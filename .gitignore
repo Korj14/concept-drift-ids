@@ -25,6 +25,10 @@ __pycache__/
 .DS_Store
 Thumbs.db
 
-# Local datasets and generated artifacts
-data/
-artifacts/
+# Dataset contents
+data/raw/*
+data/interim/*
+data/processed/*
+
+# Generated results
+results/*

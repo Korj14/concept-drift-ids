@@ -1,0 +1,9 @@
+numpy
+pandas
+scipy
+scikit-learn
+torch
+shap<0.52
+river
+matplotlib
+pytest

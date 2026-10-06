@@ -17,7 +17,8 @@ from concept_drift_ids.scenario_loader import (
     PROJECT_ROOT,
     ScenarioPartition,
     SuddenBenignScenario,
-    load_scenario,
+    load_manifest,
+    load_partition,
 )
 from concept_drift_ids.scenario_manifest import (
     sha256_canonical_json,
@@ -71,15 +72,17 @@ def _matrix(
     return matrix
 
 
-def fit_scenario_preprocessor(
-    scenario: SuddenBenignScenario,
+def fit_training_preprocessor(
+    training: ScenarioPartition,
+    manifest: dict,
 ) -> FittedPreprocessor:
-    """Fit median imputation and StandardScaler on training only."""
-    manifest = scenario.manifest
+    """Fit median imputation and StandardScaler on the frozen training partition."""
     _require_python_3119(manifest["environment"]["python_version"])
+    if training.name != "training":
+        raise ValueError("Preprocessing must be fitted from the training partition.")
 
     features = tuple(manifest["feature_schema"]["feature_columns"])
-    matrix = _matrix(scenario.training.X, features, context="training")
+    matrix = _matrix(training.X, features, context="training")
 
     all_missing = np.isnan(matrix).all(axis=0)
     if all_missing.any():
@@ -114,10 +117,17 @@ def fit_scenario_preprocessor(
         scenario_id=str(manifest["scenario_id"]),
         scenario_version=int(manifest["scenario_version"]),
         feature_columns=features,
-        training_rows=len(scenario.training.X),
+        training_rows=len(training.X),
         imputer=imputer,
         scaler=scaler,
     )
+
+
+def fit_scenario_preprocessor(
+    scenario: SuddenBenignScenario,
+) -> FittedPreprocessor:
+    """Convenience wrapper for tests/callers that already hold the full scenario."""
+    return fit_training_preprocessor(scenario.training, scenario.manifest)
 
 
 def transform_features(
@@ -327,18 +337,22 @@ def load_preprocessing_state(
 
 
 def main() -> None:
-    scenario = load_scenario()
-    fitted = fit_scenario_preprocessor(scenario)
-    summary = validate_frozen_transforms(fitted, scenario)
-    state = persist_preprocessing_state(fitted, scenario.manifest)
+    manifest = load_manifest()
+    training = load_partition("training")
+    fitted = fit_training_preprocessor(training, manifest)
 
     print("Stage 3A preprocessing validation")
-    for name, details in summary.items():
+    for name in ("training", "development", "pre_drift", "post_drift"):
+        partition = training if name == "training" else load_partition(name)
+        transformed = transform_partition(fitted, partition)
         print(
-            f"{name:12s} rows={details['rows']:,} "
-            f"features={details['features']} dtype={details['dtype']} "
-            f"finite={details['all_finite']}"
+            f"{name:12s} rows={transformed.shape[0]:,} "
+            f"features={transformed.shape[1]} dtype={transformed.dtype} "
+            f"finite={bool(np.isfinite(transformed).all())}"
         )
+        del transformed, partition
+
+    state = persist_preprocessing_state(fitted, manifest)
     print(f"state={DEFAULT_STATE_PATH}")
     print(f"state_hash={state['core_state_sha256']}")
 

@@ -41,7 +41,9 @@ The frozen project code reconstructs generated artifacts from those source files
 
 `PRE_STAGE_3_READINESS.md` records the frozen implementation decisions.
 
-`RESEARCH_DOCTRINE.md` is a repository-visible pointer to the governing project doctrine. The source Word document `MAIN - Concept_Drift_NIDS_Research_Gap_Doctrine.docx` remains the highest scientific authority.
+`RESEARCH_DOCTRINE.md` is the repository-visible summary of the governing project sources. `MAIN - Concept_Drift_NIDS_Research_Gap_Doctrine.docx` remains the highest scientific authority; `Reconciled_Pre-Stage_3_and_Stage_3_Implementation_Plan.docx` is the authoritative operational protocol where it does not conflict with MAIN.
+
+Forward experimental control is tracked in `EXPERIMENT_CONTROL_REGISTER.md` and `STATISTICAL_ANALYSIS_PLAN.md`. Repository milestone/merge discipline is recorded in `REPOSITORY_GOVERNANCE.md`.
 
 ## Stage-3 execution
 
@@ -129,4 +131,21 @@ The CSV schemas include system/scenario identifiers so equivalent outputs from l
 
 ## Current implementation boundary
 
-System A training is implemented. Pre/post evaluation remains gated on a complete, committed five-seed `system_a_v1.json` manifest.
+System A is complete and frozen as the static-neural reference.
+
+Accepted identities:
+
+- preprocessing core state: `4527f77220f2cf6063108a7d71d80aaa0e82099ad282ff25408a2d9ce3488b1e`
+- System-A manifest: `42004b5ed100b690023b9998bdc959fac41ab947b996fb7c58e44cee5e8dc6de`
+- System-A evaluation manifest: `e721b641b5898976c76c0449dedf7152cb302be4447604525afb7ddf1c94c5b3`
+
+The frozen evaluation lives under `results/frozen/system_a_v1/`.
+
+Before later adaptive evaluation, the project must freeze the common longitudinal window policy, drift/adaptation controls, label-availability assumptions, rule/fusion controls, and the confirmatory statistical-analysis choices recorded as unresolved in the control register and statistical-analysis plan.
+
+After the longitudinal window policy is frozen, the existing System-A checkpoints should be rescored over those common windows without retraining or retuning so A/B/C/D share the same temporal evaluation grid.
+
+## Research milestone workflow
+
+`main` is intended to represent the latest fully accepted scientific milestone. New major stages should branch from accepted `main`, pass their scientific gate and CI, then return through a pull request. See `REPOSITORY_GOVERNANCE.md` for the merge/tag/deviation policy.
+

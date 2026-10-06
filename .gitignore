@@ -32,3 +32,5 @@ data/processed/*
 
 # Generated results
 results/*
+# Generated model artifacts
+artifacts/*

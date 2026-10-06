@@ -609,3 +609,20 @@ Corrected supplement-manifest SHA-256:
 `1b41edecf3f69f2a2ae9804c3979b155d6436b4b7cd6e470723a3d75cd849fdc`
 
 The verifier and unit suite now check the committed supplement manifest/file relationship so future line-ending or byte-level drift is detected automatically. No frozen System-A prediction, metric, threshold, checkpoint, or original evaluation artifact changed.
+
+
+### Cross-platform frozen-evidence reconstruction policy
+
+A Linux CI check of the original System-A evaluation manifest exposed a platform representation issue: the frozen CSV artifacts had been generated on Windows using the CSV module's CRLF line endings, while Git's canonical text storage normalized them to LF. The first detected mismatch was `training_history.csv`; `static_evaluation.json`, written explicitly with LF, verified before that point.
+
+The original System-A evaluation manifest remains unchanged because it is the execution-time record of the files generated on Windows. Repository reconstruction is made deterministic through `.gitattributes`:
+
+- original `results/frozen/system_a_v1/*.csv`: checked out as CRLF, matching generation-time bytes;
+- original JSON: checked out as LF;
+- separately versioned count supplement: checked out as LF.
+
+Future CSV evidence writers now use explicit LF line termination so later systems have platform-stable text artifacts.
+
+This is a byte-representation/reproducibility correction only. No numerical result, threshold, model, scenario, or original frozen manifest was modified.
+
+System-A evaluation execution is also write-protected after closure: if the frozen evaluation manifest already exists, the evaluation command refuses to overwrite it and directs the operator to the read-only verifier.

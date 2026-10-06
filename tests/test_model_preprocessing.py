@@ -146,10 +146,6 @@ def _scenario() -> SuddenBenignScenario:
 def test_fit_uses_training_only_and_freezes_median_then_standard_scaler(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    monkeypatch.setattr(
-        "concept_drift_ids.model_preprocessing.platform.python_version",
-        lambda: "3.11.9",
-    )
 
     scenario = _scenario()
     fitted = fit_scenario_preprocessor(scenario)
@@ -174,10 +170,6 @@ def test_fit_uses_training_only_and_freezes_median_then_standard_scaler(
 def test_future_mutation_cannot_change_fitted_state_or_training_transform(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    monkeypatch.setattr(
-        "concept_drift_ids.model_preprocessing.platform.python_version",
-        lambda: "3.11.9",
-    )
 
     original = _scenario()
     mutated = deepcopy(original)
@@ -213,10 +205,6 @@ def test_future_mutation_cannot_change_fitted_state_or_training_transform(
 def test_transform_is_float64_finite_deterministic_and_non_mutating(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    monkeypatch.setattr(
-        "concept_drift_ids.model_preprocessing.platform.python_version",
-        lambda: "3.11.9",
-    )
 
     scenario = _scenario()
     fitted = fit_scenario_preprocessor(scenario)
@@ -244,10 +232,6 @@ def test_transform_is_float64_finite_deterministic_and_non_mutating(
 def test_all_missing_training_feature_is_rejected(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    monkeypatch.setattr(
-        "concept_drift_ids.model_preprocessing.platform.python_version",
-        lambda: "3.11.9",
-    )
 
     scenario = _scenario()
     scenario.training.X.loc[:, "f_10"] = np.nan
@@ -259,10 +243,6 @@ def test_all_missing_training_feature_is_rejected(
 def test_feature_order_mismatch_is_rejected(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    monkeypatch.setattr(
-        "concept_drift_ids.model_preprocessing.platform.python_version",
-        lambda: "3.11.9",
-    )
 
     scenario = _scenario()
     fitted = fit_scenario_preprocessor(scenario)
@@ -284,10 +264,6 @@ def test_preprocessing_state_round_trip_and_tamper_detection(
     monkeypatch: pytest.MonkeyPatch,
     tmp_path: Path,
 ) -> None:
-    monkeypatch.setattr(
-        "concept_drift_ids.model_preprocessing.platform.python_version",
-        lambda: "3.11.9",
-    )
 
     scenario = _scenario()
     fitted = fit_scenario_preprocessor(scenario)
@@ -334,10 +310,6 @@ def test_build_state_records_future_partitions_as_not_used_for_fit(
     monkeypatch: pytest.MonkeyPatch,
     tmp_path: Path,
 ) -> None:
-    monkeypatch.setattr(
-        "concept_drift_ids.model_preprocessing.platform.python_version",
-        lambda: "3.11.9",
-    )
 
     scenario = _scenario()
     fitted = fit_scenario_preprocessor(scenario)

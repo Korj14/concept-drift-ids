@@ -41,7 +41,7 @@ The frozen project code reconstructs generated artifacts from those source files
 
 `PRE_STAGE_3_READINESS.md` records the frozen implementation decisions.
 
-`RESEARCH_DOCTRINE.md` is the repository-visible summary of the governing project sources. `MAIN - Concept_Drift_NIDS_Research_Gap_Doctrine.docx` remains the highest scientific authority; `Reconciled_Pre-Stage_3_and_Stage_3_Implementation_Plan.docx` is the authoritative operational protocol where it does not conflict with MAIN.
+`GOVERNING_SOURCES.md` pins the exact SHA-256 identities of the two governing project-source documents. `RESEARCH_DOCTRINE.md` is the repository-visible summary of those governing sources. `MAIN - Concept_Drift_NIDS_Research_Gap_Doctrine.docx` remains the highest scientific authority; `Reconciled_Pre-Stage_3_and_Stage_3_Implementation_Plan.docx` is the authoritative operational protocol where it does not conflict with MAIN.
 
 Forward experimental control is tracked in `EXPERIMENT_CONTROL_REGISTER.md` and `STATISTICAL_ANALYSIS_PLAN.md`. Repository milestone/merge discipline is recorded in `REPOSITORY_GOVERNANCE.md`.
 

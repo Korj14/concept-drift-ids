@@ -332,3 +332,119 @@ Likely internal/contextual material rather than main-methodology prose:
 - low-level path/bootstrap mechanics
 
 These distinctions may change when the manuscript/design report is assembled; preserve the raw record regardless.
+
+
+---
+
+## 6 October 2026 — System A five-seed training completion
+
+All five frozen seeds were trained on CPU under the previously frozen System-A protocol.
+
+Accepted preprocessing state:
+
+`4527f77220f2cf6063108a7d71d80aaa0e82099ad282ff25408a2d9ce3488b1e`
+
+Per-seed development results:
+
+| Seed | Best epoch | Dev AP | Dev-selected threshold | Dev MCC |
+| ---: | ---: | ---: | ---: | ---: |
+| 0 | 12 | 0.812427 | 0.939024 | 0.744096 |
+| 1 | 13 | 0.739113 | 0.933374 | 0.759472 |
+| 2 | 4 | 0.611827 | 0.912125 | 0.708114 |
+| 3 | 17 | 0.728322 | 0.978962 | 0.771594 |
+| 4 | 15 | 0.694060 | 0.954619 | 0.737331 |
+
+Descriptive five-seed development summaries:
+
+- mean AP: 0.717150; sample SD: 0.072991; 95% t-interval: [0.626519, 0.807780]
+- mean MCC: 0.744121; sample SD: 0.024151; 95% t-interval: [0.714134, 0.774108]
+- mean selected threshold: 0.943621; sample SD: 0.024940
+- mean best epoch: 12.2; sample SD: 4.97
+
+The variation across seeds, including the lower seed-2 development ranking metrics, is retained as part of stochastic model behavior. No seed was discarded and no protocol parameter was changed in response.
+
+The five-seed frozen manifest was generated and committed:
+
+`data/manifests/system_a_v1.json`
+
+Frozen manifest SHA-256 recorded by the implementation:
+
+`42004b5ed100b690023b9998bdc959fac41ab947b996fb7c58e44cee5e8dc6de`
+
+All five manifest records use:
+
+- device: CPU
+- PyTorch: 2.14.1+cpu
+- identical preprocessing state
+- identical model/training protocol
+- independently selected development-only thresholds
+
+No pre-drift or post-drift performance had been inspected when this manifest was frozen.
+
+---
+
+## 6 October 2026 — Visualization-ready output policy frozen before first pre/post evaluation
+
+Future experiment outputs should be machine-readable and directly combinable across systems/scenarios.
+
+System-A evaluation therefore emits both a complete JSON record and tidy CSV tables.
+
+Long-form per-seed metric schema:
+
+- system ID
+- scenario ID/version
+- partition
+- seed
+- frozen decision threshold
+- metric
+- value
+
+Aggregate metric schema:
+
+- system ID
+- scenario ID/version
+- partition
+- metric
+- number of seeds
+- mean
+- sample standard deviation
+- 95% confidence-interval bounds
+
+Paired drift-delta schema:
+
+- system ID
+- scenario ID/version
+- source/target partition
+- seed
+- metric
+- post-minus-pre delta
+
+An aggregate paired-delta table is also produced.
+
+Epoch-level training history is exported separately with:
+
+- system/scenario identity
+- seed
+- epoch
+- training loss
+- development average precision
+- best-epoch flag
+
+These schemas are designed so later Systems B/C/D can emit equivalent rows and be concatenated directly for line plots, grouped bars, seed-distribution plots, confidence-interval plots, pre/post comparisons, and cross-system drift-delta figures.
+
+Primary detection metrics remain:
+
+- precision
+- recall
+- F1
+- FPR
+- MCC
+- ROC-AUC
+- average precision
+
+Before first pre/post evaluation, two secondary descriptive metrics were added prospectively:
+
+- accuracy
+- balanced accuracy
+
+They are explicitly secondary because ordinary accuracy can be misleading under severe class imbalance. Their addition does not change model fitting, early stopping, checkpoint selection, or decision-threshold selection.

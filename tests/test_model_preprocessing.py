@@ -246,7 +246,9 @@ def test_feature_order_mismatch_is_rejected() -> None:
         )
 
 
-def test_preprocessing_state_round_trip_and_tamper_detection(\n    tmp_path: Path,\n) -> None:
+def test_preprocessing_state_round_trip_and_tamper_detection(
+    tmp_path: Path,
+) -> None:
     scenario = _scenario()
     fitted = fit_scenario_preprocessor(scenario)
 
@@ -288,7 +290,9 @@ def test_preprocessing_state_round_trip_and_tamper_detection(\n    tmp_path: Pat
         load_preprocessing_state(state_path)
 
 
-def test_build_state_records_future_partitions_as_not_used_for_fit(\n    tmp_path: Path,\n) -> None:
+def test_build_state_records_future_partitions_as_not_used_for_fit(
+    tmp_path: Path,
+) -> None:
     scenario = _scenario()
     fitted = fit_scenario_preprocessor(scenario)
 

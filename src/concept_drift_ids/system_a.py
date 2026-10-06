@@ -47,6 +47,8 @@ SYSTEM_A_MANIFEST_PATH = PROJECT_ROOT / "data" / "manifests" / "system_a_v1.json
 EVALUATION_DIR = PROJECT_ROOT / "results" / "frozen" / "system_a_v1"
 EVALUATION_PATH = EVALUATION_DIR / "static_evaluation.json"
 EVALUATION_MANIFEST_PATH = EVALUATION_DIR / "evaluation_manifest.json"
+SUPPLEMENT_DIR = PROJECT_ROOT / "results" / "frozen" / "system_a_v1_supplement_v1"
+SUPPLEMENT_MANIFEST_PATH = SUPPLEMENT_DIR / "supplement_manifest.json"
 
 SYSTEM_A_CONFIG: dict[str, Any] = {
     "protocol_version": 1,
@@ -487,6 +489,47 @@ def _load_and_verify_evaluation_manifest(
     return manifest
 
 
+def _load_and_verify_supplement_manifest() -> dict[str, Any]:
+    if not SUPPLEMENT_MANIFEST_PATH.exists():
+        raise FileNotFoundError(
+            f"Missing System-A evidence supplement manifest: "
+            f"{SUPPLEMENT_MANIFEST_PATH}"
+        )
+
+    with SUPPLEMENT_MANIFEST_PATH.open("r", encoding="utf-8") as file:
+        manifest = json.load(file)
+
+    stored_hash = manifest.get("manifest_sha256")
+    core = dict(manifest)
+    core.pop("manifest_sha256", None)
+    if not isinstance(stored_hash, str) or _json_hash(core) != stored_hash:
+        raise ValueError("System-A supplement manifest hash mismatch.")
+
+    files = manifest.get("files")
+    if not isinstance(files, dict) or not files:
+        raise ValueError("System-A supplement manifest has no file inventory.")
+
+    for name, entry in files.items():
+        relative_path = entry.get("path")
+        expected_hash = entry.get("sha256")
+        if not isinstance(relative_path, str) or not isinstance(
+            expected_hash, str
+        ):
+            raise ValueError(
+                f"Invalid supplement-manifest entry for {name!r}."
+            )
+        path = PROJECT_ROOT / relative_path
+        if not path.exists():
+            raise FileNotFoundError(
+                f"Missing supplement artifact {name!r}: {path}"
+            )
+        if sha256_file(path) != expected_hash:
+            raise ValueError(
+                f"Supplement artifact hash mismatch for {name!r}."
+            )
+    return manifest
+
+
 def verify_system_a() -> None:
     """Verify frozen System-A artifacts without loading pre/post partitions."""
     frozen = _load_frozen_system_a_manifest()
@@ -513,11 +556,23 @@ def verify_system_a() -> None:
         frozen,
         preprocessing_hash=preprocessing.state_hash,
     )
+    supplement = _load_and_verify_supplement_manifest()
+
+    if (
+        supplement.get("source_evaluation_manifest_sha256")
+        != evaluation["manifest_sha256"]
+    ):
+        raise ValueError(
+            "System-A supplement does not reference the accepted "
+            "evaluation manifest."
+        )
 
     print(f"system_manifest={SYSTEM_A_MANIFEST_PATH}")
     print(f"system_manifest_hash={frozen['manifest_sha256']}")
     print(f"evaluation_manifest={EVALUATION_MANIFEST_PATH}")
     print(f"evaluation_manifest_hash={evaluation['manifest_sha256']}")
+    print(f"supplement_manifest={SUPPLEMENT_MANIFEST_PATH}")
+    print(f"supplement_manifest_hash={supplement['manifest_sha256']}")
     print(f"verified_seeds={','.join(str(seed) for seed in SYSTEM_A_CONFIG['seeds'])}")
     print("pre_post_partitions_loaded=false")
     print("status=verified")

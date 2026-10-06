@@ -239,3 +239,16 @@ def test_evaluation_manifest_verifier_checks_hash_linked_files(
     )
 
     assert verified["manifest_sha256"] == manifest["manifest_sha256"]
+
+
+def test_committed_system_a_supplement_manifest_is_self_consistent() -> None:
+    manifest = system_a._load_and_verify_supplement_manifest()
+
+    assert (
+        manifest["manifest_sha256"]
+        == "1b41edecf3f69f2a2ae9804c3979b155d6436b4b7cd6e470723a3d75cd849fdc"
+    )
+    assert (
+        manifest["source_evaluation_manifest_sha256"]
+        == "e721b641b5898976c76c0449dedf7152cb302be4447604525afb7ddf1c94c5b3"
+    )

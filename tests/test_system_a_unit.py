@@ -5,6 +5,7 @@ import json
 
 import numpy as np
 import pandas as pd
+import pytest
 import torch
 
 import concept_drift_ids.system_a as system_a
@@ -269,3 +270,15 @@ def test_committed_system_a_evaluation_manifest_verifies_repository_bytes() -> N
         verified["manifest_sha256"]
         == "e721b641b5898976c76c0449dedf7152cb302be4447604525afb7ddf1c94c5b3"
     )
+
+
+def test_system_a_evaluation_refuses_to_overwrite_frozen_evidence(
+    tmp_path,
+    monkeypatch,
+) -> None:
+    existing = tmp_path / "evaluation_manifest.json"
+    existing.write_text("{}\n", encoding="utf-8")
+    monkeypatch.setattr(system_a, "EVALUATION_MANIFEST_PATH", existing)
+
+    with pytest.raises(FileExistsError, match="already exists"):
+        system_a.evaluate_system_a(device_name="cpu")

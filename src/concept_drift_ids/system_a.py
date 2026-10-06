@@ -432,11 +432,27 @@ def evaluate_system_a(*, device_name: str) -> None:
     device = resolve_device(device_name)
 
     results: dict[str, Any] = {
+        "evaluation_format_version": 1,
         "system_id": frozen["system_id"],
         "scenario_id": frozen["scenario_id"],
         "scenario_version": frozen["scenario_version"],
         "system_manifest_sha256": frozen["manifest_sha256"],
         "preprocessing_state_hash": preprocessing.state_hash,
+        "metric_roles": {
+            "primary_detection": [
+                "precision",
+                "recall",
+                "f1",
+                "fpr",
+                "mcc",
+                "roc_auc",
+                "average_precision"
+            ],
+            "secondary_descriptive": [
+                "accuracy",
+                "balanced_accuracy"
+            ]
+        },
         "partitions": {},
     }
 

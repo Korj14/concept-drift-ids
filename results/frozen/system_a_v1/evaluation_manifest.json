@@ -1,0 +1,36 @@
+{
+  "manifest_format_version": 1,
+  "evaluation_id": "system_a_static_evaluation_v1",
+  "system_id": "system_a_static_neural_v1",
+  "scenario_id": "cicids2017_sudden_benign_v1",
+  "scenario_version": 1,
+  "system_manifest_sha256": "42004b5ed100b690023b9998bdc959fac41ab947b996fb7c58e44cee5e8dc6de",
+  "preprocessing_state_hash": "4527f77220f2cf6063108a7d71d80aaa0e82099ad282ff25408a2d9ce3488b1e",
+  "files": {
+    "static_evaluation": {
+      "path": "results/frozen/system_a_v1/static_evaluation.json",
+      "sha256": "52ea30fd6309d1c8742661b88fe89fee700e5b8afb1b759a024ff00a69866bde"
+    },
+    "training_history": {
+      "path": "results/frozen/system_a_v1/training_history.csv",
+      "sha256": "eb3a9317227bb8e55cc0ed3471b32fa0227ebc1760a4891c906336af11c73b57"
+    },
+    "metrics_by_seed": {
+      "path": "results/frozen/system_a_v1/metrics_by_seed.csv",
+      "sha256": "322012cd18224118a43f7f3fd4e56ca4dd6d597aadac9060d65e0caf91cdbc2d"
+    },
+    "aggregate_metrics": {
+      "path": "results/frozen/system_a_v1/aggregate_metrics.csv",
+      "sha256": "1562fd157204ad6c495a2136792fa9beda72420e28baa1cb22137a14655cd63d"
+    },
+    "paired_deltas_by_seed": {
+      "path": "results/frozen/system_a_v1/paired_deltas_by_seed.csv",
+      "sha256": "eb29c97af987b18fd2d406a2b0e074779f43aeab23f4822890481a3aa6f438fa"
+    },
+    "aggregate_paired_deltas": {
+      "path": "results/frozen/system_a_v1/aggregate_paired_deltas.csv",
+      "sha256": "4681cd134d4a3ca2aeed7ddd6bd114b5649c6730b3fd146558ef335be83f3cf4"
+    }
+  },
+  "manifest_sha256": "e721b641b5898976c76c0449dedf7152cb302be4447604525afb7ddf1c94c5b3"
+}

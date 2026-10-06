@@ -448,3 +448,24 @@ Before first pre/post evaluation, two secondary descriptive metrics were added p
 - balanced accuracy
 
 They are explicitly secondary because ordinary accuracy can be misleading under severe class imbalance. Their addition does not change model fitting, early stopping, checkpoint selection, or decision-threshold selection.
+
+
+### Frozen evaluation-output retention policy
+
+Before first pre/post evaluation, compact evaluation summaries were designated as versioned research artifacts under:
+
+`results/frozen/system_a_v1/`
+
+They are intentionally trackable in Git because they are small, directly support later plots/tables, and preserve the exact reported evidence.
+
+Large model checkpoints remain local/ignored.
+
+The evaluation creates `evaluation_manifest.json`, which records:
+
+- system/scenario identity;
+- frozen System-A manifest hash;
+- frozen preprocessing state hash;
+- the relative path and SHA-256 of every JSON/CSV evaluation product;
+- its own manifest hash.
+
+This separates durable research evidence from large executable checkpoint artifacts.

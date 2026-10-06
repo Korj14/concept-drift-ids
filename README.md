@@ -115,6 +115,17 @@ python run.py system-a evaluate --device auto
 
 Evaluation output is written under `results/system_a/` and does not alter the frozen model-development state.
 
+The evaluation produces:
+
+- `static_evaluation.json` — complete nested record;
+- `metrics_by_seed.csv` — long-form per-seed metrics;
+- `aggregate_metrics.csv` — mean, SD, and 95% CI by metric/partition;
+- `paired_deltas_by_seed.csv` — per-seed post-minus-pre changes;
+- `aggregate_paired_deltas.csv` — aggregate paired changes with uncertainty;
+- `training_history.csv` — epoch-level training loss and development AP.
+
+The CSV schemas include system/scenario identifiers so equivalent outputs from later systems can be concatenated directly for plots and comparisons.
+
 ## Current implementation boundary
 
 System A training is implemented. Pre/post evaluation remains gated on a complete, committed five-seed `system_a_v1.json` manifest.

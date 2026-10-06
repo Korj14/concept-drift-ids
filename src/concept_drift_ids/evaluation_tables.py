@@ -44,6 +44,7 @@ def write_evaluation_tables(
                         "scenario_version": scenario_version,
                         "partition": partition,
                         "seed": int(seed_result["seed"]),
+                        "threshold": float(seed_result["threshold"]),
                         "metric": metric,
                         "value": float(value),
                     }
@@ -114,6 +115,7 @@ def write_evaluation_tables(
             "scenario_version",
             "partition",
             "seed",
+            "threshold",
             "metric",
             "value",
         ],

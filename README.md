@@ -54,7 +54,7 @@ python -m pytest -q
 Then run the Stage-3A preprocessing acceptance pass:
 
 ```bash
-python -m concept_drift_ids.model_preprocessing
+python run.py stage3a-preprocess
 ```
 
 The acceptance pass:
@@ -71,7 +71,7 @@ Large transformed matrices are not persisted.
 
 ## Notebook / cloud execution
 
-The code avoids machine-specific paths and can run in a notebook or remote VM from the repository root. The runtime must still be **Python 3.11.9 exactly**. A hosted notebook whose fixed runtime is a different Python version is not an equivalent project environment; use a custom runtime/container or another service that can provide 3.11.9.
+The code avoids machine-specific paths and can run in a notebook or remote VM from the repository root. The root `run.py` bootstraps the `src/` layout using only the Python standard library, so no editable package install or custom `PYTHONPATH` is required. The runtime must still be **Python 3.11.9 exactly**. A hosted notebook whose fixed runtime is a different Python version is not an equivalent project environment; use a custom runtime/container or another service that can provide 3.11.9.
 
 ## Current implementation boundary
 

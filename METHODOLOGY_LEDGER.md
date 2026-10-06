@@ -562,3 +562,25 @@ Two prospective control artifacts were introduced:
 The control register separates already-frozen decisions from future variables that must be resolved before outcome-sensitive adaptive evaluation. The statistical-analysis plan explicitly treats windows as dependent longitudinal observations rather than automatic independent replicates and gates untouched C/D evaluation on a completed prespecified confirmatory analysis.
 
 These additions strengthen future evidence control and do not alter any frozen Stage-3A or System-A experimental artifact.
+
+
+### System-A integrity verifier and count supplement
+
+A read-only `python run.py system-a verify` path was added after System-A closure. It validates frozen manifests/checkpoint hashes and compact evaluation-file hashes without loading pre/post partitions. This adds an integrity check only; it does not alter model state or results.
+
+The already-frozen System-A evaluation did not contain TP/TN/FP/FN fields. Rather than rewrite it, a separately versioned supplement was added:
+
+`results/frozen/system_a_v1_supplement_v1/`
+
+Supplement manifest SHA-256:
+
+`6f0f8ef359b8f67ecdc558619d370b3e12cacdf19330727dc43c00a97fdd49fc`
+
+The supplement reconstructs exact integer confusion counts from:
+
+- the frozen per-seed recall and FPR values;
+- the frozen pre/post benign and attack counts.
+
+The reconstruction is exact: `TP = recall × attack_count` and `FP = FPR × benign_count` yield integers for every frozen seed/partition, after which `FN` and `TN` follow from the frozen class totals.
+
+No checkpoint was rerun; no probability, threshold, metric, or original evaluation artifact was changed.

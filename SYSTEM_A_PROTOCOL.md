@@ -39,6 +39,7 @@ The architecture is intentionally compact because neural architecture novelty is
 - Minimum improvement: 0.0001
 - DataLoader workers: 0
 - Fixed seeds: 0, 1, 2, 3, 4
+- Device consistency: all five seeds in the primary System-A run use the same compute backend. Seed 0 resolved to CPU, therefore seeds 1–4 are also executed on CPU for this run.
 
 Each seed saves its best development checkpoint. Later Systems B/C/D must reuse the corresponding neural starting checkpoint when a matched initial neural state is required.
 

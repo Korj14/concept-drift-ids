@@ -1,0 +1,276 @@
+{
+  "manifest_format_version": 1,
+  "scenario_id": "cicids2017_sudden_benign_v1",
+  "scenario_version": 1,
+  "dataset": "CICIDS2017",
+  "task": "binary_intrusion_detection",
+  "binary_target_mapping": {
+    "BENIGN": 0,
+    "all_other_labels": 1
+  },
+  "chronology": {
+    "type": "pseudo-chronological",
+    "timestamps_available": false,
+    "claim": "Source-file order and original row order are preserved. True timestamp chronology is not claimed because timestamps are absent from the MachineLearningCSV feature tables used here."
+  },
+  "construction": {
+    "type": "controlled_synthetic_composite",
+    "drift_type": "benign_source_regime_covariate_shift",
+    "purpose": "Introduce an abrupt BENIGN source-regime covariate shift while retaining the DoS GoldenEye attack family and closely matching pre/post attack prevalence.",
+    "natural_production_drift_claim": false
+  },
+  "environment": {
+    "python_version": "3.11.9",
+    "requirements_lock_file": "requirements-lock.txt",
+    "requirements_lock_sha256": "5ef6553f286b84c117cd67febaf20292baf9930e7f4b6cf57918e2e00f965dd4",
+    "requirements_lock_normalized_text_sha256": "9f63cbe19dcb1b916c16603f5b7c01a2fa33ac11271ce2ef0014910158d6741d"
+  },
+  "generator": {
+    "file": "src/concept_drift_ids/scenario_manifest.py",
+    "sha256": "79b9f13522bd340d902b8763ed72907a5c3bbe8af5d2bbe215505ff83866ed54",
+    "normalized_text_sha256": "79b9f13522bd340d902b8763ed72907a5c3bbe8af5d2bbe215505ff83866ed54"
+  },
+  "provenance": {
+    "raw_manifest_file": "data/manifests/cicids2017_raw_manifest.json",
+    "raw_manifest_sha256": "34c6f8d6428605713ebd8e69f1601805d951453a827d616ebc9085143067a9c4",
+    "raw_manifest_canonical_sha256": "ef1f58af1192091fdf1037edd3a2af6770dad6f0f731ac61cceb007c0cafd8ea",
+    "preprocessing_manifest_file": "data/interim/cicids2017/preprocessing_manifest.json",
+    "preprocessing_manifest_sha256": "962ad5c5725eb49c4fd5fa4f0035ecc8983deebcc6a3366da88bd7ea547bdd92",
+    "preprocessing_manifest_canonical_sha256": "d33ea433973d4f685812ec3dfbd22424fdcf715d2052bf557dc9e61e2c847ef0",
+    "exact_conflict_file": "results/split_leakage_diagnostics/exact_label_conflicts.csv",
+    "exact_conflict_file_sha256": "c31fb96cb9718dce39c6934844d4c9ea55b8d3cba26aab59f2e388d611371a39",
+    "exact_conflict_projection_sha256": "d6eb53af1f9f5986199af7d32fe04d56e06beffeacffcea81e5bf6a460c14849",
+    "raw_dataset_total_rows": 2830743
+  },
+  "feature_schema": {
+    "model_feature_count": 77,
+    "feature_columns": [
+      "Destination Port",
+      "Flow Duration",
+      "Total Fwd Packets",
+      "Total Backward Packets",
+      "Total Length of Fwd Packets",
+      "Total Length of Bwd Packets",
+      "Fwd Packet Length Max",
+      "Fwd Packet Length Min",
+      "Fwd Packet Length Mean",
+      "Fwd Packet Length Std",
+      "Bwd Packet Length Max",
+      "Bwd Packet Length Min",
+      "Bwd Packet Length Mean",
+      "Bwd Packet Length Std",
+      "Flow Bytes/s",
+      "Flow Packets/s",
+      "Flow IAT Mean",
+      "Flow IAT Std",
+      "Flow IAT Max",
+      "Flow IAT Min",
+      "Fwd IAT Total",
+      "Fwd IAT Mean",
+      "Fwd IAT Std",
+      "Fwd IAT Max",
+      "Fwd IAT Min",
+      "Bwd IAT Total",
+      "Bwd IAT Mean",
+      "Bwd IAT Std",
+      "Bwd IAT Max",
+      "Bwd IAT Min",
+      "Fwd PSH Flags",
+      "Bwd PSH Flags",
+      "Fwd URG Flags",
+      "Bwd URG Flags",
+      "Fwd Header Length",
+      "Bwd Header Length",
+      "Fwd Packets/s",
+      "Bwd Packets/s",
+      "Min Packet Length",
+      "Max Packet Length",
+      "Packet Length Mean",
+      "Packet Length Std",
+      "Packet Length Variance",
+      "FIN Flag Count",
+      "SYN Flag Count",
+      "RST Flag Count",
+      "PSH Flag Count",
+      "ACK Flag Count",
+      "URG Flag Count",
+      "CWE Flag Count",
+      "ECE Flag Count",
+      "Down/Up Ratio",
+      "Average Packet Size",
+      "Avg Fwd Segment Size",
+      "Avg Bwd Segment Size",
+      "Fwd Avg Bytes/Bulk",
+      "Fwd Avg Packets/Bulk",
+      "Fwd Avg Bulk Rate",
+      "Bwd Avg Bytes/Bulk",
+      "Bwd Avg Packets/Bulk",
+      "Bwd Avg Bulk Rate",
+      "Subflow Fwd Packets",
+      "Subflow Fwd Bytes",
+      "Subflow Bwd Packets",
+      "Subflow Bwd Bytes",
+      "Init_Win_bytes_forward",
+      "Init_Win_bytes_backward",
+      "act_data_pkt_fwd",
+      "min_seg_size_forward",
+      "Active Mean",
+      "Active Std",
+      "Active Max",
+      "Active Min",
+      "Idle Mean",
+      "Idle Std",
+      "Idle Max",
+      "Idle Min"
+    ],
+    "model_excludes": [
+      "source_file",
+      "source_order",
+      "row_in_source",
+      "Label"
+    ]
+  },
+  "partitions": {
+    "training": {
+      "rows": 1322179,
+      "label_counts": {
+        "BENIGN": 1064858,
+        "DoS GoldenEye": 1118,
+        "DoS Hulk": 231073,
+        "DoS Slowhttptest": 5499,
+        "DoS slowloris": 5796,
+        "FTP-Patator": 7938,
+        "SSH-Patator": 5897
+      },
+      "binary_counts": {
+        "benign": 1064858,
+        "attack": 257321,
+        "total": 1322179
+      },
+      "components": [
+        {
+          "source_file": "Monday-WorkingHours.pcap_ISCX.csv",
+          "source_order": 0,
+          "row_start_inclusive": 0,
+          "row_end_exclusive": 529918
+        },
+        {
+          "source_file": "Tuesday-WorkingHours.pcap_ISCX.csv",
+          "source_order": 1,
+          "row_start_inclusive": 0,
+          "row_end_exclusive": 445909
+        },
+        {
+          "source_file": "Wednesday-workingHours.pcap_ISCX.csv",
+          "source_order": 2,
+          "row_start_inclusive": 0,
+          "row_end_exclusive": 346352
+        }
+      ]
+    },
+    "development": {
+      "rows": 207810,
+      "label_counts": {
+        "BENIGN": 205797,
+        "DoS GoldenEye": 2013
+      },
+      "binary_counts": {
+        "benign": 205797,
+        "attack": 2013,
+        "total": 207810
+      },
+      "source_file": "Wednesday-workingHours.pcap_ISCX.csv",
+      "source_order": 2,
+      "row_start_inclusive": 346352,
+      "row_end_exclusive": 554162
+    },
+    "pre_drift": {
+      "rows": 69260,
+      "label_counts": {
+        "BENIGN": 65671,
+        "DoS GoldenEye": 3589
+      },
+      "binary_counts": {
+        "benign": 65671,
+        "attack": 3589,
+        "total": 69260
+      },
+      "source_file": "Wednesday-workingHours.pcap_ISCX.csv",
+      "source_order": 2,
+      "row_start_inclusive": 554162,
+      "row_end_exclusive": 623433,
+      "excluded_labels": {
+        "Heartbleed": 11
+      }
+    },
+    "post_drift": {
+      "rows": 69270,
+      "label_counts": {
+        "BENIGN": 65697,
+        "DoS GoldenEye": 3573
+      },
+      "binary_counts": {
+        "benign": 65697,
+        "attack": 3573,
+        "total": 69270
+      },
+      "template": {
+        "source_file": "Wednesday-workingHours.pcap_ISCX.csv",
+        "source_order": 2,
+        "row_start_inclusive": 623433,
+        "row_end_exclusive": 692703,
+        "attack_rows_retained": 3573,
+        "retained_attack_label": "DoS GoldenEye",
+        "benign_slots_replaced": 65697
+      },
+      "benign_replacement": {
+        "source_file": "Thursday-WorkingHours-Morning-WebAttacks.pcap_ISCX.csv",
+        "source_order": 3,
+        "eligible_label": "BENIGN",
+        "eligible_rows": 168186,
+        "selected_rows": 65697,
+        "selection_method": "Filter Thursday-morning BENIGN rows while preserving source order, then select eligible position[k] = floor(k * 168186 / 65697) for k=0..65696.",
+        "assembly_method": "Preserve Wednesday post-template row order. Retain each DoS GoldenEye row in its original template position. For BENIGN template slots in ascending row_in_source order, replace slot j with selected Thursday BENIGN row j.",
+        "selected_source_row_id_sha256": "2ab5636a81923eae27faa0eac8de4dd8b55af9fb991bf0ddfdf5419e69c017c9",
+        "template_benign_slot_row_id_sha256": "e393262d5ba7f02dd167aee8575e4980fa108b9471cef8034bb069a1340f5527",
+        "slot_to_source_row_id_mapping_sha256": "027112a593a9e6c28720e8393590110f00e8337680f88965fee1d3dc479462ad",
+        "first_selected_source_row": 0,
+        "last_selected_source_row": 170363,
+        "first_template_benign_slot": 623433,
+        "last_template_benign_slot": 692702
+      }
+    }
+  },
+  "data_quality_policy": {
+    "duplicate_rows": {
+      "primary_policy": "retain",
+      "rationale": "Repeated observations are preserved in the operational pseudo-chronological stream.",
+      "drift_detector_stream_policy": "full_stream_including_repeats",
+      "evaluation_policy": "Primary metrics use the full stream. Additional metrics will separately report observations whose exact feature pattern was not present in training.",
+      "planned_sensitivity_analysis": "deduplicated_training"
+    },
+    "representation_level_label_conflicts": {
+      "primary_policy": "retain_original_rows_and_labels",
+      "rationale": "Identical 77-feature vectors with different labels are treated as representation-level label contradictions, not proven annotation errors. No majority relabeling or future-informed deletion is used.",
+      "diagnostics": {
+        "total_conflict_patterns": 78,
+        "total_conflict_rows": 4877,
+        "training_internal_conflict_patterns": 41,
+        "training_internal_conflict_rows": 4322,
+        "training_internal_conflict_label_counts": {
+          "BENIGN": 46,
+          "DoS Hulk": 4276
+        },
+        "future_only_conflict_patterns": 37,
+        "future_only_training_rows": 513,
+        "future_only_future_rows": 37,
+        "future_only_future_partition_label_counts": {
+          "development|BENIGN": 34,
+          "post_benign|BENIGN": 3
+        }
+      },
+      "planned_sensitivity_analysis": "training_internal_conflict_removal"
+    },
+    "future_information_policy": "Future development or post-drift labels must never alter historical training rows, labels, preprocessing, feature transformations, or scenario construction decisions."
+  }
+}

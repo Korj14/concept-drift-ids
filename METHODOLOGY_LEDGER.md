@@ -584,3 +584,13 @@ The supplement reconstructs exact integer confusion counts from:
 The reconstruction is exact: `TP = recall × attack_count` and `FP = FPR × benign_count` yield integers for every frozen seed/partition, after which `FN` and `TN` follow from the frozen class totals.
 
 No checkpoint was rerun; no probability, threshold, metric, or original evaluation artifact was changed.
+
+
+### Governing source-version pin
+
+The exact project-source documents governing this repository milestone were materialized and SHA-256 hashed before merge:
+
+- MAIN doctrine: `f0700fc28e5c49ee50a6fab73db870725006ba52541a0d9cf4b285ccbe143a8f`
+- Reconciled implementation plan: `83d1e101a525e840a1235743ac5fc050ca560f228df047bee17a84e80cbf3082`
+
+These identities are recorded in `GOVERNING_SOURCES.md`. Future source updates require a new source-register entry and an explicit repository alignment review before the next untouched scientific stage.

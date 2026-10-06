@@ -252,3 +252,20 @@ def test_committed_system_a_supplement_manifest_is_self_consistent() -> None:
         manifest["source_evaluation_manifest_sha256"]
         == "e721b641b5898976c76c0449dedf7152cb302be4447604525afb7ddf1c94c5b3"
     )
+
+
+def test_committed_system_a_evaluation_manifest_verifies_repository_bytes() -> None:
+    state = load_frozen_preprocessing()
+    verified = system_a._load_and_verify_evaluation_manifest(
+        {
+            "manifest_sha256": (
+                "42004b5ed100b690023b9998bdc959fac41ab947b996fb7c58e44cee5e8dc6de"
+            )
+        },
+        preprocessing_hash=state.state_hash,
+    )
+
+    assert (
+        verified["manifest_sha256"]
+        == "e721b641b5898976c76c0449dedf7152cb302be4447604525afb7ddf1c94c5b3"
+    )

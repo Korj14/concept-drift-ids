@@ -22,19 +22,9 @@ DEFAULT_MANIFEST_PATH = (
     PROJECT_ROOT / "data" / "manifests" / "sudden_benign_v1.json"
 )
 
-PartitionName = Literal[
-    "training",
-    "development",
-    "pre_drift",
-    "post_drift",
-]
+PartitionName = Literal["training", "development", "pre_drift", "post_drift"]
 
-BASE_METADATA_COLUMNS = (
-    "source_file",
-    "source_order",
-    "row_in_source",
-)
-
+BASE_METADATA_COLUMNS = ("source_file", "source_order", "row_in_source")
 PROVENANCE_COLUMNS = (
     "scenario_partition",
     "scenario_row",
@@ -50,8 +40,6 @@ PROVENANCE_COLUMNS = (
 
 @dataclass
 class ScenarioPartition:
-    """One reconstructed scenario partition with model data and audit metadata."""
-
     name: PartitionName
     X: pd.DataFrame
     y: pd.Series
@@ -61,8 +49,6 @@ class ScenarioPartition:
 
 @dataclass
 class SuddenBenignScenario:
-    """Frozen sudden-benign scenario reconstructed from its manifest."""
-
     manifest: dict
     feature_columns: tuple[str, ...]
     training: ScenarioPartition
@@ -81,78 +67,67 @@ def load_manifest(path: Path = DEFAULT_MANIFEST_PATH) -> dict:
     with path.open("r", encoding="utf-8") as file:
         manifest = json.load(file)
 
-    _validate_manifest_contract(manifest)
+    _validate_manifest(manifest)
     return manifest
 
 
-def _validate_manifest_contract(manifest: dict) -> None:
+def _validate_manifest(manifest: dict) -> None:
     if manifest.get("scenario_id") != "cicids2017_sudden_benign_v1":
-        raise ValueError("Unexpected scenario_id in scenario manifest.")
-
+        raise ValueError("Unexpected scenario_id.")
     if manifest.get("scenario_version") != 1:
-        raise ValueError("Unexpected scenario_version in scenario manifest.")
-
+        raise ValueError("Unexpected scenario_version.")
     if manifest.get("task") != "binary_intrusion_detection":
-        raise ValueError("Unexpected task in scenario manifest.")
+        raise ValueError("Unexpected scenario task.")
 
     expected_python = manifest.get("environment", {}).get("python_version")
-    if expected_python != "3.11.9":
-        raise ValueError("Scenario manifest does not freeze Python 3.11.9.")
-    if platform.python_version() != expected_python:
+    actual_python = platform.python_version()
+    if expected_python != "3.11.9" or actual_python != "3.11.9":
         raise RuntimeError(
-            "Unexpected Python version for frozen scenario reconstruction.\n"
-            f"Expected: {expected_python}\nActual:   {platform.python_version()}"
+            "Frozen scenario reconstruction requires Python 3.11.9 exactly.\n"
+            f"Manifest: {expected_python}\nRuntime:  {actual_python}"
         )
 
-    target_mapping = manifest.get("binary_target_mapping", {})
-    if target_mapping != {"BENIGN": 0, "all_other_labels": 1}:
-        raise ValueError("Unexpected binary target mapping in scenario manifest.")
+    if manifest.get("binary_target_mapping") != {
+        "BENIGN": 0,
+        "all_other_labels": 1,
+    }:
+        raise ValueError("Unexpected binary target mapping.")
 
     schema = manifest.get("feature_schema", {})
-    feature_columns = schema.get("feature_columns", [])
-    expected_count = schema.get("model_feature_count")
-
-    if expected_count != 77 or len(feature_columns) != 77:
+    features = schema.get("feature_columns", [])
+    if schema.get("model_feature_count") != 77 or len(features) != 77:
         raise ValueError("Scenario manifest must define exactly 77 model features.")
-
-    if len(set(feature_columns)) != 77:
+    if len(set(features)) != 77:
         raise ValueError("Scenario manifest contains duplicate model features.")
 
     forbidden = {"Label", *BASE_METADATA_COLUMNS}
-    leaked = forbidden.intersection(feature_columns)
-    if leaked:
-        raise ValueError(
-            "Target/metadata columns appear in the model feature list: "
-            f"{sorted(leaked)}"
-        )
-
-    model_excludes = set(schema.get("model_excludes", []))
-    if not forbidden.issubset(model_excludes):
+    if forbidden.intersection(features):
+        raise ValueError("Target/metadata fields appear in model features.")
+    if not forbidden.issubset(set(schema.get("model_excludes", []))):
         raise ValueError("Scenario manifest does not exclude required metadata/target fields.")
 
     chronology = manifest.get("chronology", {})
-    if chronology.get("type") != "pseudo-chronological":
+    if (
+        chronology.get("type") != "pseudo-chronological"
+        or chronology.get("timestamps_available") is not False
+    ):
         raise ValueError("Unexpected chronology contract.")
-    if chronology.get("timestamps_available") is not False:
-        raise ValueError("The frozen scenario must not claim timestamp availability.")
 
     construction = manifest.get("construction", {})
-    if construction.get("drift_type") != "benign_source_regime_covariate_shift":
-        raise ValueError("Unexpected drift construction in scenario manifest.")
-    if construction.get("natural_production_drift_claim") is not False:
-        raise ValueError("The frozen scenario must not claim natural production drift.")
+    if (
+        construction.get("drift_type") != "benign_source_regime_covariate_shift"
+        or construction.get("natural_production_drift_claim") is not False
+    ):
+        raise ValueError("Unexpected drift-construction contract.")
 
     policy = manifest.get("data_quality_policy", {})
-    duplicates = policy.get("duplicate_rows", {})
-    conflicts = policy.get("representation_level_label_conflicts", {})
-    if duplicates.get("primary_policy") != "retain":
-        raise ValueError("Primary duplicate-row policy must remain 'retain'.")
-    if conflicts.get("primary_policy") != "retain_original_rows_and_labels":
-        raise ValueError("Primary representation-conflict policy has changed.")
-
-
-def _interim_path(source_file: str) -> Path:
-    return INTERIM_DIR / f"{Path(source_file).stem}.csv.gz"
+    if policy.get("duplicate_rows", {}).get("primary_policy") != "retain":
+        raise ValueError("Duplicate-row policy changed.")
+    if (
+        policy.get("representation_level_label_conflicts", {}).get("primary_policy")
+        != "retain_original_rows_and_labels"
+    ):
+        raise ValueError("Representation-conflict policy changed.")
 
 
 def _required_columns(manifest: dict) -> list[str]:
@@ -164,48 +139,31 @@ def _required_columns(manifest: dict) -> list[str]:
 
 
 def _read_source(manifest: dict, source_file: str) -> pd.DataFrame:
-    path = _interim_path(source_file)
+    path = INTERIM_DIR / f"{Path(source_file).stem}.csv.gz"
     if not path.exists():
         raise FileNotFoundError(
-            "Required structurally preprocessed CICIDS2017 file not found:\n"
-            f"{path}\n"
+            f"Required Stage-1 interim file not found:\n{path}\n"
             "Run the frozen Stage-1 structural preprocessing first."
         )
 
-    frame = pd.read_csv(
-        path,
-        usecols=_required_columns(manifest),
-        low_memory=False,
-    )
+    columns = _required_columns(manifest)
+    frame = pd.read_csv(path, usecols=columns, low_memory=False).loc[:, columns]
 
-    expected_columns = _required_columns(manifest)
-    missing = set(expected_columns).difference(frame.columns)
-    if missing:
-        raise ValueError(
-            f"Required columns missing from {source_file}: {sorted(missing)}"
-        )
-
-    # read_csv/usecols does not guarantee requested-order output across all
-    # pandas versions. Reorder explicitly to the frozen contract.
-    frame = frame.loc[:, expected_columns]
-
-    if frame["source_file"].astype(str).nunique(dropna=False) != 1:
-        raise ValueError(f"Mixed source_file values found in {source_file}.")
-    if frame["source_file"].astype(str).iloc[0] != source_file:
+    if (
+        frame["source_file"].astype(str).nunique(dropna=False) != 1
+        or frame["source_file"].astype(str).iloc[0] != source_file
+    ):
         raise ValueError(f"source_file metadata mismatch for {source_file}.")
 
     row_ids = frame["row_in_source"].to_numpy(dtype=np.int64, copy=False)
-    expected_ids = np.arange(len(frame), dtype=np.int64)
-    if not np.array_equal(row_ids, expected_ids):
+    if not np.array_equal(row_ids, np.arange(len(frame), dtype=np.int64)):
         raise ValueError(f"row_in_source is not contiguous for {source_file}.")
-
     if frame["Label"].isna().any():
         raise ValueError(f"Missing labels found in {source_file}.")
-
     return frame
 
 
-def _slice_source(
+def _slice(
     manifest: dict,
     *,
     source_file: str,
@@ -214,92 +172,79 @@ def _slice_source(
     end: int,
 ) -> pd.DataFrame:
     frame = _read_source(manifest, source_file)
-
     if start < 0 or end < start or end > len(frame):
-        raise ValueError(
-            f"Invalid slice [{start}:{end}) for {source_file} with {len(frame)} rows."
-        )
+        raise ValueError(f"Invalid slice [{start}:{end}) for {source_file}.")
 
-    source_orders = frame["source_order"].unique()
-    if len(source_orders) != 1 or int(source_orders[0]) != int(source_order):
+    orders = frame["source_order"].unique()
+    if len(orders) != 1 or int(orders[0]) != int(source_order):
         raise ValueError(f"source_order metadata mismatch for {source_file}.")
-
-    sliced = frame.iloc[start:end].copy()
-    del frame
-    return sliced
+    return frame.iloc[start:end].copy()
 
 
-def _make_provenance(
+def _provenance(
     frame: pd.DataFrame,
     *,
-    partition_name: PartitionName,
+    name: PartitionName,
     template: pd.DataFrame | None = None,
-    synthetic_replacement: np.ndarray | None = None,
+    synthetic: np.ndarray | None = None,
 ) -> pd.DataFrame:
-    provenance = frame.loc[:, list(BASE_METADATA_COLUMNS)].copy()
-    provenance.insert(0, "scenario_row", np.arange(len(frame), dtype=np.int64))
-    provenance.insert(0, "scenario_partition", partition_name)
-
-    if template is None:
-        template = frame
-
+    template = frame if template is None else template
     if len(template) != len(frame):
-        raise ValueError("Template and reconstructed frame lengths differ.")
+        raise ValueError("Template and reconstructed partition lengths differ.")
 
-    provenance["template_source_file"] = template["source_file"].astype(str).to_numpy()
-    provenance["template_source_order"] = template["source_order"].to_numpy(
-        dtype=np.int64,
-        copy=False,
+    synthetic = (
+        np.zeros(len(frame), dtype=bool)
+        if synthetic is None
+        else np.asarray(synthetic, dtype=bool)
     )
-    provenance["template_row_in_source"] = template["row_in_source"].to_numpy(
-        dtype=np.int64,
-        copy=False,
+    if len(synthetic) != len(frame):
+        raise ValueError("Synthetic-replacement mask length mismatch.")
+
+    result = pd.DataFrame(
+        {
+            "scenario_partition": name,
+            "scenario_row": np.arange(len(frame), dtype=np.int64),
+            "source_file": frame["source_file"].astype(str).to_numpy(),
+            "source_order": frame["source_order"].to_numpy(dtype=np.int64),
+            "row_in_source": frame["row_in_source"].to_numpy(dtype=np.int64),
+            "template_source_file": template["source_file"].astype(str).to_numpy(),
+            "template_source_order": template["source_order"].to_numpy(
+                dtype=np.int64
+            ),
+            "template_row_in_source": template["row_in_source"].to_numpy(
+                dtype=np.int64
+            ),
+            "synthetic_replacement": synthetic,
+        }
     )
-
-    if synthetic_replacement is None:
-        synthetic_replacement = np.zeros(len(frame), dtype=bool)
-
-    if len(synthetic_replacement) != len(frame):
-        raise ValueError("synthetic_replacement length does not match partition rows.")
-
-    provenance["synthetic_replacement"] = np.asarray(
-        synthetic_replacement,
-        dtype=bool,
-    )
-
-    return provenance.loc[:, list(PROVENANCE_COLUMNS)]
+    return result.loc[:, list(PROVENANCE_COLUMNS)]
 
 
-def _to_partition(
+def _partition(
     manifest: dict,
     *,
     name: PartitionName,
     frame: pd.DataFrame,
     template: pd.DataFrame | None = None,
-    synthetic_replacement: np.ndarray | None = None,
+    synthetic: np.ndarray | None = None,
 ) -> ScenarioPartition:
-    feature_columns = manifest["feature_schema"]["feature_columns"]
-
-    X = frame.loc[:, feature_columns].copy()
+    features = manifest["feature_schema"]["feature_columns"]
     labels = frame["Label"].astype("string").copy()
     labels.name = "Label"
-
     y = labels.ne("BENIGN").astype(np.int8)
     y.name = "binary_target"
 
-    provenance = _make_provenance(
-        frame,
-        partition_name=name,
-        template=template,
-        synthetic_replacement=synthetic_replacement,
-    )
-
     partition = ScenarioPartition(
         name=name,
-        X=X,
+        X=frame.loc[:, features].copy(),
         y=y,
         labels=labels,
-        provenance=provenance,
+        provenance=_provenance(
+            frame,
+            name=name,
+            template=template,
+            synthetic=synthetic,
+        ),
     )
     _validate_partition(manifest, partition)
     return partition
@@ -309,86 +254,66 @@ def _validate_partition(manifest: dict, partition: ScenarioPartition) -> None:
     spec = manifest["partitions"][partition.name]
     expected_rows = int(spec["rows"])
 
-    lengths = {
+    if {
         len(partition.X),
         len(partition.y),
         len(partition.labels),
         len(partition.provenance),
-    }
-    if lengths != {expected_rows}:
-        raise AssertionError(
-            f"{partition.name} reconstructed lengths do not match {expected_rows}: {lengths}"
-        )
+    } != {expected_rows}:
+        raise AssertionError(f"{partition.name} row count changed.")
 
-    expected_features = manifest["feature_schema"]["feature_columns"]
-    if list(partition.X.columns) != expected_features:
+    features = manifest["feature_schema"]["feature_columns"]
+    if list(partition.X.columns) != features:
         raise AssertionError(f"{partition.name} feature order changed.")
 
-    forbidden = {"Label", *BASE_METADATA_COLUMNS, *PROVENANCE_COLUMNS}
-    leaked = forbidden.intersection(partition.X.columns)
-    if leaked:
-        raise AssertionError(
-            f"{partition.name} metadata/target leakage into X: {sorted(leaked)}"
-        )
-
-    actual_label_counts = {
-        str(label): int(count)
-        for label, count in partition.labels.value_counts().sort_index().items()
+    expected_labels = {str(k): int(v) for k, v in spec["label_counts"].items()}
+    actual_labels = {
+        str(k): int(v) for k, v in partition.labels.value_counts().items()
     }
-    expected_label_counts = {
-        str(label): int(count)
-        for label, count in sorted(spec["label_counts"].items())
-    }
-    if actual_label_counts != expected_label_counts:
+    if actual_labels != expected_labels:
         raise AssertionError(
             f"{partition.name} label counts changed.\n"
-            f"Expected: {expected_label_counts}\nActual:   {actual_label_counts}"
+            f"Expected: {expected_labels}\nActual:   {actual_labels}"
         )
 
+    expected_binary = {k: int(v) for k, v in spec["binary_counts"].items()}
     actual_binary = {
         "benign": int((partition.y == 0).sum()),
         "attack": int((partition.y == 1).sum()),
-        "total": int(len(partition.y)),
+        "total": len(partition.y),
     }
-    expected_binary = {key: int(value) for key, value in spec["binary_counts"].items()}
     if actual_binary != expected_binary:
-        raise AssertionError(
-            f"{partition.name} binary counts changed.\n"
-            f"Expected: {expected_binary}\nActual:   {actual_binary}"
-        )
+        raise AssertionError(f"{partition.name} binary counts changed.")
 
-    scenario_rows = partition.provenance["scenario_row"].to_numpy(
-        dtype=np.int64,
-        copy=False,
-    )
+    scenario_rows = partition.provenance["scenario_row"].to_numpy(dtype=np.int64)
     if not np.array_equal(scenario_rows, np.arange(expected_rows, dtype=np.int64)):
         raise AssertionError(f"{partition.name} scenario_row is not contiguous.")
 
 
-def _load_training(manifest: dict) -> ScenarioPartition:
-    components = []
-    for component in manifest["partitions"]["training"]["components"]:
-        components.append(
-            _slice_source(
-                manifest,
-                source_file=component["source_file"],
-                source_order=int(component["source_order"]),
-                start=int(component["row_start_inclusive"]),
-                end=int(component["row_end_exclusive"]),
-            )
+def _training(manifest: dict) -> ScenarioPartition:
+    frames = [
+        _slice(
+            manifest,
+            source_file=part["source_file"],
+            source_order=int(part["source_order"]),
+            start=int(part["row_start_inclusive"]),
+            end=int(part["row_end_exclusive"]),
         )
+        for part in manifest["partitions"]["training"]["components"]
+    ]
+    return _partition(
+        manifest,
+        name="training",
+        frame=pd.concat(frames, ignore_index=True, copy=False),
+    )
 
-    frame = pd.concat(components, axis=0, ignore_index=True, copy=False)
-    del components
-    return _to_partition(manifest, name="training", frame=frame)
 
-
-def _load_simple_partition(
+def _simple(
     manifest: dict,
     name: Literal["development", "pre_drift"],
 ) -> ScenarioPartition:
     spec = manifest["partitions"][name]
-    frame = _slice_source(
+    frame = _slice(
         manifest,
         source_file=spec["source_file"],
         source_order=int(spec["source_order"]),
@@ -397,26 +322,26 @@ def _load_simple_partition(
     )
 
     if name == "pre_drift":
-        excluded = spec.get("excluded_labels", {})
-        for label, expected_count in excluded.items():
-            actual_count = int(frame["Label"].eq(label).sum())
-            if actual_count != int(expected_count):
+        for label, expected in spec.get("excluded_labels", {}).items():
+            actual = int(frame["Label"].eq(label).sum())
+            if actual != int(expected):
                 raise AssertionError(
                     f"Excluded-label count changed for {label}: "
-                    f"expected {expected_count}, got {actual_count}."
+                    f"expected {expected}, got {actual}."
                 )
-        if excluded:
-            frame = frame.loc[~frame["Label"].isin(excluded)].copy()
+        frame = frame.loc[
+            ~frame["Label"].isin(spec.get("excluded_labels", {}))
+        ].copy()
 
-    return _to_partition(manifest, name=name, frame=frame)
+    return _partition(manifest, name=name, frame=frame)
 
 
-def _load_post_drift(manifest: dict) -> ScenarioPartition:
+def _post_drift(manifest: dict) -> ScenarioPartition:
     spec = manifest["partitions"]["post_drift"]
     template_spec = spec["template"]
     replacement_spec = spec["benign_replacement"]
 
-    template = _slice_source(
+    template = _slice(
         manifest,
         source_file=template_spec["source_file"],
         source_order=int(template_spec["source_order"]),
@@ -424,88 +349,63 @@ def _load_post_drift(manifest: dict) -> ScenarioPartition:
         end=int(template_spec["row_end_exclusive"]),
     ).reset_index(drop=True)
 
-    retained_attack_label = template_spec["retained_attack_label"]
     benign_label = replacement_spec["eligible_label"]
-    expected_template_labels = {benign_label, retained_attack_label}
-    actual_template_labels = set(template["Label"].astype(str).unique())
-    if actual_template_labels != expected_template_labels:
-        raise AssertionError(
-            "Post-drift template label set changed. "
-            f"Expected {expected_template_labels}, got {actual_template_labels}."
-        )
+    attack_label = template_spec["retained_attack_label"]
+    if set(template["Label"].astype(str).unique()) != {benign_label, attack_label}:
+        raise AssertionError("Post-drift template label set changed.")
 
     benign_positions = np.flatnonzero(template["Label"].eq(benign_label).to_numpy())
-    expected_replacements = int(replacement_spec["selected_rows"])
-    if len(benign_positions) != expected_replacements:
-        raise AssertionError(
-            "Post-template BENIGN slot count changed. "
-            f"Expected {expected_replacements}, got {len(benign_positions)}."
-        )
+    selected_rows = int(replacement_spec["selected_rows"])
+    if len(benign_positions) != selected_rows:
+        raise AssertionError("Post-template BENIGN slot count changed.")
 
     source = _read_source(manifest, replacement_spec["source_file"])
-    source_orders = source["source_order"].unique()
-    if (
-        len(source_orders) != 1
-        or int(source_orders[0]) != int(replacement_spec["source_order"])
-    ):
-        raise AssertionError("Post-drift replacement source_order changed.")
+    orders = source["source_order"].unique()
+    if len(orders) != 1 or int(orders[0]) != int(replacement_spec["source_order"]):
+        raise AssertionError("Replacement source_order changed.")
 
     eligible = source.loc[source["Label"].eq(benign_label)].reset_index(drop=True)
-    del source
-
     if len(eligible) != int(replacement_spec["eligible_rows"]):
-        raise AssertionError(
-            "Post-drift eligible replacement-row count changed. "
-            f"Expected {replacement_spec['eligible_rows']}, got {len(eligible)}."
-        )
+        raise AssertionError("Eligible replacement-row count changed.")
 
-    selection_positions = deterministic_positions(
-        total_rows=len(eligible),
-        requested_rows=expected_replacements,
-    )
-    selected = eligible.iloc[selection_positions].reset_index(drop=True)
-    del eligible
+    positions = deterministic_positions(len(eligible), selected_rows)
+    selected = eligible.iloc[positions].reset_index(drop=True)
 
-    selected_source_ids = selected["row_in_source"].to_numpy(
-        dtype=np.int64,
-        copy=True,
-    )
-    template_slot_ids = template.loc[
-        benign_positions,
-        "row_in_source",
+    selected_ids = selected["row_in_source"].to_numpy(dtype=np.int64, copy=True)
+    template_ids = template.loc[
+        benign_positions, "row_in_source"
     ].to_numpy(dtype=np.int64, copy=True)
 
-    selected_hash = sha256_int64_array(selected_source_ids)
-    slot_hash = sha256_int64_array(template_slot_ids)
-    mapping_hash = sha256_int64_pairs(template_slot_ids, selected_source_ids)
-
-    expected_hashes = {
-        "selected_source_row_id_sha256": selected_hash,
-        "template_benign_slot_row_id_sha256": slot_hash,
-        "slot_to_source_row_id_mapping_sha256": mapping_hash,
+    hashes = {
+        "selected_source_row_id_sha256": sha256_int64_array(selected_ids),
+        "template_benign_slot_row_id_sha256": sha256_int64_array(template_ids),
+        "slot_to_source_row_id_mapping_sha256": sha256_int64_pairs(
+            template_ids, selected_ids
+        ),
     }
-    for field, actual in expected_hashes.items():
+    for field, actual in hashes.items():
         if actual != replacement_spec[field]:
             raise AssertionError(
-                f"Frozen post-drift mapping invariant failed for {field}.\n"
+                f"Frozen post-drift mapping failed for {field}.\n"
                 f"Expected: {replacement_spec[field]}\nActual:   {actual}"
             )
 
     reconstructed = template.copy()
-    for column_index, column in enumerate(reconstructed.columns):
-        reconstructed.iloc[benign_positions, column_index] = (
-            selected[column].to_numpy(copy=False)
-        )
+    for column in reconstructed.columns:
+        reconstructed.iloc[
+            benign_positions,
+            reconstructed.columns.get_loc(column),
+        ] = selected[column].to_numpy(copy=False)
 
-    synthetic_replacement = np.zeros(len(template), dtype=bool)
-    synthetic_replacement[benign_positions] = True
+    synthetic = np.zeros(len(template), dtype=bool)
+    synthetic[benign_positions] = True
 
-    return _to_partition(
+    return _partition(
         manifest,
         name="post_drift",
         frame=reconstructed,
         template=template,
-        synthetic_replacement=synthetic_replacement,
+        synthetic=synthetic,
     )
 
 
@@ -514,17 +414,13 @@ def load_partition(
     *,
     manifest_path: Path = DEFAULT_MANIFEST_PATH,
 ) -> ScenarioPartition:
-    """Reconstruct one frozen scenario partition from Stage-1 interim data."""
-
     manifest = load_manifest(manifest_path)
-
     if name == "training":
-        return _load_training(manifest)
+        return _training(manifest)
     if name in {"development", "pre_drift"}:
-        return _load_simple_partition(manifest, name)
+        return _simple(manifest, name)
     if name == "post_drift":
-        return _load_post_drift(manifest)
-
+        return _post_drift(manifest)
     raise ValueError(f"Unknown scenario partition: {name}")
 
 
@@ -532,14 +428,12 @@ def load_scenario(
     *,
     manifest_path: Path = DEFAULT_MANIFEST_PATH,
 ) -> SuddenBenignScenario:
-    """Reconstruct all four frozen partitions using one manifest contract."""
-
     manifest = load_manifest(manifest_path)
     return SuddenBenignScenario(
         manifest=manifest,
         feature_columns=tuple(manifest["feature_schema"]["feature_columns"]),
-        training=_load_training(manifest),
-        development=_load_simple_partition(manifest, "development"),
-        pre_drift=_load_simple_partition(manifest, "pre_drift"),
-        post_drift=_load_post_drift(manifest),
+        training=_training(manifest),
+        development=_simple(manifest, "development"),
+        pre_drift=_simple(manifest, "pre_drift"),
+        post_drift=_post_drift(manifest),
     )

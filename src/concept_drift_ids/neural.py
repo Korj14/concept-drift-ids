@@ -10,7 +10,9 @@ import numpy as np
 import torch
 from scipy.stats import t
 from sklearn.metrics import (
+    accuracy_score,
     average_precision_score,
+    balanced_accuracy_score,
     f1_score,
     matthews_corrcoef,
     precision_score,
@@ -123,6 +125,8 @@ def binary_metrics(
     fpr = fp / (fp + tn) if fp + tn else 0.0
 
     return {
+        "accuracy": float(accuracy_score(y, prediction)),
+        "balanced_accuracy": float(balanced_accuracy_score(y, prediction)),
         "precision": float(precision_score(y, prediction, zero_division=0)),
         "recall": float(recall_score(y, prediction, zero_division=0)),
         "f1": float(f1_score(y, prediction, zero_division=0)),
@@ -201,16 +205,27 @@ def select_mcc_threshold(
     return threshold, binary_metrics(y, probabilities, threshold)
 
 
-def mean_ci95(values: list[float]) -> dict[str, float]:
+def mean_ci95(values: list[float]) -> dict[str, float | int]:
     array = np.asarray(values, dtype=np.float64)
+    n = int(len(array))
     mean = float(array.mean())
-    if len(array) < 2:
-        return {"mean": mean, "ci95_low": mean, "ci95_high": mean}
+    std = float(array.std(ddof=1)) if n >= 2 else 0.0
 
-    sem = float(array.std(ddof=1) / math.sqrt(len(array)))
-    margin = float(t.ppf(0.975, df=len(array) - 1) * sem)
+    if n < 2:
+        return {
+            "n": n,
+            "mean": mean,
+            "std": std,
+            "ci95_low": mean,
+            "ci95_high": mean,
+        }
+
+    sem = std / math.sqrt(n)
+    margin = float(t.ppf(0.975, df=n - 1) * sem)
     return {
+        "n": n,
         "mean": mean,
+        "std": std,
         "ci95_low": mean - margin,
         "ci95_high": mean + margin,
     }

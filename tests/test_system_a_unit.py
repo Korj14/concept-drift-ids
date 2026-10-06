@@ -1,9 +1,12 @@
 from __future__ import annotations
 
+import csv
+
 import numpy as np
 import pandas as pd
 import torch
 
+from concept_drift_ids.evaluation_tables import write_evaluation_tables
 from concept_drift_ids.frozen_preprocessing import (
     load_frozen_preprocessing,
     transform_frame,
@@ -114,3 +117,76 @@ def test_mean_ci95_exposes_plot_ready_summary_fields() -> None:
     assert summary["mean"] == 0.7
     assert summary["std"] > 0.0
     assert summary["ci95_low"] < summary["mean"] < summary["ci95_high"]
+
+
+def test_evaluation_tables_are_long_form_and_combinable(tmp_path) -> None:
+    summary = {
+        "n": 2,
+        "mean": 0.75,
+        "std": 0.05,
+        "ci95_low": 0.70,
+        "ci95_high": 0.80,
+    }
+    results = {
+        "system_id": "system_a_static_neural_v1",
+        "scenario_id": "scenario",
+        "scenario_version": 1,
+        "partitions": {
+            "pre_drift": {
+                "seed_results": [
+                    {
+                        "seed": 0,
+                        "threshold": 0.9,
+                        "metrics": {"mcc": 0.7},
+                    },
+                    {
+                        "seed": 1,
+                        "threshold": 0.8,
+                        "metrics": {"mcc": 0.8},
+                    },
+                ],
+                "aggregate": {"mcc": summary},
+            },
+            "post_drift": {
+                "seed_results": [
+                    {
+                        "seed": 0,
+                        "threshold": 0.9,
+                        "metrics": {"mcc": 0.6},
+                    },
+                    {
+                        "seed": 1,
+                        "threshold": 0.8,
+                        "metrics": {"mcc": 0.7},
+                    },
+                ],
+                "aggregate": {"mcc": summary},
+            },
+        },
+        "post_minus_pre": {
+            "seed_deltas": [
+                {"seed": 0, "metrics": {"mcc": -0.1}},
+                {"seed": 1, "metrics": {"mcc": -0.1}},
+            ],
+            "aggregate": {"mcc": summary},
+        },
+    }
+
+    paths = write_evaluation_tables(results, tmp_path)
+
+    assert all(path.exists() for path in paths.values())
+
+    with paths["metrics_by_seed"].open(encoding="utf-8", newline="") as file:
+        rows = list(csv.DictReader(file))
+
+    assert len(rows) == 4
+    assert set(rows[0]) == {
+        "system_id",
+        "scenario_id",
+        "scenario_version",
+        "partition",
+        "seed",
+        "threshold",
+        "metric",
+        "value",
+    }

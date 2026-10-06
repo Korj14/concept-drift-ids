@@ -21,17 +21,25 @@ def main() -> None:
     )
     parser.add_argument(
         "command",
-        choices=("stage3a-preprocess",),
+        choices=("stage3a-preprocess", "system-a"),
         help="Project command to execute.",
     )
-    args = parser.parse_args()
+    args, remainder = parser.parse_known_args()
 
     _bootstrap_src()
 
     if args.command == "stage3a-preprocess":
+        if remainder:
+            parser.error("stage3a-preprocess takes no additional arguments.")
         from concept_drift_ids.model_preprocessing import main as run_stage3a
 
         run_stage3a()
+        return
+
+    from concept_drift_ids.system_a import main as run_system_a
+
+    sys.argv = [sys.argv[0], *remainder]
+    run_system_a()
 
 
 if __name__ == "__main__":

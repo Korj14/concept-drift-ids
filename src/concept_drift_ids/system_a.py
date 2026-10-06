@@ -604,6 +604,13 @@ def _load_checkpoint_model(
 
 
 def evaluate_system_a(*, device_name: str) -> None:
+    if EVALUATION_MANIFEST_PATH.exists():
+        raise FileExistsError(
+            "Frozen System-A evaluation already exists. "
+            "Use 'python run.py system-a verify' for integrity checks; "
+            "do not overwrite accepted evidence."
+        )
+
     frozen = _load_frozen_system_a_manifest()
     preprocessing = load_frozen_preprocessing()
     device = resolve_device(device_name)

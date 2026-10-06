@@ -289,6 +289,12 @@ Remaining frozen seeds:
 - 3
 - 4
 
+Execution consistency clarification made before seeds 1–4:
+
+- seed 0 resolved to CPU;
+- seeds 1–4 will also be executed on CPU;
+- this keeps the compute backend constant across the five matched System-A runs and is not a response to the observed development score.
+
 ### Interpretation rule
 
 This was a smoke/execution-validity run on the already-frozen protocol.

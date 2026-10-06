@@ -143,10 +143,7 @@ def _scenario() -> SuddenBenignScenario:
     )
 
 
-def test_fit_uses_training_only_and_freezes_median_then_standard_scaler(
-    monkeypatch: pytest.MonkeyPatch,
-) -> None:
-
+def test_fit_uses_training_only_and_freezes_median_then_standard_scaler() -> None:
     scenario = _scenario()
     fitted = fit_scenario_preprocessor(scenario)
 
@@ -167,9 +164,7 @@ def test_fit_uses_training_only_and_freezes_median_then_standard_scaler(
     )
 
 
-def test_future_mutation_cannot_change_fitted_state_or_training_transform(
-    monkeypatch: pytest.MonkeyPatch,
-) -> None:
+def test_future_mutation_cannot_change_fitted_state_or_training_transform() -> None:
 
     original = _scenario()
     mutated = deepcopy(original)
@@ -202,10 +197,7 @@ def test_future_mutation_cannot_change_fitted_state_or_training_transform(
     np.testing.assert_allclose(first_training, second_training)
 
 
-def test_transform_is_float64_finite_deterministic_and_non_mutating(
-    monkeypatch: pytest.MonkeyPatch,
-) -> None:
-
+def test_transform_is_float64_finite_deterministic_and_non_mutating() -> None:
     scenario = _scenario()
     fitted = fit_scenario_preprocessor(scenario)
 
@@ -229,10 +221,7 @@ def test_transform_is_float64_finite_deterministic_and_non_mutating(
     pd.testing.assert_frame_equal(before, scenario.development.X)
 
 
-def test_all_missing_training_feature_is_rejected(
-    monkeypatch: pytest.MonkeyPatch,
-) -> None:
-
+def test_all_missing_training_feature_is_rejected() -> None:
     scenario = _scenario()
     scenario.training.X.loc[:, "f_10"] = np.nan
 
@@ -240,10 +229,7 @@ def test_all_missing_training_feature_is_rejected(
         fit_scenario_preprocessor(scenario)
 
 
-def test_feature_order_mismatch_is_rejected(
-    monkeypatch: pytest.MonkeyPatch,
-) -> None:
-
+def test_feature_order_mismatch_is_rejected() -> None:
     scenario = _scenario()
     fitted = fit_scenario_preprocessor(scenario)
 
@@ -260,11 +246,7 @@ def test_feature_order_mismatch_is_rejected(
         )
 
 
-def test_preprocessing_state_round_trip_and_tamper_detection(
-    monkeypatch: pytest.MonkeyPatch,
-    tmp_path: Path,
-) -> None:
-
+def test_preprocessing_state_round_trip_and_tamper_detection(\n    tmp_path: Path,\n) -> None:
     scenario = _scenario()
     fitted = fit_scenario_preprocessor(scenario)
 
@@ -306,11 +288,7 @@ def test_preprocessing_state_round_trip_and_tamper_detection(
         load_preprocessing_state(state_path)
 
 
-def test_build_state_records_future_partitions_as_not_used_for_fit(
-    monkeypatch: pytest.MonkeyPatch,
-    tmp_path: Path,
-) -> None:
-
+def test_build_state_records_future_partitions_as_not_used_for_fit(\n    tmp_path: Path,\n) -> None:
     scenario = _scenario()
     fitted = fit_scenario_preprocessor(scenario)
 

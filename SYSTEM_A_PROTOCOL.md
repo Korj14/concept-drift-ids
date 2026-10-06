@@ -1,6 +1,6 @@
 # System A Protocol — Static Neural Baseline
 
-**Status:** FROZEN BEFORE PRE/POST EVALUATION  
+**Status:** FROZEN, EVALUATED, AND CLOSED  
 **Python:** 3.11.9 exactly
 
 System A is the static neural baseline. It contains no symbolic rules, drift detector, or adaptation.
@@ -85,3 +85,20 @@ That small manifest is the auditable frozen System-A starting-state record and m
 The pre/post evaluation command must refuse to run unless the complete five-seed System-A manifest exists and every referenced checkpoint hash still matches.
 
 No architecture, optimizer, early-stopping, class-weighting, or threshold decision may be changed after looking at pre/post metrics without declaring a new protocol version.
+
+
+## Accepted evaluation closure
+
+The first untouched pre/post evaluation was executed only after the five-seed `system_a_v1.json` manifest was committed and checkpoint hashes were verified.
+
+Accepted evaluation manifest:
+
+`results/frozen/system_a_v1/evaluation_manifest.json`
+
+Manifest SHA-256:
+
+`e721b641b5898976c76c0449dedf7152cb302be4447604525afb7ddf1c94c5b3`
+
+System A is now a fixed reference condition. It must not be retrained, recalibrated, rethresholded, or selectively reseeded in response to its observed pre/post results. Any scientifically justified alternative requires a new protocol/version and preservation of this accepted baseline.
+
+After the common longitudinal windowing policy is frozen, these already-frozen checkpoints may be **rescored** on the common windows without retraining or retuning.

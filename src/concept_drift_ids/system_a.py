@@ -10,6 +10,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+os.environ.setdefault("CUBLAS_WORKSPACE_CONFIG", ":4096:8")
+
 import numpy as np
 import torch
 from scipy.stats import t
@@ -157,6 +159,12 @@ def prepare_train_dev() -> PreparedData:
     """
     manifest = load_manifest()
     preprocessing = load_frozen_preprocessing()
+
+    if (
+        preprocessing.scenario_id != manifest["scenario_id"]
+        or preprocessing.scenario_version != int(manifest["scenario_version"])
+    ):
+        raise ValueError("Frozen preprocessing and scenario manifest do not match.")
 
     training = load_partition("training")
     X_train = transform_frame(
@@ -757,8 +765,6 @@ def main() -> None:
     evaluate_parser.add_argument("--device", default="auto")
 
     args = parser.parse_args()
-
-    os.environ.setdefault("CUBLAS_WORKSPACE_CONFIG", ":4096:8")
 
     if args.command == "train":
         train_system_a(

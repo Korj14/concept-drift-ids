@@ -44,8 +44,9 @@ ARTIFACT_DIR = PROJECT_ROOT / "artifacts" / "system_a"
 CHECKPOINT_DIR = ARTIFACT_DIR / "checkpoints"
 SEED_RECORD_DIR = ARTIFACT_DIR / "seed_records"
 SYSTEM_A_MANIFEST_PATH = PROJECT_ROOT / "data" / "manifests" / "system_a_v1.json"
-EVALUATION_DIR = PROJECT_ROOT / "results" / "system_a"
+EVALUATION_DIR = PROJECT_ROOT / "results" / "frozen" / "system_a_v1"
 EVALUATION_PATH = EVALUATION_DIR / "static_evaluation.json"
+EVALUATION_MANIFEST_PATH = EVALUATION_DIR / "evaluation_manifest.json"
 
 SYSTEM_A_CONFIG: dict[str, Any] = {
     "protocol_version": 1,
@@ -544,9 +545,33 @@ def evaluate_system_a(*, device_name: str) -> None:
     table_paths = write_evaluation_tables(results, EVALUATION_DIR)
     history_path = write_training_history_table(frozen, EVALUATION_DIR)
 
-    print(f"evaluation={EVALUATION_PATH}")
-    print(f"training_history={history_path}")
-    for name, path in table_paths.items():
+    output_paths = {
+        "static_evaluation": EVALUATION_PATH,
+        "training_history": history_path,
+        **table_paths,
+    }
+    evaluation_manifest = {
+        "manifest_format_version": 1,
+        "evaluation_id": "system_a_static_evaluation_v1",
+        "system_id": frozen["system_id"],
+        "scenario_id": frozen["scenario_id"],
+        "scenario_version": frozen["scenario_version"],
+        "system_manifest_sha256": frozen["manifest_sha256"],
+        "preprocessing_state_hash": preprocessing.state_hash,
+        "files": {
+            name: {
+                "path": path.relative_to(PROJECT_ROOT).as_posix(),
+                "sha256": sha256_file(path),
+            }
+            for name, path in output_paths.items()
+        },
+    }
+    evaluation_manifest["manifest_sha256"] = _json_hash(evaluation_manifest)
+    _write_json(EVALUATION_MANIFEST_PATH, evaluation_manifest)
+
+    print(f"evaluation_manifest={EVALUATION_MANIFEST_PATH}")
+    print(f"evaluation_manifest_hash={evaluation_manifest['manifest_sha256']}")
+    for name, path in output_paths.items():
         print(f"{name}={path}")
 
     for partition_name in ("pre_drift", "post_drift"):

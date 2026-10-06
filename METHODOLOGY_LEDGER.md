@@ -574,7 +574,7 @@ The already-frozen System-A evaluation did not contain TP/TN/FP/FN fields. Rathe
 
 Supplement manifest SHA-256:
 
-`6f0f8ef359b8f67ecdc558619d370b3e12cacdf19330727dc43c00a97fdd49fc`
+`1b41edecf3f69f2a2ae9804c3979b155d6436b4b7cd6e470723a3d75cd849fdc`
 
 The supplement reconstructs exact integer confusion counts from:
 
@@ -594,3 +594,18 @@ The exact project-source documents governing this repository milestone were mate
 - Reconciled implementation plan: `83d1e101a525e840a1235743ac5fc050ca560f228df047bee17a84e80cbf3082`
 
 These identities are recorded in `GOVERNING_SOURCES.md`. Future source updates require a new source-register entry and an explicit repository alignment review before the next untouched scientific stage.
+
+
+### Supplement line-ending integrity correction
+
+Before milestone merge, the System-A count supplement was independently hash-checked against the actual bytes committed to GitHub. The initial supplement manifest had recorded the SHA-256 of a CRLF local representation while the repository stored LF bytes. The numerical CSV content was unchanged.
+
+The manifest was corrected prospectively before merge to reference the actual committed LF-byte SHA-256:
+
+`e1cac14c7209b71737643ee1ae603460c12be3f86df6f52cbc9d781e344d944f`
+
+Corrected supplement-manifest SHA-256:
+
+`1b41edecf3f69f2a2ae9804c3979b155d6436b4b7cd6e470723a3d75cd849fdc`
+
+The verifier and unit suite now check the committed supplement manifest/file relationship so future line-ending or byte-level drift is detected automatically. No frozen System-A prediction, metric, threshold, checkpoint, or original evaluation artifact changed.

@@ -113,10 +113,11 @@ Only after that manifest is committed should the static System-A pre/post evalua
 python run.py system-a evaluate --device auto
 ```
 
-Evaluation output is written under `results/system_a/` and does not alter the frozen model-development state.
+Evaluation output is written under `results/frozen/system_a_v1/` and does not alter the frozen model-development state. These compact JSON/CSV summaries are intentionally trackable in Git; model checkpoints remain ignored.
 
-The evaluation produces:
+The evaluation produces an integrity manifest plus:
 
+- `evaluation_manifest.json` — hashes and identities for every frozen evaluation output;
 - `static_evaluation.json` — complete nested record;
 - `metrics_by_seed.csv` — long-form per-seed metrics;
 - `aggregate_metrics.csv` — mean, SD, and 95% CI by metric/partition;

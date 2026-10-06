@@ -10,10 +10,15 @@ from concept_drift_ids.model_preprocessing import (
     DEFAULT_STATE_PATH,
     load_preprocessing_state,
 )
+from concept_drift_ids.scenario_loader import DEFAULT_MANIFEST_PATH
+from concept_drift_ids.scenario_manifest import sha256_canonical_json
 
 
 @dataclass(frozen=True)
 class FrozenPreprocessing:
+    scenario_id: str
+    scenario_version: int
+    scenario_manifest_canonical_sha256: str
     feature_columns: tuple[str, ...]
     medians: np.ndarray
     means: np.ndarray
@@ -26,6 +31,13 @@ def load_frozen_preprocessing(
 ) -> FrozenPreprocessing:
     """Load the accepted Stage-3A preprocessing state without refitting."""
     state = load_preprocessing_state(path)
+
+    scenario = state["scenario"]
+    current_canonical_hash = sha256_canonical_json(DEFAULT_MANIFEST_PATH)
+    if current_canonical_hash != scenario["scenario_manifest_canonical_sha256"]:
+        raise ValueError(
+            "Frozen preprocessing does not match the current scenario manifest."
+        )
 
     features = tuple(state["feature_schema"]["ordered_columns"])
     medians = np.asarray(state["imputer"]["statistics"], dtype=np.float64)
@@ -42,6 +54,11 @@ def load_frozen_preprocessing(
         raise ValueError("Frozen preprocessing contains a non-positive scale.")
 
     return FrozenPreprocessing(
+        scenario_id=str(scenario["scenario_id"]),
+        scenario_version=int(scenario["scenario_version"]),
+        scenario_manifest_canonical_sha256=str(
+            scenario["scenario_manifest_canonical_sha256"]
+        ),
         feature_columns=features,
         medians=medians,
         means=means,

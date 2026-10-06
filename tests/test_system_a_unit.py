@@ -1,11 +1,13 @@
 from __future__ import annotations
 
 import csv
+import json
 
 import numpy as np
 import pandas as pd
 import torch
 
+import concept_drift_ids.system_a as system_a
 from concept_drift_ids.evaluation_tables import write_evaluation_tables
 from concept_drift_ids.frozen_preprocessing import (
     load_frozen_preprocessing,
@@ -190,3 +192,50 @@ def test_evaluation_tables_are_long_form_and_combinable(tmp_path) -> None:
         "metric",
         "value",
     }
+
+
+def test_evaluation_manifest_verifier_checks_hash_linked_files(
+    tmp_path,
+    monkeypatch,
+) -> None:
+    artifact = tmp_path / "artifact.csv"
+    artifact.write_text("a,b\n1,2\n", encoding="utf-8")
+
+    from concept_drift_ids.scenario_manifest import sha256_file
+
+    manifest = {
+        "manifest_format_version": 1,
+        "evaluation_id": "test",
+        "system_id": "system_a_static_neural_v1",
+        "scenario_id": "scenario",
+        "scenario_version": 1,
+        "system_manifest_sha256": "system-hash",
+        "preprocessing_state_hash": "preprocessing-hash",
+        "files": {
+            "artifact": {
+                "path": "artifact.csv",
+                "sha256": sha256_file(artifact),
+            }
+        },
+    }
+    manifest["manifest_sha256"] = system_a._json_hash(manifest)
+
+    manifest_path = tmp_path / "evaluation_manifest.json"
+    manifest_path.write_text(
+        json.dumps(manifest, indent=2) + "\n",
+        encoding="utf-8",
+    )
+
+    monkeypatch.setattr(system_a, "PROJECT_ROOT", tmp_path)
+    monkeypatch.setattr(
+        system_a,
+        "EVALUATION_MANIFEST_PATH",
+        manifest_path,
+    )
+
+    verified = system_a._load_and_verify_evaluation_manifest(
+        {"manifest_sha256": "system-hash"},
+        preprocessing_hash="preprocessing-hash",
+    )
+
+    assert verified["manifest_sha256"] == manifest["manifest_sha256"]

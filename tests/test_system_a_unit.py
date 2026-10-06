@@ -8,12 +8,12 @@ from concept_drift_ids.frozen_preprocessing import (
     load_frozen_preprocessing,
     transform_frame,
 )
-from concept_drift_ids.system_a import (
-    SYSTEM_A_CONFIG,
-    StaticMLP,
-    _binary_metrics,
-    select_threshold,
+from concept_drift_ids.neural import (
+    BinaryMLP,
+    binary_metrics,
+    select_mcc_threshold,
 )
+from concept_drift_ids.system_a import SYSTEM_A_CONFIG
 
 
 def test_frozen_preprocessing_matches_recorded_standardization_formula() -> None:
@@ -51,7 +51,11 @@ def test_frozen_preprocessing_float32_output_is_finite() -> None:
 
 def test_static_mlp_has_frozen_shape_and_binary_logit_output() -> None:
     torch.manual_seed(0)
-    model = StaticMLP()
+    model = BinaryMLP(
+        input_features=77,
+        hidden_layers=(128, 64),
+        dropout=0.10,
+    )
 
     output = model(torch.zeros((4, 77), dtype=torch.float32))
 
@@ -64,7 +68,7 @@ def test_threshold_selection_finds_perfect_separation() -> None:
     y = np.array([0, 0, 1, 1], dtype=np.int8)
     probabilities = np.array([0.1, 0.2, 0.8, 0.9], dtype=np.float64)
 
-    threshold, metrics = select_threshold(y, probabilities)
+    threshold, metrics = select_mcc_threshold(y, probabilities)
 
     assert 0.2 < threshold <= 0.8
     assert metrics["mcc"] == 1.0
@@ -76,7 +80,7 @@ def test_binary_metrics_include_required_detection_metrics() -> None:
     y = np.array([0, 0, 1, 1], dtype=np.int8)
     probabilities = np.array([0.1, 0.7, 0.8, 0.9], dtype=np.float64)
 
-    metrics = _binary_metrics(y, probabilities, threshold=0.5)
+    metrics = binary_metrics(y, probabilities, threshold=0.5)
 
     assert set(metrics) == {
         "precision",

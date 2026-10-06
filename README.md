@@ -141,7 +141,21 @@ Accepted identities:
 
 The frozen evaluation lives under `results/frozen/system_a_v1/`.
 
+A separately versioned evidence supplement under
+`results/frozen/system_a_v1_supplement_v1/` records exact per-seed TP/TN/FP/FN,
+sample counts, and attack prevalence. It is derived losslessly from the frozen
+recall/FPR values and frozen partition class counts; the original evaluation
+files are unchanged.
+
 Before later adaptive evaluation, the project must freeze the common longitudinal window policy, drift/adaptation controls, label-availability assumptions, rule/fusion controls, and the confirmatory statistical-analysis choices recorded as unresolved in the control register and statistical-analysis plan.
+
+Verify the accepted System-A evidence locally without loading pre/post partitions:
+
+```bash
+python run.py system-a verify
+```
+
+The verifier checks the frozen System-A manifest, seed/checkpoint identities, current preprocessing/scenario identity, evaluation manifest self-hash, and every referenced compact result-file hash.
 
 After the longitudinal window policy is frozen, the existing System-A checkpoints should be rescored over those common windows without retraining or retuning so A/B/C/D share the same temporal evaluation grid.
 

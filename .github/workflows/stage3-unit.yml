@@ -1,26 +1,65 @@
-name: Stage 3 unit contract
+name: Research contract
 
 on:
   push:
     branches:
-      - stage3-scenario-loader
-      - stage3-system-a
+      - main
+      - 'stage*'
+  pull_request:
+    branches:
+      - main
   workflow_dispatch:
 
 jobs:
-  unit-contract:
+  research-contract:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11.9'
           cache: pip
+
       - name: Verify interpreter
-        run: python --version
+        run: |
+          python --version
+          python - <<'PY'
+          import sys
+          assert sys.version_info[:3] == (3, 11, 9), sys.version
+          PY
+
+      - name: Verify repository governance artifacts
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          required = [
+              "RESEARCH_DOCTRINE.md",
+              "METHODOLOGY_LEDGER.md",
+              "EXPERIMENT_CONTROL_REGISTER.md",
+              "STATISTICAL_ANALYSIS_PLAN.md",
+              "REPOSITORY_GOVERNANCE.md",
+              "VISUALIZATION_POLICY.md",
+              "LITERATURE_WATCH.md",
+              "SYSTEM_A_PROTOCOL.md",
+          ]
+          missing = [path for path in required if not Path(path).is_file()]
+          assert not missing, f"Missing governance artifacts: {missing}"
+
+          gap = (
+              "Prior work has separately demonstrated concept-drift-aware adaptation "
+              "of predictive IDS models"
+          )
+          doctrine = Path("RESEARCH_DOCTRINE.md").read_text(encoding="utf-8")
+          assert gap in doctrine, "Repository doctrine is missing the governing gap."
+          PY
+
       - name: Install frozen environment
         run: python -m pip install -r requirements-lock.txt
+
       - name: Run Stage 3 repository-only tests
         run: python -m pytest -q tests/test_model_preprocessing.py tests/test_system_a_unit.py
+
       - name: Run Stage 2 repository-only regression tests
         run: python -m pytest -q tests/test_sudden_benign_manifest.py -k "not provenance_files_still_match_frozen_manifest"

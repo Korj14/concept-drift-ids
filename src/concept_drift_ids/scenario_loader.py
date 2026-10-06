@@ -304,7 +304,7 @@ def _training(manifest: dict) -> ScenarioPartition:
     return _partition(
         manifest,
         name="training",
-        frame=pd.concat(frames, ignore_index=True, copy=False),
+        frame=pd.concat(frames, ignore_index=True),
     )
 
 

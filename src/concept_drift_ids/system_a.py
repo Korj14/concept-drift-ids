@@ -387,19 +387,140 @@ def _load_frozen_system_a_manifest() -> dict[str, Any]:
     if manifest.get("config_sha256") != _json_hash(SYSTEM_A_CONFIG):
         raise ValueError("System-A frozen config no longer matches code.")
 
-    devices = {str(record["device"]) for record in manifest["seed_records"]}
+    records = manifest.get("seed_records")
+    if not isinstance(records, list):
+        raise ValueError("System-A manifest seed_records must be a list.")
+
+    expected_seeds = [int(seed) for seed in SYSTEM_A_CONFIG["seeds"]]
+    observed_seeds = [int(record["seed"]) for record in records]
+    if len(observed_seeds) != len(set(observed_seeds)):
+        raise ValueError("System-A manifest contains duplicate seed records.")
+    if sorted(observed_seeds) != sorted(expected_seeds):
+        raise ValueError(
+            "System-A manifest seed set does not match the frozen protocol."
+        )
+
+    devices = {str(record["device"]) for record in records}
     if len(devices) != 1:
         raise ValueError(
             f"System-A seeds used inconsistent device backends: {sorted(devices)}"
         )
 
-    for record in manifest["seed_records"]:
+    max_epochs = int(SYSTEM_A_CONFIG["max_epochs"])
+    for record in records:
+        threshold = float(record["threshold"])
+        if not math.isfinite(threshold) or not 0.0 <= threshold <= 1.0:
+            raise ValueError(
+                f"Invalid frozen threshold for seed {record['seed']}: {threshold}"
+            )
+        best_epoch = int(record["best_epoch"])
+        if not 1 <= best_epoch <= max_epochs:
+            raise ValueError(
+                f"Invalid best epoch for seed {record['seed']}: {best_epoch}"
+            )
+
         checkpoint_path = PROJECT_ROOT / record["checkpoint_file"]
+        if not checkpoint_path.exists():
+            raise FileNotFoundError(
+                f"Missing System-A checkpoint for seed {record['seed']}: "
+                f"{checkpoint_path}"
+            )
         if sha256_file(checkpoint_path) != record["checkpoint_sha256"]:
             raise ValueError(
                 f"Checkpoint hash mismatch for seed {record['seed']}."
             )
     return manifest
+
+
+def _load_and_verify_evaluation_manifest(
+    frozen: dict[str, Any],
+    *,
+    preprocessing_hash: str,
+) -> dict[str, Any]:
+    if not EVALUATION_MANIFEST_PATH.exists():
+        raise FileNotFoundError(
+            f"Missing frozen System-A evaluation manifest: "
+            f"{EVALUATION_MANIFEST_PATH}"
+        )
+
+    with EVALUATION_MANIFEST_PATH.open("r", encoding="utf-8") as file:
+        manifest = json.load(file)
+
+    stored_hash = manifest.get("manifest_sha256")
+    core = dict(manifest)
+    core.pop("manifest_sha256", None)
+    if not isinstance(stored_hash, str) or _json_hash(core) != stored_hash:
+        raise ValueError("System-A evaluation manifest hash mismatch.")
+
+    if manifest.get("system_manifest_sha256") != frozen["manifest_sha256"]:
+        raise ValueError(
+            "Evaluation manifest does not reference the frozen System-A manifest."
+        )
+    if manifest.get("preprocessing_state_hash") != preprocessing_hash:
+        raise ValueError(
+            "Evaluation manifest preprocessing hash does not match the "
+            "accepted preprocessing state."
+        )
+
+    files = manifest.get("files")
+    if not isinstance(files, dict) or not files:
+        raise ValueError("Evaluation manifest has no file inventory.")
+
+    for name, entry in files.items():
+        relative_path = entry.get("path")
+        expected_hash = entry.get("sha256")
+        if not isinstance(relative_path, str) or not isinstance(
+            expected_hash, str
+        ):
+            raise ValueError(
+                f"Invalid evaluation-manifest entry for {name!r}."
+            )
+        path = PROJECT_ROOT / relative_path
+        if not path.exists():
+            raise FileNotFoundError(
+                f"Missing frozen evaluation artifact {name!r}: {path}"
+            )
+        if sha256_file(path) != expected_hash:
+            raise ValueError(
+                f"Frozen evaluation artifact hash mismatch for {name!r}."
+            )
+    return manifest
+
+
+def verify_system_a() -> None:
+    """Verify frozen System-A artifacts without loading pre/post partitions."""
+    frozen = _load_frozen_system_a_manifest()
+    preprocessing = load_frozen_preprocessing()
+    scenario = load_manifest()
+
+    if (
+        frozen.get("scenario_id") != scenario["scenario_id"]
+        or int(frozen.get("scenario_version")) != int(
+            scenario["scenario_version"]
+        )
+    ):
+        raise ValueError(
+            "System-A manifest scenario identity no longer matches "
+            "the frozen scenario manifest."
+        )
+    if frozen.get("preprocessing_state_hash") != preprocessing.state_hash:
+        raise ValueError(
+            "System-A manifest preprocessing state no longer matches "
+            "the accepted frozen preprocessing."
+        )
+
+    evaluation = _load_and_verify_evaluation_manifest(
+        frozen,
+        preprocessing_hash=preprocessing.state_hash,
+    )
+
+    print(f"system_manifest={SYSTEM_A_MANIFEST_PATH}")
+    print(f"system_manifest_hash={frozen['manifest_sha256']}")
+    print(f"evaluation_manifest={EVALUATION_MANIFEST_PATH}")
+    print(f"evaluation_manifest_hash={evaluation['manifest_sha256']}")
+    print(f"verified_seeds={','.join(str(seed) for seed in SYSTEM_A_CONFIG['seeds'])}")
+    print("pre_post_partitions_loaded=false")
+    print("status=verified")
 
 
 def _load_checkpoint_model(
@@ -610,12 +731,22 @@ def main() -> None:
     evaluate_parser = subparsers.add_parser("evaluate")
     evaluate_parser.add_argument("--device", default="auto")
 
+    subparsers.add_parser(
+        "verify",
+        help=(
+            "Verify frozen System-A checkpoints/manifests/results without "
+            "loading pre/post partitions."
+        ),
+    )
+
     args = parser.parse_args()
 
     if args.command == "train":
         train_system_a(device_name=args.device, seeds=args.seeds)
-    else:
+    elif args.command == "evaluate":
         evaluate_system_a(device_name=args.device)
+    else:
+        verify_system_a()
 
 
 if __name__ == "__main__":

@@ -11,6 +11,7 @@ from concept_drift_ids.frozen_preprocessing import (
 from concept_drift_ids.neural import (
     BinaryMLP,
     binary_metrics,
+    mean_ci95,
     select_mcc_threshold,
 )
 from concept_drift_ids.system_a import SYSTEM_A_CONFIG
@@ -83,6 +84,8 @@ def test_binary_metrics_include_required_detection_metrics() -> None:
     metrics = binary_metrics(y, probabilities, threshold=0.5)
 
     assert set(metrics) == {
+        "accuracy",
+        "balanced_accuracy",
         "precision",
         "recall",
         "f1",
@@ -102,3 +105,12 @@ def test_system_a_protocol_forbids_pre_post_model_development_by_design() -> Non
     )
     assert SYSTEM_A_CONFIG["threshold_objective"] == "MCC"
     assert SYSTEM_A_CONFIG["max_epochs"] == 20
+
+
+def test_mean_ci95_exposes_plot_ready_summary_fields() -> None:
+    summary = mean_ci95([0.5, 0.6, 0.7, 0.8, 0.9])
+
+    assert summary["n"] == 5
+    assert summary["mean"] == 0.7
+    assert summary["std"] > 0.0
+    assert summary["ci95_low"] < summary["mean"] < summary["ci95_high"]

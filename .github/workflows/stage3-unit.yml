@@ -35,6 +35,7 @@ jobs:
           from pathlib import Path
 
           required = [
+              "GOVERNING_SOURCES.md",
               "RESEARCH_DOCTRINE.md",
               "METHODOLOGY_LEDGER.md",
               "EXPERIMENT_CONTROL_REGISTER.md",

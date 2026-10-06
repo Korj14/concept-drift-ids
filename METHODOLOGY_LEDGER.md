@@ -469,3 +469,96 @@ The evaluation creates `evaluation_manifest.json`, which records:
 - its own manifest hash.
 
 This separates durable research evidence from large executable checkpoint artifacts.
+
+
+---
+
+## 7 October 2026 — System A untouched pre/post evaluation closure
+
+The frozen five-seed System-A manifest was committed before the pre/post evaluation was executed. The evaluation therefore used already-fixed model checkpoints, development-selected thresholds, preprocessing state, seeds, and CPU execution backend.
+
+Pre-evaluation unit contract:
+
+- `tests/test_system_a_unit.py`: 8 passed under Python 3.11.9.
+
+Frozen evaluation identity:
+
+- directory: `results/frozen/system_a_v1/`
+- evaluation manifest: `evaluation_manifest.json`
+- evaluation manifest SHA-256: `e721b641b5898976c76c0449dedf7152cb302be4447604525afb7ddf1c94c5b3`
+- System-A manifest SHA-256: `42004b5ed100b690023b9998bdc959fac41ab947b996fb7c58e44cee5e8dc6de`
+- preprocessing core state SHA-256: `4527f77220f2cf6063108a7d71d80aaa0e82099ad282ff25408a2d9ce3488b1e`
+- first frozen evaluation commit: `7ace6ecbdc69b03fdfe40415ebd794c9c8a1d741`
+
+Five-seed aggregate results:
+
+| Metric | Pre-drift mean | Post-drift mean | Mean paired post-minus-pre |
+| --- | ---: | ---: | ---: |
+| Accuracy | 0.975339 | 0.978732 | +0.003393 |
+| Balanced accuracy | 0.768372 | 0.797892 | +0.029520 |
+| Precision | 0.975942 | 0.985887 | +0.009946 |
+| Recall | 0.537476 | 0.596250 | +0.058774 |
+| F1 | 0.693017 | 0.743022 | +0.050005 |
+| FPR | 0.000731 | 0.000466 | -0.000265 |
+| MCC | 0.714462 | 0.757969 | +0.043506 |
+| ROC-AUC | 0.977831 | 0.973914 | -0.003917 |
+| Average precision | 0.895855 | 0.845229 | -0.050626 |
+
+Paired 95% t-intervals across the five frozen seeds include:
+
+- balanced-accuracy delta: [0.026131, 0.032909]
+- recall delta: [0.051963, 0.065585]
+- F1 delta: [0.043504, 0.056506]
+- MCC delta: [0.037532, 0.049481]
+- FPR delta: [-0.000546, 0.000016]
+- ROC-AUC delta: [-0.043502, 0.035669]
+- average-precision delta: [-0.125459, 0.024208]
+
+Seed-level sign behavior:
+
+- accuracy, balanced accuracy, recall, F1, and MCC improved post-drift for all five seeds;
+- FPR decreased for four of five seeds and increased slightly for seed 3;
+- precision improved for four of five seeds and decreased for seed 3;
+- ROC-AUC decreased for four of five seeds but increased for seed 2;
+- average precision decreased for four of five seeds but increased for seed 2.
+
+### Scientific interpretation
+
+The controlled source-regime shift did not create a universal degradation of the frozen neural baseline. Thresholded classification behavior improved consistently for several metrics, while ranking behavior was mixed and average precision decreased for four of five seeds.
+
+This is retained as evidence rather than treated as a reason to retune System A. It reinforces the governing rule that drift is not defined by the direction of a single predictive metric and that later adaptation success cannot be reduced to recovery of F1 alone.
+
+No preprocessing, architecture, class weighting, early stopping, threshold selection, seed, checkpoint, or scenario choice was changed after these untouched results were observed.
+
+### System-A closure
+
+System A is accepted as the frozen static-neural reference for subsequent work.
+
+Its role is not to prove the proposed neuro-symbolic contribution. Its accepted outputs provide:
+
+- fixed neural starting states/checkpoint identities;
+- a non-symbolic detection reference;
+- seed-level variability;
+- frozen thresholds;
+- longitudinal-rescoring inputs once the common window policy is frozen;
+- plot-ready evidence for later matched A/B/C/D comparisons.
+
+---
+
+## 7 October 2026 — publication-grade governance synchronization
+
+The current project-source authorities are:
+
+1. `MAIN - Concept_Drift_NIDS_Research_Gap_Doctrine.docx` — highest scientific authority.
+2. `Reconciled_Pre-Stage_3_and_Stage_3_Implementation_Plan.docx` — authoritative operational protocol where non-conflicting.
+
+Repository governance was synchronized to those sources before merging the completed System-A milestone.
+
+Two prospective control artifacts were introduced:
+
+- `EXPERIMENT_CONTROL_REGISTER.md`
+- `STATISTICAL_ANALYSIS_PLAN.md`
+
+The control register separates already-frozen decisions from future variables that must be resolved before outcome-sensitive adaptive evaluation. The statistical-analysis plan explicitly treats windows as dependent longitudinal observations rather than automatic independent replicates and gates untouched C/D evaluation on a completed prespecified confirmatory analysis.
+
+These additions strengthen future evidence control and do not alter any frozen Stage-3A or System-A experimental artifact.

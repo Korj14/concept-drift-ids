@@ -47,6 +47,8 @@ Every core system should emit, where applicable:
 
 Equivalent schemas across Systems A/B/C/D should be concatenable without reverse engineering.
 
+For frozen System A, exact TP/TN/FP/FN, sample count, and prevalence are preserved in the separately versioned `results/frozen/system_a_v1_supplement_v1/` evidence supplement. Future systems should emit those audit/count fields prospectively rather than requiring reconstruction.
+
 ## 4. Preferred figure types
 
 - paired pre/post seed slope plots;

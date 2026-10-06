@@ -1,0 +1,10 @@
+system_id,scenario_id,scenario_version,from_partition,to_partition,metric,n_seeds,mean_delta,std_delta,ci95_low,ci95_high
+system_a_static_neural_v1,cicids2017_sudden_benign_v1,1,pre_drift,post_drift,accuracy,5,0.00339319484608287,0.00033267048828728856,0.002980129877511677,0.003806259814654063
+system_a_static_neural_v1,cicids2017_sudden_benign_v1,1,pre_drift,post_drift,balanced_accuracy,5,0.029519585872565646,0.0027293559965823975,0.026130642793327725,0.032908528951803566
+system_a_static_neural_v1,cicids2017_sudden_benign_v1,1,pre_drift,post_drift,precision,5,0.009945695025360668,0.007890004517652172,0.00014896047012691142,0.019742429580594426
+system_a_static_neural_v1,cicids2017_sudden_benign_v1,1,pre_drift,post_drift,recall,5,0.05877403020408552,0.005485633063108259,0.05196271712226776,0.06558534328590328
+system_a_static_neural_v1,cicids2017_sudden_benign_v1,1,pre_drift,post_drift,f1,5,0.05000484263500282,0.005235633657023317,0.04350394481529306,0.056505740454712586
+system_a_static_neural_v1,cicids2017_sudden_benign_v1,1,pre_drift,post_drift,fpr,5,-0.00026514154104575257,0.00022607967069202523,-0.0005458565288698029,1.557344677829785e-05
+system_a_static_neural_v1,cicids2017_sudden_benign_v1,1,pre_drift,post_drift,mcc,5,0.0435061918397732,0.004811769175634099,0.03753159128672174,0.049480792392824664
+system_a_static_neural_v1,cicids2017_sudden_benign_v1,1,pre_drift,post_drift,roc_auc,5,-0.00391665535026704,0.03188101951956819,-0.04350216951374633,0.035668858813212245
+system_a_static_neural_v1,cicids2017_sudden_benign_v1,1,pre_drift,post_drift,average_precision,5,-0.05062574245400975,0.060268666484449625,-0.12545917584750066,0.024207690939481177

@@ -1,0 +1,27 @@
+name: Stage 3 unit contract
+
+on:
+  push:
+    branches:
+      - stage3-scenario-loader
+  workflow_dispatch:
+
+jobs:
+  unit-contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11.9'
+          cache: pip
+      - name: Verify interpreter
+        run: python --version
+      - name: Install frozen environment
+        run: python -m pip install -r requirements-lock.txt
+      - name: Run Stage 3 preprocessing unit tests
+        run: python -m pytest -q tests/test_model_preprocessing.py
+      - name: Run Stage 2 repository-only regression tests
+        run: >
+          python -m pytest -q tests/test_sudden_benign_manifest.py
+          -k "not provenance_files_still_match_frozen_manifest"

@@ -14,6 +14,10 @@ from sklearn.metrics import average_precision_score
 from torch import nn
 from torch.utils.data import DataLoader, TensorDataset
 
+from concept_drift_ids.evaluation_tables import (
+    write_evaluation_tables,
+    write_training_history_table,
+)
 from concept_drift_ids.frozen_preprocessing import (
     FrozenPreprocessing,
     load_frozen_preprocessing,
@@ -40,7 +44,8 @@ ARTIFACT_DIR = PROJECT_ROOT / "artifacts" / "system_a"
 CHECKPOINT_DIR = ARTIFACT_DIR / "checkpoints"
 SEED_RECORD_DIR = ARTIFACT_DIR / "seed_records"
 SYSTEM_A_MANIFEST_PATH = PROJECT_ROOT / "data" / "manifests" / "system_a_v1.json"
-EVALUATION_PATH = PROJECT_ROOT / "results" / "system_a" / "static_evaluation.json"
+EVALUATION_DIR = PROJECT_ROOT / "results" / "system_a"
+EVALUATION_PATH = EVALUATION_DIR / "static_evaluation.json"
 
 SYSTEM_A_CONFIG: dict[str, Any] = {
     "protocol_version": 1,
@@ -381,6 +386,12 @@ def _load_frozen_system_a_manifest() -> dict[str, Any]:
     if manifest.get("config_sha256") != _json_hash(SYSTEM_A_CONFIG):
         raise ValueError("System-A frozen config no longer matches code.")
 
+    devices = {str(record["device"]) for record in manifest["seed_records"]}
+    if len(devices) != 1:
+        raise ValueError(
+            f"System-A seeds used inconsistent device backends: {sorted(devices)}"
+        )
+
     for record in manifest["seed_records"]:
         checkpoint_path = PROJECT_ROOT / record["checkpoint_file"]
         if sha256_file(checkpoint_path) != record["checkpoint_sha256"]:
@@ -422,6 +433,8 @@ def evaluate_system_a(*, device_name: str) -> None:
 
     results: dict[str, Any] = {
         "system_id": frozen["system_id"],
+        "scenario_id": frozen["scenario_id"],
+        "scenario_version": frozen["scenario_version"],
         "system_manifest_sha256": frozen["manifest_sha256"],
         "preprocessing_state_hash": preprocessing.state_hash,
         "partitions": {},
@@ -487,23 +500,45 @@ def evaluate_system_a(*, device_name: str) -> None:
         row["seed"]: row["metrics"]
         for row in results["partitions"]["post_drift"]["seed_results"]
     }
+
+    seed_deltas = [
+        {
+            "seed": seed,
+            "metrics": {
+                metric: float(post[seed][metric] - pre[seed][metric])
+                for metric in pre[seed]
+            },
+        }
+        for seed in SYSTEM_A_CONFIG["seeds"]
+    ]
     results["post_minus_pre"] = {
-        metric: mean_ci95(
-            [
-                float(post[seed][metric] - pre[seed][metric])
-                for seed in SYSTEM_A_CONFIG["seeds"]
-            ]
-        )
-        for metric in pre[SYSTEM_A_CONFIG["seeds"][0]]
+        "seed_deltas": seed_deltas,
+        "aggregate": {
+            metric: mean_ci95(
+                [
+                    float(post[seed][metric] - pre[seed][metric])
+                    for seed in SYSTEM_A_CONFIG["seeds"]
+                ]
+            )
+            for metric in pre[SYSTEM_A_CONFIG["seeds"][0]]
+        },
     }
 
     _write_json(EVALUATION_PATH, results)
+    table_paths = write_evaluation_tables(results, EVALUATION_DIR)
+    history_path = write_training_history_table(frozen, EVALUATION_DIR)
+
     print(f"evaluation={EVALUATION_PATH}")
+    print(f"training_history={history_path}")
+    for name, path in table_paths.items():
+        print(f"{name}={path}")
 
     for partition_name in ("pre_drift", "post_drift"):
         aggregate = results["partitions"][partition_name]["aggregate"]
         print(
             f"{partition_name}: "
+            f"Accuracy={aggregate['accuracy']['mean']:.6f} "
+            f"BalancedAccuracy={aggregate['balanced_accuracy']['mean']:.6f} "
             f"F1={aggregate['f1']['mean']:.6f} "
             f"MCC={aggregate['mcc']['mean']:.6f} "
             f"FPR={aggregate['fpr']['mean']:.6f} "

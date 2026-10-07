@@ -688,3 +688,17 @@ A targeted live search immediately before protocol freeze did not identify a new
 Exact accepted rule-base bytes, the development-selected global fusion weight, and the five fused thresholds remain intentionally unfrozen until the local build uses the ignored System-A checkpoints and permitted training/development data. They must be frozen and committed before any System-B pre/post evaluation.
 
 This entry is prospective. Untouched System-B outcomes must not cause the protocol above to be rewritten.
+
+
+### System-B pre-execution implementation clarifications
+
+Before any System-B training/development build was executed, the protocol was clarified in four implementation-sensitive areas:
+
+- System-B v1 construction and evaluation use CPU only, consistent with the accepted System-A primary backend and avoiding backend-dependent attribution behavior as an uncontrolled source of variation.
+- Rule conditions preserve the authoritative standardized/model-space threshold used by inference and also store its deterministic inverse-scaled raw-unit value for human readability. Raw thresholds are explanation metadata only.
+- Bootstrap pass-persistence stability is the candidate-validation gate on the development validation slice and is recomputed separately on the complete frozen pre/post partitions after the rule base is frozen. Longitudinal 5,000-row windows remain repeated descriptive observations and are not converted into pseudo-replicates by running independent inferential bootstrap gates per window.
+- Untouched System-B evaluation must begin from a committed freeze. The evaluator is required to reject a dirty worktree so generated R0/manifests cannot be evaluated before their identities are committed.
+
+A formatting defect introduced in the previous control-register edit (a literal backslash-n between two System-B rows) was corrected. It had no scientific effect.
+
+These are prospective implementation clarifications. No System-B rule build, fusion selection, pre-drift evaluation, or post-drift evaluation had been executed when they were recorded.

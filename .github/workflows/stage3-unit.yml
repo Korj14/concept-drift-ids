@@ -61,7 +61,7 @@ jobs:
         run: python -m pip install -r requirements-lock.txt
 
       - name: Run Stage 3 repository-only tests
-        run: python -m pytest -q tests/test_model_preprocessing.py tests/test_system_a_unit.py
+        run: python -m pytest -q tests/test_model_preprocessing.py tests/test_system_a_unit.py tests/test_symbolic_unit.py
 
       - name: Run Stage 2 repository-only regression tests
         run: python -m pytest -q tests/test_sudden_benign_manifest.py -k "not provenance_files_still_match_frozen_manifest"

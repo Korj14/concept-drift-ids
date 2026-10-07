@@ -38,5 +38,7 @@ results/*
 !results/audits/**
 !results/analysis/
 !results/analysis/**
+!results/robustness/
+!results/robustness/**
 # Generated model artifacts
 artifacts/*

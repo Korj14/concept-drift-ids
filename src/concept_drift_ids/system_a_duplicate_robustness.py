@@ -152,6 +152,7 @@ def _train_seed(
         raise FileExistsError(f"Refusing overwrite: {checkpoint_path}")
     torch.save({
         "robustness_id": ROBUSTNESS_ID,
+        "config_sha256": _json_hash(SYSTEM_A_CONFIG),
         "source_system_a_config_sha256": _json_hash(SYSTEM_A_CONFIG),
         "seed": seed,
         "preprocessing_state_hash": preprocessing_hash,

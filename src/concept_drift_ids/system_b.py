@@ -1250,6 +1250,8 @@ def main() -> None:
     subparsers.add_parser("supplement")
     subparsers.add_parser("verify-supplement")
     subparsers.add_parser("audit-r0-protocol")
+    subparsers.add_parser("semantic-analysis")
+    subparsers.add_parser("verify-semantic-analysis")
     args = parser.parse_args()
     if args.command == "build":
         build_and_freeze_system_b(device_name=args.device)
@@ -1263,9 +1265,15 @@ def main() -> None:
     elif args.command == "verify-supplement":
         from concept_drift_ids.system_b_evidence import verify_system_b_supplement
         verify_system_b_supplement()
-    else:
+    elif args.command == "audit-r0-protocol":
         from concept_drift_ids.system_b_audit import audit_frozen_r0_protocol
         audit_frozen_r0_protocol()
+    elif args.command == "semantic-analysis":
+        from concept_drift_ids.system_b_semantic_analysis import build_semantic_analysis
+        build_semantic_analysis()
+    else:
+        from concept_drift_ids.system_b_semantic_analysis import verify_semantic_analysis
+        verify_semantic_analysis()
 
 
 if __name__ == "__main__":

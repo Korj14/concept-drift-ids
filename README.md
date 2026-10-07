@@ -243,3 +243,15 @@ pre_post_partitions_loaded=false
 ```
 
 The command writes `results/audits/system_b_r0_protocol_audit_v1.json`. It does not evaluate or reload the held-out pre/post partitions. Commit that audit artifact unchanged and do not rebuild or replace R0 based on performance.
+
+
+### System-B frozen-evidence semantic analysis
+
+To derive inactive-rule-safe and class-conditional explanation evidence without loading raw data or checkpoints:
+
+```bash
+python run.py system-b semantic-analysis
+python run.py system-b verify-semantic-analysis
+```
+
+The output under `results/analysis/system_b_v1_semantic_analysis_v1/` is an additive derived artifact. It does not replace the frozen evaluation or supplement.

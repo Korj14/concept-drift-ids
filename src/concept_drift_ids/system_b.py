@@ -718,11 +718,36 @@ def _confusion(y: np.ndarray, scores: np.ndarray, threshold: float) -> dict[str,
 
 
 def _safe_window_metrics(y: np.ndarray, scores: np.ndarray, threshold: float) -> dict[str, object]:
-    base = binary_metrics(y, scores, threshold)
-    if len(np.unique(y)) < 2:
-        base["roc_auc"] = None
-        base["average_precision"] = None
-    return base
+    y = np.asarray(y, dtype=np.int8)
+    scores = np.asarray(scores, dtype=np.float64)
+    if len(np.unique(y)) >= 2:
+        return binary_metrics(y, scores, threshold)
+
+    predicted = (scores >= threshold).astype(np.int8)
+    tn = int(np.sum((y == 0) & (predicted == 0)))
+    fp = int(np.sum((y == 0) & (predicted == 1)))
+    fn = int(np.sum((y == 1) & (predicted == 0)))
+    tp = int(np.sum((y == 1) & (predicted == 1)))
+    accuracy = float(np.mean(predicted == y))
+    precision = tp / (tp + fp) if tp + fp else 0.0
+    recall = tp / (tp + fn) if tp + fn else 0.0
+    f1 = 2 * precision * recall / (precision + recall) if precision + recall else 0.0
+    fpr = fp / (fp + tn) if fp + tn else 0.0
+    if np.all(y == 0):
+        balanced_accuracy = tn / (tn + fp) if tn + fp else 0.0
+    else:
+        balanced_accuracy = tp / (tp + fn) if tp + fn else 0.0
+    return {
+        "accuracy": accuracy,
+        "balanced_accuracy": float(balanced_accuracy),
+        "precision": float(precision),
+        "recall": float(recall),
+        "f1": float(f1),
+        "fpr": float(fpr),
+        "mcc": 0.0,
+        "roc_auc": None,
+        "average_precision": None,
+    }
 
 
 def _symbolic_summary(symbolic: dict[str, np.ndarray], neural: np.ndarray) -> dict[str, float]:

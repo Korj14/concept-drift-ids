@@ -720,3 +720,8 @@ The build is fail-closed: if any seed produces no validated active rules, it abo
 ### System-B CLI routing defect corrected before data execution
 
 Repository review after the orchestration commit found that the intended root-runner edit had not taken effect: `run.py` listed `system-b` as a valid command but still dispatched every non-preprocessing command to System A. The defect was identified before any System-B build or evaluation was executed. The runner was corrected to dispatch System A and System B explicitly, and a repository-only regression assertion was added so this integration path cannot silently regress.
+
+
+### Single-class longitudinal-window metric guard
+
+A static code audit identified that the shared `binary_metrics` helper computes ROC-AUC unconditionally and would therefore raise on a longitudinal reporting window containing only one class. Before any System-B evaluation, the window-specific wrapper was corrected to retain thresholded confusion-derived metrics while recording ROC-AUC and average precision as undefined for single-class windows. A repository-only regression test was added. Full pre/post partitions still use the standard shared metric implementation because both classes are present by construction.

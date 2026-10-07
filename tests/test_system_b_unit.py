@@ -76,3 +76,16 @@ def test_root_runner_declares_system_b_command() -> None:
     text = (system_b.PROJECT_ROOT / "run.py").read_text(encoding="utf-8")
     assert '"system-b"' in text
     assert "from concept_drift_ids.system_b import main as run_system_b" in text
+
+
+def test_single_class_window_keeps_threshold_metrics_and_marks_ranking_undefined() -> None:
+    metrics = system_b._safe_window_metrics(
+        np.array([0, 0, 0], dtype=np.int8),
+        np.array([0.1, 0.2, 0.3], dtype=np.float64),
+        0.5,
+    )
+    assert metrics["accuracy"] == 1.0
+    assert metrics["balanced_accuracy"] == 1.0
+    assert metrics["fpr"] == 0.0
+    assert metrics["roc_auc"] is None
+    assert metrics["average_precision"] is None

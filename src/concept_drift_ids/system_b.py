@@ -1350,9 +1350,23 @@ def main() -> None:
     elif args.command == "analyze-duplicate-aware-validation":
         from concept_drift_ids.system_b_duplicate_robustness import build_duplicate_aware_validation
         build_duplicate_aware_validation(device_name=args.device)
-    else:
+    elif args.command == "verify-duplicate-aware-validation":
         from concept_drift_ids.system_b_duplicate_robustness import verify_duplicate_aware_validation
         verify_duplicate_aware_validation()
+    elif args.command == "build-fusion-authority-robustness":
+        from concept_drift_ids.system_b_fusion_robustness import build_fusion_authority_selection
+        build_fusion_authority_selection(device_name=args.device)
+    elif args.command == "verify-fusion-authority-robustness":
+        from concept_drift_ids.system_b_fusion_robustness import verify_fusion_authority_selection
+        verify_fusion_authority_selection()
+    elif args.command == "evaluate-fusion-authority-robustness":
+        from concept_drift_ids.system_b_fusion_robustness_evaluation import evaluate_fusion_authority
+        evaluate_fusion_authority(device_name=args.device)
+    elif args.command == "verify-fusion-authority-robustness-evaluation":
+        from concept_drift_ids.system_b_fusion_robustness_evaluation import verify_fusion_authority_evaluation
+        verify_fusion_authority_evaluation()
+    else:
+        raise ValueError(f"Unhandled System-B command: {args.command}")
 
 
 if __name__ == "__main__":

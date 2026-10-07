@@ -153,3 +153,6 @@ A result being inconvenient is not a valid reason for deviation.
 
 
 | Retrospective scenario audit | Exact-pattern dependence + BENIGN/GoldenEye feature-distribution diagnostics; write-once and post-hoc | Frozen training/development/pre/post; no model selection | Scenario attribution / publication robustness | **IMPLEMENTATION ADDED; ARTIFACT TO FREEZE** |
+
+
+| A/B exact-pattern rescore | Frozen A checkpoints and accepted R0.v2; exact raw 77-feature training membership; seen/unseen strata only | Training for membership + pre/post fixed rescore; no development/tuning | Publication-strength B robustness | **IMPLEMENTATION ADDED; ARTIFACT TO FREEZE** |

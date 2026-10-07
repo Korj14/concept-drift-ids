@@ -1265,6 +1265,9 @@ def main() -> None:
     subparsers.add_parser("verify-dtype-conformance-audit")
     subparsers.add_parser("audit-scenario-assumptions")
     subparsers.add_parser("verify-scenario-assumption-audit")
+    seen_unseen = subparsers.add_parser("analyze-seen-unseen")
+    seen_unseen.add_argument("--device", default="cpu")
+    subparsers.add_parser("verify-seen-unseen")
     args = parser.parse_args()
     if args.command == "build":
         build_and_freeze_system_b(device_name=args.device)
@@ -1308,9 +1311,15 @@ def main() -> None:
     elif args.command == "audit-scenario-assumptions":
         from concept_drift_ids.retrospective_scenario_audit import build_retrospective_scenario_audit
         build_retrospective_scenario_audit()
-    else:
+    elif args.command == "verify-scenario-assumption-audit":
         from concept_drift_ids.retrospective_scenario_audit import verify_retrospective_scenario_audit
         verify_retrospective_scenario_audit()
+    elif args.command == "analyze-seen-unseen":
+        from concept_drift_ids.system_ab_seen_unseen import build_seen_unseen_analysis
+        build_seen_unseen_analysis(device_name=args.device)
+    else:
+        from concept_drift_ids.system_ab_seen_unseen import verify_seen_unseen_analysis
+        verify_seen_unseen_analysis()
 
 
 if __name__ == "__main__":

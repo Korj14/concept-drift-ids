@@ -1289,3 +1289,18 @@ It records:
 - conservative scenario wording that does not assume attack-distribution invariance.
 
 This diagnostic may read all frozen partitions because it is explicitly retrospective descriptive evidence after A/B outcomes are known. It may not change scenario construction, R0.v2, thresholds or primary evaluation.
+
+
+### Fixed A/B seen-versus-unseen exact-pattern rescore added
+
+The Stage-2 data-quality policy had prospectively called for reporting observations whose exact feature pattern was not present in training. That reporting obligation was not carried through the original A/B evaluation.
+
+A new write-once robustness command now:
+
+- defines membership from exact equality of the raw frozen 77-feature representation before imputation/scaling;
+- uses training rows only to construct the membership mask;
+- reruns the already-frozen System-A checkpoints and accepted R0.v2 on pre/post without retraining, rule changes, lambda changes or rethresholding;
+- reports seen and unseen strata separately for A and B-v2;
+- treats one-class seen strata descriptively, with ROC-AUC/AP undefined where appropriate.
+
+This is additive post-hoc robustness, not model selection and not a replacement primary evaluation.

@@ -1,0 +1,1156 @@
+{
+  "audit_format_version": 1,
+  "audit_id": "system_b_r0_protocol_audit_v1",
+  "purpose": "Post-evaluation protocol-conformance diagnostic. It tests whether the frozen R0 candidate consequents equal the class predicted by the weighted CART leaf required by the prospectively frozen System-B protocol.",
+  "source_system_manifest_sha256": "6e3589056d4c252c1a6c7cfd87b891fb8a24f1e30e86b17833b6035ea9ee86a8",
+  "audit_git": {
+    "commit": "06b292c317d0c0f711bad13338cc54053abfc195",
+    "branch": "stage4-system-b",
+    "clean": "true"
+  },
+  "runtime": {
+    "python": "3.11.9",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "numpy": "2.4.6",
+    "torch": "2.14.1+cpu",
+    "scikit_learn": "1.9.1",
+    "shap": "0.51.0",
+    "cpu_count": 16
+  },
+  "data_access": {
+    "training_used": true,
+    "development_used": false,
+    "pre_drift_used": false,
+    "post_drift_used": false
+  },
+  "sampling_reconstruction": {
+    "training_rows_hash_matches_manifest": true,
+    "background_hash_matches_manifest": true,
+    "attribution_hash_matches_manifest": true,
+    "background_attribution_overlap_count": 1,
+    "background_count": 256,
+    "attribution_count": 2048
+  },
+  "summary": {
+    "total_leaf_count": 62,
+    "protocol_mismatch_count": 7,
+    "active_r0_protocol_mismatch_count": 4,
+    "path_rebuild_mismatch_count": 0,
+    "stored_unweighted_semantics_mismatch_count": 0
+  },
+  "seed_records": [
+    {
+      "seed": 0,
+      "checkpoint_sha256": "514c6d552b3cd680ae966bbb568105bd2871bc68d3a47aded070a70ba0615bd1",
+      "selected_features": [
+        "Destination Port",
+        "Packet Length Variance",
+        "Bwd IAT Std",
+        "Packet Length Std",
+        "Bwd Packet Length Std",
+        "Bwd IAT Total",
+        "FIN Flag Count",
+        "Min Packet Length",
+        "Bwd IAT Max",
+        "Flow IAT Std",
+        "Bwd Packet Length Mean",
+        "Fwd Packets/s"
+      ],
+      "rebuilt_leaf_count": 13,
+      "frozen_candidate_count": 13,
+      "protocol_mismatch_count": 0,
+      "active_protocol_mismatch_count": 0,
+      "comparisons": [
+        {
+          "candidate": "s0-leaf4",
+          "rule_id": "r0-s0-622d7f04b32e8dab",
+          "quality_gate_accepted": false,
+          "active_in_r0": false,
+          "path_matches_frozen_candidate": true,
+          "stored_consequent": 1,
+          "rebuilt_unweighted_majority_consequent": 1,
+          "protocol_weighted_leaf_consequent": 1,
+          "protocol_mismatch": false,
+          "weighted_leaf_class_mass": {
+            "0": 0.08950951456121216,
+            "1": 0.9104904854388739
+          },
+          "training_covered_count": 18066
+        },
+        {
+          "candidate": "s0-leaf5",
+          "rule_id": "r0-s0-591df9f6c6fa8951",
+          "quality_gate_accepted": true,
+          "active_in_r0": true,
+          "path_matches_frozen_candidate": true,
+          "stored_consequent": 0,
+          "rebuilt_unweighted_majority_consequent": 0,
+          "protocol_weighted_leaf_consequent": 0,
+          "protocol_mismatch": false,
+          "weighted_leaf_class_mass": {
+            "0": 0.9882360660579206,
+            "1": 0.011763933942079184
+          },
+          "training_covered_count": 2382
+        },
+        {
+          "candidate": "s0-leaf7",
+          "rule_id": "r0-s0-aa4b5a66d01c2c72",
+          "quality_gate_accepted": true,
+          "active_in_r0": true,
+          "path_matches_frozen_candidate": true,
+          "stored_consequent": 0,
+          "rebuilt_unweighted_majority_consequent": 0,
+          "protocol_weighted_leaf_consequent": 0,
+          "protocol_mismatch": false,
+          "weighted_leaf_class_mass": {
+            "0": 0.9631385636797519,
+            "1": 0.036861436321622025
+          },
+          "training_covered_count": 975849
+        },
+        {
+          "candidate": "s0-leaf8",
+          "rule_id": "r0-s0-f8822e4be9f72a44",
+          "quality_gate_accepted": true,
+          "active_in_r0": true,
+          "path_matches_frozen_candidate": true,
+          "stored_consequent": 0,
+          "rebuilt_unweighted_majority_consequent": 0,
+          "protocol_weighted_leaf_consequent": 0,
+          "protocol_mismatch": false,
+          "weighted_leaf_class_mass": {
+            "0": 0.5042921459118748,
+            "1": 0.49570785408839846
+          },
+          "training_covered_count": 48799
+        },
+        {
+          "candidate": "s0-leaf11",
+          "rule_id": "r0-s0-696c1215bfdbed11",
+          "quality_gate_accepted": false,
+          "active_in_r0": false,
+          "path_matches_frozen_candidate": true,
+          "stored_consequent": 1,
+          "rebuilt_unweighted_majority_consequent": 1,
+          "protocol_weighted_leaf_consequent": 1,
+          "protocol_mismatch": false,
+          "weighted_leaf_class_mass": {
+            "0": 0.047254127817047915,
+            "1": 0.9527458721829533
+          },
+          "training_covered_count": 1314
+        },
+        {
+          "candidate": "s0-leaf12",
+          "rule_id": "r0-s0-2cfbc2036e559987",
+          "quality_gate_accepted": false,
+          "active_in_r0": false,
+          "path_matches_frozen_candidate": true,
+          "stored_consequent": 1,
+          "rebuilt_unweighted_majority_consequent": 1,
+          "protocol_weighted_leaf_consequent": 1,
+          "protocol_mismatch": false,
+          "weighted_leaf_class_mass": {
+            "0": 0.0031709916674087088,
+            "1": 0.9968290083326149
+          },
+          "training_covered_count": 46433
+        },
+        {
+          "candidate": "s0-leaf14",
+          "rule_id": "r0-s0-620330157f0b221e",
+          "quality_gate_accepted": true,
+          "active_in_r0": true,
+          "path_matches_frozen_candidate": true,
+          "stored_consequent": 0,
+          "rebuilt_unweighted_majority_consequent": 0,
+          "protocol_weighted_leaf_consequent": 0,
+          "protocol_mismatch": false,
+          "weighted_leaf_class_mass": {
+            "0": 0.9820946232509785,
+            "1": 0.01790537674901819
+          },
+          "training_covered_count": 15833
+        },
+        {
+          "candidate": "s0-leaf15",
+          "rule_id": "r0-s0-26839f4140ffb321",
+          "quality_gate_accepted": true,
+          "active_in_r0": true,
+          "path_matches_frozen_candidate": true,
+          "stored_consequent": 0,
+          "rebuilt_unweighted_majority_consequent": 0,
+          "protocol_weighted_leaf_consequent": 0,
+          "protocol_mismatch": false,
+          "weighted_leaf_class_mass": {
+            "0": 1.0,
+            "1": 0.0
+          },
+          "training_covered_count": 54331
+        },
+        {
+          "candidate": "s0-leaf18",
+          "rule_id": "r0-s0-e7da4ba511511dfa",
+          "quality_gate_accepted": false,
+          "active_in_r0": false,
+          "path_matches_frozen_candidate": true,
+          "stored_consequent": 1,
+          "rebuilt_unweighted_majority_consequent": 1,
+          "protocol_weighted_leaf_consequent": 1,
+          "protocol_mismatch": false,
+          "weighted_leaf_class_mass": {
+            "0": 0.0502025484787091,
+            "1": 0.9497974515212927
+          },
+          "training_covered_count": 1118
+        },
+        {
+          "candidate": "s0-leaf20",
+          "rule_id": "r0-s0-26fb88a26bad92b6",
+          "quality_gate_accepted": false,
+          "active_in_r0": false,
+          "path_matches_frozen_candidate": true,
+          "stored_consequent": 1,
+          "rebuilt_unweighted_majority_consequent": 1,
+          "protocol_weighted_leaf_consequent": 1,
+          "protocol_mismatch": false,
+          "weighted_leaf_class_mass": {
+            "0": 0.014002666922148382,
+            "1": 0.9859973330778472
+          },
+          "training_covered_count": 1020
+        },
+        {
+          "candidate": "s0-leaf21",
+          "rule_id": "r0-s0-f2cc4ffd2bf03db1",
+          "quality_gate_accepted": true,
+          "active_in_r0": true,
+          "path_matches_frozen_candidate": true,
+          "stored_consequent": 1,
+          "rebuilt_unweighted_majority_consequent": 1,
+          "protocol_weighted_leaf_consequent": 1,
+          "protocol_mismatch": false,
+          "weighted_leaf_class_mass": {
+            "0": 0.00014871911209634784,
+            "1": 0.9998512808879024
+          },
+          "training_covered_count": 154138
+        },
+        {
+          "candidate": "s0-leaf23",
+          "rule_id": "r0-s0-df4c314d6f7d172c",
+          "quality_gate_accepted": true,
+          "active_in_r0": true,
+          "path_matches_frozen_candidate": true,
+          "stored_consequent": 0,
+          "rebuilt_unweighted_majority_consequent": 0,
+          "protocol_weighted_leaf_consequent": 0,
+          "protocol_mismatch": false,
+          "weighted_leaf_class_mass": {
+            "0": 1.0,
+            "1": 0.0
+          },
+          "training_covered_count": 1896
+        },
+        {
+          "candidate": "s0-leaf24",
+          "rule_id": "r0-s0-d376b87af357d3ac",
+          "quality_gate_accepted": false,
+          "active_in_r0": false,
+          "path_matches_frozen_candidate": true,
+          "stored_consequent": 0,
+          "rebuilt_unweighted_majority_consequent": 0,
+          "protocol_weighted_leaf_consequent": 0,
+          "protocol_mismatch": false,
+          "weighted_leaf_class_mass": {
+            "0": 0.9545483353723971,
+            "1": 0.04545166462760525
+          },
+          "training_covered_count": 1000
+        }
+      ]
+    },
+    {
+      "seed": 1,
+      "checkpoint_sha256": "07696c3f580645d9c96ac3e736cfb5eeaa8033f148bf64822e8ee105861cf552",
+      "selected_features": [
+        "Destination Port",
+        "Packet Length Variance",
+        "Bwd Packet Length Std",
+        "Idle Max",
+        "Bwd Packet Length Max",
+        "Min Packet Length",
+        "Bwd IAT Total",
+        "Fwd IAT Max",
+        "FIN Flag Count",
+        "Average Packet Size",
+        "Bwd IAT Std",
+        "Avg Bwd Segment Size"
+      ],
+      "rebuilt_leaf_count": 12,
+      "frozen_candidate_count": 12,
+      "protocol_mismatch_count": 3,
+      "active_protocol_mismatch_count": 2,
+      "comparisons": [
+        {
+          "candidate": "s1-leaf4",
+          "rule_id": "r0-s1-08d7f5dea692e032",
+          "quality_gate_accepted": false,
+          "active_in_r0": false,
+          "path_matches_frozen_candidate": true,
+          "stored_consequent": 1,
+          "rebuilt_unweighted_majority_consequent": 1,
+          "protocol_weighted_leaf_consequent": 1,
+          "protocol_mismatch": false,
+          "weighted_leaf_class_mass": {
+            "0": 0.11995088445345539,
+            "1": 0.8800491155458597
+          },
+          "training_covered_count": 97545
+        },
+        {
+          "candidate": "s1-leaf5",
+          "rule_id": "r0-s1-39e2b73a57609d15",
+          "quality_gate_accepted": true,
+          "active_in_r0": true,
+          "path_matches_frozen_candidate": true,
+          "stored_consequent": 0,
+          "rebuilt_unweighted_majority_consequent": 0,
+          "protocol_weighted_leaf_consequent": 1,
+          "protocol_mismatch": true,
+          "weighted_leaf_class_mass": {
+            "0": 0.45794798346248416,
+            "1": 0.542052016537129
+          },
+          "training_covered_count": 33654
+        },
+        {
+          "candidate": "s1-leaf7",
+          "rule_id": "r0-s1-0890152daf045f4d",
+          "quality_gate_accepted": true,
+          "active_in_r0": true,
+          "path_matches_frozen_candidate": true,
+          "stored_consequent": 0,
+          "rebuilt_unweighted_majority_consequent": 0,
+          "protocol_weighted_leaf_consequent": 0,
+          "protocol_mismatch": false,
+          "weighted_leaf_class_mass": {
+            "0": 0.9901214774648569,
+            "1": 0.00987852253512424
+          },
+          "training_covered_count": 149457
+        },
+        {
+          "candidate": "s1-leaf8",
+          "rule_id": "r0-s1-8b403b57238f08b4",
+          "quality_gate_accepted": false,
+          "active_in_r0": false,
+          "path_matches_frozen_candidate": true,
+          "stored_consequent": 0,
+          "rebuilt_unweighted_majority_consequent": 0,
+          "protocol_weighted_leaf_consequent": 1,
+          "protocol_mismatch": true,
+          "weighted_leaf_class_mass": {
+            "0": 0.44020506288861966,
+            "1": 0.5597949371113791
+          },
+          "training_covered_count": 1000
+        },
+        {
+          "candidate": "s1-leaf11",
+          "rule_id": "r0-s1-fe38a9502c654d59",
+          "quality_gate_accepted": false,
+          "active_in_r0": false,
+          "path_matches_frozen_candidate": true,
+          "stored_consequent": 1,
+          "rebuilt_unweighted_majority_consequent": 1,
+          "protocol_weighted_leaf_consequent": 1,
+          "protocol_mismatch": false,
+          "weighted_leaf_class_mass": {
+            "0": 0.044921658081111426,
+            "1": 0.9550783419188453
+          },
+          "training_covered_count": 13003
+        },
+        {
+          "candidate": "s1-leaf12",
+          "rule_id": "r0-s1-9603784d9163cfef",
+          "quality_gate_accepted": true,
+          "active_in_r0": true,
+          "path_matches_frozen_candidate": true,
+          "stored_consequent": 0,
+          "rebuilt_unweighted_majority_consequent": 0,
+          "protocol_weighted_leaf_consequent": 0,
+          "protocol_mismatch": false,
+          "weighted_leaf_class_mass": {
+            "0": 0.9887427071954168,
+            "1": 0.011257292804582795
+          },
+          "training_covered_count": 2382
+        },
+        {
+          "candidate": "s1-leaf14",
+          "rule_id": "r0-s1-53f619d047b09df9",
+          "quality_gate_accepted": true,
+          "active_in_r0": true,
+          "path_matches_frozen_candidate": true,
+          "stored_consequent": 0,
+          "rebuilt_unweighted_majority_consequent": 0,
+          "protocol_weighted_leaf_consequent": 0,
+          "protocol_mismatch": false,
+          "weighted_leaf_class_mass": {
+            "0": 0.9851160438606422,
+            "1": 0.014883956140301562
+          },
+          "training_covered_count": 858112
+        },
+        {
+          "candidate": "s1-leaf15",
+          "rule_id": "r0-s1-a7b27ed12f9ff15e",
+          "quality_gate_accepted": true,
+          "active_in_r0": true,
+          "path_matches_frozen_candidate": true,
+          "stored_consequent": 0,
+          "rebuilt_unweighted_majority_consequent": 0,
+          "protocol_weighted_leaf_consequent": 1,
+          "protocol_mismatch": true,
+          "weighted_leaf_class_mass": {
+            "0": 0.32945019418102817,
+            "1": 0.6705498058190249
+          },
+          "training_covered_count": 10012
+        },
+        {
+          "candidate": "s1-leaf18",
+          "rule_id": "r0-s1-2826ffef116c9676",
+          "quality_gate_accepted": true,
+          "active_in_r0": true,
+          "path_matches_frozen_candidate": true,
+          "stored_consequent": 1,
+          "rebuilt_unweighted_majority_consequent": 1,
+          "protocol_weighted_leaf_consequent": 1,
+          "protocol_mismatch": false,
+          "weighted_leaf_class_mass": {
+            "0": 0.017516963507769462,
+            "1": 0.9824830364922295
+          },
+          "training_covered_count": 1008
+        },
+        {
+          "candidate": "s1-leaf20",
+          "rule_id": "r0-s1-6f9ae0317f17ee29",
+          "quality_gate_accepted": true,
+          "active_in_r0": true,
+          "path_matches_frozen_candidate": true,
+          "stored_consequent": 1,
+          "rebuilt_unweighted_majority_consequent": 1,
+          "protocol_weighted_leaf_consequent": 1,
+          "protocol_mismatch": false,
+          "weighted_leaf_class_mass": {
+            "0": 7.377088156108229e-05,
+            "1": 0.999926229118438
+          },
+          "training_covered_count": 153374
+        },
+        {
+          "candidate": "s1-leaf21",
+          "rule_id": "r0-s1-403b0b3b4cdd8680",
+          "quality_gate_accepted": false,
+          "active_in_r0": false,
+          "path_matches_frozen_candidate": true,
+          "stored_consequent": 1,
+          "rebuilt_unweighted_majority_consequent": 1,
+          "protocol_weighted_leaf_consequent": 1,
+          "protocol_mismatch": false,
+          "weighted_leaf_class_mass": {
+            "0": 0.004543821551102008,
+            "1": 0.9954561784488969
+          },
+          "training_covered_count": 1091
+        },
+        {
+          "candidate": "s1-leaf22",
+          "rule_id": "r0-s1-559c8b45c52dd8e0",
+          "quality_gate_accepted": true,
+          "active_in_r0": true,
+          "path_matches_frozen_candidate": true,
+          "stored_consequent": 0,
+          "rebuilt_unweighted_majority_consequent": 0,
+          "protocol_weighted_leaf_consequent": 0,
+          "protocol_mismatch": false,
+          "weighted_leaf_class_mass": {
+            "0": 0.9575625076022611,
+            "1": 0.042437492397738794
+          },
+          "training_covered_count": 1541
+        }
+      ]
+    },
+    {
+      "seed": 2,
+      "checkpoint_sha256": "7630514cf409256bd2bbe27eca59f881acb238be698b5fdb1ee12bca8e402491",
+      "selected_features": [
+        "Destination Port",
+        "Packet Length Variance",
+        "Average Packet Size",
+        "Min Packet Length",
+        "Bwd Packet Length Std",
+        "Packet Length Mean",
+        "Fwd IAT Std",
+        "Idle Max",
+        "Fwd Packet Length Max",
+        "Bwd Packet Length Min",
+        "Idle Min",
+        "Bwd IAT Total"
+      ],
+      "rebuilt_leaf_count": 13,
+      "frozen_candidate_count": 13,
+      "protocol_mismatch_count": 1,
+      "active_protocol_mismatch_count": 0,
+      "comparisons": [
+        {
+          "candidate": "s2-leaf4",
+          "rule_id": "r0-s2-342db99547ee508b",
+          "quality_gate_accepted": false,
+          "active_in_r0": false,
+          "path_matches_frozen_candidate": true,
+          "stored_consequent": 1,
+          "rebuilt_unweighted_majority_consequent": 1,
+          "protocol_weighted_leaf_consequent": 1,
+          "protocol_mismatch": false,
+          "weighted_leaf_class_mass": {
+            "0": 0.13719864689264777,
+            "1": 0.8628013531066108
+          },
+          "training_covered_count": 94716
+        },
+        {
+          "candidate": "s2-leaf5",
+          "rule_id": "r0-s2-3151baf23ddac905",
+          "quality_gate_accepted": true,
+          "active_in_r0": true,
+          "path_matches_frozen_candidate": true,
+          "stored_consequent": 0,
+          "rebuilt_unweighted_majority_consequent": 0,
+          "protocol_weighted_leaf_consequent": 0,
+          "protocol_mismatch": false,
+          "weighted_leaf_class_mass": {
+            "0": 0.5573750975216305,
+            "1": 0.442624902478148
+          },
+          "training_covered_count": 36785
+        },
+        {
+          "candidate": "s2-leaf7",
+          "rule_id": "r0-s2-ebe3f52b21c3dbcf",
+          "quality_gate_accepted": true,
+          "active_in_r0": true,
+          "path_matches_frozen_candidate": true,
+          "stored_consequent": 0,
+          "rebuilt_unweighted_majority_consequent": 0,
+          "protocol_weighted_leaf_consequent": 0,
+          "protocol_mismatch": false,
+          "weighted_leaf_class_mass": {
+            "0": 0.9802730254068472,
+            "1": 0.01972697459298908
+          },
+          "training_covered_count": 148957
+        },
+        {
+          "candidate": "s2-leaf8",
+          "rule_id": "r0-s2-a692a4c90687f142",
+          "quality_gate_accepted": false,
+          "active_in_r0": false,
+          "path_matches_frozen_candidate": true,
+          "stored_consequent": 0,
+          "rebuilt_unweighted_majority_consequent": 0,
+          "protocol_weighted_leaf_consequent": 1,
+          "protocol_mismatch": true,
+          "weighted_leaf_class_mass": {
+            "0": 0.4160123692844547,
+            "1": 0.583987630715552
+          },
+          "training_covered_count": 1000
+        },
+        {
+          "candidate": "s2-leaf11",
+          "rule_id": "r0-s2-bca9e0bf86c9d730",
+          "quality_gate_accepted": false,
+          "active_in_r0": false,
+          "path_matches_frozen_candidate": true,
+          "stored_consequent": 1,
+          "rebuilt_unweighted_majority_consequent": 1,
+          "protocol_weighted_leaf_consequent": 1,
+          "protocol_mismatch": false,
+          "weighted_leaf_class_mass": {
+            "0": 0.08094218442141851,
+            "1": 0.9190578155786365
+          },
+          "training_covered_count": 13003
+        },
+        {
+          "candidate": "s2-leaf12",
+          "rule_id": "r0-s2-3ef521c3c5d64201",
+          "quality_gate_accepted": true,
+          "active_in_r0": true,
+          "path_matches_frozen_candidate": true,
+          "stored_consequent": 0,
+          "rebuilt_unweighted_majority_consequent": 0,
+          "protocol_weighted_leaf_consequent": 0,
+          "protocol_mismatch": false,
+          "weighted_leaf_class_mass": {
+            "0": 0.9881395017652651,
+            "1": 0.011860498234736427
+          },
+          "training_covered_count": 2382
+        },
+        {
+          "candidate": "s2-leaf14",
+          "rule_id": "r0-s2-308ae20b031294e5",
+          "quality_gate_accepted": true,
+          "active_in_r0": true,
+          "path_matches_frozen_candidate": true,
+          "stored_consequent": 0,
+          "rebuilt_unweighted_majority_consequent": 0,
+          "protocol_weighted_leaf_consequent": 0,
+          "protocol_mismatch": false,
+          "weighted_leaf_class_mass": {
+            "0": 0.9910767417841515,
+            "1": 0.008923258215793775
+          },
+          "training_covered_count": 836214
+        },
+        {
+          "candidate": "s2-leaf15",
+          "rule_id": "r0-s2-f0249e5137b511d8",
+          "quality_gate_accepted": true,
+          "active_in_r0": true,
+          "path_matches_frozen_candidate": true,
+          "stored_consequent": 0,
+          "rebuilt_unweighted_majority_consequent": 0,
+          "protocol_weighted_leaf_consequent": 0,
+          "protocol_mismatch": false,
+          "weighted_leaf_class_mass": {
+            "0": 0.648974789379011,
+            "1": 0.35102521062076764
+          },
+          "training_covered_count": 29950
+        },
+        {
+          "candidate": "s2-leaf18",
+          "rule_id": "r0-s2-a18c84c5701b1ee1",
+          "quality_gate_accepted": false,
+          "active_in_r0": false,
+          "path_matches_frozen_candidate": true,
+          "stored_consequent": 1,
+          "rebuilt_unweighted_majority_consequent": 1,
+          "protocol_weighted_leaf_consequent": 1,
+          "protocol_mismatch": false,
+          "weighted_leaf_class_mass": {
+            "0": 0.058911355681145854,
+            "1": 0.9410886443188561
+          },
+          "training_covered_count": 1003
+        },
+        {
+          "candidate": "s2-leaf20",
+          "rule_id": "r0-s2-e5b340c0d900d8a6",
+          "quality_gate_accepted": false,
+          "active_in_r0": false,
+          "path_matches_frozen_candidate": true,
+          "stored_consequent": 1,
+          "rebuilt_unweighted_majority_consequent": 1,
+          "protocol_weighted_leaf_consequent": 1,
+          "protocol_mismatch": false,
+          "weighted_leaf_class_mass": {
+            "0": 0.01805515811997835,
+            "1": 0.9819448418800238
+          },
+          "training_covered_count": 1182
+        },
+        {
+          "candidate": "s2-leaf21",
+          "rule_id": "r0-s2-339d2c93c87954a6",
+          "quality_gate_accepted": true,
+          "active_in_r0": true,
+          "path_matches_frozen_candidate": true,
+          "stored_consequent": 1,
+          "rebuilt_unweighted_majority_consequent": 1,
+          "protocol_weighted_leaf_consequent": 1,
+          "protocol_mismatch": false,
+          "weighted_leaf_class_mass": {
+            "0": 8.741084033308376e-05,
+            "1": 0.9999125891596666
+          },
+          "training_covered_count": 154091
+        },
+        {
+          "candidate": "s2-leaf23",
+          "rule_id": "r0-s2-9e298cf758ee7460",
+          "quality_gate_accepted": true,
+          "active_in_r0": true,
+          "path_matches_frozen_candidate": true,
+          "stored_consequent": 0,
+          "rebuilt_unweighted_majority_consequent": 0,
+          "protocol_weighted_leaf_consequent": 0,
+          "protocol_mismatch": false,
+          "weighted_leaf_class_mass": {
+            "0": 1.0,
+            "1": 0.0
+          },
+          "training_covered_count": 1896
+        },
+        {
+          "candidate": "s2-leaf24",
+          "rule_id": "r0-s2-a728ab1fb822a5fa",
+          "quality_gate_accepted": false,
+          "active_in_r0": false,
+          "path_matches_frozen_candidate": true,
+          "stored_consequent": 0,
+          "rebuilt_unweighted_majority_consequent": 0,
+          "protocol_weighted_leaf_consequent": 0,
+          "protocol_mismatch": false,
+          "weighted_leaf_class_mass": {
+            "0": 0.7898802009582278,
+            "1": 0.2101197990417661
+          },
+          "training_covered_count": 1000
+        }
+      ]
+    },
+    {
+      "seed": 3,
+      "checkpoint_sha256": "cce1ce47db047b9d441bbe6dad9bd53f1ee6ff3ad7d404521cae72a38bccd4b4",
+      "selected_features": [
+        "Destination Port",
+        "Packet Length Variance",
+        "Bwd Packet Length Std",
+        "Bwd Packet Length Mean",
+        "Min Packet Length",
+        "Bwd IAT Max",
+        "Bwd IAT Std",
+        "Average Packet Size",
+        "Packet Length Std",
+        "ACK Flag Count",
+        "Idle Mean",
+        "Idle Min"
+      ],
+      "rebuilt_leaf_count": 12,
+      "frozen_candidate_count": 12,
+      "protocol_mismatch_count": 2,
+      "active_protocol_mismatch_count": 2,
+      "comparisons": [
+        {
+          "candidate": "s3-leaf4",
+          "rule_id": "r0-s3-537191aa821f4854",
+          "quality_gate_accepted": true,
+          "active_in_r0": true,
+          "path_matches_frozen_candidate": true,
+          "stored_consequent": 0,
+          "rebuilt_unweighted_majority_consequent": 0,
+          "protocol_weighted_leaf_consequent": 1,
+          "protocol_mismatch": true,
+          "weighted_leaf_class_mass": {
+            "0": 0.3757321926188015,
+            "1": 0.624267807381249
+          },
+          "training_covered_count": 34033
+        },
+        {
+          "candidate": "s3-leaf5",
+          "rule_id": "r0-s3-7bff139f9b042935",
+          "quality_gate_accepted": false,
+          "active_in_r0": false,
+          "path_matches_frozen_candidate": true,
+          "stored_consequent": 1,
+          "rebuilt_unweighted_majority_consequent": 1,
+          "protocol_weighted_leaf_consequent": 1,
+          "protocol_mismatch": false,
+          "weighted_leaf_class_mass": {
+            "0": 0.134263053102192,
+            "1": 0.8657369468976591
+          },
+          "training_covered_count": 97166
+        },
+        {
+          "candidate": "s3-leaf7",
+          "rule_id": "r0-s3-e71a7cc956b5d661",
+          "quality_gate_accepted": true,
+          "active_in_r0": true,
+          "path_matches_frozen_candidate": true,
+          "stored_consequent": 0,
+          "rebuilt_unweighted_majority_consequent": 0,
+          "protocol_weighted_leaf_consequent": 0,
+          "protocol_mismatch": false,
+          "weighted_leaf_class_mass": {
+            "0": 0.9461019110432294,
+            "1": 0.0538980889567695
+          },
+          "training_covered_count": 2026
+        },
+        {
+          "candidate": "s3-leaf8",
+          "rule_id": "r0-s3-a162a1d51ac9e9ea",
+          "quality_gate_accepted": true,
+          "active_in_r0": true,
+          "path_matches_frozen_candidate": true,
+          "stored_consequent": 0,
+          "rebuilt_unweighted_majority_consequent": 0,
+          "protocol_weighted_leaf_consequent": 0,
+          "protocol_mismatch": false,
+          "weighted_leaf_class_mass": {
+            "0": 0.9982820003827669,
+            "1": 0.001717999617232957
+          },
+          "training_covered_count": 148431
+        },
+        {
+          "candidate": "s3-leaf11",
+          "rule_id": "r0-s3-0889c8522722b707",
+          "quality_gate_accepted": false,
+          "active_in_r0": false,
+          "path_matches_frozen_candidate": true,
+          "stored_consequent": 1,
+          "rebuilt_unweighted_majority_consequent": 1,
+          "protocol_weighted_leaf_consequent": 1,
+          "protocol_mismatch": false,
+          "weighted_leaf_class_mass": {
+            "0": 0.04648942207065648,
+            "1": 0.9535105779293419
+          },
+          "training_covered_count": 13003
+        },
+        {
+          "candidate": "s3-leaf12",
+          "rule_id": "r0-s3-f518f2a1ca829da9",
+          "quality_gate_accepted": true,
+          "active_in_r0": true,
+          "path_matches_frozen_candidate": true,
+          "stored_consequent": 0,
+          "rebuilt_unweighted_majority_consequent": 0,
+          "protocol_weighted_leaf_consequent": 0,
+          "protocol_mismatch": false,
+          "weighted_leaf_class_mass": {
+            "0": 0.9886165159665095,
+            "1": 0.011383484033490253
+          },
+          "training_covered_count": 2382
+        },
+        {
+          "candidate": "s3-leaf14",
+          "rule_id": "r0-s3-547997da8a60d2d9",
+          "quality_gate_accepted": true,
+          "active_in_r0": true,
+          "path_matches_frozen_candidate": true,
+          "stored_consequent": 0,
+          "rebuilt_unweighted_majority_consequent": 0,
+          "protocol_weighted_leaf_consequent": 0,
+          "protocol_mismatch": false,
+          "weighted_leaf_class_mass": {
+            "0": 0.9860145772440548,
+            "1": 0.013985422756419274
+          },
+          "training_covered_count": 858112
+        },
+        {
+          "candidate": "s3-leaf15",
+          "rule_id": "r0-s3-9c6cdfe75a7d01de",
+          "quality_gate_accepted": true,
+          "active_in_r0": true,
+          "path_matches_frozen_candidate": true,
+          "stored_consequent": 0,
+          "rebuilt_unweighted_majority_consequent": 0,
+          "protocol_weighted_leaf_consequent": 1,
+          "protocol_mismatch": true,
+          "weighted_leaf_class_mass": {
+            "0": 0.32706679523623344,
+            "1": 0.6729332047638747
+          },
+          "training_covered_count": 10012
+        },
+        {
+          "candidate": "s3-leaf18",
+          "rule_id": "r0-s3-3d5db2899e022ef6",
+          "quality_gate_accepted": false,
+          "active_in_r0": false,
+          "path_matches_frozen_candidate": true,
+          "stored_consequent": 1,
+          "rebuilt_unweighted_majority_consequent": 1,
+          "protocol_weighted_leaf_consequent": 1,
+          "protocol_mismatch": false,
+          "weighted_leaf_class_mass": {
+            "0": 0.02256431013885796,
+            "1": 0.977435689861142
+          },
+          "training_covered_count": 1008
+        },
+        {
+          "candidate": "s3-leaf20",
+          "rule_id": "r0-s3-796860cef021de2e",
+          "quality_gate_accepted": true,
+          "active_in_r0": true,
+          "path_matches_frozen_candidate": true,
+          "stored_consequent": 1,
+          "rebuilt_unweighted_majority_consequent": 1,
+          "protocol_weighted_leaf_consequent": 1,
+          "protocol_mismatch": false,
+          "weighted_leaf_class_mass": {
+            "0": 0.0011690217248581857,
+            "1": 0.9988309782751432
+          },
+          "training_covered_count": 14317
+        },
+        {
+          "candidate": "s3-leaf21",
+          "rule_id": "r0-s3-228eb474cbef4cab",
+          "quality_gate_accepted": false,
+          "active_in_r0": false,
+          "path_matches_frozen_candidate": true,
+          "stored_consequent": 1,
+          "rebuilt_unweighted_majority_consequent": 1,
+          "protocol_weighted_leaf_consequent": 1,
+          "protocol_mismatch": false,
+          "weighted_leaf_class_mass": {
+            "0": 1.5648509852373016e-06,
+            "1": 0.9999984351490147
+          },
+          "training_covered_count": 140148
+        },
+        {
+          "candidate": "s3-leaf22",
+          "rule_id": "r0-s3-79d7fc3f29cd8e4e",
+          "quality_gate_accepted": true,
+          "active_in_r0": true,
+          "path_matches_frozen_candidate": true,
+          "stored_consequent": 0,
+          "rebuilt_unweighted_majority_consequent": 0,
+          "protocol_weighted_leaf_consequent": 0,
+          "protocol_mismatch": false,
+          "weighted_leaf_class_mass": {
+            "0": 0.9796168429346842,
+            "1": 0.020383157065315915
+          },
+          "training_covered_count": 1541
+        }
+      ]
+    },
+    {
+      "seed": 4,
+      "checkpoint_sha256": "9b9e56371f3246482998c4efea4829e1e6d5aaf549bb43e1af05e471dfcb9e93",
+      "selected_features": [
+        "Destination Port",
+        "Packet Length Variance",
+        "Bwd Packet Length Std",
+        "Min Packet Length",
+        "Idle Max",
+        "Idle Mean",
+        "Packet Length Std",
+        "Average Packet Size",
+        "Bwd IAT Total",
+        "FIN Flag Count",
+        "Bwd Packet Length Max",
+        "Bwd Packet Length Mean"
+      ],
+      "rebuilt_leaf_count": 12,
+      "frozen_candidate_count": 12,
+      "protocol_mismatch_count": 1,
+      "active_protocol_mismatch_count": 0,
+      "comparisons": [
+        {
+          "candidate": "s4-leaf4",
+          "rule_id": "r0-s4-d8bc6ad1a61e274f",
+          "quality_gate_accepted": false,
+          "active_in_r0": false,
+          "path_matches_frozen_candidate": true,
+          "stored_consequent": 1,
+          "rebuilt_unweighted_majority_consequent": 1,
+          "protocol_weighted_leaf_consequent": 1,
+          "protocol_mismatch": false,
+          "weighted_leaf_class_mass": {
+            "0": 0.17972988948397914,
+            "1": 0.8202701105152378
+          },
+          "training_covered_count": 121604
+        },
+        {
+          "candidate": "s4-leaf5",
+          "rule_id": "r0-s4-a941d2200797fe0a",
+          "quality_gate_accepted": false,
+          "active_in_r0": false,
+          "path_matches_frozen_candidate": true,
+          "stored_consequent": 1,
+          "rebuilt_unweighted_majority_consequent": 1,
+          "protocol_weighted_leaf_consequent": 1,
+          "protocol_mismatch": false,
+          "weighted_leaf_class_mass": {
+            "0": 0.010324000950283903,
+            "1": 0.9896759990497158
+          },
+          "training_covered_count": 9595
+        },
+        {
+          "candidate": "s4-leaf7",
+          "rule_id": "r0-s4-de9c6dab6f02b0d4",
+          "quality_gate_accepted": true,
+          "active_in_r0": true,
+          "path_matches_frozen_candidate": true,
+          "stored_consequent": 0,
+          "rebuilt_unweighted_majority_consequent": 0,
+          "protocol_weighted_leaf_consequent": 0,
+          "protocol_mismatch": false,
+          "weighted_leaf_class_mass": {
+            "0": 0.9917885324029552,
+            "1": 0.008211467597026912
+          },
+          "training_covered_count": 149457
+        },
+        {
+          "candidate": "s4-leaf8",
+          "rule_id": "r0-s4-aa0f7837359bca4a",
+          "quality_gate_accepted": false,
+          "active_in_r0": false,
+          "path_matches_frozen_candidate": true,
+          "stored_consequent": 0,
+          "rebuilt_unweighted_majority_consequent": 0,
+          "protocol_weighted_leaf_consequent": 1,
+          "protocol_mismatch": true,
+          "weighted_leaf_class_mass": {
+            "0": 0.44382899395058556,
+            "1": 0.5561710060494145
+          },
+          "training_covered_count": 1000
+        },
+        {
+          "candidate": "s4-leaf11",
+          "rule_id": "r0-s4-7917f151ba3bb25c",
+          "quality_gate_accepted": false,
+          "active_in_r0": false,
+          "path_matches_frozen_candidate": true,
+          "stored_consequent": 1,
+          "rebuilt_unweighted_majority_consequent": 1,
+          "protocol_weighted_leaf_consequent": 1,
+          "protocol_mismatch": false,
+          "weighted_leaf_class_mass": {
+            "0": 0.05381606161743016,
+            "1": 0.9461839383825926
+          },
+          "training_covered_count": 13003
+        },
+        {
+          "candidate": "s4-leaf12",
+          "rule_id": "r0-s4-d921e73dd34c1c61",
+          "quality_gate_accepted": true,
+          "active_in_r0": true,
+          "path_matches_frozen_candidate": true,
+          "stored_consequent": 0,
+          "rebuilt_unweighted_majority_consequent": 0,
+          "protocol_weighted_leaf_consequent": 0,
+          "protocol_mismatch": false,
+          "weighted_leaf_class_mass": {
+            "0": 0.9889050839523463,
+            "1": 0.011094916047653579
+          },
+          "training_covered_count": 2382
+        },
+        {
+          "candidate": "s4-leaf14",
+          "rule_id": "r0-s4-8a8bd24bc943a6c6",
+          "quality_gate_accepted": true,
+          "active_in_r0": true,
+          "path_matches_frozen_candidate": true,
+          "stored_consequent": 0,
+          "rebuilt_unweighted_majority_consequent": 0,
+          "protocol_weighted_leaf_consequent": 0,
+          "protocol_mismatch": false,
+          "weighted_leaf_class_mass": {
+            "0": 0.9866238263919198,
+            "1": 0.013376173608077838
+          },
+          "training_covered_count": 826038
+        },
+        {
+          "candidate": "s4-leaf15",
+          "rule_id": "r0-s4-62d1f83b944f50dc",
+          "quality_gate_accepted": true,
+          "active_in_r0": true,
+          "path_matches_frozen_candidate": true,
+          "stored_consequent": 0,
+          "rebuilt_unweighted_majority_consequent": 0,
+          "protocol_weighted_leaf_consequent": 0,
+          "protocol_mismatch": false,
+          "weighted_leaf_class_mass": {
+            "0": 0.7173098253564034,
+            "1": 0.2826901746435884
+          },
+          "training_covered_count": 42086
+        },
+        {
+          "candidate": "s4-leaf18",
+          "rule_id": "r0-s4-75bd0de42217544f",
+          "quality_gate_accepted": false,
+          "active_in_r0": false,
+          "path_matches_frozen_candidate": true,
+          "stored_consequent": 1,
+          "rebuilt_unweighted_majority_consequent": 1,
+          "protocol_weighted_leaf_consequent": 1,
+          "protocol_mismatch": false,
+          "weighted_leaf_class_mass": {
+            "0": 0.021075574075574196,
+            "1": 0.9789244259244263
+          },
+          "training_covered_count": 1008
+        },
+        {
+          "candidate": "s4-leaf20",
+          "rule_id": "r0-s4-66e3dc8cac434da1",
+          "quality_gate_accepted": true,
+          "active_in_r0": true,
+          "path_matches_frozen_candidate": true,
+          "stored_consequent": 1,
+          "rebuilt_unweighted_majority_consequent": 1,
+          "protocol_weighted_leaf_consequent": 1,
+          "protocol_mismatch": false,
+          "weighted_leaf_class_mass": {
+            "0": 0.0013646985578883426,
+            "1": 0.9986353014421147
+          },
+          "training_covered_count": 14582
+        },
+        {
+          "candidate": "s4-leaf21",
+          "rule_id": "r0-s4-2eac9cb65eae8f75",
+          "quality_gate_accepted": false,
+          "active_in_r0": false,
+          "path_matches_frozen_candidate": true,
+          "stored_consequent": 1,
+          "rebuilt_unweighted_majority_consequent": 1,
+          "protocol_weighted_leaf_consequent": 1,
+          "protocol_mismatch": false,
+          "weighted_leaf_class_mass": {
+            "0": 3.2181425155727403e-06,
+            "1": 0.9999967818574844
+          },
+          "training_covered_count": 139883
+        },
+        {
+          "candidate": "s4-leaf22",
+          "rule_id": "r0-s4-799502d6956c2bc7",
+          "quality_gate_accepted": true,
+          "active_in_r0": true,
+          "path_matches_frozen_candidate": true,
+          "stored_consequent": 0,
+          "rebuilt_unweighted_majority_consequent": 0,
+          "protocol_weighted_leaf_consequent": 0,
+          "protocol_mismatch": false,
+          "weighted_leaf_class_mass": {
+            "0": 0.9745634355289645,
+            "1": 0.025436564471035514
+          },
+          "training_covered_count": 1541
+        }
+      ]
+    }
+  ],
+  "interpretation_gate": "If protocol_mismatch_count is zero, the code/protocol discrepancy had zero realized effect on the frozen candidate consequents. If nonzero, do not silently replace R0.v1: preserve all evidence and assess a versioned implementation-defect correction before C/D."
+}

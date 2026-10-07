@@ -1,0 +1,16 @@
+{
+  "manifest_format_version": 1,
+  "analysis_id": "system_b_duplicate_aware_validation_v1",
+  "summary_artifact_sha256": "40d4a1bd4f47319e528155046f4f48ff0e8f9fa7f99105da6a904e95a1cdd630",
+  "files": {
+    "candidate_pattern_revalidation": {
+      "path": "results/robustness/system_b_duplicate_aware_validation_v1/candidate_pattern_revalidation.csv",
+      "sha256": "3210e23bf321a575915205b1312d60ec268e7bffcb90625064831e270fbdef53"
+    },
+    "summary": {
+      "path": "results/robustness/system_b_duplicate_aware_validation_v1/analysis_summary.json",
+      "sha256": "ffb3f287faa93c462f922925dec5526684cadb31305f988a84a21838505a99b9"
+    }
+  },
+  "manifest_sha256": "cfab57c9e26e4eef91ef6cd908f90674be0f6ce861795c2b63de342b05a0026b"
+}

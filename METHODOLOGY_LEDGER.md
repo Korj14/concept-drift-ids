@@ -1408,3 +1408,19 @@ The builder must start from a clean worktree and verifies the frozen alternate-t
 The frozen alternate teacher removed 113,817 repeated training rows under exact raw 77-feature-pattern-plus-binary-label deduplication. Because label-conflicting feature patterns are preserved as separate observations, this differs by 41 rows from the earlier feature-pattern-only duplicate-excess count of 113,858; the difference is expected and is provenance evidence, not a correction.
 
 The deduplication is class-asymmetric: attack rows decrease more strongly than BENIGN rows, so the alternate teacher's positive-class weight changes accordingly. This is part of the intended training-multiplicity sensitivity and must not be interpreted as an isolated row-count perturbation.
+
+
+### Held-out pattern-deduplicated A-to-R0-to-B chain evaluation implemented — 7 October 2026
+
+After the alternate neural teacher and its downstream alternate R0 were both frozen before held-out access, a write-once evaluator was added for the complete duplicate-dependence chain.
+
+The evaluator:
+
+- verifies both frozen source manifests and their file identities before scoring;
+- loads pre_drift and post_drift only, with no training or development access;
+- scores the pattern-deduplicated alternate System-A teacher at its frozen per-seed development MCC thresholds;
+- scores the matched alternate System-B rule state using the same alternate teacher, its frozen selected lambda and per-seed development fusion thresholds;
+- reports seed-level, aggregate and paired post-minus-pre detection results, plus the corrected-v2 class-conditional symbolic evidence for alternate B;
+- cannot be used to select a replacement for accepted System A, R0.v2 or corrected System B.
+
+This sensitivity intentionally keeps the accepted training-fitted preprocessing fixed. It therefore measures dependence on training-example multiplicity and the resulting teacher/rule state, not a fully deduplicated end-to-end preprocessing pipeline.

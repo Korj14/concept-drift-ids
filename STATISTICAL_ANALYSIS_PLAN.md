@@ -351,3 +351,14 @@ For publication:
 - the primary later causal inference remains matched C-vs-D under a common accepted R0.v2 start.
 
 Knowledge of v1 held-out outcomes must not be used to change R0.v2, lambda, thresholds, preprocessing, windows or C/D treatment definitions.
+
+
+## 17. Bounded metric confidence-interval convention
+
+The frozen A/B aggregate files use ordinary seed-level Student-t intervals. With five seeds, an unconstrained interval for a metric whose realizations lie in [0,1] can numerically extend outside [0,1].
+
+The primary stored arithmetic remains unchanged. Do not truncate or winsorize interval endpoints in JSON/CSV or manuscript numeric tables.
+
+For visualization, a physical [0,1] metric axis is permitted. Any off-domain primary interval endpoint must be disclosed rather than silently replaced. A bounded bootstrap/transformed interval may be reported only as a clearly labeled secondary robustness/presentation interval unless a later untouched protocol prospectively makes it primary.
+
+The more important inferential limitation is unchanged: the five seeds share one scenario stream and therefore quantify stochastic optimization/symbolic-extraction variability conditional on that scenario, not population/environmental uncertainty.

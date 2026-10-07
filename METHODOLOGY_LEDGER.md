@@ -1304,3 +1304,8 @@ A new write-once robustness command now:
 - treats one-class seen strata descriptively, with ROC-AUC/AP undefined where appropriate.
 
 This is additive post-hoc robustness, not model selection and not a replacement primary evaluation.
+
+
+### Bounded-metric interval reporting policy frozen
+
+The repository now explicitly distinguishes statistical arithmetic from presentation. Existing seed-level t-interval endpoints remain untouched even when a bounded metric interval extends outside [0,1]. Numerical tables retain the raw interval. Figures may use physical metric axes only with disclosure if the underlying interval exceeds the visible domain. No frozen evidence is clipped or rewritten.

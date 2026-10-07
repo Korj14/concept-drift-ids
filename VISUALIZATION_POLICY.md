@@ -64,3 +64,18 @@ Avoid relying on accuracy-only figures for imbalanced intrusion detection.
 ## 5. Integrity rule
 
 Figures are derivatives of frozen CSV/JSON artifacts. A figure may be regenerated, reformatted, or restyled without changing the experimental result. Any transformation that changes the numeric analytical result requires a new explicitly versioned analysis artifact.
+
+
+## Bounded metric interval display
+
+Some seed-level Student-t intervals for bounded metrics can extend below 0 or above 1 because the interval is computed on the untransformed seed-level values and is not itself constrained to the metric domain.
+
+Publication policy:
+
+- immutable result files retain the raw interval exactly;
+- numerical tables report the raw interval and identify it as an unconstrained seed-level t-interval;
+- figures for metrics such as precision, recall, F1, ROC-AUC, AP, coverage and fidelity may use physically meaningful [0,1] axes, but the plotted CI endpoint must not be silently rewritten in the source data;
+- if a plot clips an interval at the visible axis boundary, the caption/legend must state that the underlying interval extends beyond the displayed metric domain;
+- any bounded bootstrap, transformed, or other alternative interval is secondary unless prospectively designated for a later untouched analysis and must never overwrite the historical interval.
+
+This is presentation-layer handling, not evidence correction.

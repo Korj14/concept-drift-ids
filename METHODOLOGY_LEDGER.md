@@ -1456,3 +1456,20 @@ schema deterministically before aggregation and CSV serialization. A
 repository-only regression test reproduces the heterogeneous-row condition.
 The correction changes serialization only and must not be used to alter model,
 rule, threshold, fusion, or metric choices.
+
+
+### System-B implementation closure after full duplicate-dependence chain — 8 October 2026
+
+The full pattern-deduplicated A-to-R0-to-B robustness chain is now frozen after a serialization-only evaluator correction. Research Contract run #151 passed on the frozen evaluation commit.
+
+Frozen duplicate-chain identities:
+
+- alternate System-A teacher manifest: `9aaf25d65052f3b6521c248d88aab6d55dd5dd2e02ed73d18452bc0460db3c5f`;
+- alternate R0 manifest: `3e1d7a984776ccc5d336716f25063f0e9f655590f8b4a92c1b6928f4517fe681`;
+- full-chain evaluation summary artifact hash: `b38765fc0c1a936d1918da77ddf332ca46924d829e9d58aa5c7001ca27ed1f3d`.
+
+The alternate teacher removes training multiplicity under exact raw 77-feature-pattern-plus-binary-label deduplication while preserving label conflicts and reusing the accepted preprocessing state. The resulting alternate R0 selects neural weight 0.50 but has 8/8/8/9/8 active rules across seeds, demonstrating substantial symbolic-state dependence on upstream training multiplicity.
+
+Held-out alternate-B mean detection remains viable: MCC is approximately 0.762 pre-drift and 0.790 post-drift; F1 approximately 0.745 and 0.779. Its post-minus-pre MCC is approximately +0.0287 and F1 +0.0332. Symbolic behavior differs materially from accepted R0.v2: attack resolved coverage is approximately 0.897 pre and 0.907 post, while attack symbolic correctness is approximately 0.563 pre and 0.614 post. These differences are treated as assumption dependence, not as a basis to replace accepted System A or R0.v2.
+
+With this evidence frozen, the mandatory retrospective System-B robustness tranche is closed. No unresolved System-B implementation defect remains that requires reopening A, R0.v2, or corrected B before C/D design work. Remaining open controls belong to the prospective adaptive phase and must be frozen before any C/D held-out execution.

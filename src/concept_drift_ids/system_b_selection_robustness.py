@@ -193,7 +193,7 @@ def _candidate_rules(
     bootstrap = stratified_bootstrap_indices(
         y_validation,
         replicates=int(gates["bootstrap_replicates"]),
-        random_state=int(gates["bootstrap_random_state_base"]) + seed + (split_seed - PRIMARY_SPLIT_SEED),
+        random_state=int(gates["bootstrap_random_state_base"]) + seed,
     )
     feature_index = {name: i for i, name in enumerate(feature_names)}
     eligible: list[Rule] = []

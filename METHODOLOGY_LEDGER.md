@@ -1330,3 +1330,8 @@ These variants can never replace accepted R0.v2 because held-out performance is 
 ### Held-out evaluation stage for B selection robustness implemented
 
 A separate robustness evaluator now consumes only a previously frozen/committed training-development selection manifest. It loads pre/post but not training/development, preserves every variant's frozen rules, lambda and per-seed threshold, and reports detection plus class-conditional symbolic outcomes. The resulting held-out robustness evidence cannot select a replacement for R0.v2.
+
+
+### Robustness isolation hardening
+
+Before any selection-robustness execution, the alternate-development-split implementation was reviewed for one-factor isolation. An initial draft also changed the bootstrap RNG as the split seed changed. That would have confounded split sensitivity with resampling realization. The code was corrected so bootstrap random state remains the original base+model-seed policy for every split variant; only development row membership changes.

@@ -85,3 +85,12 @@ def test_gate_override_changes_only_requested_gate() -> None:
     assert gates["min_neural_fidelity"] == 0.95
     assert gates["min_class_precision"] == 0.80
     assert gates["min_covered"] == 100
+
+
+
+def test_alternate_split_does_not_redefine_bootstrap_seed_policy() -> None:
+    import inspect
+    from concept_drift_ids.system_b_selection_robustness import _candidate_rules
+    source = inspect.getsource(_candidate_rules)
+    assert 'random_state=int(gates["bootstrap_random_state_base"]) + seed' in source
+    assert "split_seed - PRIMARY_SPLIT_SEED" not in source

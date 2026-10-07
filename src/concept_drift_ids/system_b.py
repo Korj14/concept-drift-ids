@@ -1283,6 +1283,9 @@ def main() -> None:
     eval_fusion_robustness = subparsers.add_parser("evaluate-fusion-authority-robustness")
     eval_fusion_robustness.add_argument("--device", default="cpu")
     subparsers.add_parser("verify-fusion-authority-robustness-evaluation")
+    dedup_teacher_r0 = subparsers.add_parser("build-pattern-dedup-teacher-r0")
+    dedup_teacher_r0.add_argument("--device", default="cpu")
+    subparsers.add_parser("verify-pattern-dedup-teacher-r0")
     args = parser.parse_args()
     if args.command == "build":
         build_and_freeze_system_b(device_name=args.device)
@@ -1365,6 +1368,12 @@ def main() -> None:
     elif args.command == "verify-fusion-authority-robustness-evaluation":
         from concept_drift_ids.system_b_fusion_robustness_evaluation import verify_fusion_authority_evaluation
         verify_fusion_authority_evaluation()
+    elif args.command == "build-pattern-dedup-teacher-r0":
+        from concept_drift_ids.system_b_dedup_teacher_robustness import build_pattern_dedup_teacher_r0
+        build_pattern_dedup_teacher_r0(device_name=args.device)
+    elif args.command == "verify-pattern-dedup-teacher-r0":
+        from concept_drift_ids.system_b_dedup_teacher_robustness import verify_pattern_dedup_teacher_r0
+        verify_pattern_dedup_teacher_r0()
     else:
         raise ValueError(f"Unhandled System-B command: {args.command}")
 

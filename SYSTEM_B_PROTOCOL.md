@@ -552,3 +552,36 @@ The defect is preserved in the historical R0.v1 artifacts and first evaluation. 
 The controlling correction procedure is now `SYSTEM_B_R0_V2_CORRECTION_PLAN.md`. Before any corrected held-out evaluation, that plan freezes a narrow R0.v2 rebuild using the original feature selections, tree constraints, candidate paths, validation gates, conflict/redundancy policy and development-only fusion procedure, with weighted CART leaf argmax as the candidate consequent.
 
 If R0.v2 satisfies its integrity contract, it becomes the required initial symbolic state for future Systems C and D independent of its later held-out performance. R0.v1 remains immutable historical nonconformant evidence.
+
+
+## 22. Accepted protocol-conformant R0.v2 identity
+
+The correction defined in Section 21 and `SYSTEM_B_R0_V2_CORRECTION_PLAN.md` has now been executed and frozen.
+
+Accepted R0.v2 manifest canonical SHA-256:
+
+`131027d2f136494eb388183f18dcb7eb0e9d7e9fe786f22dba25f4e1624c1483`
+
+Freeze commit:
+
+`16cd22a448e43e598b03446b978fb762fbd42523`
+
+Active rule counts by seed:
+
+`7, 6, 7, 6, 6`.
+
+Development-selected neural fusion weight:
+
+`lambda = 0.50`.
+
+Seed-specific fused thresholds:
+
+- seed 0: 0.692427396774292;
+- seed 1: 0.9354645609855652;
+- seed 2: 0.8299936652183533;
+- seed 3: 0.9747405052185059;
+- seed 4: 0.9527904391288757.
+
+The build accessed training and development only. It did not load pre/post.
+
+R0.v2 now supersedes R0.v1 as the protocol-conformant initial symbolic state for corrected System B and future C/D. This supersession was fixed before any R0.v2 held-out evaluation and is not conditional on whether R0.v2 performs better or worse than v1.

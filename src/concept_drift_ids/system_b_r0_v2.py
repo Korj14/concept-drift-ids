@@ -56,6 +56,9 @@ V2_MANIFEST_PATH = PROJECT_ROOT / "data" / "manifests" / "system_b_v2.json"
 V2_RULE_DIR = PROJECT_ROOT / "data" / "rules" / "system_b_r0_v2"
 AUDIT_PATH = PROJECT_ROOT / "results" / "audits" / "system_b_r0_protocol_audit_v1.json"
 AUDIT_FILE_SHA256 = "abfcb3af93531369427489fc27773f41e500a57279b0fa752b946c3985ebbf32"
+ACCEPTED_SYSTEM_B_V2_MANIFEST_SHA256 = (
+    "131027d2f136494eb388183f18dcb7eb0e9d7e9fe786f22dba25f4e1624c1483"
+)
 EXPECTED_AUDIT_SUMMARY = {
     "total_leaf_count": 62,
     "protocol_mismatch_count": 7,
@@ -548,6 +551,8 @@ def verify_r0_v2() -> None:
     core.pop("manifest_sha256", None)
     if canonical_json_hash(core) != stored:
         raise ValueError("R0.v2 manifest canonical hash mismatch.")
+    if stored != ACCEPTED_SYSTEM_B_V2_MANIFEST_SHA256:
+        raise ValueError("R0.v2 manifest is not the accepted frozen correction identity.")
     if manifest["source_system_b_v1_manifest_sha256"] != v1_manifest["manifest_sha256"]:
         raise ValueError("R0.v2 references the wrong R0.v1 source.")
     if manifest["source_protocol_audit_file_sha256"] != AUDIT_FILE_SHA256:

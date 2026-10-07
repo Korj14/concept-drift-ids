@@ -101,3 +101,13 @@ A result being inconvenient is not a valid reason for deviation.
 | Future C/D initial symbolic state | Use accepted R0.v2, not R0.v1, once v2 manifest is frozen | Deterministic protocol correction; no C/D outcomes | C/D within seed | **FROZEN PRINCIPLE; HASH TO FREEZE** |
 | Corrected System-B v2 evaluation | Required after committed/CI-accepted R0.v2; same pre/post scenario; cannot be described as first-look untouched | Frozen held-out partitions after v2 identity freeze | Corrected B static reference | **REQUIRED; NO RETUNING** |
 | R0.v1 evaluation role | Preserve as first historical evaluation of nonconformant implementation; never delete/overwrite | Existing immutable evidence | Audit/sensitivity/provenance | **FROZEN** |
+
+
+## Accepted R0.v2 identity — 7 October 2026
+
+| Control | Frozen value / rule | Evidence permitted | Matching scope | Status |
+|---|---|---|---|---|
+| Exact accepted R0.v2 manifest | `data/manifests/system_b_v2.json`; canonical SHA-256 `131027d2f136494eb388183f18dcb7eb0e9d7e9fe786f22dba25f4e1624c1483` | Training + development under frozen correction plan | Corrected B; future C/D start | **FROZEN — commit `16cd22a448e43e598b03446b978fb762fbd42523`** |
+| R0.v2 active rule counts | seed 0/1/2/3/4 = 7/6/7/6/6 | Development validation only | Corrected B; future C/D | **FROZEN** |
+| R0.v2 fusion weight | neural weight lambda = 0.50, rank-1 mean development MCC under frozen grid | Development fusion slice only | Corrected B; future C/D | **FROZEN** |
+| R0.v2 fused thresholds | seed0 0.692427396774292; seed1 0.9354645609855652; seed2 0.8299936652183533; seed3 0.9747405052185059; seed4 0.9527904391288757 | Development fusion slice only | Corrected B; future C/D initial operating point | **FROZEN** |

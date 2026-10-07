@@ -1,6 +1,6 @@
 # System B R0.v2 Protocol-Conformance Correction Plan
 
-**Status:** PROSPECTIVELY FROZEN BEFORE R0.v2 BUILD  
+**Status:** EXECUTED AND FROZEN; R0.v2 MANIFEST ACCEPTED; CORRECTED HELD-OUT EVALUATION NOT YET RUN  
 **Date:** 7 October 2026  
 **Source rule base:** R0.v1  
 **Source manifest:** `6e3589056d4c252c1a6c7cfd87b891fb8a24f1e30e86b17833b6035ea9ee86a8`  
@@ -121,3 +121,16 @@ For the manuscript:
 - use R0.v2 as the common initial symbolic state for C and D.
 
 This correction strengthens causal validity because C/D have not yet been executed.
+
+
+## 9. Accepted correction outcome
+
+R0.v2 was successfully generated under the correction contract.
+
+- manifest canonical SHA-256: `131027d2f136494eb388183f18dcb7eb0e9d7e9fe786f22dba25f4e1624c1483`;
+- artifact-freeze commit: `16cd22a448e43e598b03446b978fb762fbd42523`;
+- active counts: 7/6/7/6/6;
+- selected lambda: 0.50;
+- thresholds: 0.692427396774292 / 0.9354645609855652 / 0.8299936652183533 / 0.9747405052185059 / 0.9527904391288757.
+
+All hard correction invariants passed. The corrected B held-out evaluation remains unexecuted at this point.

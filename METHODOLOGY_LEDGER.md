@@ -1106,3 +1106,47 @@ The inherited v1 SHAP ranking is copied into each v2 rule artifact for provenanc
 The correction plan, Q1 audit and robustness plan are now required governance files in CI.
 
 No data were loaded and no R0.v2 artifact existed when these guards were added.
+
+
+---
+
+## 7 October 2026 — protocol-conformant R0.v2 frozen and independently sanitized
+
+R0.v2 was generated locally from clean commit `cf28304e2f08be731c3ebaf096f4f31fd66eaef7` under Python 3.11.9 / CPU and committed at `16cd22a448e43e598b03446b978fb762fbd42523`.
+
+Accepted manifest:
+
+`data/manifests/system_b_v2.json`
+
+Canonical SHA-256:
+
+`131027d2f136494eb388183f18dcb7eb0e9d7e9fe786f22dba25f4e1624c1483`
+
+The exact artifact-freeze commit passed Research Contract #91.
+
+Independent repository comparison against R0.v1 confirmed:
+
+- training, development-validation, development-fusion, SHAP-background and SHAP-attribution row identities are unchanged;
+- preprocessing, System-A manifest and dependency-lock identities are unchanged;
+- all five selected-feature lists and SHAP rankings are unchanged;
+- candidate counts are unchanged at 13/12/13/12/12;
+- the only changed candidate consequents are exactly the seven frozen-audit mismatches;
+- every changed candidate is rejected under the original quality gates;
+- every unaffected candidate reproduces antecedent, support, covered count, class precision, neural fidelity, stability, complexity and gate decision exactly;
+- the only active R0.v1 rules removed are the four audited defective rules (two in seed 1 and two in seed 3);
+- no new active rule is introduced;
+- final active counts are 7/6/7/6/6.
+
+The same frozen fusion grid was recomputed on the same development fusion slice. Lambda 0.50 remains the rank-1 selection by mean MCC (0.7716683), followed monotonically by 0.60, 0.70, 0.80, 0.90 and 1.00. This is a fresh development-only consequence of R0.v2, not an inherited v1 constant.
+
+Frozen R0.v2 fused thresholds:
+
+- seed 0: 0.692427396774292;
+- seed 1: 0.9354645609855652;
+- seed 2: 0.8299936652183533;
+- seed 3: 0.9747405052185059;
+- seed 4: 0.9527904391288757.
+
+Only seed 1's threshold changes materially from v1. No pre/post partition was loaded during the v2 build.
+
+R0.v2 is now the required symbolic initialization for future C/D regardless of corrected B held-out performance. R0.v1 remains immutable historical nonconformant evidence.

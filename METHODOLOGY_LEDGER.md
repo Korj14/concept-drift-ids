@@ -1372,3 +1372,25 @@ The remaining high-priority System-B assumption, symbolic/neural fusion authorit
 The sensitivity reuses the exact accepted R0.v2 rule artifacts. It does not rerun SHAP, fit a surrogate, change gates, or rebuild rules. Lambda values 0.70, 0.90 and 1.00 are fixed before held-out sensitivity execution. Each weight receives seed-specific thresholds selected only on the original development fusion slice with the original MCC/tie-break rule. The selection artifact must be committed before any pre/post sensitivity rescore.
 
 This design specifically tests whether the primary lambda=0.50 boundary choice and veto-like BENIGN rule authority materially drive the observed B conclusions without creating a post-hoc replacement baseline.
+
+
+### Fusion-authority CLI routing correction — 7 October 2026
+
+After the selection-robustness evaluation was frozen, the first attempted calls to
+`build-fusion-authority-robustness` and `verify-fusion-authority-robustness`
+were found to be misrouted by the System-B CLI dispatcher to
+`verify_duplicate_aware_validation()` through a catch-all `else` branch.
+
+Observed consequence:
+
+- both commands only re-verified the already frozen duplicate-aware validation artifact;
+- no fusion-authority selection directory or manifest was created;
+- no fusion-authority threshold selection occurred;
+- no pre_drift/post_drift partition was loaded by those attempted calls;
+- accepted A, R0.v2, B, and all frozen robustness evidence were unchanged.
+
+The dispatcher was corrected to use explicit command branches for duplicate-aware
+verification and all four fusion-authority operations, with an explicit error for
+any unhandled System-B command. A repository-only regression test now guards the
+mapping in CI. The fusion-authority sensitivity remains unexecuted until the
+corrected dispatcher commit passes CI.

@@ -1275,3 +1275,17 @@ The retrospective audit identified a documentation/implementation divergence: th
 Before any robustness tranche or C/D implementation, a training/development-only audit command was added. The neural teacher remains float32 in both comparison arms; accepted R0.v2 feature selections are reused exactly; SHAP is not recomputed. The audit compares float32 versus float64 surrogate topology, train/validation leaf assignment, weighted leaf consequents, validation-gate outcomes and active candidate sets.
 
 The decision rule was frozen before execution: harmless threshold roundoff alone does not replace R0.v2. A new version is required only if the dtype change produces a discrete scientific difference in topology/assignment, consequent, gate outcome or accepted candidate set. No pre/post partition is loaded by this audit.
+
+
+### Repository retrospective scenario/exact-pattern audit added
+
+A write-once post-hoc diagnostic was added to reproduce the earlier raw-data recheck inside the governed repository.
+
+It records:
+
+- exact training duplicate-excess rows after the frozen 77-feature representation;
+- exact training-seen feature-pattern counts for development, pre-drift and post-drift, including class decomposition;
+- feature-wise KS diagnostics for pre/post BENIGN and GoldenEye subsets using the historical deterministic 50,000-row BENIGN sampling convention;
+- conservative scenario wording that does not assume attack-distribution invariance.
+
+This diagnostic may read all frozen partitions because it is explicitly retrospective descriptive evidence after A/B outcomes are known. It may not change scenario construction, R0.v2, thresholds or primary evaluation.

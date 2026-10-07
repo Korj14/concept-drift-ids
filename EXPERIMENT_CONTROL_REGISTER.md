@@ -150,3 +150,6 @@ A result being inconvenient is not a valid reason for deviation.
 
 
 | Dtype audit decision rule | Version correction only for discrete float64-vs-float32 changes in topology/assignment, weighted consequent, gate decision or active candidate set; numerical threshold roundoff alone is additive provenance | Training + development only | R0.v2 conformance | **FROZEN BEFORE AUDIT EXECUTION** |
+
+
+| Retrospective scenario audit | Exact-pattern dependence + BENIGN/GoldenEye feature-distribution diagnostics; write-once and post-hoc | Frozen training/development/pre/post; no model selection | Scenario attribution / publication robustness | **IMPLEMENTATION ADDED; ARTIFACT TO FREEZE** |

@@ -1249,6 +1249,7 @@ def main() -> None:
     evaluate.add_argument("--device", default="cpu")
     subparsers.add_parser("supplement")
     subparsers.add_parser("verify-supplement")
+    subparsers.add_parser("audit-r0-protocol")
     args = parser.parse_args()
     if args.command == "build":
         build_and_freeze_system_b(device_name=args.device)
@@ -1259,9 +1260,12 @@ def main() -> None:
     elif args.command == "supplement":
         from concept_drift_ids.system_b_evidence import build_system_b_supplement
         build_system_b_supplement()
-    else:
+    elif args.command == "verify-supplement":
         from concept_drift_ids.system_b_evidence import verify_system_b_supplement
         verify_system_b_supplement()
+    else:
+        from concept_drift_ids.system_b_audit import audit_frozen_r0_protocol
+        audit_frozen_r0_protocol()
 
 
 if __name__ == "__main__":

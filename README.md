@@ -225,3 +225,21 @@ python run.py system-b verify-supplement
 
 This supplement reads only the committed frozen System-B CSV evidence. It does not load raw pre/post data or model checkpoints. Commit the resulting
 `results/frozen/system_b_v1_supplement_v1/` directory unchanged.
+
+
+### System-B Q1 protocol-conformance audit
+
+System B is under an adversarial pre-C/D scientific audit. Before treating R0.v1 as closed, run the training-only consequent-semantics diagnostic on the local machine that holds the frozen System-A checkpoints:
+
+```bash
+python run.py system-b audit-r0-protocol
+```
+
+Expected output always includes:
+
+```text
+development_loaded=false
+pre_post_partitions_loaded=false
+```
+
+The command writes `results/audits/system_b_r0_protocol_audit_v1.json`. It does not evaluate or reload the held-out pre/post partitions. Commit that audit artifact unchanged and do not rebuild or replace R0 based on performance.

@@ -939,3 +939,32 @@ The correct scientific response is therefore **preservation, not history deletio
 The missing paired/aggregate/staleness tables will be generated as `system_b_v1_supplement_v1` strictly from the already-frozen first-run CSV evidence. The supplement generator is mechanically prohibited from loading raw partitions or model checkpoints. This follows the same additive-evidence principle previously used for the System-A count supplement.
 
 No model rerun, threshold change, rule change, or result-driven retuning is authorized.
+
+
+---
+
+## 7 October 2026 — Q1 adversarial audit opened; surrogate-leaf protocol discrepancy identified
+
+After the System-B first-run evaluation and additive supplement were frozen, a full adversarial audit was opened against MAIN, the Reconciled operational plan, the frozen System-B protocol, implementation, evidence, and current 2025–2026 literature.
+
+The audit is not an attempt to retune System B. Its purpose is to distinguish protocol conformance, valid but assumption-sensitive design choices, and publication-level robustness gaps before the symbolic substrate is reused in C/D.
+
+A material protocol/code discrepancy was identified:
+
+- `SYSTEM_B_PROTOCOL.md` prospectively requires the candidate consequent to equal the fitted weighted CART leaf prediction;
+- the implementation that generated R0.v1 computes the consequent from the unweighted majority of frozen neural decisions among training observations satisfying the leaf path;
+- the surrogate itself was fitted with sample weights that equalize the two neural-predicted classes;
+- therefore the two consequent definitions are not mathematically guaranteed to agree.
+
+The historical ledger entry stating that the weighted-leaf semantics had been implemented is incorrect. It is preserved rather than rewritten.
+
+No System-B held-out outcome is needed to diagnose realized impact. A new command, `python run.py system-b audit-r0-protocol`, reconstructs the surrogate from **training only** using the frozen selected features and corresponding System-A checkpoint, then compares every stored candidate consequent with the weighted CART leaf class. It records development_used=false, pre_drift_used=false, and post_drift_used=false.
+
+The result will determine the next governance action:
+
+- zero realized mismatches -> preserve R0.v1 and document a no-effect implementation discrepancy;
+- one or more mismatches -> preserve all existing evidence, classify a real frozen-protocol implementation defect, and assess a versioned correction without selecting the remedy from held-out performance.
+
+The same audit also identified non-blocking but publication-important issues now recorded in `SYSTEM_B_Q1_AUDIT.md`: inactive-rule precision/fidelity semantics, seed-specific SHAP stability, background/top-k sensitivity, score-vs-probability terminology, effective benign-rule veto authority under the frozen fusion operating point, boundary lambda selection, threshold sensitivity, Destination Port/CICIDS2017 artifact risk, statistical hierarchy, and external checkpoint availability.
+
+No frozen System-B artifact is changed by this audit commit.

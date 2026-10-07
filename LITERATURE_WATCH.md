@@ -73,3 +73,21 @@ System-B consequence:
 - Longitudinal symbolic stability remains a separate evaluation outcome for the accepted static rule base.
 
 The already-known Dandamudi & Chhetri 2026 Satellite-IoT work remains directly relevant because SHAP-based automated symbolic rule extraction is occupied territory; it supports using SHAP + explicit rules as an implementation mechanism but not as the project's novelty. Pacheco & Pedroso remains the closest operational-lifecycle standard and continues to raise the bar for longitudinal evaluation.
+
+
+## 7 October 2026 — Q1 System-B reliability/robustness refresh
+
+The pre-C/D adversarial audit rechecked literature relevant to the **quality standard** for symbolic/explanation evidence rather than only the novelty conjunction.
+
+Material items:
+
+- Pacheco & Pedroso, *Operational lifecycle of interpretable multi-plane intrusion detection in 5G networks*, Computer Networks 289 (2026), Article 112672, DOI 10.1016/j.comnet.2026.112672. This remains a strong lifecycle benchmark: it evaluates temporal drift, explanation stability, OOD behavior, few-shot recovery, and matched operational costs. It reinforces that interpretability must be evaluated longitudinally and operationally rather than asserted from model form.
+- Maseno, Sun & Wang, *Reliability auditing of explanations for machine-learning-based intrusion detection systems*, Journal of Computer Virology and Hacking Techniques 22 (2026), Article 80, DOI 10.1007/s11416-026-00664-7. It reinforces separation of fidelity, consistency, robustness and predictive correctness.
+- Bizzarri et al., *Neurosymbolic AI for network intrusion detection systems: A survey*, Journal of Information Security and Applications 94 (2025), 104205, DOI 10.1016/j.jisa.2025.104205. It confirms that neuro-symbolic NIDS and rule-based symbolic integration are occupied territory.
+- Basci et al., *Explaining Concept Drift via Neuro-Symbolic Rules*, TRUST-AI 2025. This further establishes rules as a mechanism for explaining drift outside the project's exact causal lifecycle contribution.
+- Kalný, Jureček & Stamp, 2026 work on rule-based classifier representations for evolving malware families uses rule/feature structure, prediction agreement, activation stability and coverage to quantify drift. It is not a flow-level NIDS matched symbolic-evolution study, but it strengthens the expectation that rule-structure/activation changes be measured explicitly.
+- Recent surrogate/XAI methodology continues to warn that global surrogates are approximations whose fidelity must be measured and that feature-attribution conclusions can depend on background/reference choices. The System-B Q1 audit therefore treats SHAP background/top-k and surrogate fidelity as robustness questions rather than assuming the extraction pipeline is self-validating.
+
+Novelty verdict:
+
+No newly identified peer-reviewed flow-level NIDS study in this refresh collapses the full governing conjunction of endogenous statistical drift trigger + validated/versioned symbolic lifecycle + matched adaptive comparator isolating symbolic evolution + longitudinal explanation evaluation. The narrowed gap remains viable, subject to the implementation and robustness gates in `SYSTEM_B_Q1_AUDIT.md`.

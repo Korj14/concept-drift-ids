@@ -1,0 +1,20 @@
+{
+  "manifest_format_version": 1,
+  "evaluation_id": "system_b_fusion_authority_v1_evaluation",
+  "selection_manifest_sha256": "4532ab3996b1c79b0763e096ec549ae4368ff9ee88254f27639b1925d6a2bff9",
+  "files": {
+    "rows": {
+      "path": "results/robustness/system_b_fusion_authority_v1_evaluation/metrics_by_seed_weight.csv",
+      "sha256": "8faa86d8310f6032cb584cb846343693c3ce18753fbe29062b67a5d3b3895813"
+    },
+    "aggregate": {
+      "path": "results/robustness/system_b_fusion_authority_v1_evaluation/aggregate_metrics.csv",
+      "sha256": "9dc6a10549a36bdfd224109c325e071ef48ceeb2d86abf840cfba82ee6280d58"
+    },
+    "summary": {
+      "path": "results/robustness/system_b_fusion_authority_v1_evaluation/evaluation_summary.json",
+      "sha256": "a5a318c39d45db484258fcbb4bb95eb608619c29af6a53ca174d879ad54b0f01"
+    }
+  },
+  "manifest_sha256": "4c49eb29f56e521d1dce76a6373037b3df9c39b489dad1e0ff1d52d64d5d08ea"
+}

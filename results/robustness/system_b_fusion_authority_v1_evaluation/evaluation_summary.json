@@ -1,0 +1,20 @@
+{
+  "evaluation_format_version": 1,
+  "evaluation_id": "system_b_fusion_authority_v1_evaluation",
+  "evidence_status": "posthoc_fusion_authority_robustness_not_model_selection",
+  "selection_manifest_sha256": "4532ab3996b1c79b0763e096ec549ae4368ff9ee88254f27639b1925d6a2bff9",
+  "source_system_b_v2_manifest_sha256": "131027d2f136494eb388183f18dcb7eb0e9d7e9fe786f22dba25f4e1624c1483",
+  "evaluation_git": {
+    "commit": "06cb04a23a22ba72d2c904f92f795320d6fb392f",
+    "branch": "stage4-system-b",
+    "clean": "true"
+  },
+  "data_access": {
+    "training_used": false,
+    "development_used": false,
+    "pre_drift_used": true,
+    "post_drift_used": true
+  },
+  "interpretation_firewall": "Sensitivity outcomes quantify dependence on symbolic/neural authority. They cannot replace the accepted lambda=0.50 R0.v2 baseline.",
+  "artifact_sha256": "ee5d5856cb72cb231426587dbb488156e17f2669b7edb03bf8a27b2f066ed710"
+}

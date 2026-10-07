@@ -1,0 +1,32 @@
+{
+  "evaluation_format_version": 1,
+  "evaluation_id": "system_ab_pattern_dedup_training_chain_v1_evaluation",
+  "evidence_status": "posthoc_training_duplicate_chain_robustness_not_model_selection",
+  "source_alternate_teacher_manifest_sha256": "9aaf25d65052f3b6521c248d88aab6d55dd5dd2e02ed73d18452bc0460db3c5f",
+  "source_alternate_r0_manifest_sha256": "3e1d7a984776ccc5d336716f25063f0e9f655590f8b4a92c1b6928f4517fe681",
+  "preprocessing_state_hash": "4527f77220f2cf6063108a7d71d80aaa0e82099ad282ff25408a2d9ce3488b1e",
+  "evaluation_git": {
+    "commit": "f25bb65b50565c795a09832c38c0ad5b256d03c5",
+    "branch": "stage4-system-b",
+    "clean": "true"
+  },
+  "data_access": {
+    "training_used": false,
+    "development_used": false,
+    "pre_drift_used": true,
+    "post_drift_used": true
+  },
+  "systems": {
+    "system_a_pattern_dedup_training_v1": {
+      "role": "pattern_deduplicated_training_neural_teacher",
+      "threshold_source": "frozen_alternate_teacher_development_MCC"
+    },
+    "system_b_pattern_dedup_teacher_r0_v1": {
+      "role": "same_alternate_teacher_plus_frozen_alternate_R0",
+      "selected_neural_weight": 0.5,
+      "threshold_source": "frozen_alternate_R0_development_fusion_slice_MCC"
+    }
+  },
+  "interpretation_firewall": "This held-out evaluation quantifies dependence of the A-to-R0-to-B chain on training-row multiplicity. It cannot replace accepted System A, R0.v2, or corrected System B based on held-out outcomes.",
+  "artifact_sha256": "b38765fc0c1a936d1918da77ddf332ca46924d829e9d58aa5c7001ca27ed1f3d"
+}

@@ -732,3 +732,12 @@ A static code audit identified that the shared `binary_metrics` helper computes 
 The implementation review clarified that each extracted candidate must preserve the fitted surrogate's semantics. The consequent is therefore taken from the fitted decision-tree leaf prediction, including the effect of the prospectively frozen neural-class sample weights. It is not recomputed afterward from an unweighted majority of covered training decisions. Independent development neural-fidelity validation remains the acceptance safeguard.
 
 Candidate logs were also expanded to retain the full canonical antecedent for accepted and rejected candidates, so later lifecycle/rejection analysis does not depend only on opaque candidate IDs. These changes occurred before any System-B rule generation or held-out evaluation.
+
+
+### Common longitudinal grid activated for frozen System A
+
+Because the 5,000-row, non-overlapping, boundary-aligned reporting grid was frozen prospectively before System-B held-out outcomes, the previously accepted System-A checkpoints can now be rescored on that identical grid as required by the Reconciled operational plan. A separate `system_a_v1_longitudinal_v1` supplement was implemented.
+
+The supplement does not retrain, recalibrate, rethreshold, or rewrite the original System-A evaluation. It reuses every frozen checkpoint and threshold, records per-seed/per-window confusion counts and detection metrics, links back to the accepted System-A evaluation manifest, and writes new immutable LF-normalized evidence. Single-class windows retain thresholded metrics while ranking metrics are recorded as undefined.
+
+No longitudinal System-A rescore was executed during this repository-only implementation step because the ignored local checkpoint bytes remain local-only.

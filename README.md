@@ -178,6 +178,10 @@ python --version
 python -m pytest -q
 python run.py system-a verify
 
+# The common reporting grid is now frozen. Re-score accepted System A
+# without retraining or rethresholding and preserve it as a separate supplement.
+python run.py system-a rescore-windows --device cpu
+
 # Training + development only. This must not load pre/post.
 python run.py system-b build --device cpu
 

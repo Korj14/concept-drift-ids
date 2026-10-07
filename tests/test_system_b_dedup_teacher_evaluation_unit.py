@@ -44,3 +44,30 @@ def test_pattern_dedup_chain_verifier_checks_source_and_file_hashes() -> None:
     assert "source_alternate_r0_manifest_sha256" in source
     assert "canonical_json_hash" in source
     assert "sha256_file" in source
+
+
+def test_pattern_dedup_chain_rectangularizes_mixed_system_rows() -> None:
+    rows = [
+        {
+            "system_id": evaluation.ALT_A_ID,
+            "partition": "pre_drift",
+            "seed": 0,
+            "accuracy": 0.9,
+        },
+        {
+            "system_id": evaluation.ALT_B_ID,
+            "partition": "pre_drift",
+            "seed": 0,
+            "accuracy": 0.91,
+            "resolved_coverage": 0.8,
+            "attack_symbolic_correctness": 0.7,
+        },
+    ]
+
+    rectangular = evaluation._rectangularize_rows(rows)
+
+    assert list(rectangular[0]) == list(rectangular[1])
+    assert rectangular[0]["resolved_coverage"] is None
+    assert rectangular[0]["attack_symbolic_correctness"] is None
+    assert rectangular[1]["resolved_coverage"] == 0.8
+    assert rectangular[1]["attack_symbolic_correctness"] == 0.7

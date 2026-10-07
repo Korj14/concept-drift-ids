@@ -715,3 +715,8 @@ Repository-only implementation now provides:
 - `system-b evaluate`: refuses to start unless the freeze is committed (clean worktree), then and only then loads pre/post and writes immutable seed-, rule-, and reporting-window evidence.
 
 The build is fail-closed: if any seed produces no validated active rules, it aborts rather than weakening validation gates using held-out evidence. No System-B training/development build or held-out evaluation was executed while this code was authored; repository-only tests exercise the partition firewall, deterministic development split, CPU requirement, global-lambda tie policy, and overwrite protection.
+
+
+### System-B CLI routing defect corrected before data execution
+
+Repository review after the orchestration commit found that the intended root-runner edit had not taken effect: `run.py` listed `system-b` as a valid command but still dispatched every non-preprocessing command to System A. The defect was identified before any System-B build or evaluation was executed. The runner was corrected to dispatch System A and System B explicitly, and a repository-only regression assertion was added so this integration path cannot silently regress.

@@ -70,3 +70,9 @@ def test_development_split_is_deterministic_and_disjoint() -> None:
     np.testing.assert_array_equal(fu, fu2)
     assert not set(va).intersection(fu)
     assert len(va) + len(fu) == len(y)
+
+
+def test_root_runner_declares_system_b_command() -> None:
+    text = (system_b.PROJECT_ROOT / "run.py").read_text(encoding="utf-8")
+    assert '"system-b"' in text
+    assert "from concept_drift_ids.system_b import main as run_system_b" in text

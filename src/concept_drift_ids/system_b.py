@@ -21,6 +21,7 @@ from torch import nn
 from concept_drift_ids.frozen_preprocessing import load_frozen_preprocessing, transform_frame
 from concept_drift_ids.neural import (
     binary_metrics,
+    mean_ci95,
     predict_probabilities,
     select_mcc_threshold,
 )
@@ -55,6 +56,9 @@ MANIFEST_PATH = PROJECT_ROOT / "data" / "manifests" / "system_b_v1.json"
 RULE_DIR = PROJECT_ROOT / "data" / "rules" / "system_b_r0_v1"
 EVALUATION_DIR = PROJECT_ROOT / "results" / "frozen" / "system_b_v1"
 EVALUATION_MANIFEST_PATH = EVALUATION_DIR / "evaluation_manifest.json"
+ACCEPTED_SYSTEM_B_MANIFEST_SHA256 = (
+    "6e3589056d4c252c1a6c7cfd87b891fb8a24f1e30e86b17833b6035ea9ee86a8"
+)
 LOCK_PATH = PROJECT_ROOT / "requirements-lock.txt"
 
 GOVERNING_SOURCE_HASHES = {
@@ -668,6 +672,10 @@ def _load_manifest_b(*, require_checkpoints: bool) -> dict[str, Any]:
     core.pop("manifest_sha256", None)
     if canonical_json_hash(core) != stored:
         raise ValueError("System-B manifest hash mismatch.")
+    if stored != ACCEPTED_SYSTEM_B_MANIFEST_SHA256:
+        raise ValueError(
+            "System-B manifest is internally valid but is not the accepted R0.v1 identity."
+        )
     if manifest["config_sha256"] != canonical_json_hash(SYSTEM_B_CONFIG):
         raise ValueError("System-B config no longer matches frozen manifest.")
     preprocessing = load_frozen_preprocessing()
@@ -685,13 +693,63 @@ def _load_manifest_b(*, require_checkpoints: bool) -> dict[str, Any]:
         path = PROJECT_ROOT / entry["path"]
         if sha256_file(path) != entry["sha256"]:
             raise ValueError(f"Rule artifact hash mismatch for seed {seed}.")
+        payload = json.loads(path.read_text(encoding="utf-8"))
+        stored_artifact = payload.get("artifact_sha256")
+        artifact_core = dict(payload)
+        artifact_core.pop("artifact_sha256", None)
+        if canonical_json_hash(artifact_core) != stored_artifact:
+            raise ValueError(f"Rule artifact canonical hash mismatch for seed {seed}.")
+        if stored_artifact != entry["artifact_sha256"]:
+            raise ValueError(f"Rule artifact identity mismatch for seed {seed}.")
+        if int(payload["seed"]) != int(seed):
+            raise ValueError(f"Rule artifact seed mismatch for seed {seed}.")
+        if len(payload["rules"]) != int(entry["active_rule_count"]):
+            raise ValueError(f"Rule artifact active-count mismatch for seed {seed}.")
     return manifest
+
+
+def _load_and_verify_evaluation_manifest_b(
+    system_manifest: dict[str, Any],
+) -> dict[str, Any]:
+    if not EVALUATION_MANIFEST_PATH.exists():
+        raise FileNotFoundError(
+            f"Missing frozen System-B evaluation manifest: {EVALUATION_MANIFEST_PATH}"
+        )
+    evaluation = json.loads(EVALUATION_MANIFEST_PATH.read_text(encoding="utf-8"))
+    stored = evaluation.get("manifest_sha256")
+    core = dict(evaluation)
+    core.pop("manifest_sha256", None)
+    if canonical_json_hash(core) != stored:
+        raise ValueError("System-B evaluation manifest hash mismatch.")
+    if evaluation.get("system_manifest_sha256") != system_manifest["manifest_sha256"]:
+        raise ValueError("System-B evaluation references the wrong R0 manifest.")
+    files = evaluation.get("files")
+    if not isinstance(files, dict) or not files:
+        raise ValueError("System-B evaluation manifest has no file inventory.")
+    for name, entry in files.items():
+        path = PROJECT_ROOT / entry["path"]
+        if not path.exists():
+            raise FileNotFoundError(
+                f"Missing frozen System-B evaluation artifact {name!r}: {path}"
+            )
+        if sha256_file(path) != entry["sha256"]:
+            raise ValueError(
+                f"Frozen System-B evaluation artifact hash mismatch for {name!r}."
+            )
+    return evaluation
 
 
 def verify_system_b() -> None:
     manifest = _load_manifest_b(require_checkpoints=True)
     print(f"system_b_manifest={MANIFEST_PATH}")
     print(f"manifest_hash={manifest['manifest_sha256']}")
+    if EVALUATION_MANIFEST_PATH.exists():
+        evaluation = _load_and_verify_evaluation_manifest_b(manifest)
+        print(f"evaluation_manifest={EVALUATION_MANIFEST_PATH}")
+        print(f"evaluation_manifest_hash={evaluation['manifest_sha256']}")
+        print("evaluation_status=verified")
+    else:
+        print("evaluation_status=not_present")
     print("pre_post_partitions_loaded=false")
     print("status=verified")
 
@@ -751,7 +809,10 @@ def _safe_window_metrics(y: np.ndarray, scores: np.ndarray, threshold: float) ->
     }
 
 
-def _symbolic_summary(symbolic: dict[str, np.ndarray], neural: np.ndarray) -> dict[str, float]:
+def _symbolic_summary(
+    symbolic: dict[str, np.ndarray],
+    neural: np.ndarray,
+) -> dict[str, float | None]:
     covered = symbolic["covered"]
     symbolic_class = symbolic["symbolic_class"]
     return {
@@ -761,9 +822,211 @@ def _symbolic_summary(symbolic: dict[str, np.ndarray], neural: np.ndarray) -> di
         "conflict_abstention_rate": float(np.mean(symbolic["conflict_abstain"])),
         "symbolic_neural_fidelity": (
             float(np.mean(symbolic_class[covered] == neural[covered]))
-            if np.any(covered) else 0.0
+            if np.any(covered) else None
         ),
     }
+
+
+EVIDENCE_METRICS = (
+    "accuracy",
+    "balanced_accuracy",
+    "precision",
+    "recall",
+    "f1",
+    "fpr",
+    "mcc",
+    "roc_auc",
+    "average_precision",
+    "resolved_coverage",
+    "raw_activation_coverage",
+    "uncovered_rate",
+    "conflict_abstention_rate",
+    "symbolic_neural_fidelity",
+)
+
+RULE_STALENESS_METRICS = (
+    "support",
+    "covered_count",
+    "class_precision",
+    "neural_fidelity",
+    "stability",
+    "activation_rate",
+)
+
+
+def _build_metric_tables(
+    detection_rows: list[dict[str, object]],
+    *,
+    scenario_version: int,
+) -> tuple[
+    list[dict[str, object]],
+    list[dict[str, object]],
+    list[dict[str, object]],
+    list[dict[str, object]],
+]:
+    if not detection_rows:
+        raise ValueError("Detection evidence is empty.")
+    system_id = str(detection_rows[0]["system_id"])
+    scenario_id = str(detection_rows[0]["scenario_id"])
+    by_partition_seed = {
+        (str(row["partition"]), int(row["seed"])): row
+        for row in detection_rows
+    }
+
+    metric_rows: list[dict[str, object]] = []
+    aggregate_rows: list[dict[str, object]] = []
+    for partition in ("pre_drift", "post_drift"):
+        partition_rows = [
+            by_partition_seed[(partition, seed)]
+            for seed in SYSTEM_B_CONFIG["seeds"]
+        ]
+        for row in partition_rows:
+            for metric in EVIDENCE_METRICS:
+                value = row[metric]
+                if value is None:
+                    continue
+                metric_rows.append(
+                    {
+                        "system_id": system_id,
+                        "scenario_id": scenario_id,
+                        "scenario_version": scenario_version,
+                        "partition": partition,
+                        "seed": int(row["seed"]),
+                        "threshold": float(row["threshold"]),
+                        "metric": metric,
+                        "value": float(value),
+                    }
+                )
+        for metric in EVIDENCE_METRICS:
+            values = [
+                float(row[metric])
+                for row in partition_rows
+                if row[metric] is not None
+            ]
+            if not values:
+                continue
+            summary = mean_ci95(values)
+            aggregate_rows.append(
+                {
+                    "system_id": system_id,
+                    "scenario_id": scenario_id,
+                    "scenario_version": scenario_version,
+                    "partition": partition,
+                    "metric": metric,
+                    "n_seeds": summary["n"],
+                    "mean": summary["mean"],
+                    "std": summary["std"],
+                    "ci95_low": summary["ci95_low"],
+                    "ci95_high": summary["ci95_high"],
+                }
+            )
+
+    paired_rows: list[dict[str, object]] = []
+    aggregate_paired_rows: list[dict[str, object]] = []
+    for metric in EVIDENCE_METRICS:
+        deltas: list[float] = []
+        for seed in SYSTEM_B_CONFIG["seeds"]:
+            pre = by_partition_seed[("pre_drift", seed)][metric]
+            post = by_partition_seed[("post_drift", seed)][metric]
+            if pre is None or post is None:
+                continue
+            delta = float(post) - float(pre)
+            deltas.append(delta)
+            paired_rows.append(
+                {
+                    "system_id": system_id,
+                    "scenario_id": scenario_id,
+                    "scenario_version": scenario_version,
+                    "from_partition": "pre_drift",
+                    "to_partition": "post_drift",
+                    "seed": seed,
+                    "metric": metric,
+                    "delta": delta,
+                }
+            )
+        if deltas:
+            summary = mean_ci95(deltas)
+            aggregate_paired_rows.append(
+                {
+                    "system_id": system_id,
+                    "scenario_id": scenario_id,
+                    "scenario_version": scenario_version,
+                    "from_partition": "pre_drift",
+                    "to_partition": "post_drift",
+                    "metric": metric,
+                    "n_seeds": summary["n"],
+                    "mean_delta": summary["mean"],
+                    "std_delta": summary["std"],
+                    "ci95_low": summary["ci95_low"],
+                    "ci95_high": summary["ci95_high"],
+                }
+            )
+    return metric_rows, aggregate_rows, paired_rows, aggregate_paired_rows
+
+
+def _rule_gate_pass(row: dict[str, object]) -> bool:
+    return bool(
+        float(row["support"]) >= SYSTEM_B_CONFIG["validation"]["min_support"]
+        and int(row["covered_count"]) >= SYSTEM_B_CONFIG["validation"]["min_covered"]
+        and float(row["class_precision"]) >= SYSTEM_B_CONFIG["validation"]["min_class_precision"]
+        and float(row["neural_fidelity"]) >= SYSTEM_B_CONFIG["validation"]["min_neural_fidelity"]
+        and float(row["stability"]) >= SYSTEM_B_CONFIG["validation"]["min_stability"]
+        and int(row["complexity"]) <= SYSTEM_B_CONFIG["validation"]["max_complexity"]
+    )
+
+
+def _rule_staleness_deltas(
+    rule_rows: list[dict[str, object]],
+    *,
+    scenario_version: int,
+) -> list[dict[str, object]]:
+    by_key = {
+        (str(row["partition"]), int(row["seed"]), str(row["rule_id"])): row
+        for row in rule_rows
+    }
+    pre_keys = {
+        (seed, rule_id)
+        for partition, seed, rule_id in by_key
+        if partition == "pre_drift"
+    }
+    post_keys = {
+        (seed, rule_id)
+        for partition, seed, rule_id in by_key
+        if partition == "post_drift"
+    }
+    if pre_keys != post_keys:
+        raise ValueError("Pre/post rule identities differ; cannot compute staleness deltas.")
+
+    rows: list[dict[str, object]] = []
+    for seed, rule_id in sorted(pre_keys):
+        pre = by_key[("pre_drift", seed, rule_id)]
+        post = by_key[("post_drift", seed, rule_id)]
+        pre_pass = _rule_gate_pass(pre)
+        post_pass = _rule_gate_pass(post)
+        out: dict[str, object] = {
+            "system_id": SYSTEM_B_ID,
+            "scenario_id": str(pre["scenario_id"]),
+            "scenario_version": scenario_version,
+            "seed": seed,
+            "rule_id": rule_id,
+            "consequent": int(pre["consequent"]),
+            "complexity": int(pre["complexity"]),
+            "pre_gate_pass": pre_pass,
+            "post_gate_pass": post_pass,
+            "gate_transition": (
+                ("pass" if pre_pass else "fail")
+                + "_to_"
+                + ("pass" if post_pass else "fail")
+            ),
+        }
+        for metric in RULE_STALENESS_METRICS:
+            pre_value = float(pre[metric])
+            post_value = float(post[metric])
+            out[f"pre_{metric}"] = pre_value
+            out[f"post_{metric}"] = post_value
+            out[f"delta_{metric}"] = post_value - pre_value
+        rows.append(out)
+    return rows
 
 
 def evaluate_system_b(*, device_name: str) -> None:
@@ -775,6 +1038,7 @@ def evaluate_system_b(*, device_name: str) -> None:
     frozen_a = _load_frozen_system_a_manifest()
     preprocessing = load_frozen_preprocessing()
     neural_weight = float(manifest["fusion"]["selected_neural_weight"])
+    evaluation_runtime = _runtime()
 
     detection_rows: list[dict[str, object]] = []
     rule_rows: list[dict[str, object]] = []
@@ -871,12 +1135,36 @@ def evaluate_system_b(*, device_name: str) -> None:
                 })
             del model, neural_prob, neural_decision, symbolic, fused
 
+    (
+        metric_rows,
+        aggregate_metric_rows,
+        paired_delta_rows,
+        aggregate_paired_delta_rows,
+    ) = _build_metric_tables(
+        detection_rows,
+        scenario_version=int(manifest["scenario_version"]),
+    )
+    staleness_rows = _rule_staleness_deltas(
+        rule_rows,
+        scenario_version=int(manifest["scenario_version"]),
+    )
+
     EVALUATION_DIR.mkdir(parents=True, exist_ok=False)
     detection_path = EVALUATION_DIR / "detection_by_seed.csv"
+    metric_path = EVALUATION_DIR / "metrics_by_seed.csv"
+    aggregate_metric_path = EVALUATION_DIR / "aggregate_metrics.csv"
+    paired_delta_path = EVALUATION_DIR / "paired_deltas_by_seed.csv"
+    aggregate_paired_delta_path = EVALUATION_DIR / "aggregate_paired_deltas.csv"
     rule_path = EVALUATION_DIR / "rule_quality_by_seed_partition.csv"
+    staleness_path = EVALUATION_DIR / "rule_staleness_deltas.csv"
     window_path = EVALUATION_DIR / "window_metrics.csv"
     _write_csv_new(detection_path, detection_rows)
+    _write_csv_new(metric_path, metric_rows)
+    _write_csv_new(aggregate_metric_path, aggregate_metric_rows)
+    _write_csv_new(paired_delta_path, paired_delta_rows)
+    _write_csv_new(aggregate_paired_delta_path, aggregate_paired_delta_rows)
     _write_csv_new(rule_path, rule_rows)
+    _write_csv_new(staleness_path, staleness_rows)
     _write_csv_new(window_path, window_rows)
 
     summary = {
@@ -886,10 +1174,29 @@ def evaluate_system_b(*, device_name: str) -> None:
         "scenario_id": manifest["scenario_id"],
         "scenario_version": manifest["scenario_version"],
         "evaluation_git": evaluation_git,
+        "runtime": evaluation_runtime,
         "data_access": {"pre_drift_used": True, "post_drift_used": True},
+        "metric_roles": {
+            "detection": [
+                "precision", "recall", "f1", "fpr", "mcc",
+                "roc_auc", "average_precision",
+            ],
+            "secondary_detection": ["accuracy", "balanced_accuracy"],
+            "symbolic_aggregate": [
+                "resolved_coverage", "raw_activation_coverage",
+                "uncovered_rate", "conflict_abstention_rate",
+                "symbolic_neural_fidelity",
+            ],
+            "rule_staleness": list(RULE_STALENESS_METRICS),
+        },
         "rows": {
             "detection": len(detection_rows),
+            "metrics_by_seed": len(metric_rows),
+            "aggregate_metrics": len(aggregate_metric_rows),
+            "paired_deltas": len(paired_delta_rows),
+            "aggregate_paired_deltas": len(aggregate_paired_delta_rows),
             "rule_quality": len(rule_rows),
+            "rule_staleness_deltas": len(staleness_rows),
             "windows": len(window_rows),
         },
     }
@@ -899,7 +1206,12 @@ def evaluate_system_b(*, device_name: str) -> None:
     files = {
         "summary": summary_path,
         "detection_by_seed": detection_path,
+        "metrics_by_seed": metric_path,
+        "aggregate_metrics": aggregate_metric_path,
+        "paired_deltas_by_seed": paired_delta_path,
+        "aggregate_paired_deltas": aggregate_paired_delta_path,
         "rule_quality": rule_path,
+        "rule_staleness_deltas": staleness_path,
         "window_metrics": window_path,
     }
     evaluation_manifest = {
@@ -911,6 +1223,7 @@ def evaluate_system_b(*, device_name: str) -> None:
         "scenario_version": manifest["scenario_version"],
         "preprocessing_state_hash": preprocessing.state_hash,
         "evaluation_git": evaluation_git,
+        "runtime": evaluation_runtime,
         "files": {
             name: {
                 "path": path.relative_to(PROJECT_ROOT).as_posix(),

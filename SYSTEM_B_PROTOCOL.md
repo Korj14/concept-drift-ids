@@ -489,3 +489,26 @@ The manifest records `training_used=true`, `development_used=true`, `pre_drift_u
 The Research Contract run for the R0 freeze commit completed successfully. No System-B pre/post evaluation artifact existed when this acceptance section was added.
 
 This acceptance freezes the initial symbolic substrate. Later System B evaluation must not modify it, and Systems C/D must reuse the corresponding seed-matched R0 unless a separately versioned prospective deviation is scientifically justified.
+
+
+## 19. Pre-evaluation evidence-completeness clarification — 7 October 2026
+
+A static audit of the untouched-evaluation path after R0 freeze identified a reporting-completeness issue before any System-B pre/post execution: seed-level detection/rule/window evidence was already preserved, but the evaluator did not yet emit explicit System-A-compatible aggregate/paired metric tables or a direct per-rule pre-to-post staleness-delta table.
+
+This is corrected prospectively without changing the frozen R0, neural checkpoints, lambda, fused thresholds, preprocessing, validation gates, window policy, or any outcome-sensitive treatment variable.
+
+The untouched System-B evaluation must now additionally write:
+
+- `metrics_by_seed.csv` using the same long-form identity/metric/value convention as System A;
+- `aggregate_metrics.csv` with n, mean, sample SD, and 95% t-intervals across the five frozen seeds;
+- `paired_deltas_by_seed.csv` for paired post-minus-pre effects;
+- `aggregate_paired_deltas.csv` from the five paired seed effects;
+- `rule_staleness_deltas.csv`, matching every frozen rule ID across pre/post and preserving raw pre, post, and delta values for support, covered count, class precision, neural fidelity, bootstrap gate-persistence stability, and activation rate.
+
+The rule-staleness table may state whether the already-frozen conjunctive validation gate is passed in each partition and the resulting pass/fail transition. It must **not** invent or optimize a composite staleness index after seeing the outcomes.
+
+Symbolic-neural fidelity is undefined when no resolved symbolic explanation is present. Such cases are therefore recorded as null/undefined rather than numerically fabricating fidelity = 0.
+
+The evaluator is also pinned to the accepted System-B manifest canonical SHA-256 `6e3589056d4c252c1a6c7cfd87b891fb8a24f1e30e86b17833b6035ea9ee86a8` and verifies both raw and canonical rule-artifact identities before loading held-out partitions. Evaluation runtime/software provenance is written into the frozen evidence manifest.
+
+These changes strengthen evidence completeness and integrity only. No held-out System-B outcome had been generated or inspected when they were made.

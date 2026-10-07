@@ -876,3 +876,30 @@ A documentation lag was identified before evaluation: the protocol header and co
 A new repository-only frozen-contract test is also added so CI verifies the committed System-B manifest and R0 artifacts directly, including hashes, checkpoint/threshold linkage, data-access firewall flags, active-rule counts, and validation-gate invariants.
 
 No System-B pre/post metric was viewed or used during this sanitation/freeze synchronization.
+
+
+---
+
+## 7 October 2026 — pre-evaluation evidence-path sanitation
+
+After accepting the development-only R0 freeze and before any System-B pre/post execution, the untouched evaluator was reviewed against MAIN, the Reconciled operational plan, `SYSTEM_B_PROTOCOL.md`, and the common System-A evidence schema.
+
+The audit found no leakage path: the evaluator loads pre/post only after clean-worktree validation, accepted R0-manifest verification, frozen System-A checkpoint verification, and frozen preprocessing verification.
+
+One publication-grade evidence-completeness gap was found prospectively. The evaluator preserved wide seed-level detection evidence, per-rule pre/post evidence, and window trajectories, but it did not yet emit explicit paired/aggregate metric tables or a direct rule-level staleness-delta table. Although those values would be derivable later, relying on retrospective reconstruction would be weaker than freezing plot-ready machine-readable evidence at evaluation time.
+
+The evaluator was therefore strengthened before any held-out execution to add:
+
+- System-A-compatible long-form seed metric evidence;
+- aggregate pre/post metric summaries across the five fixed seeds;
+- paired seed-level post-minus-pre deltas and aggregate paired-effect intervals;
+- direct rule-ID-matched pre/post staleness deltas;
+- frozen-gate pass/fail transition labels without a composite staleness score;
+- evaluation runtime/software provenance;
+- a read-only post-evaluation hash verifier.
+
+A second semantic hygiene fix records symbolic-neural fidelity as undefined when no resolved symbolic coverage exists instead of encoding absence of an explanation as fidelity zero.
+
+Finally, the evaluation loader now pins the exact accepted `R0.v1` manifest canonical identity and verifies canonical rule-artifact hashes in addition to raw file hashes. This prevents an internally self-consistent but non-accepted replacement rule base from silently entering the untouched evaluation path.
+
+No System-B pre/post values were available or inspected during these changes. The frozen R0, lambda, thresholds, preprocessing, checkpoints, validation gates, and longitudinal window policy are unchanged.

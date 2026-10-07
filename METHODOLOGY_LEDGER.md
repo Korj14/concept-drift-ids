@@ -1349,3 +1349,10 @@ This provides a dependence-aware sensitivity for support/precision/fidelity/stab
 The selection-robustness stage now includes two alternate balanced SHAP backgrounds (seeds 20261008 and 20261009) and one natural-prevalence 256-row background (seed 20261007). The original balanced 20261007 background remains the primary reference.
 
 For these variants, the attribution sample remains exactly the frozen balanced 1,024/1,024 training sample from seed 20261007. Thus only the background reference distribution/seed changes. Each resulting ranking proceeds through the same surrogate, validation and development-only fusion selection pipeline before any held-out robustness evaluation.
+
+
+### Pattern-deduplicated System-A robustness teacher implemented
+
+A separate post-hoc alternate teacher now tests whether the primary neural baseline materially depends on repeated training observations. Training rows are collapsed by exact raw 77-feature pattern plus binary label, preserving contradictory BENIGN/attack representations as separate observations and forbidding majority relabeling. The accepted training-fitted preprocessor is reused without refit.
+
+The neural architecture, initialization/seeds, optimizer, early-stopping rule, development evidence, class-weight formula and MCC threshold-selection procedure remain the accepted System-A protocol. The alternate checkpoints and manifest are isolated under robustness paths and cannot replace accepted System A based on later held-out performance. No pre/post partition is loaded during alternate-teacher training.

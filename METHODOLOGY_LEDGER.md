@@ -1090,3 +1090,19 @@ The correction decision is outcome-independent: if the build satisfies the froze
 A later corrected B v2 evaluation is required for static-reference comparability. It will be labeled a protocol-defect correction rather than an untouched first-look evaluation because v1 held-out outcomes are historically known.
 
 No C/D adaptive outcome has been generated, so the primary future C-vs-D causal contrast remains uncontaminated.
+
+
+### R0.v2 pre-execution sanitation hardening
+
+Before any local R0.v2 build, the correction code was reviewed again.
+
+Two additional integrity guards were added:
+
+- the v2 builder now invokes the complete accepted R0.v1 verifier, including source rule-artifact and checkpoint identities, rather than trusting only the v1 manifest's internal hash;
+- every candidate whose consequent is unaffected by the audited defect must reproduce its original development support, covered count, class precision, neural fidelity, bootstrap stability, complexity and gate decision exactly. Any discrepancy aborts v2 before fusion selection.
+
+The inherited v1 SHAP ranking is copied into each v2 rule artifact for provenance; SHAP itself remains unrecomputed.
+
+The correction plan, Q1 audit and robustness plan are now required governance files in CI.
+
+No data were loaded and no R0.v2 artifact existed when these guards were added.

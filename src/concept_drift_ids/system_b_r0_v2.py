@@ -40,6 +40,7 @@ from concept_drift_ids.system_b import (
     _fit_surrogate,
     _git_state,
     _hash_int64,
+    _load_manifest_b,
     _record_for_seed,
     _require_environment,
     _runtime,
@@ -105,13 +106,10 @@ def _load_audit() -> dict[str, Any]:
 
 
 def _load_v1_manifest() -> dict[str, Any]:
-    manifest = json.loads(MANIFEST_PATH.read_text(encoding="utf-8"))
-    stored = manifest.get("manifest_sha256")
-    core = dict(manifest)
-    core.pop("manifest_sha256", None)
-    if canonical_json_hash(core) != stored:
-        raise ValueError("System-B v1 manifest canonical hash mismatch.")
-    if stored != ACCEPTED_SYSTEM_B_MANIFEST_SHA256:
+    # Reuse the accepted v1 verifier so the correction cannot be built from a
+    # self-consistent manifest whose source rule artifacts/checkpoints differ.
+    manifest = _load_manifest_b(require_checkpoints=True)
+    if manifest["manifest_sha256"] != ACCEPTED_SYSTEM_B_MANIFEST_SHA256:
         raise ValueError("System-B v1 manifest is not the accepted source identity.")
     return manifest
 
@@ -129,6 +127,39 @@ def _antecedent_equal(stored: Sequence[dict[str, object]], corrected: Sequence[C
         if float(left["threshold"]) != float(right.threshold):
             return False
     return True
+
+
+def _assert_unaffected_candidate_reproduced(
+    source: dict[str, object],
+    *,
+    quality: dict[str, float | int],
+    stability: float,
+    complexity: int,
+    accepted: bool,
+) -> None:
+    expected = {
+        "support": float(source["support"]),
+        "covered_count": int(source["covered_count"]),
+        "class_precision": float(source["class_precision"]),
+        "neural_fidelity": float(source["neural_fidelity"]),
+        "stability": float(source["stability"]),
+        "complexity": int(source["complexity"]),
+        "accepted_by_quality_gate": bool(source["accepted_by_quality_gate"]),
+    }
+    observed = {
+        "support": float(quality["support"]),
+        "covered_count": int(quality["covered_count"]),
+        "class_precision": float(quality["class_precision"]),
+        "neural_fidelity": float(quality["neural_fidelity"]),
+        "stability": float(stability),
+        "complexity": int(complexity),
+        "accepted_by_quality_gate": bool(accepted),
+    }
+    if observed != expected:
+        raise ValueError(
+            "An unaffected R0.v1 candidate did not reproduce exactly under the "
+            "R0.v2 correction build."
+        )
 
 
 def _corrected_candidates(
@@ -220,6 +251,14 @@ def _corrected_candidates(
             reasons.append("complexity")
         accepted = not reasons
         changed = int(source["consequent"]) != consequent
+        if not changed:
+            _assert_unaffected_candidate_reproduced(
+                source,
+                quality=quality,
+                stability=stability,
+                complexity=len(conditions),
+                accepted=accepted,
+            )
         log.append({
             "candidate": candidate_name,
             "source_v1_rule_id": source["rule_id"],
@@ -388,6 +427,7 @@ def build_and_freeze_r0_v2(*, device_name: str) -> None:
             "system_a_threshold": threshold_a,
             "selected_features": selected,
             "selected_features_source": "R0.v1 frozen SHAP selection",
+            "shap_ranking": v1_artifact["shap_ranking"],
             "source_v1_rule_artifact_sha256": v1_entry["artifact_sha256"],
             "candidate_log": candidate_log,
             "rules": [rule.to_dict() for rule in rules],
@@ -468,6 +508,7 @@ def build_and_freeze_r0_v2(*, device_name: str) -> None:
             "validation_gates_unchanged": True,
             "fusion_grid_and_tie_breaks_unchanged": True,
             "unexpected_active_rule_change_forbidden": True,
+            "unaffected_candidate_validation_must_reproduce_exactly": True,
             "held_out_evidence_used": False,
         },
         "fusion": {

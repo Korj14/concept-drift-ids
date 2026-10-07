@@ -45,6 +45,9 @@ jobs:
               "LITERATURE_WATCH.md",
               "SYSTEM_A_PROTOCOL.md",
               "SYSTEM_B_PROTOCOL.md",
+              "SYSTEM_B_Q1_AUDIT.md",
+              "SYSTEM_B_ROBUSTNESS_PLAN.md",
+              "SYSTEM_B_R0_V2_CORRECTION_PLAN.md",
           ]
           missing = [path for path in required if not Path(path).is_file()]
           assert not missing, f"Missing governance artifacts: {missing}"

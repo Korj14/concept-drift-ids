@@ -50,3 +50,28 @@ def test_v2_pins_frozen_protocol_audit() -> None:
     )
     assert correction.EXPECTED_AUDIT_SUMMARY["protocol_mismatch_count"] == 7
     assert correction.EXPECTED_AUDIT_SUMMARY["active_r0_protocol_mismatch_count"] == 4
+
+
+
+def test_unaffected_candidate_reproduction_guard() -> None:
+    source = {
+        "support": 0.25,
+        "covered_count": 250,
+        "class_precision": 0.9,
+        "neural_fidelity": 0.95,
+        "stability": 1.0,
+        "complexity": 3,
+        "accepted_by_quality_gate": True,
+    }
+    correction._assert_unaffected_candidate_reproduced(
+        source,
+        quality={
+            "support": 0.25,
+            "covered_count": 250,
+            "class_precision": 0.9,
+            "neural_fidelity": 0.95,
+        },
+        stability=1.0,
+        complexity=3,
+        accepted=True,
+    )

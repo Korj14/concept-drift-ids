@@ -207,3 +207,21 @@ python run.py system-b evaluate --device cpu
 The evaluator refuses to run from a dirty worktree and refuses to overwrite an existing accepted evaluation. It records detection counts/metrics, resolved symbolic coverage, raw activation coverage, conflict-abstention, neural fidelity, per-rule pre/post support/precision/fidelity/stability/activation, and the frozen 5,000-row longitudinal reporting grid.
 
 Do not relax rule gates, change fusion settings, or regenerate `R_0` because held-out results are inconvenient. A genuine defect requires a new documented version.
+
+
+### System-B frozen evaluation chronology correction
+
+The authoritative first System-B held-out evaluation is the immutable first run recorded by
+`results/frozen/system_b_v1/evaluation_manifest.json` (manifest SHA-256
+`f44cad2ed9674bcb7118f05f174f845b5dfb135f95e2cb2b4a230f0f998c3e42`).
+Do not rerun or overwrite it.
+
+After pulling the chronology-correction commit and confirming a clean worktree, generate only the additive publication-table supplement:
+
+```bash
+python run.py system-b supplement
+python run.py system-b verify-supplement
+```
+
+This supplement reads only the committed frozen System-B CSV evidence. It does not load raw pre/post data or model checkpoints. Commit the resulting
+`results/frozen/system_b_v1_supplement_v1/` directory unchanged.

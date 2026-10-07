@@ -903,3 +903,39 @@ A second semantic hygiene fix records symbolic-neural fidelity as undefined when
 Finally, the evaluation loader now pins the exact accepted `R0.v1` manifest canonical identity and verifies canonical rule-artifact hashes in addition to raw file hashes. This prevents an internally self-consistent but non-accepted replacement rule base from silently entering the untouched evaluation path.
 
 No System-B pre/post values were available or inspected during these changes. The frozen R0, lambda, thresholds, preprocessing, checkpoints, validation gates, and longitudinal window policy are unchanged.
+
+
+---
+
+## 7 October 2026 — System-B execution-order correction after evidence push
+
+After the first System-B evaluation was committed and pushed, repository provenance established that the local untouched evaluation had in fact been executed earlier than the repository-side evidence-path sanitation commits.
+
+Exact original evaluation provenance:
+
+- source clean commit: `245ca52371d7cdbcf8475b1d86b4b95d2b9850f5`;
+- source System-B manifest: `6e3589056d4c252c1a6c7cfd87b891fb8a24f1e30e86b17833b6035ea9ee86a8`;
+- evaluation manifest: `f44cad2ed9674bcb7118f05f174f845b5dfb135f95e2cb2b4a230f0f998c3e42`;
+- evidence commit: `4542108f61e01348e69a19ee642e5c01abb97491`;
+- Research Contract for the evidence commit: successful.
+
+This means earlier ledger/protocol statements asserting that no System-B pre/post outcome had yet been generated during the later sanitation commits were chronologically inaccurate. They are not erased. This entry explicitly corrects them.
+
+Importantly, the later sanitation was not outcome-informed: repository-side review had not inspected System-B metric values when the R0 governance synchronization and evaluator-hardening changes were authored. The changes did not alter R0, lambda, fused thresholds, neural checkpoints, preprocessing, fusion arithmetic, rule activation semantics, or the frozen reporting grid.
+
+Independent integrity checks of the first-run evidence confirmed:
+
+- all 10 seed/partition confusion matrices conserve sample/class totals exactly;
+- all five seeds are present;
+- pre/post rule IDs match exactly within every seed, with 7/8/7/8/6 rules;
+- 14 pre windows per seed sum to 69,260 rows;
+- 14 post windows per seed sum to 69,270 rows;
+- no reporting window has zero resolved symbolic coverage;
+- no aggregate/reporting-window conflict-abstention event occurred;
+- the evaluation references the accepted R0.v1 and preprocessing identities.
+
+The correct scientific response is therefore **preservation, not history deletion**. The first untouched evaluation remains the authoritative primary System-B v1 evaluation.
+
+The missing paired/aggregate/staleness tables will be generated as `system_b_v1_supplement_v1` strictly from the already-frozen first-run CSV evidence. The supplement generator is mechanically prohibited from loading raw partitions or model checkpoints. This follows the same additive-evidence principle previously used for the System-A count supplement.
+
+No model rerun, threshold change, rule change, or result-driven retuning is authorized.

@@ -518,3 +518,26 @@ Symbolic-neural fidelity is undefined when no resolved symbolic explanation is p
 The evaluator is also pinned to the accepted System-B manifest canonical SHA-256 `6e3589056d4c252c1a6c7cfd87b891fb8a24f1e30e86b17833b6035ea9ee86a8` and verifies both raw and canonical rule-artifact identities before loading held-out partitions. Evaluation runtime/software provenance is written into the frozen evidence manifest.
 
 These changes strengthen evidence completeness and integrity only. No held-out System-B outcome had been generated or inspected when they were made.
+
+
+## 20. Execution-order correction and evidence-preservation decision — 7 October 2026
+
+A post-push provenance audit established that the first untouched System-B evaluation had already been executed locally from clean commit `245ca52371d7cdbcf8475b1d86b4b95d2b9850f5` before the later repository-side evidence-path sanitation commits were authored.
+
+This corrects the chronology stated in Sections 18–19. Those sections are retained as historical records and are not silently rewritten.
+
+The original first-run evaluation is:
+
+- evaluation manifest SHA-256: `f44cad2ed9674bcb7118f05f174f845b5dfb135f95e2cb2b4a230f0f998c3e42`;
+- execution git commit: `245ca52371d7cdbcf8475b1d86b4b95d2b9850f5`;
+- execution worktree: clean;
+- source System-B manifest SHA-256: `6e3589056d4c252c1a6c7cfd87b891fb8a24f1e30e86b17833b6035ea9ee86a8`;
+- committed evaluation evidence: `4542108f61e01348e69a19ee642e5c01abb97491`.
+
+This chronology error does **not** justify deleting or rerunning the first held-out evaluation. The first run used the accepted R0.v1, accepted preprocessing, frozen lambda and per-seed thresholds, all five seeds, CPU backend, and the frozen pre/post partitions. Repository sanitation confirmed exact confusion-count conservation, matched rule identities across pre/post, and the frozen 14-window totals for every seed.
+
+The later evidence-path hardening did not change R0, lambda, thresholds, checkpoints, preprocessing, fusion arithmetic, rule activation semantics, or the primary detection/rule/window calculations. The only later symbolic-fidelity semantic hygiene change concerns zero resolved coverage; the original evaluation has no zero-coverage aggregate or reporting window (minimum reporting-window resolved coverage > 0.91), so this does not alter an existing result.
+
+The missing long-form/aggregate/paired/staleness tables are therefore treated as an **additive evidence supplement**, not as grounds to rerun the held-out models. `system-b supplement` must derive them only from the immutable first-run `detection_by_seed.csv` and `rule_quality_by_seed_partition.csv`. It must not load raw training, development, pre/post partitions, checkpoints, or modify R0/fusion/threshold identities.
+
+This is the controlling chronology for System-B v1. No result-driven retuning is permitted.

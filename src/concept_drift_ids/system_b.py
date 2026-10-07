@@ -1247,13 +1247,21 @@ def main() -> None:
     subparsers.add_parser("verify")
     evaluate = subparsers.add_parser("evaluate")
     evaluate.add_argument("--device", default="cpu")
+    subparsers.add_parser("supplement")
+    subparsers.add_parser("verify-supplement")
     args = parser.parse_args()
     if args.command == "build":
         build_and_freeze_system_b(device_name=args.device)
     elif args.command == "verify":
         verify_system_b()
-    else:
+    elif args.command == "evaluate":
         evaluate_system_b(device_name=args.device)
+    elif args.command == "supplement":
+        from concept_drift_ids.system_b_evidence import build_system_b_supplement
+        build_system_b_supplement()
+    else:
+        from concept_drift_ids.system_b_evidence import verify_system_b_supplement
+        verify_system_b_supplement()
 
 
 if __name__ == "__main__":

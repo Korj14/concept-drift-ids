@@ -1266,3 +1266,12 @@ The revision formalizes:
 - multi-scenario/second-dataset and checkpoint-archive obligations before broad submission claims.
 
 No historical frozen artifact was altered by this governance sync.
+
+
+### Stage-3A/System-B dtype conformance audit frozen before execution
+
+The retrospective audit identified a documentation/implementation divergence: the Stage-3A readiness contract designates float64 as the shared preprocessing output for non-PyTorch consumers, while System B fit the surrogate from float32 transformed matrices.
+
+Before any robustness tranche or C/D implementation, a training/development-only audit command was added. The neural teacher remains float32 in both comparison arms; accepted R0.v2 feature selections are reused exactly; SHAP is not recomputed. The audit compares float32 versus float64 surrogate topology, train/validation leaf assignment, weighted leaf consequents, validation-gate outcomes and active candidate sets.
+
+The decision rule was frozen before execution: harmless threshold roundoff alone does not replace R0.v2. A new version is required only if the dtype change produces a discrete scientific difference in topology/assignment, consequent, gate outcome or accepted candidate set. No pre/post partition is loaded by this audit.

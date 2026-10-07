@@ -147,3 +147,6 @@ A result being inconvenient is not a valid reason for deviation.
 | Controlled-shift attribution | `sudden_benign_v1` is BENIGN-source-regime-dominant, not attack-invariant | Scenario diagnostics | Interpretation | **FROZEN RULE** |
 | Seen/unseen exact-pattern reporting | Reproduce Stage-2 exact-pattern dependence in repository and report fixed A/B on training-seen vs unseen held-out rows | Frozen models + held-out rescore only; no tuning | Publication-strength B | **REQUIRED BEFORE B ROBUSTNESS CLOSURE** |
 | Stage-3A dtype conformance | Compare float64 symbolic-consumer contract with realized float32 B extraction using train/dev only before classifying as inert or defect | Training + development only | R0.v2 conformance | **REQUIRED FIRST** |
+
+
+| Dtype audit decision rule | Version correction only for discrete float64-vs-float32 changes in topology/assignment, weighted consequent, gate decision or active candidate set; numerical threshold roundoff alone is additive provenance | Training + development only | R0.v2 conformance | **FROZEN BEFORE AUDIT EXECUTION** |

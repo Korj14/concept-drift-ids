@@ -1260,6 +1260,9 @@ def main() -> None:
     evaluate_v2 = subparsers.add_parser("evaluate-r0-v2")
     evaluate_v2.add_argument("--device", default="cpu")
     subparsers.add_parser("verify-r0-v2-evaluation")
+    dtype_audit = subparsers.add_parser("audit-dtype-conformance")
+    dtype_audit.add_argument("--device", default="cpu")
+    subparsers.add_parser("verify-dtype-conformance-audit")
     args = parser.parse_args()
     if args.command == "build":
         build_and_freeze_system_b(device_name=args.device)
@@ -1291,9 +1294,15 @@ def main() -> None:
     elif args.command == "evaluate-r0-v2":
         from concept_drift_ids.system_b_v2_evaluation import evaluate_r0_v2
         evaluate_r0_v2(device_name=args.device)
-    else:
+    elif args.command == "verify-r0-v2-evaluation":
         from concept_drift_ids.system_b_v2_evaluation import verify_r0_v2_evaluation
         verify_r0_v2_evaluation()
+    elif args.command == "audit-dtype-conformance":
+        from concept_drift_ids.system_b_dtype_audit import audit_dtype_conformance
+        audit_dtype_conformance(device_name=args.device)
+    else:
+        from concept_drift_ids.system_b_dtype_audit import verify_dtype_conformance_audit
+        verify_dtype_conformance_audit()
 
 
 if __name__ == "__main__":

@@ -163,3 +163,38 @@ After the longitudinal window policy is frozen, the existing System-A checkpoint
 
 `main` is intended to represent the latest fully accepted scientific milestone. New major stages should branch from accepted `main`, pass their scientific gate and CI, then return through a pull request. See `REPOSITORY_GOVERNANCE.md` for the merge/tag/deviation policy.
 
+
+
+## Stage 4 — System B static neuro-symbolic baseline
+
+The prospective System-B protocol is frozen in `SYSTEM_B_PROTOCOL.md`. System B reuses each accepted System-A checkpoint unchanged and derives a seed-matched validated `R_0^(s)` using training/development evidence only.
+
+The required local sequence is deliberately gated:
+
+```bash
+git switch stage4-system-b
+git pull --ff-only
+python --version
+python -m pytest -q
+python run.py system-a verify
+
+# Training + development only. This must not load pre/post.
+python run.py system-b build --device cpu
+
+# Inspect the generated freeze:
+#   data/rules/system_b_r0_v1/seed_0.json ... seed_4.json
+#   data/manifests/system_b_v1.json
+#
+# Commit those exact rule/manifests before any held-out evaluation.
+
+git add data/rules/system_b_r0_v1 data/manifests/system_b_v1.json
+git commit -m "Freeze validated System B R0"
+python run.py system-b verify
+
+# Only after the freeze commit:
+python run.py system-b evaluate --device cpu
+```
+
+The evaluator refuses to run from a dirty worktree and refuses to overwrite an existing accepted evaluation. It records detection counts/metrics, resolved symbolic coverage, raw activation coverage, conflict-abstention, neural fidelity, per-rule pre/post support/precision/fidelity/stability/activation, and the frozen 5,000-row longitudinal reporting grid.
+
+Do not relax rule gates, change fusion settings, or regenerate `R_0` because held-out results are inconvenient. A genuine defect requires a new documented version.

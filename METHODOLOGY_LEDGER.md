@@ -702,3 +702,16 @@ Before any System-B training/development build was executed, the protocol was cl
 A formatting defect introduced in the previous control-register edit (a literal backslash-n between two System-B rows) was corrected. It had no scientific effect.
 
 These are prospective implementation clarifications. No System-B rule build, fusion selection, pre-drift evaluation, or post-drift evaluation had been executed when they were recorded.
+
+
+### System-B orchestration implementation
+
+The reusable symbolic primitives were followed by a System-B orchestration layer that mechanically enforces the prospective firewall.
+
+Repository-only implementation now provides:
+
+- `system-b build`: CPU-only, clean-worktree build using only training and development partitions; it validates the frozen System-A checkpoint identities, performs the frozen SHAP/surrogate/validation procedure, selects the global fusion weight and per-seed thresholds on the designated development slice, and writes seed-specific `R0.v1` artifacts plus a hash-linked System-B manifest.
+- `system-b verify`: read-only verification of the compact System-B freeze and local checkpoint identities without loading pre/post.
+- `system-b evaluate`: refuses to start unless the freeze is committed (clean worktree), then and only then loads pre/post and writes immutable seed-, rule-, and reporting-window evidence.
+
+The build is fail-closed: if any seed produces no validated active rules, it aborts rather than weakening validation gates using held-out evidence. No System-B training/development build or held-out evaluation was executed while this code was authored; repository-only tests exercise the partition firewall, deterministic development split, CPU requirement, global-lambda tie policy, and overwrite protection.

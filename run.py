@@ -21,7 +21,7 @@ def main() -> None:
     )
     parser.add_argument(
         "command",
-        choices=("stage3a-preprocess", "system-a"),
+        choices=("stage3a-preprocess", "system-a", "system-b"),
         help="Project command to execute.",
     )
     args, remainder = parser.parse_known_args()

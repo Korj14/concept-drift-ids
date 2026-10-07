@@ -110,6 +110,25 @@ def _aggregate(rows: list[dict[str, object]]) -> list[dict[str, object]]:
     return out
 
 
+def _rectangularize_rows(
+    rows: list[dict[str, object]],
+) -> list[dict[str, object]]:
+    """Return deterministic CSV rows with the union of all observed fields."""
+    if not rows:
+        return rows
+    fieldnames: list[str] = []
+    seen: set[str] = set()
+    for row in rows:
+        for name in row:
+            if name not in seen:
+                seen.add(name)
+                fieldnames.append(name)
+    return [
+        {name: row.get(name) for name in fieldnames}
+        for row in rows
+    ]
+
+
 def _paired_deltas(rows: list[dict[str, object]]) -> list[dict[str, object]]:
     out: list[dict[str, object]] = []
     for system_id in (ALT_A_ID, ALT_B_ID):
@@ -228,6 +247,7 @@ def evaluate_pattern_dedup_training_chain(*, device_name: str) -> None:
 
         del X, y
 
+    rows = _rectangularize_rows(rows)
     aggregate = _aggregate(rows)
     paired = _paired_deltas(rows)
     summary = {

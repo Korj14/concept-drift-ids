@@ -1021,3 +1021,35 @@ The static R0 schema was also reviewed against the final D lifecycle claim. It i
 Before executing the new System-B semantic-analysis command, repository ignore rules were checked. `results/analysis/` was still covered by the generic `results/*` ignore pattern. The directory is now explicitly unignored so the derived semantic-analysis artifact can be reviewed, hashed and committed through the normal scientific freeze workflow.
 
 No analysis output had yet been generated when this guard was added.
+
+
+---
+
+## 7 October 2026 — expanded Q1 audit: hidden controls identified before C/D
+
+A second adversarial pass reviewed System-B mechanics not with the intent to improve already-observed B outcomes, but to determine whether assumptions would survive top-quartile peer review and whether they create hidden treatment variables for C/D.
+
+No frozen System-B artifact, rule, lambda, threshold or held-out outcome was changed.
+
+New material findings were appended to `SYSTEM_B_Q1_AUDIT.md` and prospective sensitivities to `SYSTEM_B_ROBUSTNESS_PLAN.md`.
+
+Key findings:
+
+- the absolute covered-count rule has sample-size-dependent meaning and cannot be transplanted blindly into a smaller D adaptation-validation window;
+- B development true-label validation contains only GoldenEye attacks, so R0 attack-rule precision is scenario-specific rather than generic attack-family validation;
+- the SHAP top-12 score is a bespoke class-aware max-normalized selection policy and requires robustness against conventional aggregation choices;
+- one deterministic 60/40 development split does not establish acceptance stability across legitimate validation partitions;
+- five-seed intervals quantify stochastic-model variability conditional on one stream, not environmental generalization;
+- accepted-rule validation metrics are selection-conditional; held-out pre-drift is the actual post-selection generalization check;
+- the historical B timing field includes symbolic inference plus fusion and lacks a strong repeated/thread-frozen benchmarking protocol;
+- C/D fused-threshold handling is itself a causal control after neural adaptation;
+- true-label class precision makes label latency part of D's treatment definition;
+- adaptation candidate-generation and validation evidence must be time-respecting;
+- imputed antecedent values are currently invisible in rule traces;
+- future overlapping D rules make confidence-update timing operationally important.
+
+The statistical analysis plan was expanded to state explicitly that seed-level uncertainty is conditional on scenario, rule-level outcomes remain nested/descriptive, and adaptive recovery/update timing must respect actual information availability.
+
+These changes are prospective for C/D. They do not authorize any retuning of R0.v1 after observed System-B outcomes.
+
+The previously identified weighted-surrogate-leaf consequent diagnostic remains the immediate blocking System-B closure gate.

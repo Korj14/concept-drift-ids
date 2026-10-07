@@ -387,3 +387,190 @@ That is sufficient to carry R0 identities forward, but a Q1 claim about a **vali
 - operation time/cost.
 
 D must add this prospectively without rewriting R0.v1.
+
+
+## 28. Fixed covered-count gate is sample-size dependent
+
+The primary initial-rule gate requires both support >= 0.001 and covered_count >= 100.
+
+On the 60% System-B development validation slice (~124.7k observations), support >= 0.001 already implies roughly 125 covered rows. The absolute count gate is therefore redundant during the original R0 validation.
+
+On the ~69k pre/post partitions, covered_count >= 100 corresponds to an effective minimum support of about 0.00144 and is stricter than the nominal 0.001 support gate.
+
+More importantly, on a future 5,000-row adaptation-validation window, covered_count >= 100 would imply 2% coverage. Blindly reusing the B gate in D would therefore create a substantially stricter symbolic acceptance operator solely because the evidence window is smaller.
+
+Q1 implication:
+
+- the B gate remains frozen and valid for R0.v1;
+- development-to-pre/post gate-pass comparisons are descriptive, not size-invariant tests;
+- before D, freeze either an adaptation-validation window large enough for the original gate semantics to remain comparable, or a separately versioned sample-size-aware count/support rule;
+- C/D and D-drift/D-periodic must use the exact same rule-validation semantics within each matched comparison.
+
+## 29. Initial attack-rule validation is GoldenEye-specific
+
+The frozen System-B development partition contains BENIGN plus DoS GoldenEye only. Training contains multiple attack families, but true-label rule acceptance is performed on the development validation slice.
+
+Therefore an accepted binary attack rule has demonstrated class precision against the GoldenEye-containing development regime, not against a representative mixture of all CICIDS2017 attacks.
+
+This is not leakage and does not invalidate the primary controlled scenario. It does limit interpretation:
+
+- R0.v1 is a scenario-specific validated symbolic substrate;
+- its attack-rule validation must not be described as generic attack-family validity;
+- attack-pattern and unseen-attack scenarios are required before making broader symbolic generalization claims;
+- second-dataset replication becomes materially important rather than decorative.
+
+## 30. SHAP feature-selection score is a bespoke policy
+
+The frozen top-12 score is the elementwise maximum of three separately max-normalized mean-absolute-SHAP vectors: global, BENIGN, and attack.
+
+This has a clear design rationale: prevent the majority class from dominating symbolic feature restriction. It is also deterministic and prospectively frozen.
+
+However, it is not a canonical SHAP global-importance estimator. Separate normalization removes absolute scale differences among the three vectors, and the max operator gives a feature full influence if it is dominant in only one view.
+
+Publication implication:
+
+- describe this as a **class-aware feature-selection policy using SHAP**, not as the unique SHAP feature ranking;
+- report the raw three attribution summaries already preserved in the artifact;
+- include a post-hoc B / prospective C-D sensitivity using conventional global mean-absolute SHAP and a balanced class-average aggregation, while leaving R0.v1 unchanged.
+
+The fixed background and attribution samples use the same RNG seed but are generated independently at different sample sizes. This creates deterministic dependence but only minimal expected row overlap; it is a reproducibility detail, not currently a material validity threat.
+
+## 31. One development split does not establish split robustness
+
+Candidate paths are training-only, and rule validation versus fusion tuning is cleanly separated by one deterministic 60/40 stratified development split.
+
+Bootstrap gate persistence measures sampling variation **within that selected validation slice**. It does not measure whether rule acceptance is stable to a different legitimate validation partition.
+
+For Q1 robustness, add repeated deterministic development-split sensitivity using prespecified alternate split seeds. The primary R0 remains unchanged. Report:
+
+- accepted-rule identity overlap;
+- rule-count variation;
+- support/precision/fidelity variation;
+- fusion-weight/threshold variation descriptively;
+- whether qualitative conclusions depend on a single split realization.
+
+Do not select an alternate split because it makes B look better.
+
+## 32. Five-seed intervals quantify optimization variability, not environmental generalization
+
+All five System-A/System-B seeds use the same scenario rows. Their variation reflects stochastic neural training / seed-specific symbolic extraction, not independent network environments.
+
+Therefore t-intervals across five seeds are conditional on this scenario and dataset. They must not be described as confidence intervals for deployment-population performance.
+
+Q1-strength generalization evidence must come from additional scenarios/datasets, not from treating more seeds on the same stream as environmental replication.
+
+This scope also applies to later C-vs-D paired seed effects: paired seed is the correct within-scenario causal unit, but cross-environment claims require scenario/dataset replication.
+
+## 33. Validation-selection optimism remains distinct from held-out generalization
+
+Rules are accepted because they pass precision/fidelity/support/stability gates on the development validation slice. The reported validation metrics for accepted rules are therefore selection-conditional and expected to be optimistic relative to fresh data.
+
+The held-out pre-drift partition is the first genuine post-selection generalization check for R0 validity. The observed pre-drift gate failures are therefore scientifically informative rather than evidence that the validation procedure was implemented incorrectly.
+
+Manuscript reporting must distinguish:
+
+1. candidate-generation/training evidence;
+2. selection/validation evidence;
+3. held-out pre-drift generalization;
+4. post-drift change.
+
+## 34. Computational timing field is not yet a strong cost benchmark
+
+The first System-B evidence field named `symbolic_inference_seconds` times both symbolic inference **and score fusion** for an entire seed/partition pass.
+
+It was measured on one Windows CPU execution without a prospectively frozen warm-up/repetition/thread-affinity protocol. It is therefore descriptive execution evidence, not a publication-grade microbenchmark of symbolic inference alone.
+
+Before C/D cost claims:
+
+- rename future instrumentation semantically (e.g. symbolic+fusion latency versus lifecycle-update latency);
+- freeze warm-up/repetition policy;
+- record threadpool state and CPU/runtime;
+- report distributional timing summaries where feasible;
+- keep matched timing conditions across C/D and D-trigger ablations.
+
+The original B timing column remains immutable and must be described according to what it actually measured.
+
+## 35. C/D fused decision-threshold policy is a causal control
+
+System B has seed-specific fused thresholds selected on its frozen development fusion slice. Neural adaptation in C/D can change the neural-score distribution.
+
+Before any adaptive held-out run, freeze whether C/D:
+
+- retain the System-B fused thresholds throughout the stream; or
+- use an explicitly defined matched threshold-adaptation mechanism.
+
+Allowing only D to retune a threshold, or retuning C/D with different evidence, would introduce a second treatment. If adaptive thresholding is used, label timing and update budget must be identical across C/D and its cost/evidence access must be logged.
+
+The simplest causal design is a fixed threshold unless strong development-only evidence justifies matched threshold adaptation.
+
+## 36. Label timing is part of the symbolic treatment definition
+
+The rule acceptance operator uses true-label class precision. Consequently, future D symbolic evolution cannot be described as immediately online unless labels are legitimately available at the adaptation time.
+
+Before C/D, freeze:
+
+- what label is available;
+- its delay/latency distribution or deterministic delay;
+- which observations in an adaptation window have matured labels;
+- whether neural adaptation and symbolic validation consume the same matured labels;
+- what happens when insufficient labels are available;
+- whether a candidate can remain pending rather than being accepted prematurely.
+
+A label-free drift trigger does not make the full adaptation pipeline label-free if rule validation still requires ground truth.
+
+## 37. Adaptation generation and validation must preserve information time
+
+The source design requires candidates to be validated on held-out adaptation evidence. In a streaming setting, a random split of one recent window can leak later-in-window information into a rule that is treated as available earlier.
+
+Before D, freeze a temporally coherent adaptation protocol. Preferred structure:
+
+- evidence-collection interval;
+- candidate-generation subwindow;
+- later validation subwindow (or another explicitly time-respecting cross-fit);
+- publication time of the new rule-base version only after required labels/evidence are available.
+
+This is especially important when duplicate/near-duplicate flows cluster locally.
+
+## 38. Imputation is invisible in current rule explanations
+
+Rules operate on the accepted median-imputed, standardized representation. A rule condition can therefore be satisfied using an imputed feature value, but the rule trace currently does not indicate that an antecedent feature was originally missing.
+
+The overall missing/non-finite fraction is small, so this is not currently a reason to replace R0. For explanation-quality claims, however, add an imputation-activation diagnostic where feasible:
+
+- fraction of rule activations involving at least one antecedent feature that was imputed;
+- per-rule count/rate;
+- sensitivity excluding those rows from explanation-quality summaries.
+
+This should be derived without changing the primary preprocessing.
+
+## 39. Rule-confidence semantics depend on future label availability
+
+For R0, q = min(class precision, neural fidelity) is useful lifecycle metadata but operationally degenerate because accepted tree leaves are mutually exclusive.
+
+In D, independently evolved/retained rules may overlap, making q operational in symbolic aggregation. Updating q then requires a clear evidence policy, especially because class precision needs labels while neural fidelity does not.
+
+Before D, freeze whether q is:
+
+- recomputed only from matured labeled validation evidence;
+- carried forward when labels are unavailable;
+- decayed with evidence age;
+- or represented with separate correctness/fidelity components rather than collapsed immediately.
+
+Do not let D gain an implicit advantage by updating confidence with future labels unavailable to C at the same stream time.
+
+## 40. Current System-B scientific status after expanded audit
+
+System B remains a valuable and largely well-controlled static baseline, but **C/D inheritance is blocked** until the training-only weighted-leaf diagnostic is executed and its result is frozen.
+
+Even if the diagnostic reports zero realized mismatches, the following C/D controls remain mandatory before adaptive held-out execution:
+
+- label timing;
+- drift-monitor signal and persistence;
+- adaptation-window and time-respecting validation construction;
+- rule-gate sample-size semantics;
+- fused-threshold policy;
+- thread/runtime controls;
+- confirmatory endpoints/interval/test/multiplicity;
+- lifecycle-event schema.
+
+No B robustness result may be used to retroactively replace R0.v1.

@@ -304,3 +304,33 @@ At that gate:
 9. only then unlock untouched adaptive evaluation.
 
 Any subsequent change requires a new analysis-plan version, explicit rationale, and disclosure of whether outcomes had already been inspected.
+
+
+## 13. Scope of seed-level uncertainty
+
+The five stochastic seeds within one scenario share the same underlying stream observations. Seed-level intervals therefore quantify variability attributable to stochastic training / seed-specific symbolic extraction conditional on that scenario.
+
+They are **not** estimates of independent environmental or deployment-population variation.
+
+Accordingly:
+
+- within-scenario C-vs-D inference remains paired by seed;
+- scenario/dataset conclusions are reported separately first;
+- broad generalization requires additional scenario/dataset replication;
+- the manuscript must not inflate effective sample size by combining seeds, windows, or rules as if they were independent environments.
+
+## 14. Rule-level descriptive uncertainty
+
+Rule support, class precision and neural fidelity are descriptive nested outcomes, not 36 independent confirmatory experiments.
+
+Where publication tables emphasize a rule-level proportion, report its denominator and an appropriate descriptive uncertainty interval where useful. Selection-slice intervals do not remove selection bias and must not be presented as independent validation.
+
+Gate-persistence bootstrap remains a robustness metric, not a p-value.
+
+## 15. Information-time constraint on adaptive analysis
+
+Any C/D endpoint depending on an update time must use the time at which all protocol-required evidence was actually available.
+
+If symbolic validation requires delayed ground-truth labels, recovery time and update latency begin/end definitions must respect that latency. A rule-base version cannot be credited with recovery before it could legitimately have been published.
+
+This timing rule must be frozen together with the adaptive protocol before untouched C/D outcomes.

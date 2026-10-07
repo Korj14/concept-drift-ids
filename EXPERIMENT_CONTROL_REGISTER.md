@@ -38,6 +38,13 @@
 | Longitudinal reporting stride | 5,000 rows; non-overlapping | Controlled design only | A/B/C/D | **FROZEN — System-B protocol v1** |
 | Longitudinal transition handling | Pre/post scoring partitions windowed separately; no reporting window crosses the synthetic boundary; order preserved; boundary remains scoring-only and is not detector input | Controlled design only | A/B/C/D | **FROZEN — System-B protocol v1** |
 | Known synthetic boundary use | Scoring only; never supplied to detector/updaters | Governing doctrine | C/D and trigger ablations | **FROZEN rule** |
+
+| Drift monitor signal | Exact statistic monitored by ADWIN/primary detector (e.g. delayed prediction error versus label-free stream statistic) | Development/design only | C/D and trigger comparison | **TO FREEZE BEFORE C/D** |
+| Symbolic-validation label timing | Exact label availability/latency and mature-label rule for class precision | Deployment/design + development only | C/D evidence timing; D trigger variants | **TO FREEZE BEFORE C/D** |
+| Adaptation evidence chronology | Time-respecting generation/validation construction and rule-publication time | Development/design only | C/D; D-drift/D-periodic operator identical | **TO FREEZE BEFORE C/D** |
+| D rule-gate sample-size semantics | Effective support/count/uncertainty rule for actual adaptation-validation window | Development/design only; primary B unchanged | D-drift/D-periodic identical | **TO FREEZE BEFORE D** |
+| C/D fused-threshold policy | Fixed B threshold or matched threshold-adaptation operator | Development/design only | C and D identical | **TO FREEZE BEFORE C/D** |
+| Rule-confidence update policy | Evidence source/timing for q after evolution; treatment of unlabeled/pending evidence | Development/design only | D trigger variants identical; no future labels | **TO FREEZE BEFORE D** |
 | Drift detector family/config | TBD | Development/controlled design only | C/D same confirmed-event policy | **TO FREEZE** |
 | Drift persistence/confirmation | TBD | Development/controlled design only | C/D | **TO FREEZE** |
 | Label availability/latency | TBD and must reflect stream-time availability | Development/design only | C/D identical | **TO FREEZE** |

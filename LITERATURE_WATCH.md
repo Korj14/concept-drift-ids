@@ -103,3 +103,19 @@ The Q1 audit rechecked literature relevant to benchmark shortcuts and explanatio
 - Pacheco & Pedroso, Computer Networks 289 (2026), 112672, remains a high bar for temporal drift, explanation stability, OOD behavior, recovery and matched operational-cost evaluation.
 
 The novelty conjunction remains viable, but these findings strengthen the mandatory robustness/limitations package.
+
+
+## 7 October 2026 — expanded Q1 benchmark/reliability check
+
+A further live audit focused on whether the System-B assumptions would withstand a Q1-level methodology review.
+
+Material external evidence:
+
+- Engelen, Rimmer & Joosen, *Troubleshooting an Intrusion Detection Dataset: the CICIDS2017 Case Study*, IEEE SPW 2021, documents substantial traffic-generation, flow-construction, feature-extraction and labeling defects in CICIDS2017. This continues to justify explicit benchmark-artifact limitations and non-random split/sensitivity discipline. external-note: DOI 10.1109/SPW53761.2021.00009
+- Maseno, Sun & Wang, *Reliability auditing of explanations for machine-learning-based intrusion detection systems*, Journal of Computer Virology and Hacking Techniques 22 (2026), Article 80, separates explanation consistency, faithfulness and robustness from predictive performance. This supports the project's decision not to equate neural fidelity, correctness, stability and robustness.
+- A 2026 Future Internet review of AutoML/NIDS evaluation practice explicitly flags CICIDS2017 as a high structural-bias-risk benchmark due to documented duplication, overlap/leakage and quality concerns. This strengthens the need for deduplication/unseen-pattern and second-dataset robustness rather than treating near-ceiling benchmark scores as sufficient evidence.
+- 2026 IEEE work comparing SHAP/LIME robustness in deep IDS reports attack-dependent explanation quality and treats fidelity, stability, latency and robustness as distinct dimensions, further supporting narrow terminology for the project's bootstrap gate-persistence metric.
+
+Consequence:
+
+The primary System-B evidence remains useful as a controlled proving-ground result, but Q1 claims require an explicit reliability/benchmark-robustness layer and external replication. No new literature finding justifies broadening the novelty claim.

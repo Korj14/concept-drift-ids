@@ -141,3 +141,79 @@ The internal drift-detector/adaptation window is a separate control and must not
 R0's static schema is only the starting substrate. D must record immutable lifecycle events with trigger/event ID, operation type, parents/sources, evidence-window identity, candidate metrics, accept/reject reason, resulting version/rule IDs, conflict/abstention decision and computational cost.
 
 The lifecycle event schema must be frozen before the first adaptive symbolic run.
+
+
+## 18. SHAP aggregation-policy sensitivity
+
+In addition to background and top-k sensitivity, compare the frozen class-aware max-normalized policy against:
+
+- conventional global mean absolute SHAP ranking;
+- equal-weight mean of separately normalized BENIGN and attack mean-absolute-SHAP vectors.
+
+Use the same frozen training-only attribution sample and background when isolating aggregation-policy effects. Report top-k overlap, surrogate fidelity, accepted-rule identities and class-conditional rule behavior.
+
+For already-observed B, this is post-hoc robustness only. For later scenarios/datasets, freeze the chosen primary extraction policy before their held-out outcomes.
+
+## 19. Development-split sensitivity
+
+Primary R0 uses the frozen split seed 20261007.
+
+Post-hoc B robustness should repeat the **selection analysis only** with alternate deterministic split seeds {20261008, 20261009, 20261010, 20261011}; do not replace R0.v1.
+
+Report:
+
+- accepted-rule count;
+- accepted-rule identity/antecedent overlap where comparable;
+- support/precision/fidelity/stability distributions;
+- selected lambda/threshold variation if fusion is recomputed on the complementary slice.
+
+The purpose is to estimate dependence on one legitimate development split, not to choose the best split.
+
+## 20. Rule-gate sample-size sensitivity for future D
+
+The fixed minimum covered count of 100 is retained for R0.v1.
+
+Before D, report the implied effective minimum support for the actual adaptation-validation window size. If the window makes the count gate materially stronger than the 0.001 support gate, one of the following must be frozen prospectively:
+
+- a sufficiently large adaptation-validation window;
+- a separately versioned count gate scaled to evidence size;
+- an uncertainty-based minimum-evidence criterion.
+
+The same rule must apply to D-drift and D-periodic and must not be chosen from their held-out outcomes.
+
+## 21. Attack-family validity scope
+
+Because B development attacks are GoldenEye-only, later robustness/generalization must separate:
+
+- within-GoldenEye rule validity;
+- attack-pattern changes to a known family;
+- previously unseen attack-family behavior;
+- second-dataset attack behavior.
+
+Do not aggregate these into one generic “attack-rule precision” claim without per-scenario/per-class evidence.
+
+## 22. Imputation-aware explanation diagnostic
+
+Using the frozen preprocessing and source rows, quantify whether activated rule antecedents rely on originally non-finite values replaced by the training median.
+
+Primary model/rule outputs remain unchanged. Report activation counts/rates with and without any imputed antecedent feature.
+
+## 23. Computational benchmarking protocol
+
+Before C/D cost comparison, freeze:
+
+- warm-up passes;
+- repeated timing count;
+- timer scope for neural inference, symbolic inference, fusion, drift detection, neural update, symbolic maintenance;
+- CPU/thread configuration;
+- summary statistics.
+
+The first B `symbolic_inference_seconds` value is historical descriptive timing of symbolic inference plus fusion and must not be overinterpreted.
+
+## 24. C/D threshold-authority sensitivity
+
+Primary C/D threshold policy must be frozen before adaptive held-out execution.
+
+If the primary uses fixed System-B fused thresholds, a matched threshold-adaptation condition may be studied only as a separately labeled sensitivity.
+
+If adaptive thresholding becomes primary, C and D must use the identical update rule, label timing, evidence window, and update schedule.

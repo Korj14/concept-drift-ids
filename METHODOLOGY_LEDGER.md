@@ -994,3 +994,12 @@ Material findings added to the audit record:
 - CICIDS2017 Destination Port and known flow/labelling defects require explicit sensitivity/limitations.
 
 `SYSTEM_B_ROBUSTNESS_PLAN.md` freezes the sensitivity agenda before any C/D held-out outcome. Because B outcomes are already known, B robustness analyses are explicitly post-hoc and cannot replace R0.v1 or the first evaluation.
+
+
+---
+
+## 7 October 2026 — semantic-analysis hash-chain sanitation
+
+Before executing the new frozen-evidence semantic analysis, its source chain was tightened: the accepted System-B supplement manifest is now pinned to canonical SHA-256 `70d41b210ed54f2fa2269ec738ccd94100148d701bb5a2ae79d8d30839e9d190`, and the semantic-analysis command verifies both the original evaluation and the accepted supplement before reading derived tables.
+
+This is an integrity-only change. No numerical result, R0 rule, threshold, fusion setting, or held-out computation is changed.

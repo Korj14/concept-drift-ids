@@ -25,6 +25,9 @@ ORIGINAL_EVALUATION_MANIFEST_SHA256 = (
     "f44cad2ed9674bcb7118f05f174f845b5dfb135f95e2cb2b4a230f0f998c3e42"
 )
 SUPPLEMENT_ID = "system_b_v1_supplement_v1"
+ACCEPTED_SUPPLEMENT_MANIFEST_SHA256 = (
+    "70d41b210ed54f2fa2269ec738ccd94100148d701bb5a2ae79d8d30839e9d190"
+)
 SUPPLEMENT_DIR = PROJECT_ROOT / "results" / "frozen" / SUPPLEMENT_ID
 SUPPLEMENT_MANIFEST_PATH = SUPPLEMENT_DIR / "supplement_manifest.json"
 
@@ -186,6 +189,8 @@ def verify_system_b_supplement() -> None:
     core.pop("manifest_sha256", None)
     if canonical_json_hash(core) != stored:
         raise ValueError("System-B supplement manifest hash mismatch.")
+    if stored != ACCEPTED_SUPPLEMENT_MANIFEST_SHA256:
+        raise ValueError("System-B supplement is not the accepted frozen identity.")
     if manifest.get("source_evaluation_manifest_sha256") != original["manifest_sha256"]:
         raise ValueError("System-B supplement references the wrong original evaluation.")
     if manifest.get("source_system_manifest_sha256") != ACCEPTED_SYSTEM_B_MANIFEST_SHA256:

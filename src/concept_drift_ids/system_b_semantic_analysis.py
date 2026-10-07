@@ -12,8 +12,11 @@ from concept_drift_ids.scenario_manifest import sha256_file
 from concept_drift_ids.symbolic import canonical_json_hash
 from concept_drift_ids.system_b import _git_state, _runtime, _write_csv_new, _write_json_new
 from concept_drift_ids.system_b_evidence import (
+    ACCEPTED_SUPPLEMENT_MANIFEST_SHA256,
     ORIGINAL_EVALUATION_MANIFEST_SHA256,
+    SUPPLEMENT_MANIFEST_PATH,
     _verify_original_evaluation,
+    verify_system_b_supplement,
 )
 
 
@@ -225,6 +228,12 @@ def build_semantic_analysis() -> None:
                     }
                 )
 
+    verify_system_b_supplement()
+    supplement_manifest = json.loads(
+        SUPPLEMENT_MANIFEST_PATH.read_text(encoding="utf-8")
+    )
+    if supplement_manifest.get("manifest_sha256") != ACCEPTED_SUPPLEMENT_MANIFEST_SHA256:
+        raise ValueError("Unexpected System-B supplement identity.")
     supplement = PROJECT_ROOT / "results" / "frozen" / "system_b_v1_supplement_v1"
     metrics = _read_csv(supplement / "metrics_by_seed.csv")
     paired = _read_csv(supplement / "paired_deltas_by_seed.csv")

@@ -741,3 +741,8 @@ Because the 5,000-row, non-overlapping, boundary-aligned reporting grid was froz
 The supplement does not retrain, recalibrate, rethreshold, or rewrite the original System-A evaluation. It reuses every frozen checkpoint and threshold, records per-seed/per-window confusion counts and detection metrics, links back to the accepted System-A evaluation manifest, and writes new immutable LF-normalized evidence. Single-class windows retain thresholded metrics while ranking metrics are recorded as undefined.
 
 No longitudinal System-A rescore was executed during this repository-only implementation step because the ignored local checkpoint bytes remain local-only.
+
+
+### Longitudinal-rescore sequencing/provenance guard
+
+Before local execution, the common-grid System-A rescore path was tightened to require a clean Git worktree and record its exact commit/branch in both the supplement summary and manifest. The README execution order now requires committing the additive System-A longitudinal supplement before invoking `system-b build`; otherwise the intentionally strict System-B clean-worktree gate would reject the build. This correction was made before any longitudinal rescore or System-B rule build was executed.

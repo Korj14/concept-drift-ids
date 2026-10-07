@@ -1394,3 +1394,17 @@ verification and all four fusion-authority operations, with an explicit error fo
 any unhandled System-B command. A repository-only regression test now guards the
 mapping in CI. The fusion-authority sensitivity remains unexecuted until the
 corrected dispatcher commit passes CI.
+
+
+### Pattern-deduplicated teacher R0 robustness gate wired — 7 October 2026
+
+After the alternate System-A teacher manifest was frozen, the downstream alternate-R0 builder was promoted from a direct-import-only module to explicit System-B CLI commands:
+
+- `build-pattern-dedup-teacher-r0`
+- `verify-pattern-dedup-teacher-r0`
+
+The builder must start from a clean worktree and verifies the frozen alternate-teacher manifest/checkpoint hashes before use. It reconstructs the exact retained training rows, checks both retained-training and development row identities, reuses the accepted frozen preprocessing without refit, preserves the System-B SHAP/surrogate/validation protocol including weighted CART leaf consequents, and uses training/development only. The resulting alternate R0 manifest/rules are write-once and must be committed before any pre/post alternate-chain evaluation.
+
+The frozen alternate teacher removed 113,817 repeated training rows under exact raw 77-feature-pattern-plus-binary-label deduplication. Because label-conflicting feature patterns are preserved as separate observations, this differs by 41 rows from the earlier feature-pattern-only duplicate-excess count of 113,858; the difference is expected and is provenance evidence, not a correction.
+
+The deduplication is class-asymmetric: attack rows decrease more strongly than BENIGN rows, so the alternate teacher's positive-class weight changes accordingly. This is part of the intended training-multiplicity sensitivity and must not be interpreted as an isolated row-count perturbation.

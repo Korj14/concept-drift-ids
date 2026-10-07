@@ -111,3 +111,15 @@ A result being inconvenient is not a valid reason for deviation.
 | R0.v2 active rule counts | seed 0/1/2/3/4 = 7/6/7/6/6 | Development validation only | Corrected B; future C/D | **FROZEN** |
 | R0.v2 fusion weight | neural weight lambda = 0.50, rank-1 mean development MCC under frozen grid | Development fusion slice only | Corrected B; future C/D | **FROZEN** |
 | R0.v2 fused thresholds | seed0 0.692427396774292; seed1 0.9354645609855652; seed2 0.8299936652183533; seed3 0.9747405052185059; seed4 0.9527904391288757 | Development fusion slice only | Corrected B; future C/D initial operating point | **FROZEN** |
+
+
+## Corrected System-B v2 evaluation controls — 7 October 2026
+
+| Control | Frozen value / rule | Evidence permitted | Matching scope | Status |
+|---|---|---|---|---|
+| Corrected B-v2 evaluation status | Implementation-defect correction; explicitly not untouched first-look | Governance/provenance | Manuscript interpretation | **FROZEN** |
+| Corrected B-v2 evaluation inputs | Accepted R0.v2 + same System-A checkpoints + frozen preprocessing + pre/post only | Pre/post after R0.v2 freeze | Corrected B static reference | **FROZEN** |
+| Corrected B-v2 output path | `results/frozen/system_b_v2_corrected_v1/`; write-once | Evaluation only | Corrected B evidence | **FROZEN** |
+| Corrected B-v2 explanation reporting | Overall + benign/attack resolved coverage, correctness and neural fidelity | Pre/post descriptive | B/C/D explanation standard | **FROZEN BEFORE V2 EVALUATION** |
+| Corrected B-v2 imputation diagnostic | Per-rule imputed-antecedent activation and imputation-free quality; no preprocessing change | Raw pre-imputation X for diagnostic only | Explanation robustness | **FROZEN BEFORE V2 EVALUATION** |
+| Corrected B-v2 timing | Single-pass neural descriptive timing; symbolic+fusion 1 warm-up + 5 exact-repeat timings; thread state recorded | Runtime only | Cost instrumentation convention | **FROZEN BEFORE V2 EVALUATION** |

@@ -1150,3 +1150,27 @@ Frozen R0.v2 fused thresholds:
 Only seed 1's threshold changes materially from v1. No pre/post partition was loaded during the v2 build.
 
 R0.v2 is now the required symbolic initialization for future C/D regardless of corrected B held-out performance. R0.v1 remains immutable historical nonconformant evidence.
+
+
+---
+
+## 7 October 2026 — corrected System-B v2 evaluation protocol frozen before execution
+
+After R0.v2 was accepted and before any R0.v2 pre/post computation, `SYSTEM_B_V2_EVALUATION_PROTOCOL.md` was frozen.
+
+The corrected evaluation is explicitly classified as an implementation-defect correction rather than untouched first-look evidence because R0.v1 held-out outcomes are historically known.
+
+No R0.v2 detection/explanation outcome existed when the protocol was fixed.
+
+The evaluator is isolated from v1 evaluation artifacts and may load only pre_drift/post_drift. It uses the accepted R0.v2 manifest, unchanged System-A checkpoints, frozen preprocessing, lambda and per-seed thresholds.
+
+Q1-audit-driven evidence additions are prospective and do not alter prediction:
+
+- benign/attack symbolic coverage, correctness and neural fidelity separately;
+- per-rule imputed-antecedent activation plus imputation-free rule-quality diagnostics;
+- repeated symbolic+fusion timing (1 warm-up + 5 measured exact-reproduction passes);
+- torch/threadpool/environment provenance.
+
+The output is write-once under `results/frozen/system_b_v2_corrected_v1/`.
+
+R0.v2 remains the required C/D initial symbolic state regardless of corrected evaluation results.

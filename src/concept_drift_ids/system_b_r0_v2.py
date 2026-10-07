@@ -540,7 +540,7 @@ def build_and_freeze_r0_v2(*, device_name: str) -> None:
     print("next_gate=commit_r0_v2_before_corrected_evaluation")
 
 
-def verify_r0_v2() -> None:
+def load_accepted_r0_v2_manifest() -> dict[str, Any]:
     if not V2_MANIFEST_PATH.is_file():
         raise FileNotFoundError("R0.v2 is not frozen locally; run build-r0-v2 first.")
     _load_audit()
@@ -585,7 +585,12 @@ def verify_r0_v2() -> None:
             raise ValueError(f"R0.v2 rule artifact identity mismatch for seed {seed}.")
         if len(payload["rules"]) != expected_counts[seed]:
             raise ValueError(f"Unexpected R0.v2 active rule count for seed {seed}.")
+    return manifest
 
+
+def verify_r0_v2() -> None:
+    manifest = load_accepted_r0_v2_manifest()
+    stored = manifest["manifest_sha256"]
     print(f"system_b_v2_manifest={V2_MANIFEST_PATH}")
     print(f"manifest_hash={stored}")
     print("pre_post_partitions_loaded=false")

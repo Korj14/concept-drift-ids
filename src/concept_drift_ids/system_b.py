@@ -858,6 +858,7 @@ def _build_metric_tables(
     detection_rows: list[dict[str, object]],
     *,
     scenario_version: int,
+    metric_names: Sequence[str] = EVIDENCE_METRICS,
 ) -> tuple[
     list[dict[str, object]],
     list[dict[str, object]],
@@ -881,7 +882,7 @@ def _build_metric_tables(
             for seed in SYSTEM_B_CONFIG["seeds"]
         ]
         for row in partition_rows:
-            for metric in EVIDENCE_METRICS:
+            for metric in metric_names:
                 value = row[metric]
                 if value is None:
                     continue
@@ -897,7 +898,7 @@ def _build_metric_tables(
                         "value": float(value),
                     }
                 )
-        for metric in EVIDENCE_METRICS:
+        for metric in metric_names:
             values = [
                 float(row[metric])
                 for row in partition_rows
@@ -923,7 +924,7 @@ def _build_metric_tables(
 
     paired_rows: list[dict[str, object]] = []
     aggregate_paired_rows: list[dict[str, object]] = []
-    for metric in EVIDENCE_METRICS:
+    for metric in metric_names:
         deltas: list[float] = []
         for seed in SYSTEM_B_CONFIG["seeds"]:
             pre = by_partition_seed[("pre_drift", seed)][metric]
@@ -979,6 +980,7 @@ def _rule_staleness_deltas(
     rule_rows: list[dict[str, object]],
     *,
     scenario_version: int,
+    system_id: str = SYSTEM_B_ID,
 ) -> list[dict[str, object]]:
     by_key = {
         (str(row["partition"]), int(row["seed"]), str(row["rule_id"])): row
@@ -1004,7 +1006,7 @@ def _rule_staleness_deltas(
         pre_pass = _rule_gate_pass(pre)
         post_pass = _rule_gate_pass(post)
         out: dict[str, object] = {
-            "system_id": SYSTEM_B_ID,
+            "system_id": system_id,
             "scenario_id": str(pre["scenario_id"]),
             "scenario_version": scenario_version,
             "seed": seed,
@@ -1255,6 +1257,9 @@ def main() -> None:
     build_v2 = subparsers.add_parser("build-r0-v2")
     build_v2.add_argument("--device", default="cpu")
     subparsers.add_parser("verify-r0-v2")
+    evaluate_v2 = subparsers.add_parser("evaluate-r0-v2")
+    evaluate_v2.add_argument("--device", default="cpu")
+    subparsers.add_parser("verify-r0-v2-evaluation")
     args = parser.parse_args()
     if args.command == "build":
         build_and_freeze_system_b(device_name=args.device)
@@ -1280,9 +1285,15 @@ def main() -> None:
     elif args.command == "build-r0-v2":
         from concept_drift_ids.system_b_r0_v2 import build_and_freeze_r0_v2
         build_and_freeze_r0_v2(device_name=args.device)
-    else:
+    elif args.command == "verify-r0-v2":
         from concept_drift_ids.system_b_r0_v2 import verify_r0_v2
         verify_r0_v2()
+    elif args.command == "evaluate-r0-v2":
+        from concept_drift_ids.system_b_v2_evaluation import evaluate_r0_v2
+        evaluate_r0_v2(device_name=args.device)
+    else:
+        from concept_drift_ids.system_b_v2_evaluation import verify_r0_v2_evaluation
+        verify_r0_v2_evaluation()
 
 
 if __name__ == "__main__":

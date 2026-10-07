@@ -259,3 +259,29 @@ Evaluation stage:
 - uses the frozen sensitivity weight/threshold identities;
 - reports the same corrected-v2 detection and class-conditional symbolic metrics;
 - cannot replace lambda=0.50 or accepted R0.v2 regardless of outcome.
+
+
+## 26. System-B mandatory robustness closure — 8 October 2026
+
+The mandatory retrospective System-B robustness tranche is now complete and frozen.
+
+Completed mandatory items:
+
+- dtype conformance audit;
+- scenario attribution / exact-pattern diagnostic;
+- exact-pattern seen-versus-unseen A/B rescore;
+- duplicate-aware validation and whole-pattern bootstrap;
+- Destination Port exclusion;
+- alternate development splits;
+- fusion-authority sensitivity;
+- SHAP background and aggregation sensitivity;
+- one-factor rule-gate sensitivity;
+- pattern-deduplicated alternate System-A teacher;
+- matched alternate R0 construction;
+- full held-out alternate A-to-R0-to-B duplicate-dependence evaluation.
+
+The mandatory evidence does not establish a need to replace accepted R0.v2. It does establish that exact symbolic composition and class-conditional explanation behavior are assumption-dependent under several reasonable construction choices, while the main static longitudinal detection pattern is substantially more stable.
+
+Secondary items from Sections 2 and 5 (top-k and surrogate-constraint sweeps) remain available for publication robustness but are not required before transition to C/D unless a later interpretive claim depends specifically on those dimensions.
+
+System-B implementation is therefore considered closed for purposes of beginning prospective C/D design freeze. No further B-side tuning or held-out selection is permitted.

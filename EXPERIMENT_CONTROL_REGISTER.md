@@ -133,3 +133,17 @@ A result being inconvenient is not a valid reason for deviation.
 | Corrected B-v2 evidence status | Implementation-defect correction, not first-look untouched evidence | Provenance | Manuscript/statistical interpretation | **FROZEN** |
 | Corrected B-v2 staleness transitions | 18 pass→pass; 7 fail→pass; 6 fail→fail; 1 pass→fail across 32 accepted rules | Frozen v2 evidence | RQ1 descriptive symbolic staleness | **FROZEN OBSERVATION** |
 | Corrected B-v2 imputation diagnostic | 0/64 rule×partition records had imputed-antecedent activations | Frozen v2 evidence | Explanation robustness for this scenario | **FROZEN OBSERVATION** |
+
+
+## Retrospective-assumption audit controls — 7 October 2026
+
+| Control | Frozen value / rule | Evidence permitted | Matching scope | Status |
+|---|---|---|---|---|
+| Current MAIN source identity | `c3f1fed692ff0478c221925fca5c311380617a993e7ebf0021af2e05a362ab66` | Source document bytes | Future robustness + C/D | **FROZEN CURRENT AUTHORITY** |
+| Current reconciled-plan identity | `05378ef14437f037bab0aa77853a16980b4fc60ac303398acc1cc293bdd32bdb` | Source document bytes | Future robustness + C/D | **FROZEN CURRENT AUTHORITY** |
+| Historical A/B governing hashes | Preserve prior hashes already embedded in accepted manifests | Historical provenance only | Frozen A/B | **IMMUTABLE** |
+| Restart trigger | Leakage, wrong frozen identity, treatment contamination, or realized protocol mismatch changing the scientific object | Audit evidence independent of favorable held-out performance | All stages | **FROZEN RULE** |
+| Ordinary robustness dependence | Additive sensitivity; primary artifact remains immutable | Prespecified secondary analysis | A/B/C/D | **FROZEN RULE** |
+| Controlled-shift attribution | `sudden_benign_v1` is BENIGN-source-regime-dominant, not attack-invariant | Scenario diagnostics | Interpretation | **FROZEN RULE** |
+| Seen/unseen exact-pattern reporting | Reproduce Stage-2 exact-pattern dependence in repository and report fixed A/B on training-seen vs unseen held-out rows | Frozen models + held-out rescore only; no tuning | Publication-strength B | **REQUIRED BEFORE B ROBUSTNESS CLOSURE** |
+| Stage-3A dtype conformance | Compare float64 symbolic-consumer contract with realized float32 B extraction using train/dev only before classifying as inert or defect | Training + development only | R0.v2 conformance | **REQUIRED FIRST** |

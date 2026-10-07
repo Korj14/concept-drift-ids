@@ -217,3 +217,24 @@ Primary C/D threshold policy must be frozen before adaptive held-out execution.
 If the primary uses fixed System-B fused thresholds, a matched threshold-adaptation condition may be studied only as a separately labeled sensitivity.
 
 If adaptive thresholding becomes primary, C and D must use the identical update rule, label timing, evidence window, and update schedule.
+
+
+## 25. Retrospective-assumption closure order
+
+The revised governing sources require the publication-strength System-B robustness package to proceed without modifying accepted R0.v2 or its corrected evaluation.
+
+Execution order:
+
+1. Stage-3A float64/float32 symbolic-consumer conformance audit using training/development only.
+2. Repository-frozen scenario attribution and exact-pattern-dependence diagnostic.
+3. Fixed A/B seen-versus-unseen held-out rescore.
+4. Destination Port exclusion sensitivity.
+5. Duplicate-aware package: deduplicated validation, group-aware duplicate-pattern bootstrap, and deduplicated-training sensitivity.
+6. Alternate development-split sensitivity.
+7. Fusion-authority sensitivity.
+8. SHAP background/aggregation sensitivity.
+9. One-factor rule-gate sensitivity.
+
+Top-k and surrogate-constraint sweeps remain secondary unless an earlier mandatory result exposes instability requiring them for interpretation.
+
+None of these analyses may replace R0.v2 because it performs better. A versioned correction is considered only if an independent conformance audit establishes a realized scientific-contract defect.

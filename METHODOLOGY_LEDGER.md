@@ -1241,3 +1241,28 @@ The only pass→fail rule is seed 3 rule `r0-s3-e71a7cc956b5d661`, a BENIGN rule
 The v1→v2 correction has small predictive effect but meaningful coverage impact only on the affected seeds. Seeds 0/2/4 are unchanged. Seed 1 loses ~0.021 pre and ~0.035 post resolved coverage with MCC changes about -0.00284/-0.00202; seed 3 loses ~0.00445 pre and ~0.02165 post coverage while MCC is approximately unchanged/slightly improved post. This is implementation-correction provenance, not a model-selection comparison.
 
 R0.v2 remains the required initial symbolic state for future C/D regardless of these corrected held-out outcomes.
+
+
+---
+
+## 7 October 2026 — governing-source revision after retrospective assumption audit
+
+The two project-source Word authorities were revised additively after corrected System-B v2 evidence was already frozen.
+
+Current source identities:
+
+- MAIN: `c3f1fed692ff0478c221925fca5c311380617a993e7ebf0021af2e05a362ab66`;
+- Reconciled implementation plan: `05378ef14437f037bab0aa77853a16980b4fc60ac303398acc1cc293bdd32bdb`.
+
+The previously frozen A/B artifacts legitimately contain the earlier governing-source hashes and are not rewritten. The revised authorities govern new robustness diagnostics and all future C/D work.
+
+The revision formalizes:
+
+- a restart/versioned-rerun versus additive-sensitivity versus later-generalization classification;
+- BENIGN-source-regime-dominant wording for `sudden_benign_v1`, with explicit acknowledgment of nonzero GoldenEye temporal movement;
+- mandatory exact-pattern/duplicate-aware, development-split, fusion-authority, SHAP-reference and rule-gate robustness around immutable R0.v2;
+- a Stage-3A float64-versus-System-B-float32 conformance diagnostic;
+- unchanged/raw bounded seed-level t-intervals with publication-layer physical-axis handling;
+- multi-scenario/second-dataset and checkpoint-archive obligations before broad submission claims.
+
+No historical frozen artifact was altered by this governance sync.

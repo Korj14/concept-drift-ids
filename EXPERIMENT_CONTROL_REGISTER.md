@@ -172,3 +172,26 @@ A result being inconvenient is not a valid reason for deviation.
 | Pattern-deduplicated teacher R0 chain | Exact frozen alternate teacher manifest/checkpoints; reconstruct exact retained training rows; reuse frozen preprocessing, SHAP sample sizes/seeds, surrogate protocol, development split, validation gates, weighted CART consequents and fusion-selection procedure; no pre/post until R0 manifest is committed | Training + development only | Full upstream duplicate-dependence chain | **IMPLEMENTATION WIRED TO CLI; R0 MANIFEST MUST FREEZE BEFORE HELD-OUT RESCORE** |
 
 | Pattern-deduplicated full-chain held-out evaluation | Frozen alternate teacher + frozen alternate R0 only; pre/post scoring only; report alternate A and alternate B seed-level/aggregate/paired deltas; no training/development access; cannot replace accepted primary artifacts | Pre/post fixed rescore only | Full upstream duplicate-dependence robustness closure | **IMPLEMENTATION ADDED; EXECUTE ONLY AFTER ALTERNATE R0 FREEZE** |
+
+
+## Current System-B closure overlay — 8 October 2026
+
+This overlay records the present state after completion of the mandatory retrospective robustness tranche. Earlier row text documenting pre-execution gates is retained as history.
+
+| Control | Current state |
+| --- | --- |
+| System-B Q1 closure diagnostic / weighted CART consequent defect | **CLOSED by accepted R0.v2 correction** |
+| Stage-3A dtype conformance | **FROZEN / ACCEPTED AS NUMERICALLY INERT** |
+| Retrospective scenario audit | **FROZEN** |
+| A/B exact-pattern seen/unseen rescore | **FROZEN** |
+| Duplicate-aware B validation / group bootstrap | **FROZEN** |
+| B selection robustness (Destination Port, SHAP aggregation/background, dev split, rule gates) | **SELECTION + HELD-OUT EVALUATION FROZEN** |
+| Fusion-authority sensitivity | **SELECTION + HELD-OUT EVALUATION FROZEN** |
+| Pattern-deduplicated System-A teacher | **FROZEN** |
+| Pattern-deduplicated teacher R0 chain | **FROZEN** |
+| Pattern-deduplicated full-chain held-out evaluation | **FROZEN** |
+| Future C/D initial symbolic state | **ACCEPTED R0.v2 FROZEN BY MANIFEST HASH** |
+
+No unresolved System-B implementation defect blocks transition to C/D design freeze.
+
+The remaining **TO FREEZE** controls in this register are prospective C/D controls and must be resolved before the first adaptive held-out execution. They are not reasons to reopen or retune accepted System B.

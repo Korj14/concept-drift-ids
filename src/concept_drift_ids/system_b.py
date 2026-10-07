@@ -1286,6 +1286,9 @@ def main() -> None:
     dedup_teacher_r0 = subparsers.add_parser("build-pattern-dedup-teacher-r0")
     dedup_teacher_r0.add_argument("--device", default="cpu")
     subparsers.add_parser("verify-pattern-dedup-teacher-r0")
+    dedup_chain_eval = subparsers.add_parser("evaluate-pattern-dedup-chain")
+    dedup_chain_eval.add_argument("--device", default="cpu")
+    subparsers.add_parser("verify-pattern-dedup-chain-evaluation")
     args = parser.parse_args()
     if args.command == "build":
         build_and_freeze_system_b(device_name=args.device)
@@ -1374,6 +1377,12 @@ def main() -> None:
     elif args.command == "verify-pattern-dedup-teacher-r0":
         from concept_drift_ids.system_b_dedup_teacher_robustness import verify_pattern_dedup_teacher_r0
         verify_pattern_dedup_teacher_r0()
+    elif args.command == "evaluate-pattern-dedup-chain":
+        from concept_drift_ids.system_b_dedup_teacher_evaluation import evaluate_pattern_dedup_training_chain
+        evaluate_pattern_dedup_training_chain(device_name=args.device)
+    elif args.command == "verify-pattern-dedup-chain-evaluation":
+        from concept_drift_ids.system_b_dedup_teacher_evaluation import verify_pattern_dedup_training_chain_evaluation
+        verify_pattern_dedup_training_chain_evaluation()
     else:
         raise ValueError(f"Unhandled System-B command: {args.command}")
 

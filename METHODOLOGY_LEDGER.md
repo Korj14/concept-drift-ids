@@ -725,3 +725,10 @@ Repository review after the orchestration commit found that the intended root-ru
 ### Single-class longitudinal-window metric guard
 
 A static code audit identified that the shared `binary_metrics` helper computes ROC-AUC unconditionally and would therefore raise on a longitudinal reporting window containing only one class. Before any System-B evaluation, the window-specific wrapper was corrected to retain thresholded confusion-derived metrics while recording ROC-AUC and average precision as undefined for single-class windows. A repository-only regression test was added. Full pre/post partitions still use the standard shared metric implementation because both classes are present by construction.
+
+
+### Surrogate-leaf consequent semantics fixed before rule generation
+
+The implementation review clarified that each extracted candidate must preserve the fitted surrogate's semantics. The consequent is therefore taken from the fitted decision-tree leaf prediction, including the effect of the prospectively frozen neural-class sample weights. It is not recomputed afterward from an unweighted majority of covered training decisions. Independent development neural-fidelity validation remains the acceptance safeguard.
+
+Candidate logs were also expanded to retain the full canonical antecedent for accepted and rejected candidates, so later lifecycle/rejection analysis does not depend only on opaque candidate IDs. These changes occurred before any System-B rule generation or held-out evaluation.

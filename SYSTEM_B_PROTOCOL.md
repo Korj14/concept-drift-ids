@@ -128,7 +128,7 @@ For seed `s`:
 
 If either neural-predicted class is absent in training, extraction fails rather than inventing a symbolic class.
 
-Every root-to-leaf path becomes one candidate rule.
+Every root-to-leaf path becomes one candidate rule. The candidate consequent is the fitted surrogate leaf's predicted class (therefore respecting the prespecified surrogate sample weights); it is not recomputed afterward from an unweighted majority. Independent development neural fidelity remains the gate that decides whether the leaf rule actually explains the frozen neural detector well enough to enter `R_0`.
 
 ## 7. Canonical rule representation
 

@@ -392,6 +392,7 @@ def _validate_candidates(
         log.append({
             "candidate": f"s{seed}-leaf{leaf}",
             "rule_id": rule_id,
+            "antecedent": [condition.to_dict() for condition in conditions],
             "consequent": consequent,
             **quality,
             "stability": stability,

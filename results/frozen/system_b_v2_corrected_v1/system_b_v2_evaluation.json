@@ -1,0 +1,99 @@
+{
+  "evaluation_format_version": 1,
+  "evaluation_id": "system_b_v2_corrected_evaluation_v1",
+  "evidence_status": "implementation_defect_correction_not_first_look",
+  "historical_v1_held_out_outcomes_known": true,
+  "system_id": "system_b_static_neuro_symbolic_v2_corrected",
+  "system_manifest_sha256": "131027d2f136494eb388183f18dcb7eb0e9d7e9fe786f22dba25f4e1624c1483",
+  "scenario_id": "cicids2017_sudden_benign_v1",
+  "scenario_version": 1,
+  "evaluation_git": {
+    "commit": "51690ea23906ab87b9406311eacf381c7a22b5fb",
+    "branch": "stage4-system-b",
+    "clean": "true"
+  },
+  "runtime": {
+    "python": "3.11.9",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "numpy": "2.4.6",
+    "torch": "2.14.1+cpu",
+    "scikit_learn": "1.9.1",
+    "shap": "0.51.0",
+    "cpu_count": 16,
+    "torch_num_threads": 8,
+    "torch_num_interop_threads": 8,
+    "thread_environment": {
+      "OMP_NUM_THREADS": null,
+      "MKL_NUM_THREADS": null,
+      "OPENBLAS_NUM_THREADS": null,
+      "NUMEXPR_NUM_THREADS": null
+    },
+    "threadpools": [
+      {
+        "user_api": "blas",
+        "internal_api": "openblas",
+        "num_threads": 16,
+        "prefix": "libscipy_openblas",
+        "filepath": "C:\\Dev\\concept-drift-ids\\.venv\\Lib\\site-packages\\numpy.libs\\libscipy_openblas64_-63c857e738469261263c764a36be9436.dll",
+        "version": "0.3.31.188.0",
+        "threading_layer": "pthreads",
+        "architecture": "Haswell"
+      },
+      {
+        "user_api": "openmp",
+        "internal_api": "openmp",
+        "num_threads": 8,
+        "prefix": "libiomp",
+        "filepath": "C:\\Dev\\concept-drift-ids\\.venv\\Lib\\site-packages\\torch\\lib\\libiomp5md.dll",
+        "version": null
+      },
+      {
+        "user_api": "openmp",
+        "internal_api": "openmp",
+        "num_threads": 1,
+        "prefix": "libiomp",
+        "filepath": "C:\\Dev\\concept-drift-ids\\.venv\\Lib\\site-packages\\torch\\lib\\libiompstubs5md.dll",
+        "version": null
+      },
+      {
+        "user_api": "openmp",
+        "internal_api": "openmp",
+        "num_threads": 16,
+        "prefix": "vcomp",
+        "filepath": "C:\\Dev\\concept-drift-ids\\.venv\\Lib\\site-packages\\sklearn\\.libs\\vcomp140.dll",
+        "version": null
+      },
+      {
+        "user_api": "blas",
+        "internal_api": "openblas",
+        "num_threads": 16,
+        "prefix": "libscipy_openblas",
+        "filepath": "C:\\Dev\\concept-drift-ids\\.venv\\Lib\\site-packages\\scipy.libs\\libscipy_openblas-64eda39e79589aedb16f58e5547eb599.dll",
+        "version": "0.3.30",
+        "threading_layer": "pthreads",
+        "architecture": "Haswell"
+      }
+    ]
+  },
+  "data_access": {
+    "training_used": false,
+    "development_used": false,
+    "pre_drift_used": true,
+    "post_drift_used": true
+  },
+  "timing_protocol": {
+    "symbolic_fusion_warmup_repeats": 1,
+    "symbolic_fusion_measured_repeats": 5
+  },
+  "rows": {
+    "detection": 10,
+    "metrics_by_seed": 200,
+    "aggregate_metrics": 40,
+    "paired_deltas": 100,
+    "aggregate_paired_deltas": 20,
+    "rule_quality": 64,
+    "rule_staleness_deltas": 32,
+    "windows": 140,
+    "runtime": 10
+  }
+}

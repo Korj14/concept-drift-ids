@@ -1,6 +1,6 @@
 # System B Protocol — Static Neuro-Symbolic Baseline
 
-**Status:** PROTOCOL FROZEN; IMPLEMENTATION / R0 ARTIFACTS NOT YET ACCEPTED  
+**Status:** PROTOCOL + INITIAL R0 FROZEN; UNTOUCHED SYSTEM-B EVALUATION NOT YET EXECUTED  
 **Stage:** 4 / System B  
 **Python:** 3.11.9 exactly  
 **Scenario:** `cicids2017_sudden_benign_v1`
@@ -458,3 +458,34 @@ System-B v1 rule construction and untouched evaluation use **CPU only**, matchin
 - no System-B pre/post result has been generated or inspected;
 - System-A pre/post results are historically known but were not used to select any System-B parameter above;
 - exact accepted `R_0` bytes, selected global lambda, and per-seed fused thresholds remain to be generated from permitted training/development evidence under this frozen procedure.
+
+
+## 18. Accepted R0 freeze identity — 7 October 2026
+
+The development-only System-B build has completed under this frozen protocol and the resulting initial symbolic state is now accepted for untouched evaluation.
+
+Frozen identities:
+
+- System-B manifest: `data/manifests/system_b_v1.json`
+- manifest canonical SHA-256: `6e3589056d4c252c1a6c7cfd87b891fb8a24f1e30e86b17833b6035ea9ee86a8`
+- build git commit: `cd2078eacb7da28cbd8460da43d96381bd70b013`
+- freeze commit: `245ca52371d7cdbcf8475b1d86b4b95d2b9850f5`
+- build backend: CPU
+- build Python: 3.11.9
+- selected global neural fusion weight: `lambda = 0.50`
+- seed-specific fused thresholds:
+  - seed 0: `0.692427396774292`
+  - seed 1: `0.9235901534557343`
+  - seed 2: `0.8299936652183533`
+  - seed 3: `0.9747405052185059`
+  - seed 4: `0.9527904391288757`
+- active rule counts by seed: `[7, 8, 7, 8, 6]`
+- candidate counts by seed: `[13, 12, 13, 12, 12]`
+- quality-gate rejection counts by seed: `[6, 4, 6, 4, 6]`
+- committed System-A longitudinal manifest SHA-256: `9f26b54834d041da115adffd7921b10c97ed826e832c2325f77dd0e2a617754a`
+
+The manifest records `training_used=true`, `development_used=true`, `pre_drift_used=false`, and `post_drift_used=false`. Every active rule satisfies the prospectively frozen validation gates and traces to a quality-accepted candidate.
+
+The Research Contract run for the R0 freeze commit completed successfully. No System-B pre/post evaluation artifact existed when this acceptance section was added.
+
+This acceptance freezes the initial symbolic substrate. Later System B evaluation must not modify it, and Systems C/D must reuse the corresponding seed-matched R0 unless a separately versioned prospective deviation is scientifically justified.

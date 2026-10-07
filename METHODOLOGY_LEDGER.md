@@ -746,3 +746,133 @@ No longitudinal System-A rescore was executed during this repository-only implem
 ### Longitudinal-rescore sequencing/provenance guard
 
 Before local execution, the common-grid System-A rescore path was tightened to require a clean Git worktree and record its exact commit/branch in both the supplement summary and manifest. The README execution order now requires committing the additive System-A longitudinal supplement before invoking `system-b build`; otherwise the intentionally strict System-B clean-worktree gate would reject the build. This correction was made before any longitudinal rescore or System-B rule build was executed.
+
+
+---
+
+## 7 October 2026 — System-B R0 execution freeze and pre-evaluation sanitation
+
+The local operator reported successful completion of the prescribed repository tests, System-A verification, common-grid System-A longitudinal rescore, System-B development-only build, and System-B read-only verification. Repository-side inspection was then performed independently before permitting untouched System-B evaluation.
+
+### System-A common-grid longitudinal supplement
+
+Committed supplement:
+
+`results/frozen/system_a_v1_longitudinal_v1/`
+
+Accepted longitudinal manifest SHA-256:
+
+`9f26b54834d041da115adffd7921b10c97ed826e832c2325f77dd0e2a617754a`
+
+The supplement references the accepted System-A manifest `42004b5ed100b690023b9998bdc959fac41ab947b996fb7c58e44cee5e8dc6de` and original evaluation manifest `e721b641b5898976c76c0449dedf7152cb302be4447604525afb7ddf1c94c5b3`.
+
+Its execution provenance records clean commit `e29830bdf0ded41240058f19b4928259b01b5280`, CPU backend, and the prospectively frozen 5,000-row non-overlapping boundary-aligned grid.
+
+Repository sanitation confirmed:
+
+- 14 pre-drift windows per seed totaling exactly 69,260 rows;
+- 14 post-drift windows per seed totaling exactly 69,270 rows;
+- five seeds retained;
+- 140 seed/partition/window rows in total;
+- no retraining, recalibration, or threshold reselection implied by the artifact identity.
+
+### System-B development-only build
+
+Accepted System-B manifest:
+
+`data/manifests/system_b_v1.json`
+
+Canonical manifest SHA-256:
+
+`6e3589056d4c252c1a6c7cfd87b891fb8a24f1e30e86b17833b6035ea9ee86a8`
+
+The build provenance recorded by the manifest is:
+
+- clean git commit `cd2078eacb7da28cbd8460da43d96381bd70b013`;
+- branch `stage4-system-b`;
+- Python 3.11.9;
+- Windows runtime;
+- CPU backend / PyTorch 2.14.1+cpu;
+- NumPy 2.4.6;
+- scikit-learn 1.9.1;
+- SHAP 0.51.0.
+
+The manifest explicitly records:
+
+- training used: true;
+- development used: true;
+- pre_drift used: false;
+- post_drift used: false.
+
+It also preserves hashes for the training rows, the non-overlapping development validation/fusion slices, and the fixed SHAP background/attribution samples.
+
+### R0 rule-base outcome
+
+Candidate -> active-rule counts were:
+
+- seed 0: 13 -> 7;
+- seed 1: 12 -> 8;
+- seed 2: 13 -> 7;
+- seed 3: 12 -> 8;
+- seed 4: 12 -> 6.
+
+The corresponding quality-gate rejection counts were 6, 4, 6, 4, and 6.
+
+Independent repository inspection confirmed for every seed:
+
+- exactly 12 SHAP-selected features;
+- every active rule traces to a candidate that passed the prospectively frozen conjunctive quality gate;
+- every active rule satisfies support >= 0.001, covered rows >= 100, class precision >= 0.80, neural fidelity >= 0.90, bootstrap stability >= 0.90, and complexity <= 4;
+- every rule artifact references the corresponding accepted System-A checkpoint hash and frozen System-A threshold;
+- no favorable seed or rule base was substituted after generation.
+
+Active-rule class composition is sparse on the attack consequent but nonzero for every seed:
+
+- seed 0: 6 benign / 1 attack rule;
+- seed 1: 6 benign / 2 attack rules;
+- seed 2: 6 benign / 1 attack rule;
+- seed 3: 7 benign / 1 attack rule;
+- seed 4: 5 benign / 1 attack rule.
+
+This composition is retained as generated; it is not rebalanced post hoc.
+
+### Fusion freeze
+
+The prespecified global grid was evaluated on the development fusion slice only.
+
+Mean MCC by neural weight was monotonically highest at the lowest prespecified grid point:
+
+- lambda 0.50: 0.7721332020;
+- 0.60: 0.7706859479;
+- 0.70: 0.7692022392;
+- 0.80: 0.7672804491;
+- 0.90: 0.7629981606;
+- 1.00: 0.7454673697.
+
+Therefore the frozen selection rule chose `lambda=0.50`.
+
+Frozen per-seed fused thresholds are:
+
+- seed 0: 0.692427396774292;
+- seed 1: 0.9235901534557343;
+- seed 2: 0.8299936652183533;
+- seed 3: 0.9747405052185059;
+- seed 4: 0.9527904391288757.
+
+These values were not selected from pre/post evidence.
+
+### Repository/CI sanitation
+
+The R0 artifacts and manifest were committed in:
+
+`245ca52371d7cdbcf8475b1d86b4b95d2b9850f5`
+
+The exact commit completed the GitHub Research Contract successfully.
+
+Repository inspection at that head found no committed `results/frozen/system_b_v1` evaluation directory. Untouched System-B pre/post evidence therefore remained ungenerated/uncommitted at the time of this sanitation review.
+
+A documentation lag was identified before evaluation: the protocol header and control register still described exact R0/fusion identities as not yet frozen even though the freeze commit and CI had succeeded. Those status fields are synchronized in the present governance commit. This is an audit-trail correction only; no rule, threshold, fusion weight, checkpoint, preprocessing state, or evaluation code is changed.
+
+A new repository-only frozen-contract test is also added so CI verifies the committed System-B manifest and R0 artifacts directly, including hashes, checkpoint/threshold linkage, data-access firewall flags, active-rule counts, and validation-gate invariants.
+
+No System-B pre/post metric was viewed or used during this sanitation/freeze synchronization.

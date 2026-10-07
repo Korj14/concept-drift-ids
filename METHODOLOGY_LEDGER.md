@@ -1356,3 +1356,10 @@ For these variants, the attribution sample remains exactly the frozen balanced 1
 A separate post-hoc alternate teacher now tests whether the primary neural baseline materially depends on repeated training observations. Training rows are collapsed by exact raw 77-feature pattern plus binary label, preserving contradictory BENIGN/attack representations as separate observations and forbidding majority relabeling. The accepted training-fitted preprocessor is reused without refit.
 
 The neural architecture, initialization/seeds, optimizer, early-stopping rule, development evidence, class-weight formula and MCC threshold-selection procedure remain the accepted System-A protocol. The alternate checkpoints and manifest are isolated under robustness paths and cannot replace accepted System A based on later held-out performance. No pre/post partition is loaded during alternate-teacher training.
+
+
+### CI repair for alternate-teacher data-firewall test — 7 October 2026
+
+Research Contract runs #115–#117 failed because the new repository-only test searched the entire `build_pattern_dedup_teacher` source for the bare strings `pre_drift` and `post_drift`. The builder legitimately records `pre_drift_used=False` and `post_drift_used=False` in its provenance manifest, causing a false-positive test failure even though its only partition loads are training and development.
+
+The test was narrowed to forbid exact held-out calls `load_partition("pre_drift")` and `load_partition("post_drift")` while still requiring explicit training/development loads. No experimental code, frozen artifact, treatment, data-access rule, or scientific result changed.

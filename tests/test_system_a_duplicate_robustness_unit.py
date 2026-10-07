@@ -25,5 +25,5 @@ def test_dedup_teacher_builder_does_not_request_held_out_partitions() -> None:
     source = inspect.getsource(build_pattern_dedup_teacher)
     assert 'load_partition("training")' in source
     assert 'load_partition("development")' in source
-    assert "pre_drift" not in source
-    assert "post_drift" not in source
+    assert 'load_partition("pre_drift")' not in source
+    assert 'load_partition("post_drift")' not in source

@@ -122,3 +122,22 @@ Never treat 36 rules or 140 windows as independent replicates. Matched seed rema
 - New B sensitivities: secondary/post-hoc robustness.
 - C/D robustness plan: prospective.
 - No sensitivity result may erase an inconvenient primary result.
+
+
+## 16. Reporting-window sensitivity
+
+Primary reporting grid remains 5,000 rows with stride 5,000 and boundary-aligned partitions.
+
+Prospective sensitivity for later longitudinal C/D reporting:
+
+- 2,500-row non-overlapping windows;
+- 5,000-row non-overlapping windows;
+- 10,000-row non-overlapping windows.
+
+The internal drift-detector/adaptation window is a separate control and must not be conflated with this reporting sensitivity. Apply identical reporting grids to matched systems and do not use window choice to manufacture independent replicates or select favorable effects.
+
+## 17. D lifecycle-provenance requirement
+
+R0's static schema is only the starting substrate. D must record immutable lifecycle events with trigger/event ID, operation type, parents/sources, evidence-window identity, candidate metrics, accept/reject reason, resulting version/rule IDs, conflict/abstention decision and computational cost.
+
+The lifecycle event schema must be frozen before the first adaptive symbolic run.

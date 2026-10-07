@@ -1003,3 +1003,12 @@ Material findings added to the audit record:
 Before executing the new frozen-evidence semantic analysis, its source chain was tightened: the accepted System-B supplement manifest is now pinned to canonical SHA-256 `70d41b210ed54f2fa2269ec738ccd94100148d701bb5a2ae79d8d30839e9d190`, and the semantic-analysis command verifies both the original evaluation and the accepted supplement before reading derived tables.
 
 This is an integrity-only change. No numerical result, R0 rule, threshold, fusion setting, or held-out computation is changed.
+
+
+---
+
+## 7 October 2026 — duplicate-dependence and lifecycle-schema sanitation
+
+Audit-only reconstruction quantified identical 77-feature patterns in the actual B evidence slices: 3.88% of the rule-validation slice belongs to duplicated patterns (max group 206), 5.86% of exact pre-drift rows (max 548), and 3.18% of exact synthetic post-drift rows (max 136). The primary duplicate-retention policy remains unchanged. These figures justify the already-frozen group-aware/deduplicated stability sensitivity and caution against interpreting row-bootstrap persistence as independence-aware robustness.
+
+The static R0 schema was also reviewed against the final D lifecycle claim. It is adequate for persistent initial rule identity but not, by itself, a complete lifecycle event log. D must prospectively add immutable operation/parent/evidence/trigger/decision/cost records while preserving the frozen R0 IDs.

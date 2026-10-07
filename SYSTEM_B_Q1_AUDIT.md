@@ -356,3 +356,34 @@ The sensitivity questions/ranges are now fixed in `SYSTEM_B_ROBUSTNESS_PLAN.md`.
 **AMBER:** class-conditional validity, Destination Port, duplicate-aware stability, SHAP background/top-k, fusion authority, surrogate/gate sensitivity, thread-level reproducibility, checkpoint archival and external validation.
 
 **RED closure blocker:** the training-only weighted-leaf consequent diagnostic must be executed and frozen before R0.v1 is inherited into C/D.
+
+
+## 29. Duplicate dependence quantified on the actual B evidence slices
+
+An audit-only reconstruction from the frozen raw CSVs (no model/rule changes) measured exact 77-feature-pattern duplication:
+
+- full development: 10,018 rows belong to duplicated patterns (4.82%); maximum pattern multiplicity 344;
+- rule-validation 60% slice: 4,835 rows (3.88%); maximum multiplicity 206;
+- fusion 40% slice: 2,675 rows (3.22%); maximum multiplicity 138;
+- exact pre-drift partition after Heartbleed exclusion: 4,061 rows (5.86%); maximum multiplicity 548;
+- exact synthetic post-drift partition: 2,203 rows (3.18%); maximum multiplicity 136.
+
+Thus duplicate dependence is not dominant in row count, but a few high-multiplicity patterns can materially influence rare-rule support and row-bootstrap persistence. This supports, rather than replaces, the planned group-aware sensitivity.
+
+## 30. R0 schema is a lifecycle substrate, not a completed lifecycle
+
+The static rule schema preserves persistent rule ID, lineage ID, rule-base version, conditions, consequent, validation metrics, lifecycle state and generic relations.
+
+That is sufficient to carry R0 identities forward, but a Q1 claim about a **validated/versioned lifecycle** in D requires a richer immutable event record including at minimum:
+
+- trigger/drift-event identity;
+- operation type (addition/refinement/merge/demotion/retirement/reactivation);
+- parent/source rule IDs;
+- evidence window and information-timing identity;
+- candidate quality evidence;
+- acceptance/rejection decision and reason;
+- resulting rule/version IDs;
+- conflict/abstention decision where applicable;
+- operation time/cost.
+
+D must add this prospectively without rewriting R0.v1.

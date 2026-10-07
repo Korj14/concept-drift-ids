@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 import inspect
+from types import SimpleNamespace
 
 import numpy as np
+import pandas as pd
 
 import concept_drift_ids.system_b_v2_evaluation as evaluation
 from concept_drift_ids.system_b_r0_v2 import ACCEPTED_SYSTEM_B_V2_MANIFEST_SHA256
@@ -70,3 +72,27 @@ def test_class_conditional_symbolic_summary_separates_attack_correctness() -> No
 def test_timing_protocol_is_frozen() -> None:
     assert evaluation.TIMING_WARMUP_REPEATS == 1
     assert evaluation.TIMING_MEASURED_REPEATS == 5
+
+
+
+def test_imputation_diagnostic_counts_only_activated_missing_antecedents() -> None:
+    raw = pd.DataFrame({"f": [np.nan, 1.0, np.nan, 2.0]})
+    mask = np.array([True, True, False, False], dtype=bool)
+    rule = SimpleNamespace(
+        conditions=(SimpleNamespace(feature="f"),),
+        consequent=0,
+    )
+    y = np.array([0, 0, 1, 1], dtype=np.int8)
+    neural = np.array([0, 0, 1, 1], dtype=np.int8)
+    out = evaluation._imputation_diagnostic(
+        raw,
+        mask=mask,
+        rule=rule,
+        y_true=y,
+        neural_decision=neural,
+    )
+    assert out["imputed_antecedent_activation_count"] == 1
+    assert out["imputed_antecedent_activation_fraction"] == 0.5
+    assert out["imputation_free_covered_count"] == 1
+    assert out["imputation_free_class_precision"] == 1.0
+    assert out["imputation_free_neural_fidelity"] == 1.0

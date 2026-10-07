@@ -1174,3 +1174,10 @@ Q1-audit-driven evidence additions are prospective and do not alter prediction:
 The output is write-once under `results/frozen/system_b_v2_corrected_v1/`.
 
 R0.v2 remains the required C/D initial symbolic state regardless of corrected evaluation results.
+
+
+### Corrected-v2 evaluator pre-run diagnostic test hardening
+
+Before corrected R0.v2 pre/post execution, a repository-only unit test was added for the new imputation-aware explanation diagnostic. It verifies that only activated rules whose antecedent feature was actually missing are counted, and that the imputation-free quality calculation excludes those activations without altering primary prediction.
+
+No R0.v2 held-out output existed when this test was added.

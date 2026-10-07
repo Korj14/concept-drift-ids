@@ -88,3 +88,16 @@ A result being inconvenient is not a valid reason for deviation.
 | System-B robustness plan | `SYSTEM_B_ROBUSTNESS_PLAN.md`; B post-hoc robustness, C/D prospective | Structural/literature audit; no C/D outcomes | Publication robustness | **FROZEN BEFORE C/D OUTCOMES** |
 | Class-conditional symbolic reporting | Benign/attack coverage and correctness separately | Immutable B evidence; prospective C/D | B/C/D explanation reporting | **REQUIRED** |
 | Thread/determinism controls for C/D | Record/freeze torch thread counts, threadpoolctl inventory and OMP/MKL/OpenBLAS settings | Runtime before C/D | Matched C/D blocks | **TO FREEZE BEFORE C/D** |
+
+
+## System-B protocol-conformance correction controls — 7 October 2026
+
+| Control | Frozen value / rule | Evidence permitted | Matching scope | Status |
+|---|---|---|---|---|
+| R0.v1 conformance status | Historical R0.v1 has 7 weighted-leaf consequent mismatches, 4 active; preserved unchanged | Frozen training-only audit | Historical B v1 only | **FROZEN NONCONFORMANT IMPLEMENTATION** |
+| R0.v2 correction scope | Reuse exact v1 selected features/paths/gates; weighted CART leaf argmax consequent; revalidate; no SHAP recompute | Training + development only | Corrected B and future C/D initial state | **FROZEN BEFORE V2 BUILD** |
+| R0.v2 unexpected-change rule | Any active-rule change beyond the four audited active mismatches aborts the build before fusion freeze | Training + development + frozen audit | V2 correction integrity | **FROZEN** |
+| R0.v2 fusion | Re-run original lambda grid/tie breaks and fused threshold selection on same development fusion slice | Development fusion slice only | Corrected B / future C/D | **FROZEN PROCEDURE; VALUES TO FREEZE** |
+| Future C/D initial symbolic state | Use accepted R0.v2, not R0.v1, once v2 manifest is frozen | Deterministic protocol correction; no C/D outcomes | C/D within seed | **FROZEN PRINCIPLE; HASH TO FREEZE** |
+| Corrected System-B v2 evaluation | Required after committed/CI-accepted R0.v2; same pre/post scenario; cannot be described as first-look untouched | Frozen held-out partitions after v2 identity freeze | Corrected B static reference | **REQUIRED; NO RETUNING** |
+| R0.v1 evaluation role | Preserve as first historical evaluation of nonconformant implementation; never delete/overwrite | Existing immutable evidence | Audit/sensitivity/provenance | **FROZEN** |

@@ -1053,3 +1053,40 @@ The statistical analysis plan was expanded to state explicitly that seed-level u
 These changes are prospective for C/D. They do not authorize any retuning of R0.v1 after observed System-B outcomes.
 
 The previously identified weighted-surrogate-leaf consequent diagnostic remains the immediate blocking System-B closure gate.
+
+
+---
+
+## 7 October 2026 — R0.v1 protocol defect realized; R0.v2 correction frozen prospectively
+
+The committed training-only diagnostic `results/audits/system_b_r0_protocol_audit_v1.json` has raw SHA-256 `abfcb3af93531369427489fc27773f41e500a57279b0fa752b946c3985ebbf32`.
+
+It reconstructed all 62 original surrogate leaves using the exact frozen training rows, selected features, System-A checkpoints and weighted CART fitting procedure. It loaded no development, pre-drift or post-drift partition.
+
+Result:
+
+- 7 candidate consequents differ between the historical unweighted implementation and the fitted weighted CART leaf class;
+- 4 mismatches are active in R0.v1;
+- 0 path reconstruction mismatches;
+- 0 mismatches between the stored artifact and the historical unweighted-majority code.
+
+All four active discrepancies are stored BENIGN rules whose weighted CART leaf class is ATTACK. Using their already-frozen development-validation counts, the protocol-correct ATTACK consequent fails both class-precision and neural-fidelity gates for all four. They therefore should not have entered an implementation conforming to the frozen protocol.
+
+The original R0.v1 and all v1 evaluation evidence remain immutable.
+
+Before any corrected held-out computation, `SYSTEM_B_R0_V2_CORRECTION_PLAN.md` freezes a narrow deterministic correction:
+
+- inherit the exact frozen v1 feature selections;
+- do not rerun SHAP;
+- reconstruct the same weighted trees and paths;
+- derive candidate consequent from weighted CART leaf class;
+- reapply the original development validation gates;
+- abort if any unaffected active v1 rule changes;
+- reselect lambda and fused thresholds only on the original development fusion slice;
+- forbid pre/post access during v2 build.
+
+The correction decision is outcome-independent: if the build satisfies the frozen correction contract, R0.v2 supersedes R0.v1 for all future C/D initialization regardless of eventual corrected B held-out performance.
+
+A later corrected B v2 evaluation is required for static-reference comparability. It will be labeled a protocol-defect correction rather than an untouched first-look evaluation because v1 held-out outcomes are historically known.
+
+No C/D adaptive outcome has been generated, so the primary future C-vs-D causal contrast remains uncontaminated.

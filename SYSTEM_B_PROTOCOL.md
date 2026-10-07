@@ -541,3 +541,14 @@ The later evidence-path hardening did not change R0, lambda, thresholds, checkpo
 The missing long-form/aggregate/paired/staleness tables are therefore treated as an **additive evidence supplement**, not as grounds to rerun the held-out models. `system-b supplement` must derive them only from the immutable first-run `detection_by_seed.csv` and `rule_quality_by_seed_partition.csv`. It must not load raw training, development, pre/post partitions, checkpoints, or modify R0/fusion/threshold identities.
 
 This is the controlling chronology for System-B v1. No result-driven retuning is permitted.
+
+
+## 21. R0.v1 implementation defect and prospective R0.v2 supersession
+
+The training-only protocol-conformance audit found seven realized candidate-consequent mismatches between R0.v1 and the weighted CART leaf semantics implied by this protocol; four were active R0.v1 rules.
+
+The defect is preserved in the historical R0.v1 artifacts and first evaluation. It is not repaired in place.
+
+The controlling correction procedure is now `SYSTEM_B_R0_V2_CORRECTION_PLAN.md`. Before any corrected held-out evaluation, that plan freezes a narrow R0.v2 rebuild using the original feature selections, tree constraints, candidate paths, validation gates, conflict/redundancy policy and development-only fusion procedure, with weighted CART leaf argmax as the candidate consequent.
+
+If R0.v2 satisfies its integrity contract, it becomes the required initial symbolic state for future Systems C and D independent of its later held-out performance. R0.v1 remains immutable historical nonconformant evidence.

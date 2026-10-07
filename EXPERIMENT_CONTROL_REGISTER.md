@@ -162,3 +162,6 @@ A result being inconvenient is not a valid reason for deviation.
 
 
 | Duplicate-aware B validation | Equal-weight exact feature-pattern validation + whole-pattern bootstrap; preserve within-pattern label contradictions | Development validation only | B rule-validity robustness | **IMPLEMENTATION ADDED; EXECUTION BLOCKED UNTIL DTYPE AUDIT ACCEPTED** |
+
+
+| Pattern-deduplicated System-A teacher | Collapse exact raw 77-feature+binary-label multiplicities in training; preserve binary label conflicts; same A protocol and fixed preprocessor | Training + development only | Upstream duplicate-dependence robustness | **IMPLEMENTATION ADDED; MANIFEST TO FREEZE BEFORE DOWNSTREAM USE** |

@@ -1,6 +1,6 @@
 # System B v2 Corrected Evaluation Protocol
 
-**Status:** PROSPECTIVELY FROZEN BEFORE CORRECTED V2 PRE/POST EXECUTION  
+**Status:** EXECUTED AND FROZEN; CORRECTED V2 EVIDENCE ACCEPTED  
 **Date:** 7 October 2026  
 **Accepted symbolic state:** R0.v2  
 **R0.v2 manifest SHA-256:** `131027d2f136494eb388183f18dcb7eb0e9d7e9fe786f22dba25f4e1624c1483`
@@ -167,3 +167,15 @@ After the corrected evaluation:
 - R0.v2 remains the C/D initial symbolic state;
 - any v1-v2 comparison is labeled implementation-correction sensitivity/provenance, not model selection;
 - mixed or worse corrected results remain valid evidence.
+
+
+## 12. Accepted corrected evaluation identity
+
+The corrected evaluation was executed under this protocol and frozen.
+
+- evaluation manifest SHA-256: `583fa356c291bd7b2b275d726bb9eee31ae9aa5470cca50f0146c91642873710`;
+- execution commit: `51690ea23906ab87b9406311eacf381c7a22b5fb`;
+- evidence commit: `03b7e52da3a24ebc2c28b26f8293bcbea2413ed3`;
+- accepted R0.v2 manifest SHA-256: `131027d2f136494eb388183f18dcb7eb0e9d7e9fe786f22dba25f4e1624c1483`.
+
+All frozen evidence invariants passed repository-side sanitation and Research Contract #96.

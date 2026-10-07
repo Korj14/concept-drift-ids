@@ -123,3 +123,13 @@ A result being inconvenient is not a valid reason for deviation.
 | Corrected B-v2 explanation reporting | Overall + benign/attack resolved coverage, correctness and neural fidelity | Pre/post descriptive | B/C/D explanation standard | **FROZEN BEFORE V2 EVALUATION** |
 | Corrected B-v2 imputation diagnostic | Per-rule imputed-antecedent activation and imputation-free quality; no preprocessing change | Raw pre-imputation X for diagnostic only | Explanation robustness | **FROZEN BEFORE V2 EVALUATION** |
 | Corrected B-v2 timing | Single-pass neural descriptive timing; symbolic+fusion 1 warm-up + 5 exact-repeat timings; thread state recorded | Runtime only | Cost instrumentation convention | **FROZEN BEFORE V2 EVALUATION** |
+
+
+## Accepted corrected System-B v2 evaluation identity — 7 October 2026
+
+| Control | Frozen value / rule | Evidence permitted | Matching scope | Status |
+|---|---|---|---|---|
+| Corrected System-B v2 evaluation manifest | `results/frozen/system_b_v2_corrected_v1/evaluation_manifest.json`; canonical SHA-256 `583fa356c291bd7b2b275d726bb9eee31ae9aa5470cca50f0146c91642873710` | Frozen pre/post under accepted R0.v2 | Protocol-conformant B baseline evidence | **FROZEN — commit `03b7e52da3a24ebc2c28b26f8293bcbea2413ed3`** |
+| Corrected B-v2 evidence status | Implementation-defect correction, not first-look untouched evidence | Provenance | Manuscript/statistical interpretation | **FROZEN** |
+| Corrected B-v2 staleness transitions | 18 pass→pass; 7 fail→pass; 6 fail→fail; 1 pass→fail across 32 accepted rules | Frozen v2 evidence | RQ1 descriptive symbolic staleness | **FROZEN OBSERVATION** |
+| Corrected B-v2 imputation diagnostic | 0/64 rule×partition records had imputed-antecedent activations | Frozen v2 evidence | Explanation robustness for this scenario | **FROZEN OBSERVATION** |

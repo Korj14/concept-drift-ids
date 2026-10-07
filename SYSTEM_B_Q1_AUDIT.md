@@ -574,3 +574,27 @@ Even if the diagnostic reports zero realized mismatches, the following C/D contr
 - lifecycle-event schema.
 
 No B robustness result may be used to retroactively replace R0.v1.
+
+
+## 41. Corrected R0.v2 held-out audit conclusion
+
+The protocol-conformant R0.v2 evaluation is now frozen. It does not overturn the earlier Q1 audit; it sharpens it.
+
+Key corrected findings:
+
+- detection improves post-shift on MCC/F1/recall across all five seeds while AP decreases on average;
+- overall resolved symbolic coverage changes little;
+- attack-side resolved coverage increases on average (~0.613 to ~0.713);
+- attack-side true-label correctness among covered rows decreases on average (~0.803 to ~0.750);
+- attack-side neural fidelity increases on average (~0.944 to ~0.964);
+- BENIGN symbolic correctness remains effectively 1.0;
+- only 1/32 accepted rules changes pass→fail under the frozen gates;
+- the failure is a low-support BENIGN rule and is stability-driven;
+- no activated rule antecedent depends on an imputed value in either held-out partition;
+- static tree-leaf rules produce zero conflict-abstention by construction.
+
+Q1 interpretation:
+
+System B provides evidence of **selective symbolic redistribution/staleness**, not global symbolic degradation. The controlled benign covariate shift changes support/activation and class-conditional explanation quality while thresholded detection can improve. The separation between neural fidelity and true-label symbolic correctness is empirically necessary.
+
+This is a stronger and more defensible baseline for the later C-vs-D question than a manufactured claim that all rules become stale after drift.

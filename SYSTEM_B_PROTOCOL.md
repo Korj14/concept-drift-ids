@@ -585,3 +585,26 @@ Seed-specific fused thresholds:
 The build accessed training and development only. It did not load pre/post.
 
 R0.v2 now supersedes R0.v1 as the protocol-conformant initial symbolic state for corrected System B and future C/D. This supersession was fixed before any R0.v2 held-out evaluation and is not conditional on whether R0.v2 performs better or worse than v1.
+
+
+## 23. Corrected System-B v2 evaluation accepted
+
+The protocol-conformant corrected System-B evaluation is frozen at:
+
+`results/frozen/system_b_v2_corrected_v1/`
+
+Evaluation manifest canonical SHA-256:
+
+`583fa356c291bd7b2b275d726bb9eee31ae9aa5470cca50f0146c91642873710`
+
+Evidence commit:
+
+`03b7e52da3a24ebc2c28b26f8293bcbea2413ed3`.
+
+The evaluation is classified as an implementation-defect correction rather than first-look untouched evidence. It does not alter R0.v2 or any future C/D treatment definition.
+
+Primary qualitative System-B conclusion under this controlled shift:
+
+Static symbolic knowledge does **not** exhibit broad collapse. Most accepted rules remain valid or improve under the frozen gates, while one low-support BENIGN rule transitions from pass to fail. Aggregate explanation behavior is strongly class-asymmetric: BENIGN symbolic correctness remains near-perfect, whereas attack-side coverage and correctness vary substantially and move in different directions from neural fidelity.
+
+This selective behavior is the scientifically relevant RQ1 baseline for later symbolic adaptation. It does not justify claiming that drift universally degrades all symbolic knowledge.

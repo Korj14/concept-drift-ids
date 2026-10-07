@@ -1190,3 +1190,54 @@ Before R0.v2 pre/post execution, the statistical-analysis plan was amended to ma
 The newly frozen class-conditional symbolic and imputation-aware diagnostics are descriptive. They do not add post-hoc confirmatory endpoints or alter the later primary matched C-vs-D inferential unit.
 
 No R0.v2 held-out result existed when this statistical classification was recorded.
+
+
+---
+
+## 7 October 2026 — corrected System-B v2 evaluation frozen and sanitation-complete
+
+The corrected protocol-conformant System-B v2 evaluation was executed from clean commit `51690ea23906ab87b9406311eacf381c7a22b5fb` and committed at `03b7e52da3a24ebc2c28b26f8293bcbea2413ed3`.
+
+Evaluation manifest:
+
+`results/frozen/system_b_v2_corrected_v1/evaluation_manifest.json`
+
+Canonical SHA-256:
+
+`583fa356c291bd7b2b275d726bb9eee31ae9aa5470cca50f0146c91642873710`
+
+The evidence commit passed Research Contract #96.
+
+Repository-side sanitation confirmed:
+
+- accepted R0.v2 manifest identity `131027d2f136494eb388183f18dcb7eb0e9d7e9fe786f22dba25f4e1624c1483`;
+- evaluation executed from a clean worktree under Python 3.11.9 / CPU;
+- training/development were not loaded by the evaluator;
+- all five seeds and both pre/post partitions are present;
+- every confusion matrix conserves sample and class totals exactly;
+- 14 windows per seed/partition cover exactly 69,260 pre rows and 69,270 post rows;
+- rule identities match pre/post within each seed at counts 7/6/7/6/6;
+- 32 direct rule staleness records are present;
+- staleness transitions are 18 pass→pass, 7 fail→pass, 6 fail→fail, 1 pass→fail;
+- all conflict-abstention rates are zero, as expected for mutually exclusive static tree-leaf rules;
+- all 64 rule×partition imputation diagnostics report zero activated rule antecedents depending on an imputed raw value;
+- repeated symbolic+fusion timing used the frozen 1 warm-up + 5 measured-repeat protocol and recorded thread/runtime state.
+
+Detection remained strong but did not turn the controlled shift into a generic degradation event. Across five seeds, mean MCC increased from 0.73324 pre to 0.77291 post and mean F1 from 0.71394 to 0.75933. Mean AP decreased from 0.90240 to 0.85119 and mean ROC-AUC slightly decreased from 0.97933 to 0.97518.
+
+Symbolic behavior is class-asymmetric:
+
+- mean overall resolved coverage: 0.96229 pre, 0.95732 post;
+- mean BENIGN resolved coverage: 0.98140 pre, 0.97062 post;
+- mean attack resolved coverage: 0.61259 pre, 0.71279 post;
+- mean BENIGN symbolic correctness: ~0.99999 pre and 1.0 post;
+- mean attack symbolic correctness: 0.80333 pre and 0.74953 post;
+- mean attack symbolic-to-neural fidelity: 0.94418 pre and 0.96406 post.
+
+Thus the shift increases attack-side rule activation/coverage on average while true-label correctness among covered attack rows declines on average. Neural fidelity improves at the same time. This directly demonstrates why class precision/correctness and neural fidelity must remain separate explanation-quality dimensions.
+
+The only pass→fail rule is seed 3 rule `r0-s3-e71a7cc956b5d661`, a BENIGN rule. Its class precision remains 1.0; support declines from 0.001790 to 0.001545, neural fidelity from 1.0 to 0.98131, and bootstrap gate-persistence stability from 1.0 to 0.8. The failure is therefore stability-driven rather than a correctness collapse.
+
+The v1→v2 correction has small predictive effect but meaningful coverage impact only on the affected seeds. Seeds 0/2/4 are unchanged. Seed 1 loses ~0.021 pre and ~0.035 post resolved coverage with MCC changes about -0.00284/-0.00202; seed 3 loses ~0.00445 pre and ~0.02165 post coverage while MCC is approximately unchanged/slightly improved post. This is implementation-correction provenance, not a model-selection comparison.
+
+R0.v2 remains the required initial symbolic state for future C/D regardless of these corrected held-out outcomes.

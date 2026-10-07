@@ -4,6 +4,7 @@ import numpy as np
 
 from concept_drift_ids.system_b_selection_robustness import (
     ALT_SPLIT_SEEDS,
+    _background_indices,
     _gates,
     _selected_features,
     _split_development,
@@ -94,3 +95,26 @@ def test_alternate_split_does_not_redefine_bootstrap_seed_policy() -> None:
     source = inspect.getsource(_candidate_rules)
     assert 'random_state=int(gates["bootstrap_random_state_base"]) + seed' in source
     assert "split_seed - PRIMARY_SPLIT_SEED" not in source
+
+
+
+def test_background_variants_are_prespecified() -> None:
+    ids = {spec.variant_id for spec in _variant_specs()}
+    assert "shap_background_balanced_20261008" in ids
+    assert "shap_background_balanced_20261009" in ids
+    assert "shap_background_natural_20261007" in ids
+
+
+def test_balanced_background_has_equal_class_counts() -> None:
+    y = np.array([0] * 300 + [1] * 300, dtype=np.int8)
+    idx = _background_indices(y, "background_balanced_20261008")
+    assert len(idx) == 256
+    assert int(np.sum(y[idx] == 0)) == 128
+    assert int(np.sum(y[idx] == 1)) == 128
+
+
+def test_natural_background_is_not_forced_balanced() -> None:
+    y = np.array([0] * 550 + [1] * 50, dtype=np.int8)
+    idx = _background_indices(y, "background_natural_20261007")
+    assert len(idx) == 256
+    assert len(np.unique(idx)) == 256

@@ -182,6 +182,11 @@ python run.py system-a verify
 # without retraining or rethresholding and preserve it as a separate supplement.
 python run.py system-a rescore-windows --device cpu
 
+# Freeze the additive System-A longitudinal supplement before System-B build.
+git add results/frozen/system_a_v1_longitudinal_v1
+git commit -m "Freeze System A longitudinal v1 rescore"
+python run.py system-a verify
+
 # Training + development only. This must not load pre/post.
 python run.py system-b build --device cpu
 

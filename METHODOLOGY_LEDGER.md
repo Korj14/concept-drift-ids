@@ -1325,3 +1325,8 @@ The selection stage covers:
 For every variant, candidate rules use the protocol-correct weighted CART leaf consequent, the same redundancy/conflict policy, and the same development-only fusion-weight grid/threshold selection procedure. The resulting variant rule artifacts, lambda and thresholds are write-once and must be committed before any pre/post robustness evaluation.
 
 These variants can never replace accepted R0.v2 because held-out performance is better; they are secondary/post-hoc robustness only.
+
+
+### Held-out evaluation stage for B selection robustness implemented
+
+A separate robustness evaluator now consumes only a previously frozen/committed training-development selection manifest. It loads pre/post but not training/development, preserves every variant's frozen rules, lambda and per-seed threshold, and reports detection plus class-conditional symbolic outcomes. The resulting held-out robustness evidence cannot select a replacement for R0.v2.

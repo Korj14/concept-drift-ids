@@ -36,5 +36,7 @@ results/*
 !results/frozen/**
 !results/audits/
 !results/audits/**
+!results/analysis/
+!results/analysis/**
 # Generated model artifacts
 artifacts/*

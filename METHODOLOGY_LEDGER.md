@@ -1012,3 +1012,12 @@ This is an integrity-only change. No numerical result, R0 rule, threshold, fusio
 Audit-only reconstruction quantified identical 77-feature patterns in the actual B evidence slices: 3.88% of the rule-validation slice belongs to duplicated patterns (max group 206), 5.86% of exact pre-drift rows (max 548), and 3.18% of exact synthetic post-drift rows (max 136). The primary duplicate-retention policy remains unchanged. These figures justify the already-frozen group-aware/deduplicated stability sensitivity and caution against interpreting row-bootstrap persistence as independence-aware robustness.
 
 The static R0 schema was also reviewed against the final D lifecycle claim. It is adequate for persistent initial rule identity but not, by itself, a complete lifecycle event log. D must prospectively add immutable operation/parent/evidence/trigger/decision/cost records while preserving the frozen R0 IDs.
+
+
+---
+
+## 7 October 2026 — semantic-analysis artifact tracking guard
+
+Before executing the new System-B semantic-analysis command, repository ignore rules were checked. `results/analysis/` was still covered by the generic `results/*` ignore pattern. The directory is now explicitly unignored so the derived semantic-analysis artifact can be reviewed, hashed and committed through the normal scientific freeze workflow.
+
+No analysis output had yet been generated when this guard was added.

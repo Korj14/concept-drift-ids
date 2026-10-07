@@ -1309,3 +1309,19 @@ This is additive post-hoc robustness, not model selection and not a replacement 
 ### Bounded-metric interval reporting policy frozen
 
 The repository now explicitly distinguishes statistical arithmetic from presentation. Existing seed-level t-interval endpoints remain untouched even when a bounded metric interval extends outside [0,1]. Numerical tables retain the raw interval. Figures may use physical metric axes only with disclosure if the underlying interval exceeds the visible domain. No frozen evidence is clipped or rewritten.
+
+
+### Two-stage System-B selection robustness implemented
+
+The high-leverage B robustness choices are now implemented as a training/development-only selection freeze followed by a separate future held-out rescore.
+
+The selection stage covers:
+
+- Destination Port exclusion;
+- two alternate SHAP aggregation policies derived from the frozen attribution evidence;
+- four deterministic alternate development splits;
+- one-factor rule-gate variants for support, class precision, neural fidelity, bootstrap gate-persistence and complexity.
+
+For every variant, candidate rules use the protocol-correct weighted CART leaf consequent, the same redundancy/conflict policy, and the same development-only fusion-weight grid/threshold selection procedure. The resulting variant rule artifacts, lambda and thresholds are write-once and must be committed before any pre/post robustness evaluation.
+
+These variants can never replace accepted R0.v2 because held-out performance is better; they are secondary/post-hoc robustness only.

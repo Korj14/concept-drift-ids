@@ -156,3 +156,6 @@ A result being inconvenient is not a valid reason for deviation.
 
 
 | A/B exact-pattern rescore | Frozen A checkpoints and accepted R0.v2; exact raw 77-feature training membership; seen/unseen strata only | Training for membership + pre/post fixed rescore; no development/tuning | Publication-strength B robustness | **IMPLEMENTATION ADDED; ARTIFACT TO FREEZE** |
+
+
+| B selection robustness stage | Destination Port, SHAP aggregation, alternate dev splits, one-factor gates; freeze variant rules/lambda/thresholds before held-out robustness rescore | Training + development only | Publication-strength B robustness | **IMPLEMENTATION ADDED; EXECUTION BLOCKED UNTIL DTYPE AUDIT ACCEPTED** |

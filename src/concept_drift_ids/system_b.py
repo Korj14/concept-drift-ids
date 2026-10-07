@@ -1268,6 +1268,9 @@ def main() -> None:
     seen_unseen = subparsers.add_parser("analyze-seen-unseen")
     seen_unseen.add_argument("--device", default="cpu")
     subparsers.add_parser("verify-seen-unseen")
+    selection_robustness = subparsers.add_parser("build-selection-robustness")
+    selection_robustness.add_argument("--device", default="cpu")
+    subparsers.add_parser("verify-selection-robustness")
     args = parser.parse_args()
     if args.command == "build":
         build_and_freeze_system_b(device_name=args.device)
@@ -1317,9 +1320,15 @@ def main() -> None:
     elif args.command == "analyze-seen-unseen":
         from concept_drift_ids.system_ab_seen_unseen import build_seen_unseen_analysis
         build_seen_unseen_analysis(device_name=args.device)
-    else:
+    elif args.command == "verify-seen-unseen":
         from concept_drift_ids.system_ab_seen_unseen import verify_seen_unseen_analysis
         verify_seen_unseen_analysis()
+    elif args.command == "build-selection-robustness":
+        from concept_drift_ids.system_b_selection_robustness import build_selection_robustness
+        build_selection_robustness(device_name=args.device)
+    else:
+        from concept_drift_ids.system_b_selection_robustness import verify_selection_robustness
+        verify_selection_robustness()
 
 
 if __name__ == "__main__":

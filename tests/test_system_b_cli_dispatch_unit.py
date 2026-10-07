@@ -39,3 +39,23 @@ def test_duplicate_aware_verifier_is_not_catch_all_dispatch() -> None:
     source = inspect.getsource(system_b.main)
     assert 'elif args.command == "verify-duplicate-aware-validation":' in source
     assert "else:\n        from concept_drift_ids.system_b_duplicate_robustness" not in source
+
+
+def test_pattern_dedup_teacher_r0_commands_are_explicitly_dispatched() -> None:
+    source = inspect.getsource(system_b.main)
+
+    expected = {
+        '"build-pattern-dedup-teacher-r0"': (
+            "concept_drift_ids.system_b_dedup_teacher_robustness",
+            "build_pattern_dedup_teacher_r0",
+        ),
+        '"verify-pattern-dedup-teacher-r0"': (
+            "concept_drift_ids.system_b_dedup_teacher_robustness",
+            "verify_pattern_dedup_teacher_r0",
+        ),
+    }
+
+    for command, (module_name, function_name) in expected.items():
+        assert command in source
+        assert module_name in source
+        assert function_name in source

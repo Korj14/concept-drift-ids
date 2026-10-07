@@ -1,0 +1,20 @@
+{
+  "evaluation_format_version": 1,
+  "evaluation_id": "system_b_selection_robustness_v1_evaluation",
+  "evidence_status": "posthoc_robustness_not_model_selection",
+  "selection_manifest_sha256": "70d8792cf6d2982b2832b7b3f1c7c0312fba4d2c0b329b96aea0828a31e25ade",
+  "evaluation_git": {
+    "commit": "22de3e63092c426e83501d8efdcf3553eedd5f14",
+    "branch": "stage4-system-b",
+    "clean": "true"
+  },
+  "data_access": {
+    "training_used": false,
+    "development_used": false,
+    "pre_drift_used": true,
+    "post_drift_used": true
+  },
+  "variant_count": 20,
+  "interpretation_firewall": "Held-out robustness results cannot replace accepted R0.v2 or select a preferred variant. They quantify dependence on prespecified assumptions.",
+  "artifact_sha256": "b2057a485e1d3685a32b30c6e365a488566dc77e203a11df782e13186bf6ca28"
+}

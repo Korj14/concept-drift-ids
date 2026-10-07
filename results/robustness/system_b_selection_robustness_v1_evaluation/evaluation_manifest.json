@@ -1,0 +1,20 @@
+{
+  "manifest_format_version": 1,
+  "evaluation_id": "system_b_selection_robustness_v1_evaluation",
+  "selection_manifest_sha256": "70d8792cf6d2982b2832b7b3f1c7c0312fba4d2c0b329b96aea0828a31e25ade",
+  "files": {
+    "rows": {
+      "path": "results/robustness/system_b_selection_robustness_v1_evaluation/metrics_by_seed_variant.csv",
+      "sha256": "2af9dbaef25815a3099b14dbe37ed54e0c830e87b32690eada71a839ba869a9f"
+    },
+    "aggregate": {
+      "path": "results/robustness/system_b_selection_robustness_v1_evaluation/aggregate_metrics.csv",
+      "sha256": "bfe11e0ddeca8b0e35b114f3d2be0edfc5fd83aa896fecba4fb5a777aea0350e"
+    },
+    "summary": {
+      "path": "results/robustness/system_b_selection_robustness_v1_evaluation/evaluation_summary.json",
+      "sha256": "81c3577caa9f2814cfd8b149d84493f91b75e7d5a9d668fcf182e6487cff823d"
+    }
+  },
+  "manifest_sha256": "146273a1e5cc3d3b8a8c46e195c4727b6dfa34f9a6c6e847970f9e045ce37fde"
+}

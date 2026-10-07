@@ -1,0 +1,26 @@
+{
+  "manifest_format_version": 1,
+  "evaluation_id": "system_a_longitudinal_v1",
+  "system_id": "system_a_static_neural_v1",
+  "scenario_id": "cicids2017_sudden_benign_v1",
+  "scenario_version": 1,
+  "system_manifest_sha256": "42004b5ed100b690023b9998bdc959fac41ab947b996fb7c58e44cee5e8dc6de",
+  "source_evaluation_manifest_sha256": "e721b641b5898976c76c0449dedf7152cb302be4447604525afb7ddf1c94c5b3",
+  "preprocessing_state_hash": "4527f77220f2cf6063108a7d71d80aaa0e82099ad282ff25408a2d9ce3488b1e",
+  "evaluation_git": {
+    "commit": "e29830bdf0ded41240058f19b4928259b01b5280",
+    "branch": "stage4-system-b",
+    "clean": "true"
+  },
+  "files": {
+    "summary": {
+      "path": "results/frozen/system_a_v1_longitudinal_v1/longitudinal_rescore.json",
+      "sha256": "f4d8f298f8a923b05d8a5752412b9a2d06a4495e978fbcb3be980c9a45c7cf54"
+    },
+    "window_metrics": {
+      "path": "results/frozen/system_a_v1_longitudinal_v1/window_metrics.csv",
+      "sha256": "1145ed263002f08864c3729f4f2c2fbd220b6f6cec51338edba78d62df7086b4"
+    }
+  },
+  "manifest_sha256": "9f26b54834d041da115adffd7921b10c97ed826e832c2325f77dd0e2a617754a"
+}

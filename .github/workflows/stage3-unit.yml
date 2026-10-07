@@ -44,6 +44,7 @@ jobs:
               "VISUALIZATION_POLICY.md",
               "LITERATURE_WATCH.md",
               "SYSTEM_A_PROTOCOL.md",
+              "SYSTEM_B_PROTOCOL.md",
           ]
           missing = [path for path in required if not Path(path).is_file()]
           assert not missing, f"Missing governance artifacts: {missing}"

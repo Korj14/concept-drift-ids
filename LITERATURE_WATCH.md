@@ -48,3 +48,28 @@ Also noted in the same refresh:
 - HED-ID remains a close drift-triggered explainability/re-optimization comparator, but does not establish the same separately versioned symbolic lifecycle.
 
 Consequence: no broad novelty claim is restored or expanded. The narrowed gap remains viable, but the final manuscript must explicitly compare against the Pacheco–Pedroso lifecycle paper and meet or exceed its longitudinal evaluation discipline.
+
+
+## 7 October 2026 — System-B protocol-freeze literature refresh
+
+A targeted adversarial refresh was performed immediately before freezing the static neuro-symbolic baseline protocol. The search focused on 2025–2026 neuro-symbolic NIDS rule extraction, SHAP-derived symbolic rules, surrogate/rule validation, explanation fidelity/stability, static neuro-symbolic baselines, and lifecycle-aware interpretable NIDS.
+
+No new peer-reviewed flow-level NIDS paper was identified that collapses the governing full conjunction of endogenous statistical drift trigger + validated/versioned symbolic lifecycle + matched adaptive comparator isolating symbolic evolution + longitudinal explanation evaluation. The narrowed novelty boundary therefore remains unchanged; this remains a finite-search evidence judgment, not proof of nonexistence.
+
+Two recent peer-reviewed explanation-reliability papers materially affect the System-B validation standard:
+
+- Helen Sharmila A. and Deepanramkumar P., *Explanation stability assessment for federated explainable intrusion detection in wireless sensor networks*, Array 31 (2026), 101114, DOI: 10.1016/j.array.2026.101114. The paper bootstrap-resamples explanation sets and uses Jaccard-based stability, reinforcing that explanation reliability should be measured rather than assumed.
+- E. M. Maseno, Y. Sun, and Z. Wang, *Reliability auditing of explanations for machine-learning-based intrusion detection systems*, Journal of Computer Virology and Hacking Techniques 22 (2026), Article 80, DOI: 10.1007/s11416-026-00664-7. It separates predictive quality from explanation consistency, faithfulness, and robustness and demonstrates that high detection performance does not establish explanation reliability.
+
+A broader 2026 methodological warning was also considered:
+
+- K. Elangovan and D. S. W. Ting, *Position: Explanation Stability Is a Property of the Model–Method Pair, Not the Model*, ICML 2026, PMLR 306. This argues that stability claims must name the explanation operator rather than treating stability as an intrinsic model property.
+
+System-B consequence:
+
+- SHAP-attribution stability and symbolic-rule validity stability are not conflated.
+- The primary candidate-rule stability gate is explicitly defined as bootstrap resampling persistence of support/precision/fidelity validity on development data, avoiding semantically unconstrained perturbations of network-flow features.
+- SHAP operator, background, output scale, and sampling policy are frozen and recorded.
+- Longitudinal symbolic stability remains a separate evaluation outcome for the accepted static rule base.
+
+The already-known Dandamudi & Chhetri 2026 Satellite-IoT work remains directly relevant because SHAP-based automated symbolic rule extraction is occupied territory; it supports using SHAP + explicit rules as an implementation mechanism but not as the project's novelty. Pacheco & Pedroso remains the closest operational-lifecycle standard and continues to raise the bar for longitudinal evaluation.

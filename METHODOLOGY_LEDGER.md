@@ -626,3 +626,65 @@ Future CSV evidence writers now use explicit LF line termination so later system
 This is a byte-representation/reproducibility correction only. No numerical result, threshold, model, scenario, or original frozen manifest was modified.
 
 System-A evaluation execution is also write-protected after closure: if the frozen evaluation manifest already exists, the evaluation command refuses to overwrite it and directs the operator to the read-only verifier.
+
+
+---
+
+## 7 October 2026 — System-B launch verification and prospective protocol freeze
+
+Stage 4 began from the accepted System-A milestone on the dedicated `stage4-system-b` branch.
+
+### Continuity verification
+
+Remote GitHub verification showed:
+
+- `main`: `5d5cb67dda1abcda720eac785c29fa259f6bf5b8`;
+- `stage4-system-b`: `5d5cb67dda1abcda720eac785c29fa259f6bf5b8`;
+- branch comparison: identical, ahead 0 / behind 0.
+
+The uploaded governing source bytes were re-hashed before Stage-4 design work:
+
+- MAIN: `f0700fc28e5c49ee50a6fab73db870725006ba52541a0d9cf4b285ccbe143a8f`, 55,780 bytes;
+- Reconciled plan: `83d1e101a525e840a1235743ac5fc050ca560f228df047bee17a84e80cbf3082`, 50,623 bytes.
+
+These exactly match `GOVERNING_SOURCES.md`; no source migration or prior-evidence impact assessment was required.
+
+Remote verification cannot establish local working-tree cleanliness or the presence of ignored System-A checkpoint bytes. Those remain local-only execution prerequisites and are not inferred from GitHub state.
+
+### Permitted evidence and outcome firewall
+
+The System-B protocol was frozen using:
+
+- MAIN and the Reconciled operational plan;
+- the accepted repository contracts and System-A development identities;
+- current 2025–2026 literature;
+- design/engineering constraints.
+
+No System-B pre/post outcome existed or was inspected.
+
+The research team historically knows the frozen System-A pre/post results. Those held-out results were explicitly excluded from all System-B choices. No SHAP setting, tree constraint, validation threshold, fusion policy, rule threshold, or longitudinal reporting window was selected from System-A pre/post behavior.
+
+### Literature refresh
+
+A targeted live search immediately before protocol freeze did not identify a new peer-reviewed flow-level NIDS paper implementing the complete governing conjunction. Recent 2026 explanation-reliability work did materially strengthen the requirement to define and audit stability rather than use the term generically. The details and references are appended to `LITERATURE_WATCH.md`.
+
+### Prospective System-B decisions
+
+`SYSTEM_B_PROTOCOL.md` was created before implementation and before untouched B evaluation. Major decisions include:
+
+- seed-specific `R_0^(s)` mapped to the corresponding frozen System-A checkpoint and carried forward within the same stochastic block;
+- training-only SHAP and surrogate candidate generation;
+- deterministic non-overlapping 60/40 development split for rule validation versus fusion/threshold tuning;
+- DeepExplainer on the raw attack logit with fixed class-balanced training background/sample identities;
+- 12-feature class-aware SHAP restriction;
+- depth-4, minimum-leaf-1000 weighted surrogate mimicking the frozen neural decision;
+- conjunctive support, class-precision, neural-fidelity, bootstrap-stability, and complexity gates;
+- candidate confidence defined conservatively as min(class precision, neural fidelity);
+- explicit empirical redundancy/conflict semantics and neural fallback for runtime cross-class symbolic conflicts;
+- one global development-selected fusion weight across seeds, with seed-specific fused thresholds;
+- no probability calibration;
+- a 5,000-row non-overlapping common longitudinal reporting grid, boundary-aligned for evaluator scoring only.
+
+Exact accepted rule-base bytes, the development-selected global fusion weight, and the five fused thresholds remain intentionally unfrozen until the local build uses the ignored System-A checkpoints and permitted training/development data. They must be frozen and committed before any System-B pre/post evaluation.
+
+This entry is prospective. Untouched System-B outcomes must not cause the protocol above to be rewritten.

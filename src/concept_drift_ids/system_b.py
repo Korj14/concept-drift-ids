@@ -1274,6 +1274,9 @@ def main() -> None:
     eval_robustness = subparsers.add_parser("evaluate-selection-robustness")
     eval_robustness.add_argument("--device", default="cpu")
     subparsers.add_parser("verify-selection-robustness-evaluation")
+    duplicate_aware = subparsers.add_parser("analyze-duplicate-aware-validation")
+    duplicate_aware.add_argument("--device", default="cpu")
+    subparsers.add_parser("verify-duplicate-aware-validation")
     args = parser.parse_args()
     if args.command == "build":
         build_and_freeze_system_b(device_name=args.device)
@@ -1335,9 +1338,15 @@ def main() -> None:
     elif args.command == "evaluate-selection-robustness":
         from concept_drift_ids.system_b_selection_robustness_evaluation import evaluate_selection_robustness
         evaluate_selection_robustness(device_name=args.device)
-    else:
+    elif args.command == "verify-selection-robustness-evaluation":
         from concept_drift_ids.system_b_selection_robustness_evaluation import verify_selection_robustness_evaluation
         verify_selection_robustness_evaluation()
+    elif args.command == "analyze-duplicate-aware-validation":
+        from concept_drift_ids.system_b_duplicate_robustness import build_duplicate_aware_validation
+        build_duplicate_aware_validation(device_name=args.device)
+    else:
+        from concept_drift_ids.system_b_duplicate_robustness import verify_duplicate_aware_validation
+        verify_duplicate_aware_validation()
 
 
 if __name__ == "__main__":

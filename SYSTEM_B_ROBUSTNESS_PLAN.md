@@ -33,8 +33,7 @@ Primary policy retains duplicates and original conflicting labels.
 
 Because row duplicates can inflate effective sample size and row-bootstrap persistence, include:
 
-- deduplicated development-validation sensitivity by exact frozen feature pattern;
-- group-aware bootstrap where identical feature patterns are resampled as groups.
+- exact-pattern equal-weight development-validation sensitivity (a deduplicated-pattern analysis that preserves within-pattern label contradictions rather than arbitrarily keeping one row);\n- group-aware bootstrap where identical feature patterns are resampled as whole groups.
 
 Do not majority-relabel conflicts. Report support, covered count, precision, fidelity, stability and gate transitions under the sensitivity.
 

@@ -1335,3 +1335,10 @@ A separate robustness evaluator now consumes only a previously frozen/committed 
 ### Robustness isolation hardening
 
 Before any selection-robustness execution, the alternate-development-split implementation was reviewed for one-factor isolation. An initial draft also changed the bootstrap RNG as the split seed changed. That would have confounded split sensitivity with resampling realization. The code was corrected so bootstrap random state remains the original base+model-seed policy for every split variant; only development row membership changes.
+
+
+### Duplicate-aware System-B validation sensitivity implemented
+
+The duplicate sensitivity now avoids arbitrary first-row deduplication or majority relabeling. Exact raw 77-feature patterns are grouped; each pattern receives equal total weight, while any conflicting labels within a pattern remain represented as fractional class correctness. Bootstrap stability resamples entire exact-pattern groups.
+
+This provides a dependence-aware sensitivity for support/precision/fidelity/stability and candidate gate decisions without changing the primary row-retention policy.

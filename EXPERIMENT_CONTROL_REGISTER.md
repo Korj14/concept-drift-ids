@@ -159,3 +159,6 @@ A result being inconvenient is not a valid reason for deviation.
 
 
 | B selection robustness stage | Destination Port, SHAP aggregation, alternate dev splits, one-factor gates; freeze variant rules/lambda/thresholds before held-out robustness rescore | Training + development only | Publication-strength B robustness | **IMPLEMENTATION ADDED; EXECUTION BLOCKED UNTIL DTYPE AUDIT ACCEPTED** |
+
+
+| Duplicate-aware B validation | Equal-weight exact feature-pattern validation + whole-pattern bootstrap; preserve within-pattern label contradictions | Development validation only | B rule-validity robustness | **IMPLEMENTATION ADDED; EXECUTION BLOCKED UNTIL DTYPE AUDIT ACCEPTED** |

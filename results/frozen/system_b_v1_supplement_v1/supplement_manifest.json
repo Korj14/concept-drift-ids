@@ -1,0 +1,40 @@
+{
+  "manifest_format_version": 1,
+  "supplement_id": "system_b_v1_supplement_v1",
+  "source_evaluation_manifest_sha256": "f44cad2ed9674bcb7118f05f174f845b5dfb135f95e2cb2b4a230f0f998c3e42",
+  "source_system_manifest_sha256": "6e3589056d4c252c1a6c7cfd87b891fb8a24f1e30e86b17833b6035ea9ee86a8",
+  "scenario_id": "cicids2017_sudden_benign_v1",
+  "scenario_version": 1,
+  "derivation_git": {
+    "commit": "ab4c1b08c17891415d3a1f6a42f4dac65f917ec0",
+    "branch": "stage4-system-b",
+    "clean": "true"
+  },
+  "files": {
+    "summary": {
+      "path": "results/frozen/system_b_v1_supplement_v1/supplement_summary.json",
+      "sha256": "fb7d145dbc1113d38cea0af0349dec1c4be867f943aa206ceb47e8b031f4f461"
+    },
+    "metrics_by_seed": {
+      "path": "results/frozen/system_b_v1_supplement_v1/metrics_by_seed.csv",
+      "sha256": "7b27dae8b96ce9c246238c4b7c6c4fb7eae00e9a7f9de15325296606d26dc66c"
+    },
+    "aggregate_metrics": {
+      "path": "results/frozen/system_b_v1_supplement_v1/aggregate_metrics.csv",
+      "sha256": "85d703f6c9cd680c152f47a182443ded0733f3333b247e8aefc981c619364510"
+    },
+    "paired_deltas_by_seed": {
+      "path": "results/frozen/system_b_v1_supplement_v1/paired_deltas_by_seed.csv",
+      "sha256": "f087e5494c41d43617b802e36602ac35fae0a5c4b203146d9b5672113417f6d7"
+    },
+    "aggregate_paired_deltas": {
+      "path": "results/frozen/system_b_v1_supplement_v1/aggregate_paired_deltas.csv",
+      "sha256": "ba846e01731a7c1429ad73d25967001e522419ebf216b681599b82e7f703389f"
+    },
+    "rule_staleness_deltas": {
+      "path": "results/frozen/system_b_v1_supplement_v1/rule_staleness_deltas.csv",
+      "sha256": "57d48ea8d6540f28f8846de0410403fddfb6c185d6b1a0d67a406e0a1988efac"
+    }
+  },
+  "manifest_sha256": "70d41b210ed54f2fa2269ec738ccd94100148d701bb5a2ae79d8d30839e9d190"
+}

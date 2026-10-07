@@ -1,0 +1,33 @@
+{
+  "manifest_format_version": 1,
+  "evaluation_id": "system_b_static_evaluation_v1",
+  "system_id": "system_b_static_neuro_symbolic_v1",
+  "system_manifest_sha256": "6e3589056d4c252c1a6c7cfd87b891fb8a24f1e30e86b17833b6035ea9ee86a8",
+  "scenario_id": "cicids2017_sudden_benign_v1",
+  "scenario_version": 1,
+  "preprocessing_state_hash": "4527f77220f2cf6063108a7d71d80aaa0e82099ad282ff25408a2d9ce3488b1e",
+  "evaluation_git": {
+    "commit": "245ca52371d7cdbcf8475b1d86b4b95d2b9850f5",
+    "branch": "stage4-system-b",
+    "clean": "true"
+  },
+  "files": {
+    "summary": {
+      "path": "results/frozen/system_b_v1/system_b_evaluation.json",
+      "sha256": "32ef78ea5e00c9447b2b3bdff0fdc76596267178fdbaa1cd6bd7c6b1975e6471"
+    },
+    "detection_by_seed": {
+      "path": "results/frozen/system_b_v1/detection_by_seed.csv",
+      "sha256": "267fb45b9f1e9b037e456c6dc85ed8ce7fb80d40b9dd80f43023adbd6e929c6b"
+    },
+    "rule_quality": {
+      "path": "results/frozen/system_b_v1/rule_quality_by_seed_partition.csv",
+      "sha256": "0123b4cb7ae02847cf63363de8d2d4f2096876ba19e870c93644a5777459e3c5"
+    },
+    "window_metrics": {
+      "path": "results/frozen/system_b_v1/window_metrics.csv",
+      "sha256": "95e931441d75f52cd879bba5bdcd7657269dd85a7b628990d80f69297bbcfd39"
+    }
+  },
+  "manifest_sha256": "f44cad2ed9674bcb7118f05f174f845b5dfb135f95e2cb2b4a230f0f998c3e42"
+}

@@ -1,0 +1,21 @@
+{
+  "evaluation_format_version": 1,
+  "system_id": "system_b_static_neuro_symbolic_v1",
+  "system_manifest_sha256": "6e3589056d4c252c1a6c7cfd87b891fb8a24f1e30e86b17833b6035ea9ee86a8",
+  "scenario_id": "cicids2017_sudden_benign_v1",
+  "scenario_version": 1,
+  "evaluation_git": {
+    "commit": "245ca52371d7cdbcf8475b1d86b4b95d2b9850f5",
+    "branch": "stage4-system-b",
+    "clean": "true"
+  },
+  "data_access": {
+    "pre_drift_used": true,
+    "post_drift_used": true
+  },
+  "rows": {
+    "detection": 10,
+    "rule_quality": 72,
+    "windows": 140
+  }
+}

@@ -451,7 +451,13 @@ Repository-only tests must cover at least:
 
 ## 17. Evidence status at protocol freeze
 
-System-B v1 rule construction and untouched evaluation use **CPU only**, matching the accepted System-A primary backend and avoiding backend-dependent attribution/tree inputs as a new uncontrolled variable. A future backend change requires a separately versioned prospective protocol.\n\nCandidate stability and held-out staleness stability use the same named quantity at different evidence stages: the candidate gate is bootstrap pass persistence on the development validation slice; after freeze, the same pass-persistence calculation is recomputed separately on the complete pre-drift and post-drift partitions. The 5,000-row longitudinal windows report support, class precision, neural fidelity, activation/coverage and conflict behavior, but are not treated as independent bootstrap experiments.\n\nUntouched evaluation additionally requires the generated System-B manifest and all `R_0` files to have been committed: the evaluator must refuse to start from a dirty worktree. This makes the pre/post firewall mechanically auditable.\n\nAt this protocol freeze:
+System-B v1 rule construction and untouched evaluation use **CPU only**, matching the accepted System-A primary backend and avoiding backend-dependent attribution/tree inputs as a new uncontrolled variable. A future backend change requires a separately versioned prospective protocol.
+
+Candidate stability and held-out staleness stability use the same named quantity at different evidence stages: the candidate gate is bootstrap pass persistence on the development validation slice; after freeze, the same pass-persistence calculation is recomputed separately on the complete pre-drift and post-drift partitions. The 5,000-row longitudinal windows report support, class precision, neural fidelity, activation/coverage and conflict behavior, but are not treated as independent bootstrap experiments.
+
+Untouched evaluation additionally requires the generated System-B manifest and all `R_0` files to have been committed: the evaluator must refuse to start from a dirty worktree. This makes the pre/post firewall mechanically auditable.
+
+At this protocol freeze:
 
 - the governing DOCX hashes match `GOVERNING_SOURCES.md`;
 - remote `main` and `stage4-system-b` both point to `5d5cb67dda1abcda720eac785c29fa259f6bf5b8`;

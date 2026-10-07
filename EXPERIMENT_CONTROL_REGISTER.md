@@ -52,7 +52,7 @@
 | Optional D-continuous | Secondary only if feasible | Design decision before use | Same operator where meaningful | **NOT YET COMMITTED** |
 | Primary C-vs-D comparison | Paired by seed/start state and all non-symbolic controls | MAIN | C/D | **FROZEN** |
 | Computational backend for C/D | Same backend/configuration wherever feasible | Available hardware before runs | C/D paired blocks | **TO FREEZE** |
-| System-B build/evaluation backend | CPU only for v1 | Accepted System-A backend + prospective implementation control | B seeds; initial R0 evidence | **FROZEN — System-B protocol v1** |\n| Thread/determinism controls | Record and hold matched within causal blocks | Runtime environment | Matched systems | **TO FREEZE/record** |
+| Thread/determinism controls | Record and hold matched within causal blocks | Runtime environment | Matched systems | **TO FREEZE/record** |
 | Primary inferential unit | Matched seed-level treatment effect within scenario; windows are longitudinal repeated observations, not independent replicates | Governing doctrine | Primary C-vs-D inference | **FROZEN principle** |
 | Primary/secondary endpoints | Defined in `STATISTICAL_ANALYSIS_PLAN.md`; exact scenario-specific endpoint set frozen before C/D evaluation | Doctrine + development/design only | All final contrasts | **TO FREEZE before C/D** |
 | Failed-run/exclusion policy | Technical failure only under prespecified criteria; retain original failure/reason | Statistical plan | All systems | **FROZEN principle** |

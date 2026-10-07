@@ -1,0 +1,5 @@
+partition,rows,training_seen_rows,training_seen_fraction,training_seen_benign_rows,training_seen_attack_rows,exact_duplicate_excess_rows,exact_duplicate_excess_fraction
+training,1322179,1322179,1.0,1064858,257321,113858,0.08611390742100729
+development,207810,9915,0.047711852172657714,9915,0,,
+pre_drift,69260,4324,0.06243141784579844,4324,0,,
+post_drift,69270,3459,0.04993503681247293,3459,0,,

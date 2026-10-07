@@ -1,0 +1,21 @@
+{
+  "manifest_format_version": 1,
+  "audit_id": "sudden_benign_v1_retrospective_assumption_audit_v1",
+  "scenario_id": "cicids2017_sudden_benign_v1",
+  "summary_artifact_sha256": "21d54ce4cd2ec609fd53c9958685996a18dda47f682ebdbe47e053151c9705f9",
+  "files": {
+    "summary": {
+      "path": "results/audits/sudden_benign_v1_retrospective_assumption_audit_v1/audit_summary.json",
+      "sha256": "c1c0e637980c9f565fd93918e1bc43d352c31419d8b57ef3d6b48c3414a63bb5"
+    },
+    "exact_pattern_dependence": {
+      "path": "results/audits/sudden_benign_v1_retrospective_assumption_audit_v1/exact_pattern_dependence.csv",
+      "sha256": "6f31708b07a15da43db6b057c731d1a08cca74730e1d4361a8e0f14cc50479a9"
+    },
+    "regime_shift_by_feature": {
+      "path": "results/audits/sudden_benign_v1_retrospective_assumption_audit_v1/regime_shift_by_feature.csv",
+      "sha256": "2feed6dcd30b6f04fd287a3e364bbac26b07ac4a40d9f4065ad33118c02ea2de"
+    }
+  },
+  "manifest_sha256": "f4953c88a7ca556749a69b172fd27f0575a1b375f216bc5074438d17f7b7481e"
+}

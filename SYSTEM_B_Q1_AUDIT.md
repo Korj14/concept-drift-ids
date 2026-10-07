@@ -598,3 +598,31 @@ Q1 interpretation:
 System B provides evidence of **selective symbolic redistribution/staleness**, not global symbolic degradation. The controlled benign covariate shift changes support/activation and class-conditional explanation quality while thresholded detection can improve. The separation between neural fidelity and true-label symbolic correctness is empirically necessary.
 
 This is a stronger and more defensible baseline for the later C-vs-D question than a manufactured claim that all rules become stale after drift.
+
+
+## 42. System-B implementation closure status — 8 October 2026
+
+This section supersedes the operational blocking language in earlier audit sections without rewriting the historical record.
+
+The protocol-conformance defect identified in R0.v1 was corrected by accepted R0.v2, and the subsequent mandatory retrospective robustness tranche has now been executed and frozen. C/D inheritance is therefore **no longer blocked by any unresolved System-B implementation defect**.
+
+Completed closure evidence includes:
+
+- Stage-3A float64/float32 symbolic-consumer conformance: numerically inert, no R0 version change required;
+- repository-frozen scenario attribution / exact-pattern audit;
+- A/B exact-training-pattern seen-versus-unseen held-out rescore;
+- duplicate-aware validation and whole-pattern bootstrap sensitivity;
+- Destination Port exclusion;
+- alternate development splits;
+- SHAP background and aggregation sensitivities;
+- one-factor rule-gate sensitivities;
+- fusion-authority sensitivities at neural weights 0.70, 0.90 and 1.00;
+- pattern-deduplicated alternate System-A teacher;
+- matched alternate R0 rebuilt from that teacher after the teacher freeze;
+- full alternate A-to-R0-to-B held-out duplicate-dependence evaluation after both upstream artifacts were frozen.
+
+The full pattern-deduplicated chain confirms that training multiplicity materially affects the learned teacher and symbolic state, especially class-conditional symbolic coverage/correctness, but it does not reveal a scientific-contract defect requiring replacement of accepted System A or R0.v2. The alternate B state uses 8/8/8/9/8 active rules across seeds versus 7/6/7/6/6 in accepted R0.v2, while its held-out detection remains viable. This is therefore reported as substantive assumption dependence, not retroactive model selection.
+
+The mandatory System-B robustness package is considered **implementation-complete for transition into C/D design freeze**. Secondary top-k and surrogate-constraint sweeps remain optional publication robustness unless later interpretation specifically requires them; they are not prerequisites for starting C/D.
+
+Before the first adaptive C/D held-out execution, the remaining open work is prospective C/D control design rather than System-B repair: drift signal/configuration/persistence, label timing, time-respecting adaptation evidence, neural adaptation procedure/budget/replay/stopping, D rule-gate sample-size semantics, threshold policy, rule-confidence update, D-periodic cadence/budget, backend/thread controls, confirmatory endpoint/multiplicity freeze, and lifecycle-event schema.

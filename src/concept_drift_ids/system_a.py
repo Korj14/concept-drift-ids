@@ -1032,6 +1032,18 @@ def main() -> None:
     )
     rescore_parser.add_argument("--device", default="cpu")
 
+    subparsers.add_parser(
+        "build-pattern-dedup-robustness",
+        help=(
+            "Train the post-hoc exact-pattern+binary-label deduplicated "
+            "System-A robustness teacher using training/development only."
+        ),
+    )
+    subparsers.add_parser(
+        "verify-pattern-dedup-robustness",
+        help="Verify the frozen alternate-teacher robustness manifest/checkpoints.",
+    )
+
     args = parser.parse_args()
 
     if args.command == "train":
@@ -1040,6 +1052,16 @@ def main() -> None:
         evaluate_system_a(device_name=args.device)
     elif args.command == "rescore-windows":
         rescore_system_a_longitudinal(device_name=args.device)
+    elif args.command == "build-pattern-dedup-robustness":
+        from concept_drift_ids.system_a_duplicate_robustness import (
+            build_pattern_dedup_teacher,
+        )
+        build_pattern_dedup_teacher()
+    elif args.command == "verify-pattern-dedup-robustness":
+        from concept_drift_ids.system_a_duplicate_robustness import (
+            verify_pattern_dedup_teacher,
+        )
+        verify_pattern_dedup_teacher()
     else:
         verify_system_a()
 

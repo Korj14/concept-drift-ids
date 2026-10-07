@@ -334,3 +334,20 @@ Any C/D endpoint depending on an update time must use the time at which all prot
 If symbolic validation requires delayed ground-truth labels, recovery time and update latency begin/end definitions must respect that latency. A rule-base version cannot be credited with recovery before it could legitimately have been published.
 
 This timing rule must be frozen together with the adaptive protocol before untouched C/D outcomes.
+
+
+## 16. Corrected System-B v2 evidence status
+
+The R0.v2 evaluation is a protocol-defect correction conducted after historical R0.v1 held-out outcomes were known. It is therefore not treated as a new untouched confirmatory experiment.
+
+For publication:
+
+- R0.v2 is the protocol-conformant static System-B baseline and the required symbolic start state for future C/D;
+- R0.v1 versus R0.v2 differences are implementation-correction sensitivity/provenance, not a hypothesis test or model-selection comparison;
+- no p-value is attached to the v1-v2 correction contrast;
+- the corrected v2 pre/post paired seed summaries are descriptive baseline evidence for RQ1 and for later matched visualization;
+- class-conditional symbolic coverage/correctness/fidelity are descriptive explanation diagnostics motivated and frozen before v2 execution;
+- imputation-aware rule diagnostics are descriptive robustness evidence and do not redefine the primary rule-validity gates;
+- the primary later causal inference remains matched C-vs-D under a common accepted R0.v2 start.
+
+Knowledge of v1 held-out outcomes must not be used to change R0.v2, lambda, thresholds, preprocessing, windows or C/D treatment definitions.

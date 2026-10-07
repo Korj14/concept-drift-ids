@@ -1181,3 +1181,12 @@ R0.v2 remains the required C/D initial symbolic state regardless of corrected ev
 Before corrected R0.v2 pre/post execution, a repository-only unit test was added for the new imputation-aware explanation diagnostic. It verifies that only activated rules whose antecedent feature was actually missing are counted, and that the imputation-free quality calculation excludes those activations without altering primary prediction.
 
 No R0.v2 held-out output existed when this test was added.
+
+
+### Statistical-status sanitation before corrected v2 evaluation
+
+Before R0.v2 pre/post execution, the statistical-analysis plan was amended to make the correction status explicit. R0.v2 is the protocol-conformant B baseline, but its corrected evaluation is not a second untouched first-look experiment. The v1-v2 contrast is therefore sensitivity/provenance rather than a confirmatory hypothesis test.
+
+The newly frozen class-conditional symbolic and imputation-aware diagnostics are descriptive. They do not add post-hoc confirmatory endpoints or alter the later primary matched C-vs-D inferential unit.
+
+No R0.v2 held-out result existed when this statistical classification was recorded.

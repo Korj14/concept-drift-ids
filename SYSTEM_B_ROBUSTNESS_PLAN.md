@@ -237,3 +237,25 @@ Execution order:
 Top-k and surrogate-constraint sweeps remain secondary unless an earlier mandatory result exposes instability requiring them for interpretation.
 
 None of these analyses may replace R0.v2 because it performs better. A versioned correction is considered only if an independent conformance audit establishes a realized scientific-contract defect.
+
+
+## Fusion-authority sensitivity implementation freeze — 7 October 2026
+
+The high-priority lambda/fusion-authority sensitivity is implemented as a separate two-stage robustness analysis so it cannot accidentally regenerate or replace R0.v2.
+
+Selection stage:
+
+- exact accepted R0.v2 rules are reused;
+- no SHAP or surrogate rebuild occurs;
+- no training partition is loaded;
+- the original development fusion slice is reconstructed and hash-checked;
+- neural weights 0.70, 0.90 and 1.00 are fixed prospectively;
+- for each weight/seed, only the fused operating threshold is selected using the original MCC/F1/FPR/0.5 tie policy;
+- the resulting selection manifest must be committed before held-out rescoring.
+
+Evaluation stage:
+
+- loads only pre_drift/post_drift;
+- uses the frozen sensitivity weight/threshold identities;
+- reports the same corrected-v2 detection and class-conditional symbolic metrics;
+- cannot replace lambda=0.50 or accepted R0.v2 regardless of outcome.

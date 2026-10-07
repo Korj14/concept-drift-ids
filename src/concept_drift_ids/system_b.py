@@ -1277,6 +1277,12 @@ def main() -> None:
     duplicate_aware = subparsers.add_parser("analyze-duplicate-aware-validation")
     duplicate_aware.add_argument("--device", default="cpu")
     subparsers.add_parser("verify-duplicate-aware-validation")
+    fusion_robustness = subparsers.add_parser("build-fusion-authority-robustness")
+    fusion_robustness.add_argument("--device", default="cpu")
+    subparsers.add_parser("verify-fusion-authority-robustness")
+    eval_fusion_robustness = subparsers.add_parser("evaluate-fusion-authority-robustness")
+    eval_fusion_robustness.add_argument("--device", default="cpu")
+    subparsers.add_parser("verify-fusion-authority-robustness-evaluation")
     args = parser.parse_args()
     if args.command == "build":
         build_and_freeze_system_b(device_name=args.device)

@@ -165,3 +165,6 @@ A result being inconvenient is not a valid reason for deviation.
 
 
 | Pattern-deduplicated System-A teacher | Collapse exact raw 77-feature+binary-label multiplicities in training; preserve binary label conflicts; same A protocol and fixed preprocessor | Training + development only | Upstream duplicate-dependence robustness | **IMPLEMENTATION ADDED; MANIFEST TO FREEZE BEFORE DOWNSTREAM USE** |
+
+
+| System-B fusion-authority sensitivity | Reuse accepted R0.v2; lambda in {0.70, 0.90, 1.00}; threshold selected on original development fusion slice under original MCC tie policy; held-out evaluation only after selection freeze | Development selection, then pre/post rescore | Publication-strength B robustness; informs future C/D fusion-policy risk | **IMPLEMENTATION ADDED; PRIMARY lambda=0.50 IMMUTABLE** |

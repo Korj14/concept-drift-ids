@@ -1363,3 +1363,12 @@ The neural architecture, initialization/seeds, optimizer, early-stopping rule, d
 Research Contract runs #115–#117 failed because the new repository-only test searched the entire `build_pattern_dedup_teacher` source for the bare strings `pre_drift` and `post_drift`. The builder legitimately records `pre_drift_used=False` and `post_drift_used=False` in its provenance manifest, causing a false-positive test failure even though its only partition loads are training and development.
 
 The test was narrowed to forbid exact held-out calls `load_partition("pre_drift")` and `load_partition("post_drift")` while still requiring explicit training/development loads. No experimental code, frozen artifact, treatment, data-access rule, or scientific result changed.
+
+
+### Fusion-authority robustness implementation — 7 October 2026
+
+The remaining high-priority System-B assumption, symbolic/neural fusion authority, was implemented as an isolated sensitivity rather than mixed into rule-selection variants.
+
+The sensitivity reuses the exact accepted R0.v2 rule artifacts. It does not rerun SHAP, fit a surrogate, change gates, or rebuild rules. Lambda values 0.70, 0.90 and 1.00 are fixed before held-out sensitivity execution. Each weight receives seed-specific thresholds selected only on the original development fusion slice with the original MCC/tie-break rule. The selection artifact must be committed before any pre/post sensitivity rescore.
+
+This design specifically tests whether the primary lambda=0.50 boundary choice and veto-like BENIGN rule authority materially drive the observed B conclusions without creating a post-hoc replacement baseline.

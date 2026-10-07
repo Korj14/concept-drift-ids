@@ -20,6 +20,7 @@ from concept_drift_ids.system_b import (
     _git_state,
     _hash_int64,
     _record_for_seed,
+    _require_environment,
     _runtime,
     _tree_paths,
     _write_json_new,
@@ -62,6 +63,7 @@ def audit_frozen_r0_protocol() -> None:
     if AUDIT_PATH.exists():
         raise FileExistsError(f"Audit artifact already exists; refusing overwrite: {AUDIT_PATH}")
 
+    _require_environment("cpu")
     git = _git_state(require_clean=True)
     manifest = json.loads(MANIFEST_PATH.read_text(encoding="utf-8"))
     if manifest.get("manifest_sha256") != ACCEPTED_SYSTEM_B_MANIFEST_SHA256:
@@ -90,6 +92,10 @@ def audit_frozen_r0_protocol() -> None:
     )
     expected_rows = manifest["row_identities"]
     sampling = {
+        "training_rows_hash_matches_manifest": (
+            _hash_int64(training_rows)
+            == expected_rows["training_scenario_rows_sha256"]
+        ),
         "background_hash_matches_manifest": (
             _hash_int64(training_rows[background_idx])
             == expected_rows["shap_background_training_rows_sha256"]
@@ -104,6 +110,16 @@ def audit_frozen_r0_protocol() -> None:
         "background_count": int(len(background_idx)),
         "attribution_count": int(len(attribution_idx)),
     }
+
+    if not all(
+        sampling[key]
+        for key in (
+            "training_rows_hash_matches_manifest",
+            "background_hash_matches_manifest",
+            "attribution_hash_matches_manifest",
+        )
+    ):
+        raise ValueError("Training/SHAP row identity reconstruction does not match the frozen manifest.")
 
     seed_records: list[dict[str, object]] = []
     total_mismatches = 0

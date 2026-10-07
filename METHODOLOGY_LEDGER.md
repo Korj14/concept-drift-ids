@@ -968,3 +968,10 @@ The result will determine the next governance action:
 The same audit also identified non-blocking but publication-important issues now recorded in `SYSTEM_B_Q1_AUDIT.md`: inactive-rule precision/fidelity semantics, seed-specific SHAP stability, background/top-k sensitivity, score-vs-probability terminology, effective benign-rule veto authority under the frozen fusion operating point, boundary lambda selection, threshold sensitivity, Destination Port/CICIDS2017 artifact risk, statistical hierarchy, and external checkpoint availability.
 
 No frozen System-B artifact is changed by this audit commit.
+
+
+### Q1 audit artifact persistence guard
+
+Before local execution of the R0 protocol diagnostic, repository review found that the existing ignore policy admitted only `results/frozen/**`; the proposed `results/audits/**` path would therefore have remained untracked. The ignore policy was prospectively extended to admit audit evidence before the diagnostic was run.
+
+The diagnostic was also tightened before execution to enforce the System-B CPU/Python environment contract and verify the complete frozen training scenario-row identity in addition to the SHAP background and attribution sample hashes. No data were loaded and no diagnostic result existed when these corrections were made.

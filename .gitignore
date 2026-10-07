@@ -34,5 +34,7 @@ data/processed/*
 results/*
 !results/frozen/
 !results/frozen/**
+!results/audits/
+!results/audits/**
 # Generated model artifacts
 artifacts/*

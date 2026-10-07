@@ -4,6 +4,7 @@ import argparse
 import hashlib
 import json
 import math
+import subprocess
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -834,6 +835,28 @@ def _window_metrics_safe(
     }
 
 
+def _longitudinal_git_state() -> dict[str, str]:
+    def run(*args: str) -> str:
+        return subprocess.run(
+            ["git", *args],
+            cwd=PROJECT_ROOT,
+            check=True,
+            capture_output=True,
+            text=True,
+        ).stdout.strip()
+
+    status = run("status", "--porcelain")
+    if status:
+        raise RuntimeError(
+            "System-A longitudinal rescoring requires a clean Git worktree."
+        )
+    return {
+        "commit": run("rev-parse", "HEAD"),
+        "branch": run("branch", "--show-current"),
+        "clean": "true",
+    }
+
+
 def rescore_system_a_longitudinal(*, device_name: str) -> None:
     """Rescore frozen System A on the common reporting grid; no retraining/retuning."""
     if device_name != "cpu":
@@ -843,6 +866,7 @@ def rescore_system_a_longitudinal(*, device_name: str) -> None:
             "Frozen System-A longitudinal supplement already exists; refusing overwrite."
         )
 
+    evaluation_git = _longitudinal_git_state()
     frozen = _load_frozen_system_a_manifest()
     preprocessing = load_frozen_preprocessing()
     accepted_eval = _load_and_verify_evaluation_manifest(
@@ -928,6 +952,7 @@ def rescore_system_a_longitudinal(*, device_name: str) -> None:
         "source_evaluation_manifest_sha256": accepted_eval["manifest_sha256"],
         "preprocessing_state_hash": preprocessing.state_hash,
         "backend": "cpu",
+        "evaluation_git": evaluation_git,
         "window_policy": {
             "size": 5000,
             "stride": 5000,
@@ -948,6 +973,7 @@ def rescore_system_a_longitudinal(*, device_name: str) -> None:
         "system_manifest_sha256": frozen["manifest_sha256"],
         "source_evaluation_manifest_sha256": accepted_eval["manifest_sha256"],
         "preprocessing_state_hash": preprocessing.state_hash,
+        "evaluation_git": evaluation_git,
         "files": {
             "summary": {
                 "path": summary_path.relative_to(PROJECT_ROOT).as_posix(),

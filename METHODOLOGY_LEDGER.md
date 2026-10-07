@@ -1342,3 +1342,10 @@ Before any selection-robustness execution, the alternate-development-split imple
 The duplicate sensitivity now avoids arbitrary first-row deduplication or majority relabeling. Exact raw 77-feature patterns are grouped; each pattern receives equal total weight, while any conflicting labels within a pattern remain represented as fractional class correctness. Bootstrap stability resamples entire exact-pattern groups.
 
 This provides a dependence-aware sensitivity for support/precision/fidelity/stability and candidate gate decisions without changing the primary row-retention policy.
+
+
+### SHAP background-reference sensitivity added to the selection freeze
+
+The selection-robustness stage now includes two alternate balanced SHAP backgrounds (seeds 20261008 and 20261009) and one natural-prevalence 256-row background (seed 20261007). The original balanced 20261007 background remains the primary reference.
+
+For these variants, the attribution sample remains exactly the frozen balanced 1,024/1,024 training sample from seed 20261007. Thus only the background reference distribution/seed changes. Each resulting ranking proceeds through the same surrogate, validation and development-only fusion selection pipeline before any held-out robustness evaluation.

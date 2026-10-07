@@ -34,10 +34,12 @@ from concept_drift_ids.system_a import (
 )
 from concept_drift_ids.system_b import (
     SYSTEM_B_CONFIG,
+    _balanced_indices,
     _fit_surrogate,
     _git_state,
     _record_for_seed,
     _require_environment,
+    _select_shap_features,
     _select_global_fusion,
     _tree_paths,
     _write_json_new,
@@ -84,6 +86,21 @@ def _variant_specs() -> tuple[VariantSpec, ...]:
             "shap_equal_class_normalized",
             "shap_aggregation",
             selected_feature_policy="equal_class_normalized",
+        ),
+        VariantSpec(
+            "shap_background_balanced_20261008",
+            "shap_background",
+            selected_feature_policy="background_balanced_20261008",
+        ),
+        VariantSpec(
+            "shap_background_balanced_20261009",
+            "shap_background",
+            selected_feature_policy="background_balanced_20261009",
+        ),
+        VariantSpec(
+            "shap_background_natural_20261007",
+            "shap_background",
+            selected_feature_policy="background_natural_20261007",
         ),
     ]
     specs.extend(
@@ -166,6 +183,31 @@ def _selected_features(
         order = sorted(range(len(ranking)), key=lambda i: (-float(score[i]), i))
         return [str(ranking[i]["feature"]) for i in order[:k]]
     raise ValueError(f"Unknown selected-feature policy: {policy}")
+
+
+
+def _background_indices(y: np.ndarray, policy: str) -> np.ndarray:
+    if policy.startswith("background_balanced_"):
+        seed = int(policy.rsplit("_", 1)[1])
+        return _balanced_indices(
+            y,
+            per_class=int(SYSTEM_B_CONFIG["shap"]["background_per_class"]),
+            random_state=seed,
+        )
+    if policy == "background_natural_20261007":
+        rng = np.random.default_rng(20261007)
+        return rng.choice(
+            np.arange(len(y), dtype=np.int64),
+            size=2 * int(SYSTEM_B_CONFIG["shap"]["background_per_class"]),
+            replace=False,
+        )
+    raise ValueError(f"Unknown SHAP background policy: {policy}")
+
+
+def _is_background_policy(policy: str) -> bool:
+    return policy.startswith("background_balanced_") or policy.startswith(
+        "background_natural_"
+    )
 
 
 def _gates(spec: VariantSpec) -> dict[str, Any]:
@@ -324,6 +366,11 @@ def build_selection_robustness(*, device_name: str) -> None:
     del training, development
 
     specs = _variant_specs()
+    frozen_attribution_idx = _balanced_indices(
+        y_train,
+        per_class=int(SYSTEM_B_CONFIG["shap"]["attribution_per_class"]),
+        random_state=int(SYSTEM_B_CONFIG["shap"]["sample_random_state"]),
+    )
     variant_state: dict[str, dict[str, Any]] = {
         spec.variant_id: {
             "spec": spec,
@@ -367,8 +414,35 @@ def build_selection_robustness(*, device_name: str) -> None:
         }
 
         tree_cache: dict[tuple[str, ...], Any] = {}
+        background_feature_cache: dict[str, tuple[list[str], list[dict[str, object]]]] = {}
         for spec in specs:
-            selected = _selected_features(source_artifact, spec.selected_feature_policy)
+            if _is_background_policy(spec.selected_feature_policy):
+                if spec.selected_feature_policy not in background_feature_cache:
+                    background_idx = _background_indices(
+                        y_train,
+                        spec.selected_feature_policy,
+                    )
+                    selected_bg, ranking_bg, _ = _select_shap_features(
+                        model,
+                        X_train,
+                        y_train,
+                        feature_names=preprocessing.feature_columns,
+                        background_idx=background_idx,
+                        attribution_idx=frozen_attribution_idx,
+                    )
+                    background_feature_cache[spec.selected_feature_policy] = (
+                        selected_bg,
+                        ranking_bg,
+                    )
+                selected, sensitivity_ranking = background_feature_cache[
+                    spec.selected_feature_policy
+                ]
+            else:
+                selected = _selected_features(
+                    source_artifact,
+                    spec.selected_feature_policy,
+                )
+                sensitivity_ranking = None
             key = tuple(selected)
             if key not in tree_cache:
                 tree, _ = _fit_surrogate(
@@ -415,6 +489,7 @@ def build_selection_robustness(*, device_name: str) -> None:
             variant_state[spec.variant_id]["seed_payloads"][seed] = {
                 "seed": seed,
                 "selected_features": selected,
+                "sensitivity_shap_ranking": sensitivity_ranking,
                 "development_split_seed": spec.development_split_seed,
                 "gates": gates,
                 "surrogate_training_neural_fidelity": _surrogate_fidelity(
@@ -493,6 +568,13 @@ def build_selection_robustness(*, device_name: str) -> None:
             "development_used": True,
             "pre_drift_used": False,
             "post_drift_used": False,
+        },
+        "shap_background_contract": {
+            "frozen_attribution_sample": "balanced_1024_per_class_seed_20261007",
+            "balanced_background_variants": [20261008, 20261009],
+            "natural_prevalence_background_rows": 256,
+            "natural_prevalence_background_seed": 20261007,
+            "only_background_changes_within_shap_background_family": True,
         },
         "variant_count": len(specs),
         "variant_inventory": variant_inventory,

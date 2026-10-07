@@ -1424,3 +1424,35 @@ The evaluator:
 - cannot be used to select a replacement for accepted System A, R0.v2 or corrected System B.
 
 This sensitivity intentionally keeps the accepted training-fitted preprocessing fixed. It therefore measures dependence on training-example multiplicity and the resulting teacher/rule state, not a fully deduplicated end-to-end preprocessing pipeline.
+
+
+### Deduplicated-training chain evaluator CSV-schema correction — 8 October 2026
+
+The first held-out invocation of `evaluate-pattern-dedup-chain` occurred only after
+the alternate System-A teacher and alternate R0 manifests had been frozen. The
+evaluator successfully verified those frozen sources, loaded and scored the
+pre_drift/post_drift partitions, and then failed while serializing
+`metrics_by_seed_system.csv`.
+
+Cause: the shared CSV writer inferred field names from the first neural-only
+System-A row, while later System-B rows additionally contained the frozen
+symbolic evidence fields (coverage, correctness, fidelity, and abstention
+metrics). Python's `csv.DictWriter` therefore rejected the later rows as
+containing fields outside the first-row schema.
+
+Scientific consequence classification:
+
+- frozen alternate teacher: unchanged;
+- frozen alternate R0: unchanged;
+- thresholds, neural weight, rules, and held-out scoring equations: unchanged;
+- no evaluation manifest was produced by the failed write;
+- no persisted result is accepted from the failed attempt;
+- pre/post had nevertheless been accessed and scored in memory, so the corrected
+  rerun is explicitly classified as an implementation-defect correction rather
+  than a pristine first-look evaluation.
+
+Correction: the evaluator now rectangularizes the mixed System-A/System-B row
+schema deterministically before aggregation and CSV serialization. A
+repository-only regression test reproduces the heterogeneous-row condition.
+The correction changes serialization only and must not be used to alter model,
+rule, threshold, fusion, or metric choices.

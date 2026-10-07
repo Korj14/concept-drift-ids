@@ -1,0 +1,20 @@
+{
+  "manifest_format_version": 1,
+  "analysis_id": "system_ab_seen_unseen_exact_pattern_v1",
+  "summary_artifact_sha256": "c6e9ae946f24ce99fdc57754995ec419d479dd5bd20d2094dd92ac8e78f9fd23",
+  "files": {
+    "rows": {
+      "path": "results/robustness/system_ab_seen_unseen_exact_pattern_v1/metrics_by_seed_stratum.csv",
+      "sha256": "8ecf99d0840a03330f7c26a01000761134fe1f8ccc4f7448fad10e773e31a7b7"
+    },
+    "aggregate": {
+      "path": "results/robustness/system_ab_seen_unseen_exact_pattern_v1/aggregate_metrics.csv",
+      "sha256": "3324d01ec45b7c9fbf2e4011974a9061d4368628209466a61a504752b6a188aa"
+    },
+    "summary": {
+      "path": "results/robustness/system_ab_seen_unseen_exact_pattern_v1/analysis_summary.json",
+      "sha256": "b9fa0e139a29e0d324febad35d8801a0ecf0556cb48774aa942708afca67b56a"
+    }
+  },
+  "manifest_sha256": "69ed8e279cb6a7784bd6ebc3b2bc6f53327cc560322f357fc030d8a350ecc028"
+}

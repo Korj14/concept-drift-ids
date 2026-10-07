@@ -975,3 +975,22 @@ No frozen System-B artifact is changed by this audit commit.
 Before local execution of the R0 protocol diagnostic, repository review found that the existing ignore policy admitted only `results/frozen/**`; the proposed `results/audits/**` path would therefore have remained untracked. The ignore policy was prospectively extended to admit audit evidence before the diagnostic was run.
 
 The diagnostic was also tightened before execution to enforce the System-B CPU/Python environment contract and verify the complete frozen training scenario-row identity in addition to the SHAP background and attribution sample hashes. No data were loaded and no diagnostic result existed when these corrections were made.
+
+
+---
+
+## 7 October 2026 — expanded Q1 audit of hidden assumptions
+
+The System-B audit was expanded without modifying any primary artifact.
+
+Material findings added to the audit record:
+
+- zero B conflict is structurally constrained by disjoint single-tree leaves;
+- q is lifecycle metadata in B and does not soften a one-active-leaf symbolic score;
+- lambda=0.50 plus thresholds >0.50 gives covered benign rules effective veto authority;
+- aggregate coverage/fidelity hides materially weaker attack-side symbolic correctness;
+- row-bootstrap persistence does not account for retained duplicate-pattern dependence;
+- exact threadpool state was not captured in B build provenance;
+- CICIDS2017 Destination Port and known flow/labelling defects require explicit sensitivity/limitations.
+
+`SYSTEM_B_ROBUSTNESS_PLAN.md` freezes the sensitivity agenda before any C/D held-out outcome. Because B outcomes are already known, B robustness analyses are explicitly post-hoc and cannot replace R0.v1 or the first evaluation.

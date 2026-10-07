@@ -76,3 +76,8 @@ A deviation from a frozen row is not automatically prohibited, but it is never s
 6. rerun matched conditions required to restore causal comparability.
 
 A result being inconvenient is not a valid reason for deviation.
+
+| System-B Q1 closure diagnostic | Training-only weighted CART leaf consequent reconstruction | Training only; no development/pre/post | Determines realized R0.v1 protocol conformance | **REQUIRED BEFORE C/D INHERITANCE** |
+| System-B robustness plan | `SYSTEM_B_ROBUSTNESS_PLAN.md`; B post-hoc robustness, C/D prospective | Structural/literature audit; no C/D outcomes | Publication robustness | **FROZEN BEFORE C/D OUTCOMES** |
+| Class-conditional symbolic reporting | Benign/attack coverage and correctness separately | Immutable B evidence; prospective C/D | B/C/D explanation reporting | **REQUIRED** |
+| Thread/determinism controls for C/D | Record/freeze torch thread counts, threadpoolctl inventory and OMP/MKL/OpenBLAS settings | Runtime before C/D | Matched C/D blocks | **TO FREEZE BEFORE C/D** |

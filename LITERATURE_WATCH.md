@@ -91,3 +91,15 @@ Material items:
 Novelty verdict:
 
 No newly identified peer-reviewed flow-level NIDS study in this refresh collapses the full governing conjunction of endogenous statistical drift trigger + validated/versioned symbolic lifecycle + matched adaptive comparator isolating symbolic evolution + longitudinal explanation evaluation. The narrowed gap remains viable, subject to the implementation and robustness gates in `SYSTEM_B_Q1_AUDIT.md`.
+
+
+## 7 October 2026 — benchmark-risk and explanation-standard check
+
+The Q1 audit rechecked literature relevant to benchmark shortcuts and explanation validation.
+
+- Engelen, Rimmer & Joosen, *Troubleshooting an Intrusion Detection Dataset: the CICIDS2017 Case Study*, IEEE SPW 2021, DOI 10.1109/SPW53761.2021.00009, documents material traffic-generation, flow-construction, feature-extraction and labelling problems in CICIDS2017.
+- A flow-based CICIDS2017 study in *Sensors* 22(23):9326 reports Destination Port becoming the top information-gain feature and a one-rule classifier obtaining implausibly high performance; the authors removed the feature to reduce attack-port memorization risk.
+- Recent 2026 IDS/XAI work increasingly validates surrogate fidelity and audits faithfulness, consistency and robustness separately rather than assuming an interpretable surrogate is reliable.
+- Pacheco & Pedroso, Computer Networks 289 (2026), 112672, remains a high bar for temporal drift, explanation stability, OOD behavior, recovery and matched operational-cost evaluation.
+
+The novelty conjunction remains viable, but these findings strengthen the mandatory robustness/limitations package.

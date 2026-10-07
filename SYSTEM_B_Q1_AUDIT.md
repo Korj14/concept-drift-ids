@@ -321,3 +321,38 @@ Then:
 3. add a corrected inactive-rule semantic analysis artifact;
 4. freeze the robustness/sensitivity plan before C/D;
 5. resolve the remaining C/D controls and statistical-plan TBDs before any adaptive held-out outcome.
+
+
+## 22. Zero System-B conflict is structurally constrained
+
+R0 rules are retained root-to-leaf paths from one decision tree. Distinct leaves are mutually exclusive. Therefore frozen B's zero conflict-abstention rate is largely structural, not empirical proof that future lifecycle conflict resolution is effective. D must supply conflict evidence once independently evolved rules can overlap.
+
+## 23. Class imbalance hides symbolic correctness asymmetry
+
+Because accepted R0 leaves are disjoint, frozen rule evidence supports exact class-conditional derivation. Across five seeds, mean benign symbolic coverage is about 0.983 pre and 0.980 post, while mean attack coverage is about 0.676 pre and 0.755 post. Covered-benign ground-truth correctness is approximately 1.000, whereas covered-attack correctness averages about 0.746 pre and 0.715 post.
+
+Thus overall coverage (~0.97) and neural fidelity (~0.998) hide materially weaker attack-side symbolic correctness. Neural fidelity is not correctness, and overall coverage is not class-conditional coverage.
+
+## 24. Duplicate rows can inflate bootstrap persistence
+
+The primary duplicate-retention policy is unchanged. However, row-bootstrap gate persistence does not model dependence among identical feature patterns and can overstate effective-sample robustness. Publication robustness therefore requires deduplicated-validation and group-aware duplicate-pattern bootstrap sensitivities.
+
+## 25. Determinism provenance is incomplete
+
+B records exact environment versions, OS, CPU count, hashes and backend, but not full BLAS/OpenMP/PyTorch thread state. Before C/D, freeze threadpool/runtime controls. For B, exact reconstruction should be checked locally where feasible, and the frozen System-A checkpoint bytes must be archived before submission.
+
+## 26. Pseudo-chronology remains bounded evidence
+
+Source/scenario row order is a controlled pseudo-chronological proxy, not a natural production stream with fully trustworthy temporal provenance. Combined with known CICIDS2017 flow/label issues, sudden_benign_v1 supports a controlled source-regime shift claim, not broad temporal deployment validity.
+
+## 27. Frozen robustness agenda
+
+The sensitivity questions/ranges are now fixed in `SYSTEM_B_ROBUSTNESS_PLAN.md`. B sensitivities are post-hoc robustness because B outcomes are known; the same plan is prospective for C/D while adaptive held-out outcomes remain unseen.
+
+## 28. Current audit verdict
+
+**GREEN:** artifact integrity, seed retention, rule identity, window totals, immutable first evaluation and additive supplement.
+
+**AMBER:** class-conditional validity, Destination Port, duplicate-aware stability, SHAP background/top-k, fusion authority, surrogate/gate sensitivity, thread-level reproducibility, checkpoint archival and external validation.
+
+**RED closure blocker:** the training-only weighted-leaf consequent diagnostic must be executed and frozen before R0.v1 is inherited into C/D.

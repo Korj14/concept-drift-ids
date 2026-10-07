@@ -59,3 +59,23 @@ def test_pattern_dedup_teacher_r0_commands_are_explicitly_dispatched() -> None:
         assert command in source
         assert module_name in source
         assert function_name in source
+
+
+def test_pattern_dedup_chain_evaluation_commands_are_explicitly_dispatched() -> None:
+    source = inspect.getsource(system_b.main)
+
+    expected = {
+        '"evaluate-pattern-dedup-chain"': (
+            "concept_drift_ids.system_b_dedup_teacher_evaluation",
+            "evaluate_pattern_dedup_training_chain",
+        ),
+        '"verify-pattern-dedup-chain-evaluation"': (
+            "concept_drift_ids.system_b_dedup_teacher_evaluation",
+            "verify_pattern_dedup_training_chain_evaluation",
+        ),
+    }
+
+    for command, (module_name, function_name) in expected.items():
+        assert command in source
+        assert module_name in source
+        assert function_name in source

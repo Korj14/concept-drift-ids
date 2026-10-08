@@ -93,7 +93,13 @@
 | C symbolic treatment | Active `R_0` held frozen | MAIN | Treatment definition | **FROZEN** |
 | D symbolic treatment | Same initial `R_0`, evolved `R_t` only after confirmed drift in primary condition | MAIN | Treatment definition | **FROZEN** |
 | D-drift trigger | Confirmed statistical drift | MAIN | Compare with D-periodic | **FROZEN treatment definition** |
-| D-periodic trigger | Prespecified periodic maintenance without detector consultation | MAIN | Same evolution operator; matched evidence/update opportunity | **TO FREEZE cadence/budget** |
+| D-periodic trigger | Four fixed symbolic opportunity clocks per seed: 27,706; 55,412; 83,118; 110,824 (floor(i*N/5), N=138,530); schedule never consults detector/boundary | `D_TRIGGER_ABLATION_PROTOCOL.md` | Same symbolic operator/config hash/evidence budget as D-drift | **FROZEN** |
+| Symbolic opportunity budget | K_symbolic=4 maximum opportunities per seed per trigger arm; every triggered/scheduled slot consumes budget regardless publication/no-op/censoring; no retries beyond slot budget | Prospective fair-trigger design | D-drift/D-periodic same maximum intervention budget | **FROZEN** |
+| D-drift symbolic slots | First four confirmed primary detector events consume symbolic slots; later detector events may still update shared neural state but symbolic maintenance logs `symbolic_budget_exhausted` | Trigger-ablation design | D-drift | **FROZEN** |
+| D-periodic evidence at target | Most recent 10,000 mature rows at target clock for generation; current shared neural checkpoint applied to them; same 10,000 future checkpoint-pure validation contract as D-drift | Trigger-ablation design | D-periodic | **FROZEN** |
+| Trigger-arm operator identity | D-drift/D-periodic call same symbolic operator with identical config hash and RNG namespace by seed/opportunity; only opportunity timing/source differs | Causal trigger ablation | D trigger arms | **FROZEN** |
+| Trigger opportunity outcome taxonomy | opportunity / completed_validation / publication / no_op / censored_or_aborted kept distinct; opportunity count must not be equated with update count | Trigger-efficiency analysis | D trigger arms | **FROZEN** |
+| Concurrent symbolic transaction policy | At most one outstanding symbolic transaction per seed/arm; periodic target while pending logs `pending_transaction_skip` and consumes slot; neural supersession aborts checkpoint-tied validation | Lifecycle/trigger design | D trigger arms | **FROZEN** |
 | Optional D-continuous | Secondary only if feasible | Design decision before use | Same operator where meaningful | **NOT YET COMMITTED** |
 | Primary C-vs-D comparison | Paired by seed/start state and all non-symbolic controls | MAIN | C/D | **FROZEN** |
 | Computational backend for C/D | Same backend/configuration wherever feasible | Available hardware before runs | C/D paired blocks | **TO FREEZE** |

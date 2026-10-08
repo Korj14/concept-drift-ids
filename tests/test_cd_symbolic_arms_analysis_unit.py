@@ -20,6 +20,7 @@ from concept_drift_ids.cd_symbolic_arms import (
     frozen_periodic_opportunities,
     open_symbolic_transaction,
     verify_periodic_schedule,
+    verify_primary_symbolic_operator_config,
     verify_trigger_operator_identity,
 )
 from concept_drift_ids.cd_symbolic_evaluation import (
@@ -296,3 +297,12 @@ def test_recovery_requires_two_consecutive_post_windows() -> None:
     assert result["baseline"] == pytest.approx(0.7)
     assert result["recovered"]
     assert result["recovery_clock"] == 15_000
+
+
+
+def test_primary_symbolic_config_rejects_test_overrides() -> None:
+    verify_primary_symbolic_operator_config(SymbolicOperatorConfig())
+    with pytest.raises(ValueError, match="frozen configuration"):
+        verify_primary_symbolic_operator_config(
+            SymbolicOperatorConfig(validation_rows=4)
+        )

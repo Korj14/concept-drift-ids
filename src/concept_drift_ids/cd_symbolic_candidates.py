@@ -139,7 +139,7 @@ def select_online_shap_features(
         random_state=base + 1,
     )
 
-    started = time.perf_counter()
+    started = time.perf_counter_ns()
     wrapped = _LogitColumn(model.cpu()).eval()
     background = torch.from_numpy(X[background_idx])
     explained = torch.from_numpy(X[attribution_idx])
@@ -197,7 +197,7 @@ def select_online_shap_features(
         ranking,
         tuple(str(row_ids[index]) for index in background_idx),
         tuple(str(row_ids[index]) for index in attribution_idx),
-        time.perf_counter() - started,
+        (time.perf_counter_ns() - started) / 1_000_000_000.0,
     )
 
 
@@ -235,9 +235,9 @@ def fit_online_surrogate(
         min_samples_leaf=config.min_samples_leaf,
         random_state=int(random_state),
     )
-    started = time.perf_counter()
+    started = time.perf_counter_ns()
     tree.fit(X[:, columns], target, sample_weight=sample_weight)
-    return tree, time.perf_counter() - started
+    return tree, (time.perf_counter_ns() - started) / 1_000_000_000.0
 
 
 def weighted_leaf_consequent(

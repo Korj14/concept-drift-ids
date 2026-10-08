@@ -1987,3 +1987,124 @@ using both recovery/effectiveness and maintenance efficiency/cost.
 **Gate after this packet:** the symbolic lifecycle and mandatory drift-vs-periodic trigger ablation
 are prospectively frozen. Adaptive implementation remains prohibited. The next packet is the final
 statistical/runtime/reproducibility freeze and fail-closed implementation contract.
+
+
+### Final C/D statistical, runtime, reproducibility, and held-out-access freeze — 8 October 2026
+
+The project froze `C_D_FINAL_ANALYSIS_REPRODUCIBILITY_PROTOCOL.md` and promoted
+`STATISTICAL_ANALYSIS_PLAN.md` to version 1.0 before any adaptive C/D held-out execution.
+
+This packet deliberately resolves the remaining inferential and execution degrees of freedom rather
+than leaving them to implementation time.
+
+The primary confirmatory family contains exactly three seed-paired whole-post-regime endpoints:
+
+1. D-drift minus C post-regime MCC;
+2. D-drift minus C post-regime macro correct symbolic coverage (MCSC);
+3. D-drift minus D-periodic post-regime MCSC.
+
+For class c, correct symbolic coverage is the proportion of true class-c rows receiving a resolved
+correct symbolic prediction. Uncovered rows, unresolved conflict/abstention, and wrong symbolic
+predictions contribute zero. MCSC is the unweighted mean of benign and attack correct symbolic
+coverage. Component coverage/correctness/conflict metrics remain mandatory so the composite cannot
+hide class-specific trade-offs.
+
+The full frozen 69,270-row post partition is the confirmatory domain. No rows are removed because an
+update had not yet occurred. This makes detector delay, evidence waiting, no-op maintenance,
+right-censoring and late publication part of the realized treatment effect rather than post-hoc
+exclusions.
+
+For each confirmatory endpoint, the primary effect estimate is the arithmetic mean of the five
+matched seed differences. The primary interval is the 95% Student-t interval over the five paired
+differences with df=4. This interval is explicitly restricted to stochastic-seed variability
+conditional on the one fixed scenario and is not presented as deployment-population uncertainty.
+
+Because n=5 cannot support meaningful normality diagnostics, the plan mandates all five raw paired
+effects, median, SD, min/max, positive/zero/negative sign counts and the leave-one-seed-out mean-effect
+range alongside the interval. Bootstrap intervals are not primary.
+
+A one-sided exact sign test is frozen as secondary calibration for each of the three positive-benefit
+contrasts. Zero differences are removed from its denominator and the effective n is reported.
+Holm-Bonferroni controls the three-test family at FWER .05. The plan explicitly rejects p-value
+crossing as the sole success criterion because five matched seeds share the same underlying stream
+and produce a coarse attainable p-value grid.
+
+No confirmatory window-level mixed model/GEE is used in the primary scenario. Reporting windows are
+longitudinal mechanism units, not extra replicates.
+
+Secondary recovery uses a frozen rule: the pre-reference baseline is the row-count-weighted mean of
+the final three pre-drift reporting windows. A higher-is-better metric recovers only at the first post
+window at or above that baseline whose immediately following post window is also at or above it;
+lower-is-better metrics reverse the inequality. Otherwise recovery is right-censored. Symbolic
+"recovery" additionally requires the lifecycle evidence chain already frozen in the symbolic
+protocol.
+
+Scientific no-update outcomes are not missing data. No detector event, no symbolic publication,
+validated no-op, budget exhaustion, checkpoint supersession and right-censored symbolic validation
+remain part of the realized trajectory. A technical/protocol failure can be rerun only with preserved
+failed evidence, a documented invalidating defect/fault and a new run identity. The five-seed
+confirmatory family is not silently reduced to n=4.
+
+The robustness set is now explicit: L=0/L=10,000; Page-Hinkley; ADWIN-Brier; no-replay; lambda
+.70/.90/1.0; 2,500/10,000-row longitudinal window sensitivities; and a static-style symbolic
+support/count gate without Wilson bounds. Primary results cannot be replaced by a favorable
+sensitivity.
+
+Primary runtime is frozen to CPU with Python 3.11.9 and the requirements lock. Before numerical
+library initialization, PYTHONHASHSEED=0 and OMP/MKL/OpenBLAS/NumExpr thread counts are set to one.
+PyTorch intra/inter-op thread counts are one, deterministic algorithms are requested and DataLoader
+workers remain zero. `threadpoolctl.threadpool_info()` is recorded and a detected numerical pool
+violating the single-thread contract blocks primary execution.
+
+Write-once evidence families are now frozen for run manifests, shared control-plane events,
+checkpoint lineage, arm prediction tables, symbolic maintenance events, rule revisions/versions and
+metrics/evaluation evidence.
+
+Ten fail-closed verifier families are prospectively required:
+
+- shared C/D control-plane artifact identity;
+- information timing;
+- checkpoint purity;
+- fusion/threshold identity;
+- exact lambda=1 predictive equality;
+- symbolic generation/validation separation;
+- trigger-arm operator identity and exact periodic clocks;
+- symbolic lifecycle integrity;
+- no synthetic-boundary contamination;
+- write-once/hash integrity.
+
+The implementation test matrix must cover these controls using toy/generated fixtures and permitted
+training/development evidence before primary pre/post adaptive execution.
+
+The implementation sequence is also frozen:
+
+1. accept this design milestone into main and annotate `cd-design-freeze-v1`;
+2. `stage6-cd-control-plane` implements shared timing/detector/replay/neural/checkpoint/evidence
+   infrastructure without primary pre/post adaptive execution;
+3. `stage7-cd-symbolic-lifecycle` implements symbolic lifecycle, periodic trigger arm, evaluators,
+   analysis builders and remaining verifiers, still without primary pre/post adaptive execution;
+4. after acceptance/tagging as `cd-implementation-ready-v1`, create
+   `stage8-cd-primary-evaluation`.
+
+The held-out access gate requires SAP v1.0, no material C/D control-register TBD, local and CI tests
+green on the exact implementation-ready head, all five System-A checkpoint bytes/hash verification,
+scenario/preprocessing verification, causal-verifier tests, a committed primary run/config manifest,
+clean worktree and no unresolved outcome-sensitive parameter.
+
+Primary held-out execution itself is two-phase. First, generate and freeze one shared detector/neural
+control-plane trajectory per seed. Only after those artifacts are hash-frozen do C, D-drift and
+D-periodic consume them. This makes matched neural adaptation an immutable artifact identity and
+prevents any symbolic arm from feeding back into drift events, replay or checkpoint timing.
+
+After any adaptive held-out output has been inspected, poor performance, sparse events, harmful
+forgetting or trigger direction cannot justify retuning. Realized implementation defects are handled
+by preserved failed evidence and versioned correction; design limitations become sensitivities or
+future work.
+
+The Research Contract workflow was strengthened prospectively to require all Stage-5 C/D protocol
+artifacts, SAP v1.0, absence of unresolved C/D analysis TBD markers and absence of unresolved
+control-register freeze-state rows.
+
+**Gate after this packet:** the prospective C/D design is complete. Adaptive implementation may
+begin only after this design branch is accepted into main and tagged `cd-design-freeze-v1`.
+Adaptive held-out execution remains prohibited until the later `cd-implementation-ready-v1` gate.

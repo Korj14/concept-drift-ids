@@ -1,0 +1,492 @@
+# C/D Treatment-Independent Drift-Monitor Protocol
+
+**Status:** PROSPECTIVE DESIGN FREEZE — PRIMARY DRIFT SIGNAL AND DETECTOR  
+**Branch:** `stage5-cd-design-audit`  
+**Accepted parent:** `main` at `4c13d71a111ce7b72b3ef26a01b2918592425aa1`  
+**Date:** 8 October 2026  
+**Depends on:** `C_D_STREAM_TIME_CONTRACT.md`  
+**Adaptive held-out execution:** PROHIBITED
+
+## 1. Purpose
+
+This protocol freezes the primary upstream statistical drift gate before neural adaptation,
+symbolic lifecycle implementation, or adaptive held-out execution.
+
+The detector is part of the shared non-symbolic control plane. It is not separately run from
+C and D fused outputs. For a matched seed, one detector/control-plane trajectory is generated
+and then consumed by both systems.
+
+The primary scientific role of the detector is deliberately narrow:
+
+> identify a statistically significant change in a treatment-independent neural predictive-error
+> stream and emit an endogenous maintenance event.
+
+The event is not, by itself, proof that the data-generating mechanism changed specifically in
+`P(Y|X)`. In the primary BENIGN-source-regime-dominant scenario, manuscript language must
+distinguish a **supervised neural-error drift event / statistical performance-drift event** from
+a universal claim of real concept drift.
+
+## 2. Why the primary signal is supervised neural-only prequential error
+
+For seed `s` and origin row `j`, let:
+
+- `p_j^(s)` be the neural attack probability stored when row `j` was originally predicted;
+- `tau_monitor^(s)` be the seed-specific frozen System-A development threshold;
+- `y_j` be the binary ground-truth label, visible adaptively only when mature.
+
+Define the monitor decision:
+
+`yhat_monitor_j^(s) = 1[p_j^(s) >= tau_monitor^(s)]`
+
+and the primary detector input:
+
+`e_j^(s) = 1[yhat_monitor_j^(s) != y_j]`.
+
+Thus each eligible detector input is Bernoulli-valued in `{0,1}`.
+
+### 2.1 Exact frozen monitor thresholds
+
+The monitor-only thresholds are the accepted System-A thresholds and remain fixed throughout
+the primary stream:
+
+- seed 0: 0.939024031162262
+- seed 1: 0.9333740472793579
+- seed 2: 0.9121250510215759
+- seed 3: 0.9789621233940125
+- seed 4: 0.954619288444519
+
+They are read from accepted `data/manifests/system_a_v1.json`. They are **not** the
+System-B fused thresholds.
+
+### 2.2 Why a fixed monitor threshold is used
+
+The monitor threshold is a stable sentinel operating rule, not necessarily the eventual fused
+operating threshold of C or D.
+
+It is frozen because:
+
+1. it was selected before adaptive held-out execution from development evidence;
+2. it makes the detector independent of D symbolic state and of future C/D fusion-threshold policy;
+3. it avoids allowing a treatment-dependent threshold trajectory to change the trigger stream;
+4. the resulting 0/1 error signal is bounded and directly interpretable as neural decision error.
+
+The monitor threshold does not adapt after neural updates in the primary condition.
+
+A fixed threshold can become suboptimal if neural score scale changes after adaptation. That
+limitation is disclosed rather than hidden; a threshold-free bounded-loss signal is prespecified
+below as robustness.
+
+### 2.3 Why fused prediction error is rejected
+
+C and D fused predictions are treatment outputs. Using them upstream would allow D symbolic
+evolution to alter its own future trigger schedule.
+
+Therefore the following are prohibited primary detector inputs:
+
+- C fused decisions or scores;
+- D fused decisions or scores;
+- symbolic coverage/conflict/abstention;
+- rule confidence or lifecycle state.
+
+### 2.4 Why raw probability loss is not the primary signal
+
+System-A probabilities are explicitly uncalibrated. A probability-sensitive loss can therefore
+mix ranking/discrimination change with calibration/score-scale change.
+
+Hard error at the accepted development operating point is the simpler primary signal. A bounded
+Brier-loss variant is retained only as a prespecified signal-form robustness condition.
+
+## 3. Delayed-label construction
+
+The information-time contract remains authoritative.
+
+Primary verification latency is `L=5,000` logical stream rows.
+
+For an origin row `j`:
+
+- its prediction is stored at row `j`;
+- its label becomes mature only after prediction at row `j+L`;
+- only then may `e_j` be constructed;
+- `e_j` always uses the stored original prediction, never a later rescore.
+
+The detector input record therefore has two distinct times:
+
+- `origin_index = j`
+- `availability_index = j + L`.
+
+A confirmed detector event is timestamped at its **availability/confirmation clock**, never moved
+backward to the origin index of the evidence that contributed to it.
+
+## 4. Checkpoint-pure detector epochs
+
+Delayed labels create a subtle closed-loop problem after neural adaptation.
+
+Suppose a neural update is published at logical row `p`. For the next `L` rows, labels continue
+to mature for predictions that were generated by an older neural checkpoint. Feeding those old-model
+errors into a newly reset detector would mix checkpoint regimes and could create repeated alarms
+caused by stale feedback rather than by the current model/environment relationship.
+
+The primary protocol therefore freezes **checkpoint-pure detector epochs**.
+
+### 4.1 Epoch rule
+
+Each armed detector epoch is associated with exactly one active neural checkpoint identity.
+
+An error observation is eligible for that detector epoch only if the prediction record used to
+construct the error was generated by that epoch's neural checkpoint.
+
+### 4.2 Event-to-response state
+
+When ADWIN emits a confirmed event:
+
+1. the event is logged;
+2. the current detector epoch closes;
+3. the primary detector becomes **disarmed** while the event's neural-adaptation transaction is
+   pending;
+4. no additional primary drift event may be emitted during that outstanding transaction;
+5. mature errors continue to be logged for provenance/evaluation but are not admitted to a new
+   detector epoch unless they satisfy the later checkpoint-purity rule.
+
+### 4.3 Re-arming after neural publication
+
+After the shared neural updater publishes a new checkpoint at effective prediction index `p`:
+
+- the next detector epoch is fresh;
+- it is associated with that new checkpoint;
+- it remains without eligible supervised inputs until labels mature for predictions actually made
+  by the new checkpoint;
+- under primary `L=5,000`, the earliest such input is available after prediction at `p+5,000`.
+
+This creates an information-mandated blind/refractory interval. It is **not** implemented by
+changing ADWIN's grace period.
+
+The blind interval and suppressed old-checkpoint error count must be reported.
+
+### 4.4 Why this is necessary
+
+Without checkpoint purity, the next detector state could be driven for thousands of rows by delayed
+errors from a model that is no longer active. That would make repeated trigger timing partly an
+artifact of verification latency and response timing.
+
+Checkpoint purity is therefore a causal-information constraint, not an outcome-tuned heuristic.
+
+### 4.5 Adaptation failure
+
+The exact neural adaptation transaction is not yet frozen. Once frozen, it must specify how a
+confirmed detector event resolves.
+
+A technical failure that prevents a required primary neural publication is not permission to silently
+re-arm the detector. It is handled under the project's failed-run/deviation policy.
+
+## 5. Primary detector
+
+The primary detector is:
+
+`river.drift.ADWIN`
+
+under the locked dependency:
+
+`river==0.26.1`.
+
+Exact configuration:
+
+- `delta = 0.002`
+- `clock = 32`
+- `max_buckets = 5`
+- `min_window_length = 5`
+- `grace_period = 10`
+
+These are the River 0.26.1 ADWIN defaults.
+
+No detector hyperparameter is tuned against the primary pre/post adaptive stream.
+
+### 5.1 Why ADWIN
+
+ADWIN is selected because:
+
+- it is an explicit statistical change detector rather than a heuristic boundary rule;
+- its original formulation supports monitoring prediction error;
+- it adapts its comparison window rather than requiring a fixed unknown change timescale;
+- the one-dimensional bounded error stream fits its mean-change role naturally;
+- the library implementation is already dependency-locked in the repository;
+- the project's original implementation roadmap anticipated ADWIN, reducing post-hoc method
+  flexibility;
+- its parameters and state are compact enough to record and verify reproducibly.
+
+This does not mean ADWIN is assumed globally optimal.
+
+## 6. Confirmation, reset, and persistence semantics
+
+### 6.1 Confirmation
+
+One River ADWIN `drift_detected == True` result on an eligible primary error input constitutes one
+**confirmed statistical drift event**.
+
+There is no additional two-hit, majority-vote, or boundary-proximity confirmation rule in the
+primary condition.
+
+Rationale: ADWIN already implements its own statistical comparison. Adding an external persistence
+heuristic without independent justification would add researcher degrees of freedom.
+
+### 6.2 Reset
+
+River 0.26.1 resets ADWIN before consuming the next input after `drift_detected` is true.
+
+The project nevertheless maintains an explicit external event log and epoch identity. It does not
+use River's internal detection count as the authoritative experiment event count.
+
+### 6.3 Primary refractory behavior
+
+There is no arbitrary fixed-row cooldown layered on ADWIN.
+
+The primary refractory/disarmed period is the causal transaction/feedback-quarantine interval
+defined in Section 4:
+
+`confirmed event -> neural response pending -> new checkpoint published -> first mature error from new checkpoint`.
+
+Only then can the next checkpoint-pure detector epoch receive input.
+
+This policy must be identical for matched C and D because the detector is upstream of symbolic
+treatment.
+
+## 7. Initialization and warm-up
+
+For each seed:
+
+- instantiate a fresh primary ADWIN before adaptive stream row 0;
+- do not preload it with training or development errors;
+- do not initialize from the evaluator-known pre/post boundary;
+- it receives no supervised input until the first label matures under the 5,000-row latency;
+- after inputs begin, the locked ADWIN `grace_period=10` applies.
+
+No development-to-pre transition is introduced into the detector by preloading development
+predictions.
+
+## 8. Shared-control-plane requirement
+
+The detector is conceptually executed once per seed as part of the shared non-symbolic control
+plane.
+
+C and D consume the resulting shared event/neural trajectory.
+
+Required equality evidence later includes:
+
+- monitor threshold identity;
+- eligible detector-input row IDs;
+- origin/availability indices;
+- stored neural checkpoint SHA used for each prediction;
+- detector epoch ID;
+- exact detector configuration;
+- confirmed event IDs and confirmation clocks;
+- disarmed intervals;
+- suppressed stale-checkpoint error IDs;
+- neural response/publication identity before re-arming.
+
+There must not be separate C and D detector RNG/state trajectories.
+
+## 9. Trigger semantics and terminology
+
+A primary ADWIN event means:
+
+> the mean of the eligible delayed neural 0/1 error stream changed sufficiently for the frozen ADWIN
+> test to signal a change.
+
+It does **not** alone establish:
+
+- that `P(Y|X)` changed;
+- that an attack family changed;
+- that the synthetic scenario is natural production drift;
+- that symbolic rules are stale;
+- that adaptation will improve performance.
+
+Those are separate empirical questions.
+
+For the primary `cicids2017_sudden_benign_v1` scenario, preferred precise terminology is:
+
+- "confirmed supervised neural-error drift event";
+- "statistical performance-drift event";
+- "ADWIN event on the delayed neural error stream".
+
+The broader project may still discuss concept-drift-aware adaptation, but scenario-specific causal
+claims must retain the BENIGN-source-regime-dominant/covariate-shift limitation.
+
+## 10. Boundary use and trigger-quality scoring
+
+The synthetic boundary remains prohibited detector input.
+
+It may be used **after event logs are frozen** to score trigger behavior.
+
+Primary trigger-quality diagnostics for the designated controlled boundary:
+
+1. number and clocks of pre-reference-boundary alarms;
+2. whether at least one event is confirmed after the boundary;
+3. first post-boundary confirmation clock;
+4. end-to-end first-event delay:
+   `confirmation_clock - boundary_index`;
+5. verification-latency-adjusted descriptive excess delay:
+   `confirmation_clock - (boundary_index + L)`;
+6. repeated post-boundary events;
+7. total event count;
+8. inter-event spacing;
+9. detector input count per epoch;
+10. disarmed/blind duration per response;
+11. suppressed stale-checkpoint-error count;
+12. ADWIN width, estimation, variance, and eligible-input count at logged event where available.
+
+The latency-adjusted quantity is descriptive only. It does not move the causal event earlier and may
+not be used to claim an adaptation occurred before labels were available.
+
+"False alarm" must be qualified as **relative to the designated controlled boundary**, because
+natural within-partition variation may exist in the pseudo-chronological stream.
+
+## 11. Prespecified robustness conditions
+
+The primary configuration is not retrospectively replaced by a sensitivity result.
+
+### 11.1 Detector-family sensitivity — Page-Hinkley
+
+Use the identical hard-error signal, fixed System-A monitor thresholds, label timing,
+checkpoint-pure epoch rule, and event-response quarantine.
+
+Detector:
+
+`river.drift.PageHinkley` under `river==0.26.1`
+
+with exact River defaults:
+
+- `min_instances = 30`
+- `delta = 0.005`
+- `threshold = 50.0`
+- `alpha = 0.9999`
+- `mode = "both"`
+
+This is a detector-family robustness condition, not a search for a better trigger.
+
+### 11.2 Signal-form sensitivity — ADWIN on delayed Brier loss
+
+Use the primary ADWIN configuration and checkpoint-pure epoch semantics, but input:
+
+`b_j = (p_j - y_j)^2`
+
+from the stored original neural probability.
+
+Brier loss is bounded in `[0,1]` and avoids the fixed hard-decision threshold, but it is sensitive
+to score calibration. Because the accepted neural scores are uncalibrated, this condition is
+robustness evidence rather than the primary trigger.
+
+### 11.3 No primary detector tuning grid
+
+The project will not run a broad ADWIN-delta/Page-Hinkley-threshold search against the adaptive
+held-out stream.
+
+If later interpretation depends specifically on one detector parameter, a prospectively versioned
+one-factor robustness analysis may be added without replacing the frozen primary.
+
+## 12. Label-latency sensitivities
+
+The already frozen `L=0` and `L=10,000` timing conditions apply to the primary ADWIN hard-error
+detector unless a sensitivity is explicitly scoped otherwise.
+
+For each latency:
+
+- prediction-before-label-release still holds;
+- checkpoint-pure epochs still hold;
+- end-to-end detection delay uses actual confirmation time;
+- event count/delay differences are robustness outcomes, not detector tuning evidence.
+
+## 13. Why label-free shift is not the primary gate
+
+A label-free feature/representation/score shift detector could react sooner than delayed error
+monitoring and may be useful operationally.
+
+It is not primary here because:
+
+- the initial controlled scenario is deliberately dominated by a BENIGN source-regime covariate
+  shift, making a feature-distribution detector especially likely to trigger on the injected source
+  change whether or not predictive/symbolic validity is affected;
+- the causal research question benefits from a trigger linked to predictive behavior rather than a
+  detector that is guaranteed to be sensitive to the construction mechanism;
+- multivariate label-free monitoring would add substantial representation/statistic choices before
+  the core causal comparison is established.
+
+Label-free drift may be reported later as a secondary diagnostic or separate robustness condition,
+but it does not drive primary C/D adaptation.
+
+## 14. Closed-loop limitation
+
+After the first event, later detector behavior occurs in an adaptive closed loop because the shared
+neural model may change.
+
+Therefore later events are not interpreted as independent exogenous environmental changepoints.
+
+The checkpoint-pure reset/feedback-quarantine policy makes each new detector epoch interpretable
+relative to the currently deployed neural checkpoint, but the manuscript must still distinguish:
+
+- environment/source changes;
+- model-response effects;
+- detector events.
+
+## 15. Evidence and implementation requirements
+
+Before adaptive implementation is unlocked, tests/verifiers must eventually establish at least:
+
+- monitor inputs are built only from mature labels;
+- stored original neural predictions are used;
+- monitor thresholds equal the accepted System-A thresholds;
+- C/D fused outputs cannot reach the detector API;
+- event logs do not contain/use synthetic boundary fields during execution;
+- detector inputs are checkpoint-pure within epoch;
+- stale old-checkpoint errors after publication are not fed to the new epoch;
+- detector is disarmed while a response transaction is outstanding;
+- matched C/D consume identical event/control-plane identities;
+- River version/configuration is serialized;
+- event log is write-once/hash-linked.
+
+No such adaptive implementation code is written by this protocol packet.
+
+## 16. Still unresolved after this packet
+
+The following remain to freeze before adaptive implementation:
+
+- exact adaptation evidence horizon after a confirmed event;
+- neural continual-learning/replay method;
+- replay capacity/sampling/eviction;
+- neural update budget/stopping and publication transaction;
+- matched C/D operational/fusion threshold policy;
+- symbolic lifecycle and validation operator;
+- rule-confidence update semantics;
+- D-periodic cadence/opportunity matching;
+- final confirmatory endpoint/test/multiplicity plan;
+- runtime/thread/cost benchmark controls;
+- exact serialized event/evidence schemas and fail-closed verifier details.
+
+## 17. References
+
+Primary algorithm reference:
+
+- Albert Bifet and Ricard Gavaldà, "Learning from Time-Changing Data with Adaptive Windowing,"
+  Proceedings of the 2007 SIAM International Conference on Data Mining, pp. 443-448,
+  DOI 10.1137/1.9781611972771.42.
+
+Recent context:
+
+- Mateus Komarchesqui et al., "A Comprehensive Survey on Concept-Drift-Resilient Network
+  Intrusion Detection Systems," IEEE Access 14 (2026), 69689-69718.
+- G. Cassales et al., "Concept drift detection in delayed and partially labeled data streams:
+  An experimental survey," Digital Signal Processing 182 (2026), 106325.
+- Joanna Komorniczak, Paweł Ksieniewicz, and Paweł Zyblewski, "Structuring the processing
+  frameworks for data stream evaluation and application," Pattern Recognition 172 (2026), 112516.
+
+Implementation identity:
+
+- River dependency: `river==0.26.1`;
+- primary class: `river.drift.ADWIN`;
+- robustness class: `river.drift.PageHinkley`.
+
+## 18. Gate
+
+**Primary drift-monitor signal/detector packet: FROZEN.**
+
+The next design packet is the shared neural adaptation/replay protocol.
+
+Adaptive implementation remains prohibited.

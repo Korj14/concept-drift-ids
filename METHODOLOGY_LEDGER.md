@@ -2503,3 +2503,21 @@ fusion setting, endpoint, or inferential unit changed.
 
 A new exact-terminal-head Research Contract pass is mandatory after this hardening before
 `cd-primary-prepare` may be run.
+
+
+### Stage-8 config-only freeze-commit invariant — 9 October 2026
+
+A final command-path audit identified that requiring `HEAD` to equal the last commit touching the
+primary run-config file was necessary but not sufficient to prove that the freeze commit itself
+contained only the generated config.
+
+Before primary run-config generation, the execution gate was strengthened so that the config commit
+must have exactly one parent, that parent must equal the `prepared_from_git_commit` recorded by the
+no-data preparation step, and the commit's changed path set must be exactly
+`data/manifests/cd_primary_run_config_v1.json`.
+
+A regression test covers the valid case, a wrong-parent case and an extra-file case.
+
+No primary run config existed when this control was added. No primary adaptive held-out row had been
+processed or scored. The control changes no scientific parameter or treatment; it closes a
+repository-governance degree of freedom at the first-access boundary.

@@ -186,11 +186,14 @@ def test_active_fail_then_fail_demotes_then_retires() -> None:
         gate=_gate(),
     )
     assert second.published is False
+    assert second.state.rule_base_version_id == first.state.rule_base_version_id
+    assert second.state.canonical_sha256 == first.state.canonical_sha256
+    assert second.state.history_sha256 != first.state.history_sha256
     latest2 = second.state.latest_by_semantic()
     only2 = next(iter(latest2.values()))
-    # A pure demoted->retired transition is audit-relevant even though inference
-    # remains inactive. The engine must preserve it in a later maintenance state.
-    assert only2.lifecycle_state in {"demoted", "retired"}
+    assert only2.lifecycle_state == "retired"
+    assert only2.failure_streak == 2
+    verify_lifecycle_state(second.state)
 
 
 def test_demoted_rule_reactivates_on_later_full_gate_pass() -> None:

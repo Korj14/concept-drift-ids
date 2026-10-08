@@ -43,3 +43,21 @@ def test_locked_distribution_versions_match_frozen_environment() -> None:
     assert versions["river"] == "0.26.1"
     assert versions["shap"] == "0.51.0"
     assert len(_distribution_identity(versions)) == 64
+
+
+
+def test_locked_distribution_parser_accepts_bom_marked_utf16(
+    tmp_path,
+    monkeypatch,
+) -> None:
+    from concept_drift_ids import cd_runtime
+
+    path = tmp_path / "lock.txt"
+    path.write_bytes("numpy==2.4.6\n".encode("utf-16"))
+    monkeypatch.setattr(
+        cd_runtime.metadata,
+        "version",
+        lambda name: "2.4.6" if name == "numpy" else "unexpected",
+    )
+    versions = cd_runtime.verify_locked_distributions(path)
+    assert versions == {"numpy": "2.4.6"}

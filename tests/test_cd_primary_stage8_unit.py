@@ -74,8 +74,8 @@ def test_primary_config_build_is_no_data_and_freezes_complete_surface(
         "_requirements_identity",
         lambda **_: {
             "path": "requirements-lock.txt",
-            "sha256": "raw",
-            "normalized_text_sha256": "text",
+            "binding_normalized_text_sha256": "text",
+            "freeze_checkout_raw_sha256": "raw",
         },
     )
     monkeypatch.setattr(
@@ -374,3 +374,19 @@ def test_committed_primary_config_verifies_exact_head_when_present() -> None:
     config = primary_config.verify_primary_run_config_for_execution()
     assert config["status"] == "frozen_before_primary_adaptive_access"
     assert config["preparation"]["heldout_access_occurred"] is False
+
+
+
+def test_dependency_lock_binding_is_normalized_text_not_raw_checkout_bytes() -> None:
+    identity = primary_config._requirements_identity(
+        project_root=primary_config.PROJECT_ROOT
+    )
+    assert (
+        identity["binding_normalized_text_sha256"]
+        == primary_config.EXPECTED_REQUIREMENTS_NORMALIZED_SHA256
+    )
+    assert "freeze_checkout_raw_sha256" in identity
+    attrs = (primary_config.PROJECT_ROOT / ".gitattributes").read_text(
+        encoding="utf-8"
+    )
+    assert "requirements-lock.txt text eol=lf" in attrs

@@ -363,6 +363,49 @@ For timing-dependent outcomes:
 The 5,000-row latency is a controlled simulation assumption, not an estimate of real SOC label turnaround. The primary scenario remains unsuitable for real-time throughput/backlog claims because trustworthy event timestamps are absent.
 
 
+### 15.2 Frozen primary drift-monitor analysis contract — 8 October 2026
+
+`C_D_DRIFT_MONITOR_PROTOCOL.md` freezes the primary upstream event generator as River 0.26.1
+ADWIN operating on the delayed neural-only hard-error stream at the fixed accepted System-A
+development threshold for each seed.
+
+The event is interpreted as a statistically significant change in the mean of the eligible neural
+error stream. It is not treated as proof of a change specifically in `P(Y|X)`.
+
+Primary trigger-quality reporting relative to the designated controlled boundary will include:
+
+- pre-reference-boundary alarm count and clocks;
+- whether a post-boundary event occurs;
+- first post-boundary confirmation clock;
+- end-to-end delay = confirmation clock minus boundary index;
+- latency-adjusted descriptive excess delay = confirmation clock minus (boundary index + L);
+- repeated post-boundary events;
+- total event count and inter-event spacing;
+- eligible detector-input count by checkpoint-pure epoch;
+- disarmed/blind duration and suppressed stale-checkpoint-error count.
+
+The synthetic boundary is used for these diagnostics only after the detector event log is frozen.
+It is never supplied to the running detector.
+
+The latency-adjusted excess delay is descriptive. It does not subtract verification latency from the
+causal publication clock and cannot be used to credit earlier adaptation.
+
+Pre-boundary alarms are described as alarms relative to the designated reference boundary rather
+than automatically asserted to be objectively false environmental detections, because the
+pseudo-chronological pre partition may contain natural internal variation.
+
+Detector events within a seed are dependent longitudinal observations, not independent inferential
+replicates.
+
+Prespecified robustness conditions are:
+
+1. identical hard-error signal and timing under River 0.26.1 Page-Hinkley defaults;
+2. primary ADWIN configuration on delayed Brier loss instead of hard error;
+3. the already-frozen label-latency conditions L=0 and L=10,000 applied to the primary detector.
+
+None may replace the primary ADWIN hard-error condition because its held-out result is more favorable.
+
+
 ## 16. Corrected System-B v2 evidence status
 
 The R0.v2 evaluation is a protocol-defect correction conducted after historical R0.v1 held-out outcomes were known. It is therefore not treated as a new untouched confirmatory experiment.

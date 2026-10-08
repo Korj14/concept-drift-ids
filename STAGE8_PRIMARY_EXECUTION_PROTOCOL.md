@@ -286,3 +286,22 @@ and a Phase-C arm summary detached from verified Phase A. Both are required to f
 This correction changes no adaptive state, detector, neural update, rule operator, schedule, fusion
 parameter, endpoint, or inferential rule. It strengthens only provenance verification before first
 held-out access.
+
+
+## 14. Config-only freeze-commit invariant
+
+The no-data preparation command records the exact source HEAD from which the primary run config was
+generated.
+
+Primary execution now requires both:
+
+1. `HEAD` is exactly the commit that last committed
+   `data/manifests/cd_primary_run_config_v1.json`; and
+2. that commit's single parent equals the recorded no-data preparation source HEAD, while its changed
+   path set is exactly:
+   `data/manifests/cd_primary_run_config_v1.json`.
+
+Therefore a config commit that also changes tests, documentation, workflow, source, or any other file
+is invalid for primary execution even if the scientific source hashes would otherwise still verify.
+
+This control was added before run-config generation and before any primary adaptive access.

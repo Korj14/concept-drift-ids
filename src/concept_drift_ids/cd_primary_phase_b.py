@@ -472,6 +472,16 @@ def verify_phase_b_seed(seed: int) -> dict[str, Any]:
     if seed not in PRIMARY_SEEDS:
         raise ValueError(f"Unsupported primary seed: {seed}")
     config = verify_primary_run_config_for_execution()
+    phase_a_verified = {
+        other: verify_phase_a_seed(other) for other in PRIMARY_SEEDS
+    }
+    expected_shared_identity = phase_a_verified[seed][
+        "shared_identity_sha256"
+    ]
+    expected_all_phase_a = {
+        str(other): phase_a_verified[other]["shared_identity_sha256"]
+        for other in PRIMARY_SEEDS
+    }
     phase_b_dir = _phase_b_dir(seed)
     manifest_path = phase_b_dir / "phase_b_manifest.json"
     manifest = _verify_json_payload(manifest_path)
@@ -484,6 +494,20 @@ def verify_phase_b_seed(seed: int) -> dict[str, Any]:
         "manifest_sha256"
     ]:
         raise ValueError("Phase-B references the wrong primary config.")
+    if manifest["shared_identity_sha256"] != expected_shared_identity:
+        raise ValueError(
+            "Phase-B shared identity does not match verified Phase A."
+        )
+    if (
+        manifest["all_phase_a_shared_identity_sha256"]
+        != expected_all_phase_a
+    ):
+        raise ValueError(
+            "Phase-B all-seed Phase-A identity map changed."
+        )
+    frozen_operator_sha256 = SymbolicOperatorConfig().sha256()
+    if manifest["operator_config_sha256"] != frozen_operator_sha256:
+        raise ValueError("Phase-B symbolic operator identity changed.")
 
     for arm in ARM_NAMES:
         descriptor = manifest["arms"].get(arm)
@@ -497,6 +521,24 @@ def verify_phase_b_seed(seed: int) -> dict[str, Any]:
             "manifest_sha256"
         ]:
             raise ValueError("Phase-B arm-manifest identity mismatch.")
+        if int(arm_manifest["seed"]) != seed:
+            raise ValueError("Phase-B arm-manifest seed mismatch.")
+        if arm_manifest["arm"] != arm:
+            raise ValueError("Phase-B arm-manifest arm mismatch.")
+        if (
+            arm_manifest["shared_identity_sha256"]
+            != expected_shared_identity
+        ):
+            raise ValueError(
+                "Phase-B arm is not bound to verified Phase A."
+            )
+        if (
+            arm_manifest["operator_config_sha256"]
+            != frozen_operator_sha256
+        ):
+            raise ValueError(
+                "Phase-B arm symbolic operator identity changed."
+            )
 
     trajectories = tuple(
         load_frozen_arm_trajectory(seed, arm) for arm in ARM_NAMES
@@ -504,6 +546,20 @@ def verify_phase_b_seed(seed: int) -> dict[str, Any]:
     isolation = verify_symbolic_arm_control_plane_isolation(trajectories)
     if isolation != manifest["arm_isolation_sha256"]:
         raise ValueError("Phase-B arm-isolation identity mismatch.")
+    if any(
+        trajectory.shared_identity_sha256 != expected_shared_identity
+        for trajectory in trajectories
+    ):
+        raise ValueError(
+            "Phase-B trajectory shared identity diverges from Phase A."
+        )
+    if any(
+        trajectory.operator_config_sha256 != frozen_operator_sha256
+        for trajectory in trajectories
+    ):
+        raise ValueError(
+            "Phase-B trajectory operator identity diverges from freeze."
+        )
     return {
         "status": "phase_b_seed_verified_unscored",
         "seed": seed,

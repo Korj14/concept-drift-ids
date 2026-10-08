@@ -434,6 +434,20 @@ def verify_primary_run_config_for_execution(
 ) -> dict[str, Any]:
     verify_implementation_tag(project_root=project_root)
     _require_config_tracked_clean(project_root=project_root)
+    head = _git_output("rev-parse", "HEAD", project_root=project_root)
+    config_commit = _git_output(
+        "log",
+        "-1",
+        "--format=%H",
+        "--",
+        "data/manifests/cd_primary_run_config_v1.json",
+        project_root=project_root,
+    )
+    if not config_commit or head != config_commit:
+        raise RuntimeError(
+            "Primary execution requires HEAD to be exactly the commit that "
+            "froze cd_primary_run_config_v1.json."
+        )
     config = load_primary_run_config(
         path=project_root
         / "data"

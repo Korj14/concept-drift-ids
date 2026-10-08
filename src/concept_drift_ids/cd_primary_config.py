@@ -89,6 +89,7 @@ PROTOCOL_PATHS = (
     "C_D_FINAL_ANALYSIS_REPRODUCIBILITY_PROTOCOL.md",
     "STAGE7_SYMBOLIC_IMPLEMENTATION.md",
     "STAGE7_R0_V2_PORTABILITY_CORRECTION.md",
+    "STAGE8_PRIMARY_EXECUTION_PROTOCOL.md",
 )
 
 SCIENTIFIC_SOURCE_PATHS = (
@@ -112,7 +113,11 @@ SCIENTIFIC_SOURCE_PATHS = (
     "src/concept_drift_ids/cd_primary_config.py",
     "src/concept_drift_ids/cd_primary_adapter.py",
     "src/concept_drift_ids/cd_primary_phase_a.py",
+    "src/concept_drift_ids/cd_primary_phase_b.py",
+    "src/concept_drift_ids/cd_primary_phase_c.py",
+    "src/concept_drift_ids/cd_primary_export.py",
     "run.py",
+    "scripts/run_primary.ps1",
 )
 
 

@@ -412,3 +412,51 @@ def test_dependency_lock_binding_is_normalized_text_not_raw_checkout_bytes() -> 
         encoding="utf-8"
     )
     assert "requirements-lock.txt text eol=lf" in attrs
+
+
+
+def test_phase_c_recovery_reports_rows_from_boundary() -> None:
+    windows = {
+        "pre": [
+            {
+                "row_count": 5_000,
+                "mcc": 0.6,
+                "mcsc": 0.6,
+                "fpr": 0.3,
+                "start_index": primary_config.PRIMARY_STREAM_LENGTH - 80_000,
+            },
+            {
+                "row_count": 5_000,
+                "mcc": 0.7,
+                "mcsc": 0.7,
+                "fpr": 0.2,
+                "start_index": primary_config.PRIMARY_STREAM_LENGTH - 75_000,
+            },
+            {
+                "row_count": 5_000,
+                "mcc": 0.8,
+                "mcsc": 0.8,
+                "fpr": 0.1,
+                "start_index": primary_config.PRIMARY_STREAM_LENGTH - 70_000,
+            },
+        ],
+        "post": [
+            {
+                "row_count": 5_000,
+                "mcc": 0.75,
+                "mcsc": 0.75,
+                "fpr": 0.15,
+                "start_index": phase_c.EXPECTED_PRE_ROWS,
+            },
+            {
+                "row_count": 5_000,
+                "mcc": 0.75,
+                "mcsc": 0.75,
+                "fpr": 0.15,
+                "start_index": phase_c.EXPECTED_PRE_ROWS + 5_000,
+            },
+        ],
+    }
+    summary = phase_c._recovery_summary(windows)
+    assert summary["mcc"]["recovery_clock"] == phase_c.EXPECTED_PRE_ROWS
+    assert summary["mcc"]["recovery_rows_from_boundary"] == 0

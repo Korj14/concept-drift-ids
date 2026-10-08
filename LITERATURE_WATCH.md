@@ -220,3 +220,40 @@ Project consequence:
 
 This literature occupies broad novelty claims around replay-based adaptive NIDS. Replay is a control
 mechanism here, not a claimed contribution.
+
+
+## 8 October 2026 — symbolic lifecycle / online validation refresh
+
+The symbolic-treatment freeze was checked against the closest adaptive/interpretable IDS territory.
+
+Material evidence:
+
+- Guang-Yu Qian, Jinyuan Li, Wei He, Wei Zhang, and You Cao, *An online intrusion detection
+  method for industrial control systems based on extended belief rule base*, International Journal
+  of Information Security 23 (2024), 2491-2514. O-EBRB explicitly incorporates/merges new
+  observations into an online-updatable belief-rule base. This confirms that online symbolic/rule-base
+  adaptation in IDS is established territory.
+- Xiao-Wei Gu, Gareth Howells, and Hai-Yue Yuan, *A soft prototype-based autonomous fuzzy
+  inference system for network intrusion detection*, Information Sciences 677 (2024), 120964.
+  SPAFIS learns interpretable fuzzy rules online/chunk-by-chunk and prunes redundant knowledge.
+- Mateus Komarchesqui et al., *A Comprehensive Survey on Concept-Drift-Resilient Network
+  Intrusion Detection Systems*, IEEE Access 14 (2026), 69689-69718, reinforces that drift
+  detection, adaptive response and dynamic evaluation must be treated as separate design stages.
+- The governing 2026 literature audit additionally identifies DNF-VDS, CAPTAIN, HED-ID and recent
+  drift-triggered symbolic re-mining in SOC alert triage as adjacent work that rules out broad
+  novelty claims around adaptive rules or drift-triggered symbolic refresh alone.
+
+Project consequence:
+
+- the contribution cannot be "rules update online" or "drift triggers a rule refresh";
+- the D treatment is therefore frozen as a versioned lifecycle with independent acceptance evidence,
+  incumbent-staleness measurement, lineage, rejected-change history, conflict/abstention semantics and
+  a matched adaptive-neural control;
+- candidate generation is separated from independent future validation to avoid optimistic
+  self-validation;
+- online rule acceptance uses uncertainty-aware Wilson lower bounds rather than transferring the
+  static R0 covered-count threshold mechanically;
+- wholesale unvalidated rule-base replacement is prohibited.
+
+The lifecycle design is intended as a controlled empirical treatment, not claimed to be a universally
+optimal stream-rule learner.

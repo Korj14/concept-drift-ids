@@ -53,7 +53,7 @@ IMPLEMENTATION_READY_COMMIT = (
 PRIMARY_CONFIG_PATH = (
     PROJECT_ROOT / "data" / "manifests" / "cd_primary_run_config_v1.json"
 )
-PRIMARY_OUTPUT_ROOT = PROJECT_ROOT / "results" / "frozen" / "cd_primary_v1"
+PRIMARY_OUTPUT_ROOT = PROJECT_ROOT / "artifacts" / "cd_primary_v1"
 PRIMARY_SEEDS = (0, 1, 2, 3, 4)
 PRIMARY_PHASES = (
     "phase_a_shared_control_plane",
@@ -350,6 +350,9 @@ def build_primary_run_config(
             "primary_cpu_only": True,
             "required_thread_environment": dict(PRIMARY_THREAD_ENV),
             "write_once_outputs": True,
+            "execution_output_root": "artifacts/cd_primary_v1",
+            "execution_outputs_gitignored": True,
+            "compact_export_root": "results/frozen/cd_primary_v1",
             "first_heldout_access_allowed_only_after_config_is_tracked_clean_and_ci_green": True,
         },
         "preparation": {

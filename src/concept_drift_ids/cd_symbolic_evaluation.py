@@ -249,3 +249,89 @@ def prediction_rows(
         }
         for index in range(n)
     )
+
+
+
+def evaluate_dynamic_symbolic_trajectory(
+    *,
+    seed: int,
+    X: np.ndarray,
+    y_true: np.ndarray,
+    neural_probability: np.ndarray,
+    feature_names: Sequence[str],
+    trajectory: Any,
+    neural_weight: float = PRIMARY_NEURAL_WEIGHT,
+) -> SymbolicArmEvaluation:
+    X = np.asarray(X)
+    y = np.asarray(y_true, dtype=np.int8)
+    neural = np.asarray(neural_probability, dtype=np.float64)
+    if len(X) != len(y) or len(y) != len(neural):
+        raise ValueError("Dynamic arm-evaluation arrays have mismatched lengths.")
+    if int(trajectory.seed) != int(seed):
+        raise ValueError("Symbolic trajectory seed mismatch.")
+
+    symbolic_attack = np.full(len(y), np.nan, dtype=np.float64)
+    symbolic_class = np.full(len(y), -1, dtype=np.int8)
+    covered = np.zeros(len(y), dtype=bool)
+    uncovered = np.ones(len(y), dtype=bool)
+    conflict = np.zeros(len(y), dtype=bool)
+
+    change_points = [0]
+    change_points.extend(
+        int(index)
+        for index, _ in trajectory.publications
+        if 0 < int(index) < len(y)
+    )
+    change_points.append(len(y))
+    change_points = sorted(set(change_points))
+
+    for start, end in zip(change_points[:-1], change_points[1:]):
+        state = trajectory.state_for_prediction_index(start)
+        symbolic = infer_symbolic(
+            X[start:end],
+            feature_names=feature_names,
+            rules=active_rules_for_inference(state),
+        )
+        symbolic_attack[start:end] = np.asarray(
+            symbolic["p_rule_attack"],
+            dtype=np.float64,
+        )
+        symbolic_class[start:end] = np.asarray(
+            symbolic["symbolic_class"],
+            dtype=np.int8,
+        )
+        covered[start:end] = np.asarray(symbolic["covered"], dtype=bool)
+        uncovered[start:end] = np.asarray(symbolic["uncovered"], dtype=bool)
+        conflict[start:end] = np.asarray(
+            symbolic["conflict_abstain"],
+            dtype=bool,
+        )
+
+    symbolic_payload = {
+        "p_rule_attack": symbolic_attack,
+        "symbolic_class": symbolic_class,
+        "covered": covered,
+        "uncovered": uncovered,
+        "conflict_abstain": conflict,
+    }
+    fused = fuse_scores(
+        neural,
+        symbolic_payload,
+        neural_weight=float(neural_weight),
+    )
+    threshold = fused_threshold(seed=seed, neural_weight=neural_weight)
+    decision = (fused >= threshold).astype(np.int8)
+    metrics = binary_metrics(y, fused, threshold)
+    explanation = macro_correct_symbolic_coverage(y, symbolic_payload)
+    return SymbolicArmEvaluation(
+        neural_probability=neural,
+        symbolic_attack_probability=symbolic_attack,
+        symbolic_class=symbolic_class,
+        covered=covered,
+        uncovered=uncovered,
+        conflict_abstain=conflict,
+        fused_probability=fused,
+        thresholded_decision=decision,
+        metrics=metrics,
+        explanation=explanation,
+    )

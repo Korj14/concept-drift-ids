@@ -54,6 +54,8 @@ def test_implementation_preflight_fails_closed_when_checkpoint_bytes_are_missing
         "D_SYMBOLIC_LIFECYCLE_PROTOCOL.md",
         "D_TRIGGER_ABLATION_PROTOCOL.md",
         "STAGE6_HANDOFF.md",
+        "STAGE7_SYMBOLIC_IMPLEMENTATION.md",
+        "STAGE7_HANDOFF.md",
         "data/manifests/sudden_benign_v1.json",
         "data/manifests/sudden_benign_v1_preprocessing_v1.json",
         "data/manifests/system_a_v1.json",

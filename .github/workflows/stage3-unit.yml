@@ -108,5 +108,8 @@ jobs:
       - name: Run Stage 6 repository-only tests
         run: python -m pytest -q tests/test_cd_control_plane_unit.py tests/test_cd_evidence_unit.py tests/test_cd_shared_runner_unit.py tests/test_cd_runtime_unit.py
 
+      - name: Run Stage 7 repository-only tests
+        run: python -m pytest -q tests/test_cd_symbolic_lifecycle_unit.py tests/test_cd_symbolic_candidates_unit.py tests/test_cd_symbolic_arms_analysis_unit.py
+
       - name: Run Stage 2 repository-only regression tests
         run: python -m pytest -q tests/test_sudden_benign_manifest.py -k "not provenance_files_still_match_frozen_manifest"

@@ -302,3 +302,156 @@ def test_validation_requires_both_classes() -> None:
     )
     assert not result.published
     assert result.maintenance_status == "insufficient_validation_class_diversity"
+
+
+
+def test_stale_incumbent_can_be_refined_and_lineage_is_preserved() -> None:
+    source = Rule(
+        rule_id="r0-stale",
+        lineage_id="lineage-stale",
+        rule_base_version="R0.v2",
+        seed=0,
+        conditions=(Condition("x", ">", 0.2),),
+        consequent=1,
+        confidence=0.9,
+        support=0.8,
+        covered_count=80,
+        class_precision=0.9,
+        neural_fidelity=0.9,
+        stability=1.0,
+        complexity=1,
+        lifecycle_state="active",
+        source_candidate_id="source",
+        validation_evidence_id="r0-validation",
+    )
+    state = migrate_r0_v2_rules(
+        seed=0,
+        rules=[source],
+        neural_checkpoint_sha256="checkpoint-a",
+    )
+    X = np.array(
+        [[0.0], [0.1], [0.3], [0.4], [0.6], [0.7], [0.8], [0.9]],
+        dtype=np.float64,
+    )
+    y = np.array([0, 0, 0, 0, 1, 1, 1, 1], dtype=np.int8)
+    neural = y.copy()
+    candidate = CandidateRule(
+        candidate_id="candidate-refine",
+        seed=0,
+        conditions=(Condition("x", ">", 0.5),),
+        consequent=1,
+        generation_evidence_id="generation",
+    )
+    gate = OnlineRuleGate(
+        min_support=0.0,
+        min_covered=2,
+        min_class_precision=0.8,
+        min_precision_lcb=0.0,
+        min_neural_fidelity=0.8,
+        min_fidelity_lcb=0.0,
+        min_stability=0.0,
+        max_complexity=4,
+        bootstrap_replicates=4,
+    )
+    result = apply_lifecycle_maintenance(
+        state,
+        candidates=[candidate],
+        X_validation=X,
+        y_validation=y,
+        neural_decision=neural,
+        feature_names=("x",),
+        opportunity_id=1,
+        validation_evidence_id="v1",
+        neural_checkpoint_sha256="checkpoint-b",
+        publication_effective_index=20,
+        bootstrap_random_state=3,
+        gate=gate,
+    )
+    assert result.published
+    assert any(item["type"] == "refined" for item in result.decisions)
+    active = result.state.active_revisions()
+    assert len(active) == 1
+    assert active[0].conditions == candidate.conditions
+    assert active[0].lineage_id == "lineage-stale"
+    assert active[0].lifecycle_transition == "refined"
+
+
+def test_unresolved_conflict_relations_are_complete_and_nonduplicated() -> None:
+    state = migrate_r0_v2_rules(
+        seed=0,
+        rules=[],
+        neural_checkpoint_sha256="checkpoint-a",
+    )
+    X = np.array(
+        [[0.0], [0.1], [0.3], [0.4], [0.7], [0.8]],
+        dtype=np.float64,
+    )
+    y = np.array([0, 0, 1, 1, 1, 1], dtype=np.int8)
+    neural = y.copy()
+    candidates = [
+        CandidateRule(
+            candidate_id="benign-wide",
+            seed=0,
+            conditions=(Condition("x", ">", -1.0),),
+            consequent=0,
+            generation_evidence_id="g",
+        ),
+        CandidateRule(
+            candidate_id="attack-high",
+            seed=0,
+            conditions=(Condition("x", ">", 0.6),),
+            consequent=1,
+            generation_evidence_id="g",
+        ),
+        CandidateRule(
+            candidate_id="attack-mid",
+            seed=0,
+            conditions=(
+                Condition("x", ">", 0.2),
+                Condition("x", "<=", 0.5),
+            ),
+            consequent=1,
+            generation_evidence_id="g",
+        ),
+    ]
+    gate = OnlineRuleGate(
+        min_support=0.0,
+        min_covered=1,
+        min_class_precision=0.0,
+        min_precision_lcb=0.0,
+        min_neural_fidelity=0.0,
+        min_fidelity_lcb=0.0,
+        min_stability=0.0,
+        max_complexity=4,
+        bootstrap_replicates=2,
+    )
+    result = apply_lifecycle_maintenance(
+        state,
+        candidates=candidates,
+        X_validation=X,
+        y_validation=y,
+        neural_decision=neural,
+        feature_names=("x",),
+        opportunity_id=1,
+        validation_evidence_id="v1",
+        neural_checkpoint_sha256="checkpoint-b",
+        publication_effective_index=20,
+        bootstrap_random_state=4,
+        gate=gate,
+    )
+    active = result.state.active_revisions()
+    benign = next(item for item in active if item.consequent == 0)
+    assert len(benign.relations) == 2
+    others = {relation["other"] for relation in benign.relations}
+    assert len(others) == 2
+    assert all(
+        relation["type"] == "unresolved_cross_class_conflict"
+        for relation in benign.relations
+    )
+    assert len(
+        [
+            item
+            for item in result.decisions
+            if item["type"] == "unresolved_cross_class_conflict"
+        ]
+    ) == 2

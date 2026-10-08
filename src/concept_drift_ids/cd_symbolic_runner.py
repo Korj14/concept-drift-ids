@@ -68,6 +68,7 @@ class SymbolicArmTrajectory:
     seed: int
     arm: str
     operator_config_sha256: str
+    shared_identity_sha256: str
     initial_state: RuleBaseState
     final_state: RuleBaseState
     maintenance: tuple[SymbolicMaintenanceRecord, ...]
@@ -440,6 +441,8 @@ def run_drift_symbolic_arm(
     *,
     seed: int,
     initial_state: RuleBaseState,
+    shared_identity_sha256: str,
+    shared_predictions: Sequence[Mapping[str, Any]],
     shared_events: Sequence[Mapping[str, Any]],
     replay_transactions: Sequence[Mapping[str, Any]],
     checkpoint_chain: Sequence[Mapping[str, Any]],
@@ -449,6 +452,9 @@ def run_drift_symbolic_arm(
     raw_affine: Mapping[str, tuple[float, float]] | None = None,
     operator_config: SymbolicOperatorConfig = SymbolicOperatorConfig(),
 ) -> SymbolicArmTrajectory:
+    if not shared_identity_sha256:
+        raise ValueError("Shared control-plane identity is required.")
+    verify_shared_symbolic_rows(rows, shared_predictions)
     lookup = _stream_lookup(rows)
     opportunities = drift_symbolic_opportunities(shared_events)
     replay_by_event = {
@@ -513,6 +519,7 @@ def run_drift_symbolic_arm(
         seed=seed,
         arm="d_drift",
         operator_config_sha256=operator_config.sha256(),
+        shared_identity_sha256=str(shared_identity_sha256),
         initial_state=initial_state,
         final_state=state,
         maintenance=tuple(maintenance),
@@ -547,6 +554,8 @@ def run_periodic_symbolic_arm(
     *,
     seed: int,
     initial_state: RuleBaseState,
+    shared_identity_sha256: str,
+    shared_predictions: Sequence[Mapping[str, Any]],
     checkpoint_chain: Sequence[Mapping[str, Any]],
     rows: Sequence[SharedSymbolicRow],
     feature_names: Sequence[str],
@@ -554,6 +563,9 @@ def run_periodic_symbolic_arm(
     raw_affine: Mapping[str, tuple[float, float]] | None = None,
     operator_config: SymbolicOperatorConfig = SymbolicOperatorConfig(),
 ) -> SymbolicArmTrajectory:
+    if not shared_identity_sha256:
+        raise ValueError("Shared control-plane identity is required.")
+    verify_shared_symbolic_rows(rows, shared_predictions)
     lookup = _stream_lookup(rows)
     state = initial_state
     maintenance: list[SymbolicMaintenanceRecord] = []
@@ -644,6 +656,7 @@ def run_periodic_symbolic_arm(
         seed=seed,
         arm="d_periodic",
         operator_config_sha256=operator_config.sha256(),
+        shared_identity_sha256=str(shared_identity_sha256),
         initial_state=initial_state,
         final_state=state,
         maintenance=tuple(maintenance),
@@ -655,12 +668,14 @@ def frozen_c_arm(
     *,
     seed: int,
     initial_state: RuleBaseState,
+    shared_identity_sha256: str,
     operator_config: SymbolicOperatorConfig = SymbolicOperatorConfig(),
 ) -> SymbolicArmTrajectory:
     return SymbolicArmTrajectory(
         seed=seed,
         arm="c_frozen_symbolic",
         operator_config_sha256=operator_config.sha256(),
+        shared_identity_sha256=str(shared_identity_sha256),
         initial_state=initial_state,
         final_state=initial_state,
         maintenance=(),
@@ -670,11 +685,18 @@ def frozen_c_arm(
 
 def verify_symbolic_arm_control_plane_isolation(
     trajectories: Sequence[SymbolicArmTrajectory],
-    *,
-    shared_identity_sha256: str,
 ) -> str:
-    if not shared_identity_sha256:
-        raise ValueError("Shared control-plane identity is required.")
+    if not trajectories:
+        raise ValueError("At least one symbolic trajectory is required.")
+    shared_hashes = {
+        trajectory.shared_identity_sha256
+        for trajectory in trajectories
+    }
+    if len(shared_hashes) != 1 or not next(iter(shared_hashes)):
+        raise ValueError(
+            "C/D symbolic arms do not share one control-plane identity."
+        )
+    shared_identity_sha256 = next(iter(shared_hashes))
     operator_hashes = {
         trajectory.operator_config_sha256
         for trajectory in trajectories

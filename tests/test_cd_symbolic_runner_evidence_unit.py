@@ -306,6 +306,7 @@ def test_symbolic_evidence_is_write_once_for_published_result(
         opportunity_clock=10,
         neural_checkpoint_sha256="child-checkpoint",
         checkpoint_publication_effective_index=11,
+        validation_start_index=11,
         generation_row_ids=tuple(f"g-{i}" for i in range(10_000)),
         generation_evidence_id="generation",
         candidates=(),

@@ -456,3 +456,24 @@ def test_symbolic_arm_isolation_requires_one_shared_control_plane_identity() -> 
         verify_symbolic_arm_control_plane_isolation(
             [left, right, divergent]
         )
+
+
+    different_start = migrate_r0_v2_rules(
+        seed=0,
+        rules=[],
+        neural_checkpoint_sha256="initial",
+    )
+    mismatched_start = SymbolicArmTrajectory(
+        seed=0,
+        arm="d_periodic",
+        operator_config_sha256="operator",
+        shared_identity_sha256="shared",
+        initial_state=different_start,
+        final_state=different_start,
+        maintenance=(),
+        publications=(),
+    )
+    with pytest.raises(ValueError, match="R0.v2 starting state"):
+        verify_symbolic_arm_control_plane_isolation(
+            [left, right, mismatched_start]
+        )

@@ -253,3 +253,110 @@ def recovery_time(
         "recovery_clock": int(stream_end_index),
         "right_censored": True,
     }
+
+
+
+def summarize_symbolic_maintenance(
+    records: Sequence[Any],
+) -> dict[str, Any]:
+    opportunities = len(records)
+    publications = sum(
+        int(record.symbolic_publication_effective_index is not None)
+        for record in records
+    )
+    completed_validation = sum(
+        int(bool(record.validation_row_ids))
+        for record in records
+        if not str(record.status).startswith(
+            (
+                "right_censored_validation",
+                "superseded_before_validation",
+                "superseded_before_symbolic_publication",
+            )
+        )
+    )
+    no_ops = sum(
+        int(str(record.status).startswith("no_rule_base_change"))
+        for record in records
+    )
+    censored = sum(
+        int(
+            any(
+                token in str(record.status)
+                for token in (
+                    "right_censored",
+                    "superseded",
+                    "pending_transaction_skip",
+                    "insufficient_generation_rows",
+                    "blocked_no_executable_neural_child",
+                )
+            )
+        )
+        for record in records
+    )
+    total_shap = float(
+        sum(float(getattr(record, "shap_seconds", 0.0)) for record in records)
+    )
+    total_surrogate = float(
+        sum(
+            float(getattr(record, "surrogate_seconds", 0.0))
+            for record in records
+        )
+    )
+    total_lifecycle = float(
+        sum(
+            float(getattr(record, "lifecycle_seconds", 0.0))
+            for record in records
+        )
+    )
+    candidate_count = int(
+        sum(int(getattr(record, "candidate_count", 0)) for record in records)
+    )
+    wait_rows = [
+        int(record.validation_wait_rows)
+        for record in records
+        if getattr(record, "validation_wait_rows", None) is not None
+    ]
+
+    lifecycle_counts: dict[str, int] = {}
+    for record in records:
+        transaction = getattr(record, "lifecycle", None)
+        lifecycle = (
+            transaction.lifecycle
+            if transaction is not None
+            else None
+        )
+        if lifecycle is None:
+            continue
+        for decision in lifecycle.decisions:
+            name = str(decision["type"])
+            lifecycle_counts[name] = lifecycle_counts.get(name, 0) + 1
+
+    compute_seconds = total_shap + total_surrogate + total_lifecycle
+    return {
+        "opportunity_count": opportunities,
+        "completed_validation_count": completed_validation,
+        "publication_count": publications,
+        "no_op_count": no_ops,
+        "censored_or_blocked_count": censored,
+        "candidate_count": candidate_count,
+        "publication_per_opportunity": (
+            publications / opportunities if opportunities else None
+        ),
+        "compute_seconds": compute_seconds,
+        "shap_seconds": total_shap,
+        "surrogate_seconds": total_surrogate,
+        "lifecycle_seconds": total_lifecycle,
+        "compute_seconds_per_opportunity": (
+            compute_seconds / opportunities if opportunities else None
+        ),
+        "compute_seconds_per_publication": (
+            compute_seconds / publications if publications else None
+        ),
+        "mean_validation_wait_rows": (
+            float(np.mean(wait_rows)) if wait_rows else None
+        ),
+        "lifecycle_decision_counts": dict(
+            sorted(lifecycle_counts.items())
+        ),
+    }

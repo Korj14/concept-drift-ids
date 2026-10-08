@@ -8,6 +8,7 @@ from typing import Any, Callable, Mapping, Sequence
 import numpy as np
 import torch
 
+from concept_drift_ids.cd_analysis import summarize_symbolic_maintenance
 from concept_drift_ids.cd_control_plane import (
     canonical_sha256,
     state_dict_sha256,
@@ -339,6 +340,9 @@ def _freeze_arm(
         "final_rule_base_sha256": trajectory.final_state.canonical_sha256,
         "final_history_sha256": trajectory.final_state.history_sha256,
         "publications": publications,
+        "maintenance_summary": summarize_symbolic_maintenance(
+            trajectory.maintenance
+        ),
         "files": files,
     }
     manifest["manifest_sha256"] = canonical_sha256(manifest)

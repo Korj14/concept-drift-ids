@@ -1916,3 +1916,74 @@ The lifecycle decisions were propagated into `EXPERIMENT_CONTROL_REGISTER.md`,
 **Gate after this packet:** the D symbolic evolution operator and online evidence gates are frozen.
 Adaptive implementation remains prohibited. The next packet is the D-drift versus D-periodic
 trigger-ablation schedule/opportunity budget.
+
+
+### D-drift versus D-periodic trigger ablation frozen — 8 October 2026
+
+The project froze `D_TRIGGER_ABLATION_PROTOCOL.md` after the symbolic lifecycle operator had been
+frozen.
+
+The purpose is to test whether the **trigger policy** adds value, not merely whether rule maintenance
+can help.
+
+D-drift and D-periodic therefore share:
+
+- accepted seed-matched R0.v2 start state;
+- exact shared neural checkpoint trajectory;
+- symbolic candidate-generation algorithm;
+- independent 10,000-row validation contract;
+- uncertainty gates;
+- lifecycle transitions;
+- conflict/abstention rules;
+- fusion/threshold policy;
+- symbolic RNG namespace by seed/opportunity.
+
+Only the symbolic maintenance opportunity timing differs.
+
+A common maximum symbolic opportunity budget of four slots per seed is frozen for both trigger arms.
+Every triggered/scheduled opportunity consumes a slot regardless of whether it produces a rule-base
+publication, a validated no-op, insufficient evidence, checkpoint supersession, right-censoring or a
+pending-transaction skip. There is no retry beyond the four-slot budget.
+
+D-drift consumes its first four symbolic slots from the first four confirmed primary detector events.
+Later drift events may continue to drive the already-frozen shared neural trajectory, but no fifth
+D-drift symbolic maintenance opportunity is permitted.
+
+D-periodic does not consult the drift detector for scheduling. With total primary stream length
+N=138,530, the fixed target clocks are:
+
+- 27,706
+- 55,412
+- 83,118
+- 110,824
+
+These equal floor(i*N/5), i=1..4.
+
+The schedule was derived from the frozen stream length and the symbolic evidence footprint:
+10,000 retrospective generation rows + 10,000 future validation rows + 5,000-row label delay =
+a nominal 25,000-row maintenance footprint. Four interior fifth-spaced opportunities produce
+approximately 27,706-row spacing. A five-opportunity six-segment schedule would produce only
+approximately 23,088-row spacing and systematically overlap that nominal footprint.
+
+This derivation did not use the evaluator-known synthetic boundary at 69,260; none of the periodic
+target clocks equals the boundary.
+
+At a periodic target clock, ordinary row prediction, label maturity and any shared detector/neural
+control-plane action at that clock complete first. The periodic opportunity opens last and snapshots
+the neural checkpoint effective for the next logical prediction. Its generation evidence is the most
+recent 10,000 mature stream rows available at the target clock, evaluated using that current shared
+checkpoint. Candidate acceptance then uses the same future checkpoint-pure 10,000-row validation
+contract as D-drift.
+
+If the checkpoint is superseded during validation, the periodic transaction aborts without partial
+publication and the next periodic clock is not moved. At most one symbolic transaction may be
+outstanding per trigger arm/seed. A later periodic target that arrives while a prior periodic
+transaction remains pending is logged as `pending_transaction_skip` and still consumes its slot.
+
+The analysis now distinguishes symbolic opportunity, completed validation, publication, no-op and
+censored/aborted transaction. These counts may not be conflated. Trigger quality will be evaluated
+using both recovery/effectiveness and maintenance efficiency/cost.
+
+**Gate after this packet:** the symbolic lifecycle and mandatory drift-vs-periodic trigger ablation
+are prospectively frozen. Adaptive implementation remains prohibited. The next packet is the final
+statistical/runtime/reproducibility freeze and fail-closed implementation contract.

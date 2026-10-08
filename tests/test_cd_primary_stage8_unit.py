@@ -14,6 +14,7 @@ import torch
 import concept_drift_ids.cd_primary_config as primary_config
 import concept_drift_ids.cd_primary_export as primary_export
 import concept_drift_ids.cd_primary_phase_a as phase_a
+import concept_drift_ids.cd_primary_phase_b as phase_b
 import concept_drift_ids.cd_primary_phase_c as phase_c
 from concept_drift_ids.cd_control_plane import (
     canonical_sha256,
@@ -460,3 +461,166 @@ def test_phase_c_recovery_reports_rows_from_boundary() -> None:
     summary = phase_c._recovery_summary(windows)
     assert summary["mcc"]["recovery_clock"] == phase_c.EXPECTED_PRE_ROWS
     assert summary["mcc"]["recovery_rows_from_boundary"] == 0
+
+
+
+def _write_hashed_json(path: Path, payload: dict, hash_field: str) -> str:
+    body = dict(payload)
+    body[hash_field] = canonical_sha256(body)
+    write_json_new(path, body)
+    return body[hash_field]
+
+
+def test_phase_b_verifier_rebinds_shared_identity_to_verified_phase_a(
+    monkeypatch,
+    tmp_path: Path,
+) -> None:
+    monkeypatch.setattr(
+        phase_b,
+        "verify_primary_run_config_for_execution",
+        lambda: {"manifest_sha256": "config"},
+    )
+    monkeypatch.setattr(
+        phase_b,
+        "verify_phase_a_seed",
+        lambda seed: {
+            "shared_identity_sha256": f"shared-{seed}",
+            "run_manifest_sha256": f"phase-a-{seed}",
+        },
+    )
+    monkeypatch.setattr(
+        phase_b,
+        "_phase_b_dir",
+        lambda seed: tmp_path,
+    )
+
+    operator_sha = SymbolicOperatorConfig().sha256()
+    core = {
+        "schema_version": 1,
+        "seed": 0,
+        "primary_config_manifest_sha256": "config",
+        "shared_identity_sha256": "forged-shared",
+        "all_phase_a_shared_identity_sha256": {
+            str(seed): f"shared-{seed}" for seed in primary_config.PRIMARY_SEEDS
+        },
+        "operator_config_sha256": operator_sha,
+        "arm_isolation_sha256": "isolation",
+        "arms": {},
+    }
+    _write_hashed_json(
+        tmp_path / "phase_b_manifest.json",
+        core,
+        "manifest_sha256",
+    )
+
+    with pytest.raises(ValueError, match="verified Phase A"):
+        phase_b.verify_phase_b_seed(0)
+
+
+def test_phase_c_verifier_rebinds_arm_summary_to_verified_phase_a(
+    monkeypatch,
+    tmp_path: Path,
+) -> None:
+    phase_c_dir = tmp_path / "phase-c"
+    phase_b_dir = tmp_path / "phase-b"
+    phase_c_dir.mkdir()
+    phase_b_dir.mkdir()
+
+    monkeypatch.setattr(
+        phase_c,
+        "verify_primary_run_config_for_execution",
+        lambda: {
+            "manifest_sha256": "config",
+            "scenario": {"stream_rows": 2},
+        },
+    )
+    monkeypatch.setattr(
+        phase_c,
+        "verify_phase_a_seed",
+        lambda seed: {
+            "run_manifest_sha256": "phase-a-manifest",
+            "shared_identity_sha256": "verified-shared",
+        },
+    )
+    monkeypatch.setattr(
+        phase_c,
+        "verify_phase_b_seed",
+        lambda seed: {"phase_b_manifest_sha256": "phase-b-manifest"},
+    )
+    monkeypatch.setattr(
+        phase_c,
+        "_phase_c_dir",
+        lambda seed: phase_c_dir,
+    )
+    monkeypatch.setattr(
+        phase_c,
+        "_phase_b_dir",
+        lambda seed: phase_b_dir,
+    )
+
+    seed_core = {
+        "schema_version": 1,
+        "seed": 0,
+        "primary_config_manifest_sha256": "config",
+        "phase_a_run_manifest_sha256": "phase-a-manifest",
+        "phase_b_seed_manifest_sha256": "phase-b-manifest",
+        "arm_summary_sha256": {},
+        "lambda_one_predictive_equality": True,
+        "adaptive_components_received_boundary": False,
+    }
+
+    first_arm = phase_c.ARM_NAMES[0]
+    arm_manifest_core = {
+        "schema_version": 1,
+        "seed": 0,
+        "arm": first_arm,
+        "maintenance_summary": {"opportunity_count": 0},
+    }
+    arm_dir = phase_b_dir / first_arm
+    arm_dir.mkdir()
+    arm_manifest_sha = _write_hashed_json(
+        arm_dir / "arm_manifest.json",
+        arm_manifest_core,
+        "manifest_sha256",
+    )
+    phase_b_seed_core = {
+        "arms": {
+            first_arm: {
+                "path": f"{first_arm}/arm_manifest.json",
+                "manifest_sha256": arm_manifest_sha,
+            }
+        }
+    }
+    write_json_new(
+        phase_b_dir / "phase_b_manifest.json",
+        phase_b_seed_core,
+    )
+
+    summary_core = {
+        "seed": 0,
+        "arm": first_arm,
+        "primary_config_manifest_sha256": "config",
+        "phase_b_arm_manifest_sha256": arm_manifest_sha,
+        "shared_identity_sha256": "forged-shared",
+        "maintenance_summary": {"opportunity_count": 0},
+        "prediction_trace": {
+            "path": "unused.jsonl.gz",
+            "row_count": 2,
+            "sha256": "unused",
+            "canonical_jsonl_sha256": "unused",
+        },
+    }
+    summary_sha = _write_hashed_json(
+        phase_c_dir / f"{first_arm}_evaluation.json",
+        summary_core,
+        "summary_sha256",
+    )
+    seed_core["arm_summary_sha256"][first_arm] = summary_sha
+    _write_hashed_json(
+        phase_c_dir / "phase_c_seed_manifest.json",
+        seed_core,
+        "manifest_sha256",
+    )
+
+    with pytest.raises(ValueError, match="verified Phase A"):
+        phase_c.verify_phase_c_seed(0)

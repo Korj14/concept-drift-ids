@@ -165,9 +165,54 @@ Trigger-ablation decisions:
 - at most one symbolic transaction is outstanding per seed/arm; a periodic target arriving while a transaction remains pending is logged pending_transaction_skip and consumes its slot;
 - opportunity, completed validation, publication, no-op and censored/aborted transaction are distinct outcomes.
 
+### Packet 8 — final statistical / runtime / reproducibility freeze
+
+`C_D_FINAL_ANALYSIS_REPRODUCIBILITY_PROTOCOL.md` is frozen and
+`STATISTICAL_ANALYSIS_PLAN.md` is now version 1.0.
+
+Primary confirmatory family:
+
+- E1: whole-post MCC, D-drift minus C;
+- E2: whole-post macro correct symbolic coverage (MCSC), D-drift minus C;
+- E3: whole-post MCSC, D-drift minus D-periodic.
+
+Primary seed-level effect summary:
+
+- arithmetic mean of five paired seed differences;
+- 95% Student-t interval over paired differences, df=4;
+- all five raw pairs, median, SD, min/max, sign pattern and leave-one-seed-out mean range mandatory;
+- exact one-sided sign test is secondary calibration;
+- Holm-Bonferroni adjusts the three confirmatory sign-test p-values;
+- windows/events/rules are not promoted to independent replicates.
+
+Primary runtime/reproducibility:
+
+- CPU-only;
+- Python 3.11.9 + frozen requirements;
+- PYTHONHASHSEED=0;
+- OMP/MKL/OpenBLAS/NumExpr threads=1;
+- torch intra/inter-op threads=1;
+- deterministic algorithms;
+- DataLoader workers=0;
+- threadpoolctl inventory recorded and fail-closed.
+
+Write-once evidence and ten causal verifier families are frozen, including exact C/D shared-control-plane identity, information timing, checkpoint purity, lambda=1 predictive equality, symbolic evidence separation, trigger-arm operator identity, no-boundary contamination and hash integrity.
+
+Implementation sequence is frozen:
+
+1. accept/tag this design milestone as `cd-design-freeze-v1`;
+2. `stage6-cd-control-plane`;
+3. `stage7-cd-symbolic-lifecycle`;
+4. accept/tag `cd-implementation-ready-v1`;
+5. `stage8-cd-primary-evaluation`.
+
+Held-out execution is two-phase: first freeze one shared detector/neural control-plane trajectory per seed, then C/D-drift/D-periodic consume that immutable trajectory.
+
 ## Current scientific gate
 
-**Status: NOT READY FOR ADAPTIVE IMPLEMENTATION.**
+**Status: PROSPECTIVE C/D DESIGN FREEZE COMPLETE — IMPLEMENTATION MAY BEGIN ONLY AFTER MILESTONE ACCEPTANCE.**
+
+Adaptive held-out execution remains prohibited until `cd-implementation-ready-v1`.
 
 No adaptive C/D held-out execution is authorized.
 
@@ -175,36 +220,38 @@ No adaptive detector/updater/lifecycle implementation should begin until the rem
 
 ## Remaining blocking controls
 
-1. final confirmatory endpoint hierarchy;
-2. exact paired interval/test choices and multiplicity handling;
-3. recovery/reference definitions not already frozen;
-4. missing/censored/failure analysis rules;
-5. runtime/thread/backend and cost-measurement scope;
-6. exact event/evidence/lifecycle serialized schemas;
-7. fail-closed treatment-contamination/integrity verifiers;
-8. implementation test matrix;
-9. stage/branch execution order and held-out access gate.
+There are **no remaining material prospective design TBDs** blocking adaptive implementation.
+
+The remaining gates are implementation/governance gates:
+
+1. exact Stage-5 design head must pass Research Contract CI;
+2. draft PR #3 must be reviewed/accepted and merged to `main` preserving history;
+3. accepted merge commit must receive immutable annotated tag `cd-design-freeze-v1`;
+4. Stage-6/7 implementation and repository-only verifier tests must complete before any primary adaptive pre/post execution;
+5. `cd-implementation-ready-v1` must be accepted/tagged before Stage-8 primary evaluation.
 
 ## Exact next packet
 
-**Final statistical / runtime / reproducibility design freeze.**
+**Milestone acceptance, then Stage 6 shared control-plane implementation.**
 
-This packet must remove the remaining material TBDs before any adaptive implementation code is authorized.
+Before implementation code:
 
-Required order:
+1. verify Research Contract CI on the exact final Stage-5 head;
+2. merge draft PR #3 to `main` without squashing scientific history;
+3. create immutable annotated tag `cd-design-freeze-v1` on the accepted merge commit;
+4. create `stage6-cd-control-plane` from that accepted parent.
 
-1. define a small confirmatory endpoint family for the primary C-vs-D causal question;
-2. separate detection, explanation/lifecycle, trigger-quality and cost endpoints into confirmatory versus secondary/exploratory families;
-3. freeze seed-paired effect estimands, confidence intervals/tests, small-n interpretation and multiplicity;
-4. freeze recovery reference and censoring/failure rules without treating longitudinal windows/events as independent replicates;
-5. freeze D-drift-vs-D-periodic estimands and opportunity/publication efficiency measures;
-6. freeze runtime/backend/thread/environment controls and cost scopes;
-7. freeze write-once event/checkpoint/rule-version schema requirements;
-8. define fail-closed verifiers for C/D neural equality, label timing, replay identity, detector-event identity, threshold identity, lambda=1 negative control and symbolic evidence chronology;
-9. define the repository-only/unit/integration test matrix using toy/generated data;
-10. define the implementation branch/stage sequence and the exact gate that must pass before any adaptive held-out execution.
+Stage 6 then implements only:
 
-Only after this packet and its CI pass may adaptive implementation begin.
+- stream logical clock and delayed-label queue;
+- shared ADWIN detector/event epochs;
+- treatment-independent replay memory;
+- shared neural adaptation transaction/checkpoint lineage;
+- write-once run/control-plane schemas;
+- causal verifiers for timing/control-plane identity/checkpoint purity;
+- repository-only toy/generated tests.
+
+**Stage 6 must not execute the primary pre/post adaptive stream.**
 
 ## Prohibited actions until later gate
 
@@ -232,6 +279,6 @@ A new chat in this Project can resume safely by:
 3. verify local HEAD equals `origin/stage5-cd-design-audit`;
 4. read this handoff, `C_D_ADVERSARIAL_DESIGN_AUDIT.md`, `C_D_STREAM_TIME_CONTRACT.md`, the control register, statistical plan, and methodology-ledger tail;
 5. verify draft PR #3 CI for the current exact branch head;
-6. continue with the symbolic lifecycle / online-validation design packet only.
+6. if Stage-5 has been accepted/tagged, continue with Stage-6 shared control-plane implementation only; otherwise complete milestone acceptance first.
 
 Scientific decisions that matter must continue to be committed to the repository rather than existing only in conversational context.

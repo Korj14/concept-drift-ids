@@ -77,3 +77,13 @@ def test_preflight_module_has_no_partition_loader_or_primary_execution_surface()
     assert "load_partition" not in text
     assert "pre_drift" not in text
     assert "post_drift" not in text
+
+
+
+def test_root_runner_exposes_only_preflight_not_primary_cd_execution() -> None:
+    text = (preflight.PROJECT_ROOT / "run.py").read_text(encoding="utf-8")
+    assert '"cd-preflight"' in text
+    assert "run_cd_preflight" in text
+    assert '"cd-primary"' not in text
+    assert '"system-c"' not in text
+    assert '"system-d"' not in text

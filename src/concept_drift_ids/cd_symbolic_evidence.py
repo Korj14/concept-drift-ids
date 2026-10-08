@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+import time
 from typing import Any, Mapping
 
 from concept_drift_ids.cd_control_plane import (
@@ -125,7 +126,8 @@ def write_symbolic_maintenance_new(
     parent_state: RuleBaseState,
     git_commit: str,
     publication_effective_index: int | None,
-) -> dict[str, Mapping[str, str]]:
+) -> dict[str, Any]:
+    started = time.perf_counter_ns()
     output_dir = Path(output_dir)
     opportunity_dir = (
         output_dir
@@ -179,6 +181,11 @@ def write_symbolic_maintenance_new(
             "sha256": version_file_sha,
             "payload_sha256": version["version_artifact_sha256"],
         }
+    out["serialization"] = {
+        "seconds": (
+            time.perf_counter_ns() - started
+        ) / 1_000_000_000.0
+    }
     return out
 
 

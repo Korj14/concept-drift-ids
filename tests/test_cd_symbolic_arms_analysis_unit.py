@@ -306,3 +306,62 @@ def test_primary_symbolic_config_rejects_test_overrides() -> None:
         verify_primary_symbolic_operator_config(
             SymbolicOperatorConfig(validation_rows=4)
         )
+
+
+
+def test_periodic_validation_starts_after_maintenance_clock_not_old_checkpoint_birth() -> None:
+    opportunity = SymbolicOpportunity(
+        arm="d_periodic",
+        opportunity_id=1,
+        source="periodic",
+        logical_clock=50,
+        shared_neural_checkpoint_sha256=None,
+    )
+    operator = SymbolicOperatorConfig(validation_rows=2)
+    transaction = open_symbolic_transaction(
+        opportunity,
+        neural_checkpoint_sha256="long-lived-checkpoint",
+        checkpoint_publication_effective_index=0,
+        validation_start_index=51,
+        generation_row_ids=[f"g-{i}" for i in range(10_000)],
+        generation_evidence_id="generation",
+        candidates=[],
+        operator_config=operator,
+    )
+    records = [
+        SymbolicValidationRecord(
+            row_id="too-early",
+            origin_index=20,
+            maturity_index=25,
+            neural_checkpoint_sha256="long-lived-checkpoint",
+            features=np.array([0.0]),
+            true_label=0,
+            neural_decision=0,
+        ),
+        SymbolicValidationRecord(
+            row_id="future-1",
+            origin_index=51,
+            maturity_index=56,
+            neural_checkpoint_sha256="long-lived-checkpoint",
+            features=np.array([0.0]),
+            true_label=0,
+            neural_decision=0,
+        ),
+        SymbolicValidationRecord(
+            row_id="future-2",
+            origin_index=52,
+            maturity_index=57,
+            neural_checkpoint_sha256="long-lived-checkpoint",
+            features=np.array([1.0]),
+            true_label=1,
+            neural_decision=1,
+        ),
+    ]
+    result = collect_independent_validation_block(
+        records,
+        transaction,
+        superseding_checkpoint_effective_index=None,
+        required_rows=2,
+    )
+    assert result.status == "complete"
+    assert result.row_ids == ("future-1", "future-2")

@@ -1337,3 +1337,105 @@ def verify_lifecycle_state(state: RuleBaseState) -> None:
         raise ValueError("Rule-base canonical hash mismatch.")
     if _history_hash(state.revisions) != state.history_sha256:
         raise ValueError("Rule lifecycle-history hash mismatch.")
+
+
+
+def rule_revision_from_dict(payload: Mapping[str, Any]) -> RuleRevision:
+    conditions = tuple(
+        Condition(
+            feature=str(item["feature"]),
+            operator=str(item["operator"]),
+            threshold=float(item["threshold"]),
+            raw_threshold=(
+                float(item["raw_threshold"])
+                if item.get("raw_threshold") is not None
+                else None
+            ),
+        )
+        for item in payload["conditions"]
+    )
+    return RuleRevision(
+        semantic_rule_id=str(payload["semantic_rule_id"]),
+        rule_revision_id=str(payload["rule_revision_id"]),
+        lineage_id=str(payload["lineage_id"]),
+        parent_rule_revision_ids=tuple(
+            str(item) for item in payload["parent_rule_revision_ids"]
+        ),
+        parent_lineage_ids=tuple(
+            str(item) for item in payload["parent_lineage_ids"]
+        ),
+        rule_base_version_id=str(payload["rule_base_version_id"]),
+        seed=int(payload["seed"]),
+        conditions=conditions,
+        consequent=int(payload["consequent"]),
+        confidence=float(payload["confidence"]),
+        support=float(payload["support"]),
+        covered_count=int(payload["covered_count"]),
+        class_precision=float(payload["class_precision"]),
+        class_precision_lcb=(
+            float(payload["class_precision_lcb"])
+            if payload.get("class_precision_lcb") is not None
+            else None
+        ),
+        neural_fidelity=float(payload["neural_fidelity"]),
+        neural_fidelity_lcb=(
+            float(payload["neural_fidelity_lcb"])
+            if payload.get("neural_fidelity_lcb") is not None
+            else None
+        ),
+        stability=float(payload["stability"]),
+        complexity=int(payload["complexity"]),
+        lifecycle_state=str(payload["lifecycle_state"]),
+        lifecycle_transition=str(payload["lifecycle_transition"]),
+        failure_streak=int(payload["failure_streak"]),
+        source_candidate_id=(
+            str(payload["source_candidate_id"])
+            if payload.get("source_candidate_id") is not None
+            else None
+        ),
+        generation_evidence_id=(
+            str(payload["generation_evidence_id"])
+            if payload.get("generation_evidence_id") is not None
+            else None
+        ),
+        validation_evidence_id=str(payload["validation_evidence_id"]),
+        neural_checkpoint_sha256=str(
+            payload["neural_checkpoint_sha256"]
+        ),
+        valid_from=int(payload["valid_from"]),
+        valid_to=(
+            int(payload["valid_to"])
+            if payload.get("valid_to") is not None
+            else None
+        ),
+        relations=tuple(dict(item) for item in payload.get("relations", ())),
+    )
+
+
+def rule_base_state_from_dict(payload: Mapping[str, Any]) -> RuleBaseState:
+    state = RuleBaseState(
+        seed=int(payload["seed"]),
+        rule_base_version_id=str(payload["rule_base_version_id"]),
+        version_number=int(payload["version_number"]),
+        parent_version_id=(
+            str(payload["parent_version_id"])
+            if payload.get("parent_version_id") is not None
+            else None
+        ),
+        parent_version_sha256=(
+            str(payload["parent_version_sha256"])
+            if payload.get("parent_version_sha256") is not None
+            else None
+        ),
+        revisions=tuple(
+            rule_revision_from_dict(item)
+            for item in payload["revisions"]
+        ),
+        active_revision_ids=tuple(
+            str(item) for item in payload["active_revision_ids"]
+        ),
+        canonical_sha256=str(payload["canonical_sha256"]),
+        history_sha256=str(payload["history_sha256"]),
+    )
+    verify_lifecycle_state(state)
+    return state

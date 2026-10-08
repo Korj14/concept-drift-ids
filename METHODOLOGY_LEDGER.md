@@ -2402,3 +2402,44 @@ Git-ignored heavy evidence, deterministic trace content identity and launcher en
 pre/post execution has occurred. The next permitted action after exact-head CI is local no-data
 `cd-primary-prepare`, followed by committing that generated manifest and requiring clean,
 exact-config-head CI before the first Phase-A seed.
+
+
+### Stage 8 final pre-access adversarial integrity pass — 9 October 2026
+
+A final adversarial audit of the still-unexecuted Stage-8 primary pipeline identified additional
+fail-closed reproducibility/provenance improvements. No primary run config had yet been generated and
+no primary adaptive row had been processed.
+
+The execution gate now requires the current Git `HEAD` to equal exactly the commit that last
+committed `data/manifests/cd_primary_run_config_v1.json`. Source/protocol hashes remain checked as
+well, but hash equality alone is no longer sufficient to permit execution after any later commit.
+GitHub Actions now fetches full history and annotated tags; when the primary config exists, the
+Stage-8 repository test verifies the committed config on the exact branch push head. Synthetic PR
+merge SHAs are distinguished from the binding exact-config-head push run.
+
+Dependency reproducibility was also strengthened. The binding requirements-lock identity is its
+normalized UTF-8 text SHA-256, avoiding CRLF/LF checkout dependence. `requirements-lock.txt` is
+pinned to LF for future checkouts. Preparation and execution both verify every exact
+`name==version` distribution in the lock against the active environment. The frozen config records
+the exact installed distribution map and its canonical identity. Platform-specific raw lockfile bytes
+are deliberately not embedded in the frozen config.
+
+Phase-B verification now checks the Phase-B-to-arm manifest descriptors and the complete inference
+version chain: initial/final identities, increasing publication clocks, contiguous version increments,
+and exact parent version/hash links. Phase-C seed manifests now bind explicitly to the exact Phase-A
+and Phase-B seed manifest identities. Compact export re-verifies all three phases and the confirmatory
+aggregate before copying compact evidence.
+
+The lambda=1 control was strengthened from cross-arm equality alone to exact row-wise equality between
+each arm's lambda=1 fused score and the shared neural score, followed by cross-arm equality.
+
+The Research Contract workflow itself, together with `.gitattributes` and `.gitignore`, is included
+in the frozen scientific source identity because these files now materially enforce execution,
+portability and evidence-location semantics.
+
+These changes are prospective integrity hardening only. They do not alter the frozen concept-drift
+detector, label latency, neural adaptation/replay budget, symbolic lifecycle operator, periodic clocks,
+fusion weights/thresholds, confirmatory endpoints or inferential unit.
+
+**Held-out status remains unchanged:** the primary run config has not yet been generated and no
+primary adaptive pre/post execution has occurred.

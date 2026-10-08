@@ -248,3 +248,41 @@ held-out access:
 These are fail-closed reproducibility and causal-integrity checks. They do not modify any frozen
 scientific parameter, treatment, endpoint, threshold, update budget, trigger schedule or inference
 rule.
+
+
+## 13. Final cross-phase evidence rebinding hardening
+
+A final pre-access verifier audit identified a distinction between **internal consistency** and
+**causal provenance binding**.
+
+Before this correction, a Phase-B artifact could prove that C, D-drift and D-periodic all referenced
+the same shared identity, yet the verifier did not independently prove that this identity was still
+the one frozen in the verified Phase-A seed artifact. Likewise, Phase-C summaries were bound to the
+Phase-B seed manifest at the seed level, but individual arm summaries were not rechecked against the
+verified Phase-A shared identity and exact Phase-B arm manifest during later verification.
+
+This was corrected prospectively before run-config generation and before any primary adaptive access.
+
+Phase-B verification now:
+
+- re-verifies **all five** Phase-A seeds;
+- requires the seed-level Phase-B shared identity to equal the verified Phase-A identity;
+- requires the stored all-seed Phase-A identity map to reproduce exactly;
+- requires the seed and arm identities of every arm manifest;
+- requires every arm and trajectory to use the frozen primary symbolic-operator hash;
+- requires every arm/trajectory shared identity to equal the verified Phase-A seed identity.
+
+Phase-C verification now:
+
+- re-binds each arm summary to the verified Phase-A shared identity;
+- re-binds each arm summary to the exact Phase-B arm-manifest identity;
+- requires the copied symbolic-maintenance summary to equal the frozen Phase-B arm summary;
+- records and verifies the exact row count of every compressed prediction trace against the frozen
+  primary stream length.
+
+Adversarial unit tests deliberately construct a self-consistent but forged Phase-B shared identity
+and a Phase-C arm summary detached from verified Phase A. Both are required to fail closed.
+
+This correction changes no adaptive state, detector, neural update, rule operator, schedule, fusion
+parameter, endpoint, or inferential rule. It strengthens only provenance verification before first
+held-out access.

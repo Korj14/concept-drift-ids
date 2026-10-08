@@ -330,3 +330,37 @@ def test_primary_launcher_sets_frozen_environment_before_python() -> None:
         "NUMEXPR_NUM_THREADS",
     ):
         assert text.index(f"$env:{key}") < python_position
+
+
+
+def test_exact_config_commit_gate_rejects_later_head(
+    monkeypatch,
+    tmp_path: Path,
+) -> None:
+    def same_head(*args, **kwargs):
+        if args[:2] == ("rev-parse", "HEAD"):
+            return "config-commit"
+        if args[:3] == ("log", "-1", "--format=%H"):
+            return "config-commit"
+        raise AssertionError(args)
+
+    monkeypatch.setattr(primary_config, "_git_output", same_head)
+    assert (
+        primary_config._require_exact_config_commit(
+            project_root=tmp_path
+        )
+        == "config-commit"
+    )
+
+    def later_head(*args, **kwargs):
+        if args[:2] == ("rev-parse", "HEAD"):
+            return "later-commit"
+        if args[:3] == ("log", "-1", "--format=%H"):
+            return "config-commit"
+        raise AssertionError(args)
+
+    monkeypatch.setattr(primary_config, "_git_output", later_head)
+    with pytest.raises(RuntimeError, match="exactly the commit"):
+        primary_config._require_exact_config_commit(
+            project_root=tmp_path
+        )

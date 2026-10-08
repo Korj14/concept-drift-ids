@@ -1,0 +1,25 @@
+{
+  "manifest_format_version": 1,
+  "evaluation_id": "system_ab_pattern_dedup_training_chain_v1_evaluation",
+  "source_alternate_teacher_manifest_sha256": "9aaf25d65052f3b6521c248d88aab6d55dd5dd2e02ed73d18452bc0460db3c5f",
+  "source_alternate_r0_manifest_sha256": "3e1d7a984776ccc5d336716f25063f0e9f655590f8b4a92c1b6928f4517fe681",
+  "files": {
+    "rows": {
+      "path": "results/robustness/system_ab_pattern_dedup_training_chain_v1_evaluation/metrics_by_seed_system.csv",
+      "sha256": "13967201451dc9906e0e4bb0f353afc2e5ef75a6235714049da1558da3563e10"
+    },
+    "aggregate": {
+      "path": "results/robustness/system_ab_pattern_dedup_training_chain_v1_evaluation/aggregate_metrics.csv",
+      "sha256": "ad2af3d659638b5b0138c270ca3cb5277a9ad4bbbe56d25ae04b9fd705ad83cb"
+    },
+    "paired_deltas": {
+      "path": "results/robustness/system_ab_pattern_dedup_training_chain_v1_evaluation/aggregate_paired_deltas.csv",
+      "sha256": "c9f6ad2cedbdeba7577018ef4592e8e82a43063d8cfc5c1f503eaffc1fbf6568"
+    },
+    "summary": {
+      "path": "results/robustness/system_ab_pattern_dedup_training_chain_v1_evaluation/evaluation_summary.json",
+      "sha256": "1995ea6b8ede189cbef3fd73b0ef2af3992378da1d1f3be52c350b0a939d1ef0"
+    }
+  },
+  "manifest_sha256": "4f68483d35ccd9b819119d8554db8d4eefe749d4b6133f9d11a9f5e5a318a86b"
+}

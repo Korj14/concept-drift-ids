@@ -163,3 +163,95 @@ After the longitudinal window policy is frozen, the existing System-A checkpoint
 
 `main` is intended to represent the latest fully accepted scientific milestone. New major stages should branch from accepted `main`, pass their scientific gate and CI, then return through a pull request. See `REPOSITORY_GOVERNANCE.md` for the merge/tag/deviation policy.
 
+
+
+## Stage 4 — System B static neuro-symbolic baseline
+
+The prospective System-B protocol is frozen in `SYSTEM_B_PROTOCOL.md`. System B reuses each accepted System-A checkpoint unchanged and derives a seed-matched validated `R_0^(s)` using training/development evidence only.
+
+The required local sequence is deliberately gated:
+
+```bash
+git switch stage4-system-b
+git pull --ff-only
+python --version
+python -m pytest -q
+python run.py system-a verify
+
+# The common reporting grid is now frozen. Re-score accepted System A
+# without retraining or rethresholding and preserve it as a separate supplement.
+python run.py system-a rescore-windows --device cpu
+
+# Freeze the additive System-A longitudinal supplement before System-B build.
+git add results/frozen/system_a_v1_longitudinal_v1
+git commit -m "Freeze System A longitudinal v1 rescore"
+python run.py system-a verify
+
+# Training + development only. This must not load pre/post.
+python run.py system-b build --device cpu
+
+# Inspect the generated freeze:
+#   data/rules/system_b_r0_v1/seed_0.json ... seed_4.json
+#   data/manifests/system_b_v1.json
+#
+# Commit those exact rule/manifests before any held-out evaluation.
+
+git add data/rules/system_b_r0_v1 data/manifests/system_b_v1.json
+git commit -m "Freeze validated System B R0"
+python run.py system-b verify
+
+# Only after the freeze commit:
+python run.py system-b evaluate --device cpu
+```
+
+The evaluator refuses to run from a dirty worktree and refuses to overwrite an existing accepted evaluation. It records detection counts/metrics, resolved symbolic coverage, raw activation coverage, conflict-abstention, neural fidelity, per-rule pre/post support/precision/fidelity/stability/activation, and the frozen 5,000-row longitudinal reporting grid.
+
+Do not relax rule gates, change fusion settings, or regenerate `R_0` because held-out results are inconvenient. A genuine defect requires a new documented version.
+
+
+### System-B frozen evaluation chronology correction
+
+The authoritative first System-B held-out evaluation is the immutable first run recorded by
+`results/frozen/system_b_v1/evaluation_manifest.json` (manifest SHA-256
+`f44cad2ed9674bcb7118f05f174f845b5dfb135f95e2cb2b4a230f0f998c3e42`).
+Do not rerun or overwrite it.
+
+After pulling the chronology-correction commit and confirming a clean worktree, generate only the additive publication-table supplement:
+
+```bash
+python run.py system-b supplement
+python run.py system-b verify-supplement
+```
+
+This supplement reads only the committed frozen System-B CSV evidence. It does not load raw pre/post data or model checkpoints. Commit the resulting
+`results/frozen/system_b_v1_supplement_v1/` directory unchanged.
+
+
+### System-B Q1 protocol-conformance audit
+
+System B is under an adversarial pre-C/D scientific audit. Before treating R0.v1 as closed, run the training-only consequent-semantics diagnostic on the local machine that holds the frozen System-A checkpoints:
+
+```bash
+python run.py system-b audit-r0-protocol
+```
+
+Expected output always includes:
+
+```text
+development_loaded=false
+pre_post_partitions_loaded=false
+```
+
+The command writes `results/audits/system_b_r0_protocol_audit_v1.json`. It does not evaluate or reload the held-out pre/post partitions. Commit that audit artifact unchanged and do not rebuild or replace R0 based on performance.
+
+
+### System-B frozen-evidence semantic analysis
+
+To derive inactive-rule-safe and class-conditional explanation evidence without loading raw data or checkpoints:
+
+```bash
+python run.py system-b semantic-analysis
+python run.py system-b verify-semantic-analysis
+```
+
+The output under `results/analysis/system_b_v1_semantic_analysis_v1/` is an additive derived artifact. It does not replace the frozen evaluation or supplement.

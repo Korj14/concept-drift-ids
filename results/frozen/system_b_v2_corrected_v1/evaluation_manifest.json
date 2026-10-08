@@ -1,0 +1,121 @@
+{
+  "manifest_format_version": 1,
+  "evaluation_id": "system_b_v2_corrected_evaluation_v1",
+  "evidence_status": "implementation_defect_correction_not_first_look",
+  "system_id": "system_b_static_neuro_symbolic_v2_corrected",
+  "system_manifest_sha256": "131027d2f136494eb388183f18dcb7eb0e9d7e9fe786f22dba25f4e1624c1483",
+  "scenario_id": "cicids2017_sudden_benign_v1",
+  "scenario_version": 1,
+  "preprocessing_state_hash": "4527f77220f2cf6063108a7d71d80aaa0e82099ad282ff25408a2d9ce3488b1e",
+  "evaluation_git": {
+    "commit": "51690ea23906ab87b9406311eacf381c7a22b5fb",
+    "branch": "stage4-system-b",
+    "clean": "true"
+  },
+  "runtime": {
+    "python": "3.11.9",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "numpy": "2.4.6",
+    "torch": "2.14.1+cpu",
+    "scikit_learn": "1.9.1",
+    "shap": "0.51.0",
+    "cpu_count": 16,
+    "torch_num_threads": 8,
+    "torch_num_interop_threads": 8,
+    "thread_environment": {
+      "OMP_NUM_THREADS": null,
+      "MKL_NUM_THREADS": null,
+      "OPENBLAS_NUM_THREADS": null,
+      "NUMEXPR_NUM_THREADS": null
+    },
+    "threadpools": [
+      {
+        "user_api": "blas",
+        "internal_api": "openblas",
+        "num_threads": 16,
+        "prefix": "libscipy_openblas",
+        "filepath": "C:\\Dev\\concept-drift-ids\\.venv\\Lib\\site-packages\\numpy.libs\\libscipy_openblas64_-63c857e738469261263c764a36be9436.dll",
+        "version": "0.3.31.188.0",
+        "threading_layer": "pthreads",
+        "architecture": "Haswell"
+      },
+      {
+        "user_api": "openmp",
+        "internal_api": "openmp",
+        "num_threads": 8,
+        "prefix": "libiomp",
+        "filepath": "C:\\Dev\\concept-drift-ids\\.venv\\Lib\\site-packages\\torch\\lib\\libiomp5md.dll",
+        "version": null
+      },
+      {
+        "user_api": "openmp",
+        "internal_api": "openmp",
+        "num_threads": 1,
+        "prefix": "libiomp",
+        "filepath": "C:\\Dev\\concept-drift-ids\\.venv\\Lib\\site-packages\\torch\\lib\\libiompstubs5md.dll",
+        "version": null
+      },
+      {
+        "user_api": "openmp",
+        "internal_api": "openmp",
+        "num_threads": 16,
+        "prefix": "vcomp",
+        "filepath": "C:\\Dev\\concept-drift-ids\\.venv\\Lib\\site-packages\\sklearn\\.libs\\vcomp140.dll",
+        "version": null
+      },
+      {
+        "user_api": "blas",
+        "internal_api": "openblas",
+        "num_threads": 16,
+        "prefix": "libscipy_openblas",
+        "filepath": "C:\\Dev\\concept-drift-ids\\.venv\\Lib\\site-packages\\scipy.libs\\libscipy_openblas-64eda39e79589aedb16f58e5547eb599.dll",
+        "version": "0.3.30",
+        "threading_layer": "pthreads",
+        "architecture": "Haswell"
+      }
+    ]
+  },
+  "files": {
+    "detection_by_seed": {
+      "path": "results/frozen/system_b_v2_corrected_v1/detection_by_seed.csv",
+      "sha256": "6ce19d1cac57a671c850bd5987cb794910e85567d6568f4017f4f1285ed2dda7"
+    },
+    "metrics_by_seed": {
+      "path": "results/frozen/system_b_v2_corrected_v1/metrics_by_seed.csv",
+      "sha256": "42c8b8a446f3d0d306dabadc0e60e0065d0eb270a06e45cbf778361d80b29770"
+    },
+    "aggregate_metrics": {
+      "path": "results/frozen/system_b_v2_corrected_v1/aggregate_metrics.csv",
+      "sha256": "96577eff95b73d43aeb97f4da89459123cdf198318cbe5ad6385176b829373c1"
+    },
+    "paired_deltas_by_seed": {
+      "path": "results/frozen/system_b_v2_corrected_v1/paired_deltas_by_seed.csv",
+      "sha256": "895da3f9ac416290964ea8ee9311be991612e678c34e6157f596d554057db35d"
+    },
+    "aggregate_paired_deltas": {
+      "path": "results/frozen/system_b_v2_corrected_v1/aggregate_paired_deltas.csv",
+      "sha256": "3aa6683d401048369093644f2b5e907562df1938f532d2949271c64f9b15586d"
+    },
+    "rule_quality": {
+      "path": "results/frozen/system_b_v2_corrected_v1/rule_quality_by_seed_partition.csv",
+      "sha256": "cf5f287295edab678655849bd261897ceaeb002593d52955104aed5d20c4dc41"
+    },
+    "rule_staleness_deltas": {
+      "path": "results/frozen/system_b_v2_corrected_v1/rule_staleness_deltas.csv",
+      "sha256": "74300f741d3cb6d01f95b0eaad3623fae01ad4ec69f6b1a2b6d0aba45988bc8e"
+    },
+    "window_metrics": {
+      "path": "results/frozen/system_b_v2_corrected_v1/window_metrics.csv",
+      "sha256": "e09f38c5cb3813051e753fa6c70679eee70b21b61f50be664d6e91f66f499f10"
+    },
+    "runtime": {
+      "path": "results/frozen/system_b_v2_corrected_v1/runtime_by_seed_partition.csv",
+      "sha256": "6a8b3e283aa6402651db4458bf27dd7cb1506a13acfbe48568db540f04ea00c2"
+    },
+    "summary": {
+      "path": "results/frozen/system_b_v2_corrected_v1/system_b_v2_evaluation.json",
+      "sha256": "4215f87259798fe017419d203f05d7c4d14e7f623b27c3747b48be95021d8a55"
+    }
+  },
+  "manifest_sha256": "583fa356c291bd7b2b275d726bb9eee31ae9aa5470cca50f0146c91642873710"
+}

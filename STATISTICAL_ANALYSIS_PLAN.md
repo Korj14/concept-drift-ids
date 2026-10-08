@@ -304,3 +304,61 @@ At that gate:
 9. only then unlock untouched adaptive evaluation.
 
 Any subsequent change requires a new analysis-plan version, explicit rationale, and disclosure of whether outcomes had already been inspected.
+
+
+## 13. Scope of seed-level uncertainty
+
+The five stochastic seeds within one scenario share the same underlying stream observations. Seed-level intervals therefore quantify variability attributable to stochastic training / seed-specific symbolic extraction conditional on that scenario.
+
+They are **not** estimates of independent environmental or deployment-population variation.
+
+Accordingly:
+
+- within-scenario C-vs-D inference remains paired by seed;
+- scenario/dataset conclusions are reported separately first;
+- broad generalization requires additional scenario/dataset replication;
+- the manuscript must not inflate effective sample size by combining seeds, windows, or rules as if they were independent environments.
+
+## 14. Rule-level descriptive uncertainty
+
+Rule support, class precision and neural fidelity are descriptive nested outcomes, not 36 independent confirmatory experiments.
+
+Where publication tables emphasize a rule-level proportion, report its denominator and an appropriate descriptive uncertainty interval where useful. Selection-slice intervals do not remove selection bias and must not be presented as independent validation.
+
+Gate-persistence bootstrap remains a robustness metric, not a p-value.
+
+## 15. Information-time constraint on adaptive analysis
+
+Any C/D endpoint depending on an update time must use the time at which all protocol-required evidence was actually available.
+
+If symbolic validation requires delayed ground-truth labels, recovery time and update latency begin/end definitions must respect that latency. A rule-base version cannot be credited with recovery before it could legitimately have been published.
+
+This timing rule must be frozen together with the adaptive protocol before untouched C/D outcomes.
+
+
+## 16. Corrected System-B v2 evidence status
+
+The R0.v2 evaluation is a protocol-defect correction conducted after historical R0.v1 held-out outcomes were known. It is therefore not treated as a new untouched confirmatory experiment.
+
+For publication:
+
+- R0.v2 is the protocol-conformant static System-B baseline and the required symbolic start state for future C/D;
+- R0.v1 versus R0.v2 differences are implementation-correction sensitivity/provenance, not a hypothesis test or model-selection comparison;
+- no p-value is attached to the v1-v2 correction contrast;
+- the corrected v2 pre/post paired seed summaries are descriptive baseline evidence for RQ1 and for later matched visualization;
+- class-conditional symbolic coverage/correctness/fidelity are descriptive explanation diagnostics motivated and frozen before v2 execution;
+- imputation-aware rule diagnostics are descriptive robustness evidence and do not redefine the primary rule-validity gates;
+- the primary later causal inference remains matched C-vs-D under a common accepted R0.v2 start.
+
+Knowledge of v1 held-out outcomes must not be used to change R0.v2, lambda, thresholds, preprocessing, windows or C/D treatment definitions.
+
+
+## 17. Bounded metric confidence-interval convention
+
+The frozen A/B aggregate files use ordinary seed-level Student-t intervals. With five seeds, an unconstrained interval for a metric whose realizations lie in [0,1] can numerically extend outside [0,1].
+
+The primary stored arithmetic remains unchanged. Do not truncate or winsorize interval endpoints in JSON/CSV or manuscript numeric tables.
+
+For visualization, a physical [0,1] metric axis is permitted. Any off-domain primary interval endpoint must be disclosed rather than silently replaced. A bounded bootstrap/transformed interval may be reported only as a clearly labeled secondary robustness/presentation interval unless a later untouched protocol prospectively makes it primary.
+
+The more important inferential limitation is unchanged: the five seeds share one scenario stream and therefore quantify stochastic optimization/symbolic-extraction variability conditional on that scenario, not population/environmental uncertainty.

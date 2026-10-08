@@ -626,3 +626,850 @@ Future CSV evidence writers now use explicit LF line termination so later system
 This is a byte-representation/reproducibility correction only. No numerical result, threshold, model, scenario, or original frozen manifest was modified.
 
 System-A evaluation execution is also write-protected after closure: if the frozen evaluation manifest already exists, the evaluation command refuses to overwrite it and directs the operator to the read-only verifier.
+
+
+---
+
+## 7 October 2026 — System-B launch verification and prospective protocol freeze
+
+Stage 4 began from the accepted System-A milestone on the dedicated `stage4-system-b` branch.
+
+### Continuity verification
+
+Remote GitHub verification showed:
+
+- `main`: `5d5cb67dda1abcda720eac785c29fa259f6bf5b8`;
+- `stage4-system-b`: `5d5cb67dda1abcda720eac785c29fa259f6bf5b8`;
+- branch comparison: identical, ahead 0 / behind 0.
+
+The uploaded governing source bytes were re-hashed before Stage-4 design work:
+
+- MAIN: `f0700fc28e5c49ee50a6fab73db870725006ba52541a0d9cf4b285ccbe143a8f`, 55,780 bytes;
+- Reconciled plan: `83d1e101a525e840a1235743ac5fc050ca560f228df047bee17a84e80cbf3082`, 50,623 bytes.
+
+These exactly match `GOVERNING_SOURCES.md`; no source migration or prior-evidence impact assessment was required.
+
+Remote verification cannot establish local working-tree cleanliness or the presence of ignored System-A checkpoint bytes. Those remain local-only execution prerequisites and are not inferred from GitHub state.
+
+### Permitted evidence and outcome firewall
+
+The System-B protocol was frozen using:
+
+- MAIN and the Reconciled operational plan;
+- the accepted repository contracts and System-A development identities;
+- current 2025–2026 literature;
+- design/engineering constraints.
+
+No System-B pre/post outcome existed or was inspected.
+
+The research team historically knows the frozen System-A pre/post results. Those held-out results were explicitly excluded from all System-B choices. No SHAP setting, tree constraint, validation threshold, fusion policy, rule threshold, or longitudinal reporting window was selected from System-A pre/post behavior.
+
+### Literature refresh
+
+A targeted live search immediately before protocol freeze did not identify a new peer-reviewed flow-level NIDS paper implementing the complete governing conjunction. Recent 2026 explanation-reliability work did materially strengthen the requirement to define and audit stability rather than use the term generically. The details and references are appended to `LITERATURE_WATCH.md`.
+
+### Prospective System-B decisions
+
+`SYSTEM_B_PROTOCOL.md` was created before implementation and before untouched B evaluation. Major decisions include:
+
+- seed-specific `R_0^(s)` mapped to the corresponding frozen System-A checkpoint and carried forward within the same stochastic block;
+- training-only SHAP and surrogate candidate generation;
+- deterministic non-overlapping 60/40 development split for rule validation versus fusion/threshold tuning;
+- DeepExplainer on the raw attack logit with fixed class-balanced training background/sample identities;
+- 12-feature class-aware SHAP restriction;
+- depth-4, minimum-leaf-1000 weighted surrogate mimicking the frozen neural decision;
+- conjunctive support, class-precision, neural-fidelity, bootstrap-stability, and complexity gates;
+- candidate confidence defined conservatively as min(class precision, neural fidelity);
+- explicit empirical redundancy/conflict semantics and neural fallback for runtime cross-class symbolic conflicts;
+- one global development-selected fusion weight across seeds, with seed-specific fused thresholds;
+- no probability calibration;
+- a 5,000-row non-overlapping common longitudinal reporting grid, boundary-aligned for evaluator scoring only.
+
+Exact accepted rule-base bytes, the development-selected global fusion weight, and the five fused thresholds remain intentionally unfrozen until the local build uses the ignored System-A checkpoints and permitted training/development data. They must be frozen and committed before any System-B pre/post evaluation.
+
+This entry is prospective. Untouched System-B outcomes must not cause the protocol above to be rewritten.
+
+
+### System-B pre-execution implementation clarifications
+
+Before any System-B training/development build was executed, the protocol was clarified in four implementation-sensitive areas:
+
+- System-B v1 construction and evaluation use CPU only, consistent with the accepted System-A primary backend and avoiding backend-dependent attribution behavior as an uncontrolled source of variation.
+- Rule conditions preserve the authoritative standardized/model-space threshold used by inference and also store its deterministic inverse-scaled raw-unit value for human readability. Raw thresholds are explanation metadata only.
+- Bootstrap pass-persistence stability is the candidate-validation gate on the development validation slice and is recomputed separately on the complete frozen pre/post partitions after the rule base is frozen. Longitudinal 5,000-row windows remain repeated descriptive observations and are not converted into pseudo-replicates by running independent inferential bootstrap gates per window.
+- Untouched System-B evaluation must begin from a committed freeze. The evaluator is required to reject a dirty worktree so generated R0/manifests cannot be evaluated before their identities are committed.
+
+A formatting defect introduced in the previous control-register edit (a literal backslash-n between two System-B rows) was corrected. It had no scientific effect.
+
+These are prospective implementation clarifications. No System-B rule build, fusion selection, pre-drift evaluation, or post-drift evaluation had been executed when they were recorded.
+
+
+### System-B orchestration implementation
+
+The reusable symbolic primitives were followed by a System-B orchestration layer that mechanically enforces the prospective firewall.
+
+Repository-only implementation now provides:
+
+- `system-b build`: CPU-only, clean-worktree build using only training and development partitions; it validates the frozen System-A checkpoint identities, performs the frozen SHAP/surrogate/validation procedure, selects the global fusion weight and per-seed thresholds on the designated development slice, and writes seed-specific `R0.v1` artifacts plus a hash-linked System-B manifest.
+- `system-b verify`: read-only verification of the compact System-B freeze and local checkpoint identities without loading pre/post.
+- `system-b evaluate`: refuses to start unless the freeze is committed (clean worktree), then and only then loads pre/post and writes immutable seed-, rule-, and reporting-window evidence.
+
+The build is fail-closed: if any seed produces no validated active rules, it aborts rather than weakening validation gates using held-out evidence. No System-B training/development build or held-out evaluation was executed while this code was authored; repository-only tests exercise the partition firewall, deterministic development split, CPU requirement, global-lambda tie policy, and overwrite protection.
+
+
+### System-B CLI routing defect corrected before data execution
+
+Repository review after the orchestration commit found that the intended root-runner edit had not taken effect: `run.py` listed `system-b` as a valid command but still dispatched every non-preprocessing command to System A. The defect was identified before any System-B build or evaluation was executed. The runner was corrected to dispatch System A and System B explicitly, and a repository-only regression assertion was added so this integration path cannot silently regress.
+
+
+### Single-class longitudinal-window metric guard
+
+A static code audit identified that the shared `binary_metrics` helper computes ROC-AUC unconditionally and would therefore raise on a longitudinal reporting window containing only one class. Before any System-B evaluation, the window-specific wrapper was corrected to retain thresholded confusion-derived metrics while recording ROC-AUC and average precision as undefined for single-class windows. A repository-only regression test was added. Full pre/post partitions still use the standard shared metric implementation because both classes are present by construction.
+
+
+### Surrogate-leaf consequent semantics fixed before rule generation
+
+The implementation review clarified that each extracted candidate must preserve the fitted surrogate's semantics. The consequent is therefore taken from the fitted decision-tree leaf prediction, including the effect of the prospectively frozen neural-class sample weights. It is not recomputed afterward from an unweighted majority of covered training decisions. Independent development neural-fidelity validation remains the acceptance safeguard.
+
+Candidate logs were also expanded to retain the full canonical antecedent for accepted and rejected candidates, so later lifecycle/rejection analysis does not depend only on opaque candidate IDs. These changes occurred before any System-B rule generation or held-out evaluation.
+
+
+### Common longitudinal grid activated for frozen System A
+
+Because the 5,000-row, non-overlapping, boundary-aligned reporting grid was frozen prospectively before System-B held-out outcomes, the previously accepted System-A checkpoints can now be rescored on that identical grid as required by the Reconciled operational plan. A separate `system_a_v1_longitudinal_v1` supplement was implemented.
+
+The supplement does not retrain, recalibrate, rethreshold, or rewrite the original System-A evaluation. It reuses every frozen checkpoint and threshold, records per-seed/per-window confusion counts and detection metrics, links back to the accepted System-A evaluation manifest, and writes new immutable LF-normalized evidence. Single-class windows retain thresholded metrics while ranking metrics are recorded as undefined.
+
+No longitudinal System-A rescore was executed during this repository-only implementation step because the ignored local checkpoint bytes remain local-only.
+
+
+### Longitudinal-rescore sequencing/provenance guard
+
+Before local execution, the common-grid System-A rescore path was tightened to require a clean Git worktree and record its exact commit/branch in both the supplement summary and manifest. The README execution order now requires committing the additive System-A longitudinal supplement before invoking `system-b build`; otherwise the intentionally strict System-B clean-worktree gate would reject the build. This correction was made before any longitudinal rescore or System-B rule build was executed.
+
+
+---
+
+## 7 October 2026 — System-B R0 execution freeze and pre-evaluation sanitation
+
+The local operator reported successful completion of the prescribed repository tests, System-A verification, common-grid System-A longitudinal rescore, System-B development-only build, and System-B read-only verification. Repository-side inspection was then performed independently before permitting untouched System-B evaluation.
+
+### System-A common-grid longitudinal supplement
+
+Committed supplement:
+
+`results/frozen/system_a_v1_longitudinal_v1/`
+
+Accepted longitudinal manifest SHA-256:
+
+`9f26b54834d041da115adffd7921b10c97ed826e832c2325f77dd0e2a617754a`
+
+The supplement references the accepted System-A manifest `42004b5ed100b690023b9998bdc959fac41ab947b996fb7c58e44cee5e8dc6de` and original evaluation manifest `e721b641b5898976c76c0449dedf7152cb302be4447604525afb7ddf1c94c5b3`.
+
+Its execution provenance records clean commit `e29830bdf0ded41240058f19b4928259b01b5280`, CPU backend, and the prospectively frozen 5,000-row non-overlapping boundary-aligned grid.
+
+Repository sanitation confirmed:
+
+- 14 pre-drift windows per seed totaling exactly 69,260 rows;
+- 14 post-drift windows per seed totaling exactly 69,270 rows;
+- five seeds retained;
+- 140 seed/partition/window rows in total;
+- no retraining, recalibration, or threshold reselection implied by the artifact identity.
+
+### System-B development-only build
+
+Accepted System-B manifest:
+
+`data/manifests/system_b_v1.json`
+
+Canonical manifest SHA-256:
+
+`6e3589056d4c252c1a6c7cfd87b891fb8a24f1e30e86b17833b6035ea9ee86a8`
+
+The build provenance recorded by the manifest is:
+
+- clean git commit `cd2078eacb7da28cbd8460da43d96381bd70b013`;
+- branch `stage4-system-b`;
+- Python 3.11.9;
+- Windows runtime;
+- CPU backend / PyTorch 2.14.1+cpu;
+- NumPy 2.4.6;
+- scikit-learn 1.9.1;
+- SHAP 0.51.0.
+
+The manifest explicitly records:
+
+- training used: true;
+- development used: true;
+- pre_drift used: false;
+- post_drift used: false.
+
+It also preserves hashes for the training rows, the non-overlapping development validation/fusion slices, and the fixed SHAP background/attribution samples.
+
+### R0 rule-base outcome
+
+Candidate -> active-rule counts were:
+
+- seed 0: 13 -> 7;
+- seed 1: 12 -> 8;
+- seed 2: 13 -> 7;
+- seed 3: 12 -> 8;
+- seed 4: 12 -> 6.
+
+The corresponding quality-gate rejection counts were 6, 4, 6, 4, and 6.
+
+Independent repository inspection confirmed for every seed:
+
+- exactly 12 SHAP-selected features;
+- every active rule traces to a candidate that passed the prospectively frozen conjunctive quality gate;
+- every active rule satisfies support >= 0.001, covered rows >= 100, class precision >= 0.80, neural fidelity >= 0.90, bootstrap stability >= 0.90, and complexity <= 4;
+- every rule artifact references the corresponding accepted System-A checkpoint hash and frozen System-A threshold;
+- no favorable seed or rule base was substituted after generation.
+
+Active-rule class composition is sparse on the attack consequent but nonzero for every seed:
+
+- seed 0: 6 benign / 1 attack rule;
+- seed 1: 6 benign / 2 attack rules;
+- seed 2: 6 benign / 1 attack rule;
+- seed 3: 7 benign / 1 attack rule;
+- seed 4: 5 benign / 1 attack rule.
+
+This composition is retained as generated; it is not rebalanced post hoc.
+
+### Fusion freeze
+
+The prespecified global grid was evaluated on the development fusion slice only.
+
+Mean MCC by neural weight was monotonically highest at the lowest prespecified grid point:
+
+- lambda 0.50: 0.7721332020;
+- 0.60: 0.7706859479;
+- 0.70: 0.7692022392;
+- 0.80: 0.7672804491;
+- 0.90: 0.7629981606;
+- 1.00: 0.7454673697.
+
+Therefore the frozen selection rule chose `lambda=0.50`.
+
+Frozen per-seed fused thresholds are:
+
+- seed 0: 0.692427396774292;
+- seed 1: 0.9235901534557343;
+- seed 2: 0.8299936652183533;
+- seed 3: 0.9747405052185059;
+- seed 4: 0.9527904391288757.
+
+These values were not selected from pre/post evidence.
+
+### Repository/CI sanitation
+
+The R0 artifacts and manifest were committed in:
+
+`245ca52371d7cdbcf8475b1d86b4b95d2b9850f5`
+
+The exact commit completed the GitHub Research Contract successfully.
+
+Repository inspection at that head found no committed `results/frozen/system_b_v1` evaluation directory. Untouched System-B pre/post evidence therefore remained ungenerated/uncommitted at the time of this sanitation review.
+
+A documentation lag was identified before evaluation: the protocol header and control register still described exact R0/fusion identities as not yet frozen even though the freeze commit and CI had succeeded. Those status fields are synchronized in the present governance commit. This is an audit-trail correction only; no rule, threshold, fusion weight, checkpoint, preprocessing state, or evaluation code is changed.
+
+A new repository-only frozen-contract test is also added so CI verifies the committed System-B manifest and R0 artifacts directly, including hashes, checkpoint/threshold linkage, data-access firewall flags, active-rule counts, and validation-gate invariants.
+
+No System-B pre/post metric was viewed or used during this sanitation/freeze synchronization.
+
+
+---
+
+## 7 October 2026 — pre-evaluation evidence-path sanitation
+
+After accepting the development-only R0 freeze and before any System-B pre/post execution, the untouched evaluator was reviewed against MAIN, the Reconciled operational plan, `SYSTEM_B_PROTOCOL.md`, and the common System-A evidence schema.
+
+The audit found no leakage path: the evaluator loads pre/post only after clean-worktree validation, accepted R0-manifest verification, frozen System-A checkpoint verification, and frozen preprocessing verification.
+
+One publication-grade evidence-completeness gap was found prospectively. The evaluator preserved wide seed-level detection evidence, per-rule pre/post evidence, and window trajectories, but it did not yet emit explicit paired/aggregate metric tables or a direct rule-level staleness-delta table. Although those values would be derivable later, relying on retrospective reconstruction would be weaker than freezing plot-ready machine-readable evidence at evaluation time.
+
+The evaluator was therefore strengthened before any held-out execution to add:
+
+- System-A-compatible long-form seed metric evidence;
+- aggregate pre/post metric summaries across the five fixed seeds;
+- paired seed-level post-minus-pre deltas and aggregate paired-effect intervals;
+- direct rule-ID-matched pre/post staleness deltas;
+- frozen-gate pass/fail transition labels without a composite staleness score;
+- evaluation runtime/software provenance;
+- a read-only post-evaluation hash verifier.
+
+A second semantic hygiene fix records symbolic-neural fidelity as undefined when no resolved symbolic coverage exists instead of encoding absence of an explanation as fidelity zero.
+
+Finally, the evaluation loader now pins the exact accepted `R0.v1` manifest canonical identity and verifies canonical rule-artifact hashes in addition to raw file hashes. This prevents an internally self-consistent but non-accepted replacement rule base from silently entering the untouched evaluation path.
+
+No System-B pre/post values were available or inspected during these changes. The frozen R0, lambda, thresholds, preprocessing, checkpoints, validation gates, and longitudinal window policy are unchanged.
+
+
+---
+
+## 7 October 2026 — System-B execution-order correction after evidence push
+
+After the first System-B evaluation was committed and pushed, repository provenance established that the local untouched evaluation had in fact been executed earlier than the repository-side evidence-path sanitation commits.
+
+Exact original evaluation provenance:
+
+- source clean commit: `245ca52371d7cdbcf8475b1d86b4b95d2b9850f5`;
+- source System-B manifest: `6e3589056d4c252c1a6c7cfd87b891fb8a24f1e30e86b17833b6035ea9ee86a8`;
+- evaluation manifest: `f44cad2ed9674bcb7118f05f174f845b5dfb135f95e2cb2b4a230f0f998c3e42`;
+- evidence commit: `4542108f61e01348e69a19ee642e5c01abb97491`;
+- Research Contract for the evidence commit: successful.
+
+This means earlier ledger/protocol statements asserting that no System-B pre/post outcome had yet been generated during the later sanitation commits were chronologically inaccurate. They are not erased. This entry explicitly corrects them.
+
+Importantly, the later sanitation was not outcome-informed: repository-side review had not inspected System-B metric values when the R0 governance synchronization and evaluator-hardening changes were authored. The changes did not alter R0, lambda, fused thresholds, neural checkpoints, preprocessing, fusion arithmetic, rule activation semantics, or the frozen reporting grid.
+
+Independent integrity checks of the first-run evidence confirmed:
+
+- all 10 seed/partition confusion matrices conserve sample/class totals exactly;
+- all five seeds are present;
+- pre/post rule IDs match exactly within every seed, with 7/8/7/8/6 rules;
+- 14 pre windows per seed sum to 69,260 rows;
+- 14 post windows per seed sum to 69,270 rows;
+- no reporting window has zero resolved symbolic coverage;
+- no aggregate/reporting-window conflict-abstention event occurred;
+- the evaluation references the accepted R0.v1 and preprocessing identities.
+
+The correct scientific response is therefore **preservation, not history deletion**. The first untouched evaluation remains the authoritative primary System-B v1 evaluation.
+
+The missing paired/aggregate/staleness tables will be generated as `system_b_v1_supplement_v1` strictly from the already-frozen first-run CSV evidence. The supplement generator is mechanically prohibited from loading raw partitions or model checkpoints. This follows the same additive-evidence principle previously used for the System-A count supplement.
+
+No model rerun, threshold change, rule change, or result-driven retuning is authorized.
+
+
+---
+
+## 7 October 2026 — Q1 adversarial audit opened; surrogate-leaf protocol discrepancy identified
+
+After the System-B first-run evaluation and additive supplement were frozen, a full adversarial audit was opened against MAIN, the Reconciled operational plan, the frozen System-B protocol, implementation, evidence, and current 2025–2026 literature.
+
+The audit is not an attempt to retune System B. Its purpose is to distinguish protocol conformance, valid but assumption-sensitive design choices, and publication-level robustness gaps before the symbolic substrate is reused in C/D.
+
+A material protocol/code discrepancy was identified:
+
+- `SYSTEM_B_PROTOCOL.md` prospectively requires the candidate consequent to equal the fitted weighted CART leaf prediction;
+- the implementation that generated R0.v1 computes the consequent from the unweighted majority of frozen neural decisions among training observations satisfying the leaf path;
+- the surrogate itself was fitted with sample weights that equalize the two neural-predicted classes;
+- therefore the two consequent definitions are not mathematically guaranteed to agree.
+
+The historical ledger entry stating that the weighted-leaf semantics had been implemented is incorrect. It is preserved rather than rewritten.
+
+No System-B held-out outcome is needed to diagnose realized impact. A new command, `python run.py system-b audit-r0-protocol`, reconstructs the surrogate from **training only** using the frozen selected features and corresponding System-A checkpoint, then compares every stored candidate consequent with the weighted CART leaf class. It records development_used=false, pre_drift_used=false, and post_drift_used=false.
+
+The result will determine the next governance action:
+
+- zero realized mismatches -> preserve R0.v1 and document a no-effect implementation discrepancy;
+- one or more mismatches -> preserve all existing evidence, classify a real frozen-protocol implementation defect, and assess a versioned correction without selecting the remedy from held-out performance.
+
+The same audit also identified non-blocking but publication-important issues now recorded in `SYSTEM_B_Q1_AUDIT.md`: inactive-rule precision/fidelity semantics, seed-specific SHAP stability, background/top-k sensitivity, score-vs-probability terminology, effective benign-rule veto authority under the frozen fusion operating point, boundary lambda selection, threshold sensitivity, Destination Port/CICIDS2017 artifact risk, statistical hierarchy, and external checkpoint availability.
+
+No frozen System-B artifact is changed by this audit commit.
+
+
+### Q1 audit artifact persistence guard
+
+Before local execution of the R0 protocol diagnostic, repository review found that the existing ignore policy admitted only `results/frozen/**`; the proposed `results/audits/**` path would therefore have remained untracked. The ignore policy was prospectively extended to admit audit evidence before the diagnostic was run.
+
+The diagnostic was also tightened before execution to enforce the System-B CPU/Python environment contract and verify the complete frozen training scenario-row identity in addition to the SHAP background and attribution sample hashes. No data were loaded and no diagnostic result existed when these corrections were made.
+
+
+---
+
+## 7 October 2026 — expanded Q1 audit of hidden assumptions
+
+The System-B audit was expanded without modifying any primary artifact.
+
+Material findings added to the audit record:
+
+- zero B conflict is structurally constrained by disjoint single-tree leaves;
+- q is lifecycle metadata in B and does not soften a one-active-leaf symbolic score;
+- lambda=0.50 plus thresholds >0.50 gives covered benign rules effective veto authority;
+- aggregate coverage/fidelity hides materially weaker attack-side symbolic correctness;
+- row-bootstrap persistence does not account for retained duplicate-pattern dependence;
+- exact threadpool state was not captured in B build provenance;
+- CICIDS2017 Destination Port and known flow/labelling defects require explicit sensitivity/limitations.
+
+`SYSTEM_B_ROBUSTNESS_PLAN.md` freezes the sensitivity agenda before any C/D held-out outcome. Because B outcomes are already known, B robustness analyses are explicitly post-hoc and cannot replace R0.v1 or the first evaluation.
+
+
+---
+
+## 7 October 2026 — semantic-analysis hash-chain sanitation
+
+Before executing the new frozen-evidence semantic analysis, its source chain was tightened: the accepted System-B supplement manifest is now pinned to canonical SHA-256 `70d41b210ed54f2fa2269ec738ccd94100148d701bb5a2ae79d8d30839e9d190`, and the semantic-analysis command verifies both the original evaluation and the accepted supplement before reading derived tables.
+
+This is an integrity-only change. No numerical result, R0 rule, threshold, fusion setting, or held-out computation is changed.
+
+
+---
+
+## 7 October 2026 — duplicate-dependence and lifecycle-schema sanitation
+
+Audit-only reconstruction quantified identical 77-feature patterns in the actual B evidence slices: 3.88% of the rule-validation slice belongs to duplicated patterns (max group 206), 5.86% of exact pre-drift rows (max 548), and 3.18% of exact synthetic post-drift rows (max 136). The primary duplicate-retention policy remains unchanged. These figures justify the already-frozen group-aware/deduplicated stability sensitivity and caution against interpreting row-bootstrap persistence as independence-aware robustness.
+
+The static R0 schema was also reviewed against the final D lifecycle claim. It is adequate for persistent initial rule identity but not, by itself, a complete lifecycle event log. D must prospectively add immutable operation/parent/evidence/trigger/decision/cost records while preserving the frozen R0 IDs.
+
+
+---
+
+## 7 October 2026 — semantic-analysis artifact tracking guard
+
+Before executing the new System-B semantic-analysis command, repository ignore rules were checked. `results/analysis/` was still covered by the generic `results/*` ignore pattern. The directory is now explicitly unignored so the derived semantic-analysis artifact can be reviewed, hashed and committed through the normal scientific freeze workflow.
+
+No analysis output had yet been generated when this guard was added.
+
+
+---
+
+## 7 October 2026 — expanded Q1 audit: hidden controls identified before C/D
+
+A second adversarial pass reviewed System-B mechanics not with the intent to improve already-observed B outcomes, but to determine whether assumptions would survive top-quartile peer review and whether they create hidden treatment variables for C/D.
+
+No frozen System-B artifact, rule, lambda, threshold or held-out outcome was changed.
+
+New material findings were appended to `SYSTEM_B_Q1_AUDIT.md` and prospective sensitivities to `SYSTEM_B_ROBUSTNESS_PLAN.md`.
+
+Key findings:
+
+- the absolute covered-count rule has sample-size-dependent meaning and cannot be transplanted blindly into a smaller D adaptation-validation window;
+- B development true-label validation contains only GoldenEye attacks, so R0 attack-rule precision is scenario-specific rather than generic attack-family validation;
+- the SHAP top-12 score is a bespoke class-aware max-normalized selection policy and requires robustness against conventional aggregation choices;
+- one deterministic 60/40 development split does not establish acceptance stability across legitimate validation partitions;
+- five-seed intervals quantify stochastic-model variability conditional on one stream, not environmental generalization;
+- accepted-rule validation metrics are selection-conditional; held-out pre-drift is the actual post-selection generalization check;
+- the historical B timing field includes symbolic inference plus fusion and lacks a strong repeated/thread-frozen benchmarking protocol;
+- C/D fused-threshold handling is itself a causal control after neural adaptation;
+- true-label class precision makes label latency part of D's treatment definition;
+- adaptation candidate-generation and validation evidence must be time-respecting;
+- imputed antecedent values are currently invisible in rule traces;
+- future overlapping D rules make confidence-update timing operationally important.
+
+The statistical analysis plan was expanded to state explicitly that seed-level uncertainty is conditional on scenario, rule-level outcomes remain nested/descriptive, and adaptive recovery/update timing must respect actual information availability.
+
+These changes are prospective for C/D. They do not authorize any retuning of R0.v1 after observed System-B outcomes.
+
+The previously identified weighted-surrogate-leaf consequent diagnostic remains the immediate blocking System-B closure gate.
+
+
+---
+
+## 7 October 2026 — R0.v1 protocol defect realized; R0.v2 correction frozen prospectively
+
+The committed training-only diagnostic `results/audits/system_b_r0_protocol_audit_v1.json` has raw SHA-256 `abfcb3af93531369427489fc27773f41e500a57279b0fa752b946c3985ebbf32`.
+
+It reconstructed all 62 original surrogate leaves using the exact frozen training rows, selected features, System-A checkpoints and weighted CART fitting procedure. It loaded no development, pre-drift or post-drift partition.
+
+Result:
+
+- 7 candidate consequents differ between the historical unweighted implementation and the fitted weighted CART leaf class;
+- 4 mismatches are active in R0.v1;
+- 0 path reconstruction mismatches;
+- 0 mismatches between the stored artifact and the historical unweighted-majority code.
+
+All four active discrepancies are stored BENIGN rules whose weighted CART leaf class is ATTACK. Using their already-frozen development-validation counts, the protocol-correct ATTACK consequent fails both class-precision and neural-fidelity gates for all four. They therefore should not have entered an implementation conforming to the frozen protocol.
+
+The original R0.v1 and all v1 evaluation evidence remain immutable.
+
+Before any corrected held-out computation, `SYSTEM_B_R0_V2_CORRECTION_PLAN.md` freezes a narrow deterministic correction:
+
+- inherit the exact frozen v1 feature selections;
+- do not rerun SHAP;
+- reconstruct the same weighted trees and paths;
+- derive candidate consequent from weighted CART leaf class;
+- reapply the original development validation gates;
+- abort if any unaffected active v1 rule changes;
+- reselect lambda and fused thresholds only on the original development fusion slice;
+- forbid pre/post access during v2 build.
+
+The correction decision is outcome-independent: if the build satisfies the frozen correction contract, R0.v2 supersedes R0.v1 for all future C/D initialization regardless of eventual corrected B held-out performance.
+
+A later corrected B v2 evaluation is required for static-reference comparability. It will be labeled a protocol-defect correction rather than an untouched first-look evaluation because v1 held-out outcomes are historically known.
+
+No C/D adaptive outcome has been generated, so the primary future C-vs-D causal contrast remains uncontaminated.
+
+
+### R0.v2 pre-execution sanitation hardening
+
+Before any local R0.v2 build, the correction code was reviewed again.
+
+Two additional integrity guards were added:
+
+- the v2 builder now invokes the complete accepted R0.v1 verifier, including source rule-artifact and checkpoint identities, rather than trusting only the v1 manifest's internal hash;
+- every candidate whose consequent is unaffected by the audited defect must reproduce its original development support, covered count, class precision, neural fidelity, bootstrap stability, complexity and gate decision exactly. Any discrepancy aborts v2 before fusion selection.
+
+The inherited v1 SHAP ranking is copied into each v2 rule artifact for provenance; SHAP itself remains unrecomputed.
+
+The correction plan, Q1 audit and robustness plan are now required governance files in CI.
+
+No data were loaded and no R0.v2 artifact existed when these guards were added.
+
+
+---
+
+## 7 October 2026 — protocol-conformant R0.v2 frozen and independently sanitized
+
+R0.v2 was generated locally from clean commit `cf28304e2f08be731c3ebaf096f4f31fd66eaef7` under Python 3.11.9 / CPU and committed at `16cd22a448e43e598b03446b978fb762fbd42523`.
+
+Accepted manifest:
+
+`data/manifests/system_b_v2.json`
+
+Canonical SHA-256:
+
+`131027d2f136494eb388183f18dcb7eb0e9d7e9fe786f22dba25f4e1624c1483`
+
+The exact artifact-freeze commit passed Research Contract #91.
+
+Independent repository comparison against R0.v1 confirmed:
+
+- training, development-validation, development-fusion, SHAP-background and SHAP-attribution row identities are unchanged;
+- preprocessing, System-A manifest and dependency-lock identities are unchanged;
+- all five selected-feature lists and SHAP rankings are unchanged;
+- candidate counts are unchanged at 13/12/13/12/12;
+- the only changed candidate consequents are exactly the seven frozen-audit mismatches;
+- every changed candidate is rejected under the original quality gates;
+- every unaffected candidate reproduces antecedent, support, covered count, class precision, neural fidelity, stability, complexity and gate decision exactly;
+- the only active R0.v1 rules removed are the four audited defective rules (two in seed 1 and two in seed 3);
+- no new active rule is introduced;
+- final active counts are 7/6/7/6/6.
+
+The same frozen fusion grid was recomputed on the same development fusion slice. Lambda 0.50 remains the rank-1 selection by mean MCC (0.7716683), followed monotonically by 0.60, 0.70, 0.80, 0.90 and 1.00. This is a fresh development-only consequence of R0.v2, not an inherited v1 constant.
+
+Frozen R0.v2 fused thresholds:
+
+- seed 0: 0.692427396774292;
+- seed 1: 0.9354645609855652;
+- seed 2: 0.8299936652183533;
+- seed 3: 0.9747405052185059;
+- seed 4: 0.9527904391288757.
+
+Only seed 1's threshold changes materially from v1. No pre/post partition was loaded during the v2 build.
+
+R0.v2 is now the required symbolic initialization for future C/D regardless of corrected B held-out performance. R0.v1 remains immutable historical nonconformant evidence.
+
+
+---
+
+## 7 October 2026 — corrected System-B v2 evaluation protocol frozen before execution
+
+After R0.v2 was accepted and before any R0.v2 pre/post computation, `SYSTEM_B_V2_EVALUATION_PROTOCOL.md` was frozen.
+
+The corrected evaluation is explicitly classified as an implementation-defect correction rather than untouched first-look evidence because R0.v1 held-out outcomes are historically known.
+
+No R0.v2 detection/explanation outcome existed when the protocol was fixed.
+
+The evaluator is isolated from v1 evaluation artifacts and may load only pre_drift/post_drift. It uses the accepted R0.v2 manifest, unchanged System-A checkpoints, frozen preprocessing, lambda and per-seed thresholds.
+
+Q1-audit-driven evidence additions are prospective and do not alter prediction:
+
+- benign/attack symbolic coverage, correctness and neural fidelity separately;
+- per-rule imputed-antecedent activation plus imputation-free rule-quality diagnostics;
+- repeated symbolic+fusion timing (1 warm-up + 5 measured exact-reproduction passes);
+- torch/threadpool/environment provenance.
+
+The output is write-once under `results/frozen/system_b_v2_corrected_v1/`.
+
+R0.v2 remains the required C/D initial symbolic state regardless of corrected evaluation results.
+
+
+### Corrected-v2 evaluator pre-run diagnostic test hardening
+
+Before corrected R0.v2 pre/post execution, a repository-only unit test was added for the new imputation-aware explanation diagnostic. It verifies that only activated rules whose antecedent feature was actually missing are counted, and that the imputation-free quality calculation excludes those activations without altering primary prediction.
+
+No R0.v2 held-out output existed when this test was added.
+
+
+### Statistical-status sanitation before corrected v2 evaluation
+
+Before R0.v2 pre/post execution, the statistical-analysis plan was amended to make the correction status explicit. R0.v2 is the protocol-conformant B baseline, but its corrected evaluation is not a second untouched first-look experiment. The v1-v2 contrast is therefore sensitivity/provenance rather than a confirmatory hypothesis test.
+
+The newly frozen class-conditional symbolic and imputation-aware diagnostics are descriptive. They do not add post-hoc confirmatory endpoints or alter the later primary matched C-vs-D inferential unit.
+
+No R0.v2 held-out result existed when this statistical classification was recorded.
+
+
+---
+
+## 7 October 2026 — corrected System-B v2 evaluation frozen and sanitation-complete
+
+The corrected protocol-conformant System-B v2 evaluation was executed from clean commit `51690ea23906ab87b9406311eacf381c7a22b5fb` and committed at `03b7e52da3a24ebc2c28b26f8293bcbea2413ed3`.
+
+Evaluation manifest:
+
+`results/frozen/system_b_v2_corrected_v1/evaluation_manifest.json`
+
+Canonical SHA-256:
+
+`583fa356c291bd7b2b275d726bb9eee31ae9aa5470cca50f0146c91642873710`
+
+The evidence commit passed Research Contract #96.
+
+Repository-side sanitation confirmed:
+
+- accepted R0.v2 manifest identity `131027d2f136494eb388183f18dcb7eb0e9d7e9fe786f22dba25f4e1624c1483`;
+- evaluation executed from a clean worktree under Python 3.11.9 / CPU;
+- training/development were not loaded by the evaluator;
+- all five seeds and both pre/post partitions are present;
+- every confusion matrix conserves sample and class totals exactly;
+- 14 windows per seed/partition cover exactly 69,260 pre rows and 69,270 post rows;
+- rule identities match pre/post within each seed at counts 7/6/7/6/6;
+- 32 direct rule staleness records are present;
+- staleness transitions are 18 pass→pass, 7 fail→pass, 6 fail→fail, 1 pass→fail;
+- all conflict-abstention rates are zero, as expected for mutually exclusive static tree-leaf rules;
+- all 64 rule×partition imputation diagnostics report zero activated rule antecedents depending on an imputed raw value;
+- repeated symbolic+fusion timing used the frozen 1 warm-up + 5 measured-repeat protocol and recorded thread/runtime state.
+
+Detection remained strong but did not turn the controlled shift into a generic degradation event. Across five seeds, mean MCC increased from 0.73324 pre to 0.77291 post and mean F1 from 0.71394 to 0.75933. Mean AP decreased from 0.90240 to 0.85119 and mean ROC-AUC slightly decreased from 0.97933 to 0.97518.
+
+Symbolic behavior is class-asymmetric:
+
+- mean overall resolved coverage: 0.96229 pre, 0.95732 post;
+- mean BENIGN resolved coverage: 0.98140 pre, 0.97062 post;
+- mean attack resolved coverage: 0.61259 pre, 0.71279 post;
+- mean BENIGN symbolic correctness: ~0.99999 pre and 1.0 post;
+- mean attack symbolic correctness: 0.80333 pre and 0.74953 post;
+- mean attack symbolic-to-neural fidelity: 0.94418 pre and 0.96406 post.
+
+Thus the shift increases attack-side rule activation/coverage on average while true-label correctness among covered attack rows declines on average. Neural fidelity improves at the same time. This directly demonstrates why class precision/correctness and neural fidelity must remain separate explanation-quality dimensions.
+
+The only pass→fail rule is seed 3 rule `r0-s3-e71a7cc956b5d661`, a BENIGN rule. Its class precision remains 1.0; support declines from 0.001790 to 0.001545, neural fidelity from 1.0 to 0.98131, and bootstrap gate-persistence stability from 1.0 to 0.8. The failure is therefore stability-driven rather than a correctness collapse.
+
+The v1→v2 correction has small predictive effect but meaningful coverage impact only on the affected seeds. Seeds 0/2/4 are unchanged. Seed 1 loses ~0.021 pre and ~0.035 post resolved coverage with MCC changes about -0.00284/-0.00202; seed 3 loses ~0.00445 pre and ~0.02165 post coverage while MCC is approximately unchanged/slightly improved post. This is implementation-correction provenance, not a model-selection comparison.
+
+R0.v2 remains the required initial symbolic state for future C/D regardless of these corrected held-out outcomes.
+
+
+---
+
+## 7 October 2026 — governing-source revision after retrospective assumption audit
+
+The two project-source Word authorities were revised additively after corrected System-B v2 evidence was already frozen.
+
+Current source identities:
+
+- MAIN: `c3f1fed692ff0478c221925fca5c311380617a993e7ebf0021af2e05a362ab66`;
+- Reconciled implementation plan: `05378ef14437f037bab0aa77853a16980b4fc60ac303398acc1cc293bdd32bdb`.
+
+The previously frozen A/B artifacts legitimately contain the earlier governing-source hashes and are not rewritten. The revised authorities govern new robustness diagnostics and all future C/D work.
+
+The revision formalizes:
+
+- a restart/versioned-rerun versus additive-sensitivity versus later-generalization classification;
+- BENIGN-source-regime-dominant wording for `sudden_benign_v1`, with explicit acknowledgment of nonzero GoldenEye temporal movement;
+- mandatory exact-pattern/duplicate-aware, development-split, fusion-authority, SHAP-reference and rule-gate robustness around immutable R0.v2;
+- a Stage-3A float64-versus-System-B-float32 conformance diagnostic;
+- unchanged/raw bounded seed-level t-intervals with publication-layer physical-axis handling;
+- multi-scenario/second-dataset and checkpoint-archive obligations before broad submission claims.
+
+No historical frozen artifact was altered by this governance sync.
+
+
+### Stage-3A/System-B dtype conformance audit frozen before execution
+
+The retrospective audit identified a documentation/implementation divergence: the Stage-3A readiness contract designates float64 as the shared preprocessing output for non-PyTorch consumers, while System B fit the surrogate from float32 transformed matrices.
+
+Before any robustness tranche or C/D implementation, a training/development-only audit command was added. The neural teacher remains float32 in both comparison arms; accepted R0.v2 feature selections are reused exactly; SHAP is not recomputed. The audit compares float32 versus float64 surrogate topology, train/validation leaf assignment, weighted leaf consequents, validation-gate outcomes and active candidate sets.
+
+The decision rule was frozen before execution: harmless threshold roundoff alone does not replace R0.v2. A new version is required only if the dtype change produces a discrete scientific difference in topology/assignment, consequent, gate outcome or accepted candidate set. No pre/post partition is loaded by this audit.
+
+
+### Repository retrospective scenario/exact-pattern audit added
+
+A write-once post-hoc diagnostic was added to reproduce the earlier raw-data recheck inside the governed repository.
+
+It records:
+
+- exact training duplicate-excess rows after the frozen 77-feature representation;
+- exact training-seen feature-pattern counts for development, pre-drift and post-drift, including class decomposition;
+- feature-wise KS diagnostics for pre/post BENIGN and GoldenEye subsets using the historical deterministic 50,000-row BENIGN sampling convention;
+- conservative scenario wording that does not assume attack-distribution invariance.
+
+This diagnostic may read all frozen partitions because it is explicitly retrospective descriptive evidence after A/B outcomes are known. It may not change scenario construction, R0.v2, thresholds or primary evaluation.
+
+
+### Fixed A/B seen-versus-unseen exact-pattern rescore added
+
+The Stage-2 data-quality policy had prospectively called for reporting observations whose exact feature pattern was not present in training. That reporting obligation was not carried through the original A/B evaluation.
+
+A new write-once robustness command now:
+
+- defines membership from exact equality of the raw frozen 77-feature representation before imputation/scaling;
+- uses training rows only to construct the membership mask;
+- reruns the already-frozen System-A checkpoints and accepted R0.v2 on pre/post without retraining, rule changes, lambda changes or rethresholding;
+- reports seen and unseen strata separately for A and B-v2;
+- treats one-class seen strata descriptively, with ROC-AUC/AP undefined where appropriate.
+
+This is additive post-hoc robustness, not model selection and not a replacement primary evaluation.
+
+
+### Bounded-metric interval reporting policy frozen
+
+The repository now explicitly distinguishes statistical arithmetic from presentation. Existing seed-level t-interval endpoints remain untouched even when a bounded metric interval extends outside [0,1]. Numerical tables retain the raw interval. Figures may use physical metric axes only with disclosure if the underlying interval exceeds the visible domain. No frozen evidence is clipped or rewritten.
+
+
+### Two-stage System-B selection robustness implemented
+
+The high-leverage B robustness choices are now implemented as a training/development-only selection freeze followed by a separate future held-out rescore.
+
+The selection stage covers:
+
+- Destination Port exclusion;
+- two alternate SHAP aggregation policies derived from the frozen attribution evidence;
+- four deterministic alternate development splits;
+- one-factor rule-gate variants for support, class precision, neural fidelity, bootstrap gate-persistence and complexity.
+
+For every variant, candidate rules use the protocol-correct weighted CART leaf consequent, the same redundancy/conflict policy, and the same development-only fusion-weight grid/threshold selection procedure. The resulting variant rule artifacts, lambda and thresholds are write-once and must be committed before any pre/post robustness evaluation.
+
+These variants can never replace accepted R0.v2 because held-out performance is better; they are secondary/post-hoc robustness only.
+
+
+### Held-out evaluation stage for B selection robustness implemented
+
+A separate robustness evaluator now consumes only a previously frozen/committed training-development selection manifest. It loads pre/post but not training/development, preserves every variant's frozen rules, lambda and per-seed threshold, and reports detection plus class-conditional symbolic outcomes. The resulting held-out robustness evidence cannot select a replacement for R0.v2.
+
+
+### Robustness isolation hardening
+
+Before any selection-robustness execution, the alternate-development-split implementation was reviewed for one-factor isolation. An initial draft also changed the bootstrap RNG as the split seed changed. That would have confounded split sensitivity with resampling realization. The code was corrected so bootstrap random state remains the original base+model-seed policy for every split variant; only development row membership changes.
+
+
+### Duplicate-aware System-B validation sensitivity implemented
+
+The duplicate sensitivity now avoids arbitrary first-row deduplication or majority relabeling. Exact raw 77-feature patterns are grouped; each pattern receives equal total weight, while any conflicting labels within a pattern remain represented as fractional class correctness. Bootstrap stability resamples entire exact-pattern groups.
+
+This provides a dependence-aware sensitivity for support/precision/fidelity/stability and candidate gate decisions without changing the primary row-retention policy.
+
+
+### SHAP background-reference sensitivity added to the selection freeze
+
+The selection-robustness stage now includes two alternate balanced SHAP backgrounds (seeds 20261008 and 20261009) and one natural-prevalence 256-row background (seed 20261007). The original balanced 20261007 background remains the primary reference.
+
+For these variants, the attribution sample remains exactly the frozen balanced 1,024/1,024 training sample from seed 20261007. Thus only the background reference distribution/seed changes. Each resulting ranking proceeds through the same surrogate, validation and development-only fusion selection pipeline before any held-out robustness evaluation.
+
+
+### Pattern-deduplicated System-A robustness teacher implemented
+
+A separate post-hoc alternate teacher now tests whether the primary neural baseline materially depends on repeated training observations. Training rows are collapsed by exact raw 77-feature pattern plus binary label, preserving contradictory BENIGN/attack representations as separate observations and forbidding majority relabeling. The accepted training-fitted preprocessor is reused without refit.
+
+The neural architecture, initialization/seeds, optimizer, early-stopping rule, development evidence, class-weight formula and MCC threshold-selection procedure remain the accepted System-A protocol. The alternate checkpoints and manifest are isolated under robustness paths and cannot replace accepted System A based on later held-out performance. No pre/post partition is loaded during alternate-teacher training.
+
+
+### CI repair for alternate-teacher data-firewall test — 7 October 2026
+
+Research Contract runs #115–#117 failed because the new repository-only test searched the entire `build_pattern_dedup_teacher` source for the bare strings `pre_drift` and `post_drift`. The builder legitimately records `pre_drift_used=False` and `post_drift_used=False` in its provenance manifest, causing a false-positive test failure even though its only partition loads are training and development.
+
+The test was narrowed to forbid exact held-out calls `load_partition("pre_drift")` and `load_partition("post_drift")` while still requiring explicit training/development loads. No experimental code, frozen artifact, treatment, data-access rule, or scientific result changed.
+
+
+### Fusion-authority robustness implementation — 7 October 2026
+
+The remaining high-priority System-B assumption, symbolic/neural fusion authority, was implemented as an isolated sensitivity rather than mixed into rule-selection variants.
+
+The sensitivity reuses the exact accepted R0.v2 rule artifacts. It does not rerun SHAP, fit a surrogate, change gates, or rebuild rules. Lambda values 0.70, 0.90 and 1.00 are fixed before held-out sensitivity execution. Each weight receives seed-specific thresholds selected only on the original development fusion slice with the original MCC/tie-break rule. The selection artifact must be committed before any pre/post sensitivity rescore.
+
+This design specifically tests whether the primary lambda=0.50 boundary choice and veto-like BENIGN rule authority materially drive the observed B conclusions without creating a post-hoc replacement baseline.
+
+
+### Fusion-authority CLI routing correction — 7 October 2026
+
+After the selection-robustness evaluation was frozen, the first attempted calls to
+`build-fusion-authority-robustness` and `verify-fusion-authority-robustness`
+were found to be misrouted by the System-B CLI dispatcher to
+`verify_duplicate_aware_validation()` through a catch-all `else` branch.
+
+Observed consequence:
+
+- both commands only re-verified the already frozen duplicate-aware validation artifact;
+- no fusion-authority selection directory or manifest was created;
+- no fusion-authority threshold selection occurred;
+- no pre_drift/post_drift partition was loaded by those attempted calls;
+- accepted A, R0.v2, B, and all frozen robustness evidence were unchanged.
+
+The dispatcher was corrected to use explicit command branches for duplicate-aware
+verification and all four fusion-authority operations, with an explicit error for
+any unhandled System-B command. A repository-only regression test now guards the
+mapping in CI. The fusion-authority sensitivity remains unexecuted until the
+corrected dispatcher commit passes CI.
+
+
+### Pattern-deduplicated teacher R0 robustness gate wired — 7 October 2026
+
+After the alternate System-A teacher manifest was frozen, the downstream alternate-R0 builder was promoted from a direct-import-only module to explicit System-B CLI commands:
+
+- `build-pattern-dedup-teacher-r0`
+- `verify-pattern-dedup-teacher-r0`
+
+The builder must start from a clean worktree and verifies the frozen alternate-teacher manifest/checkpoint hashes before use. It reconstructs the exact retained training rows, checks both retained-training and development row identities, reuses the accepted frozen preprocessing without refit, preserves the System-B SHAP/surrogate/validation protocol including weighted CART leaf consequents, and uses training/development only. The resulting alternate R0 manifest/rules are write-once and must be committed before any pre/post alternate-chain evaluation.
+
+The frozen alternate teacher removed 113,817 repeated training rows under exact raw 77-feature-pattern-plus-binary-label deduplication. Because label-conflicting feature patterns are preserved as separate observations, this differs by 41 rows from the earlier feature-pattern-only duplicate-excess count of 113,858; the difference is expected and is provenance evidence, not a correction.
+
+The deduplication is class-asymmetric: attack rows decrease more strongly than BENIGN rows, so the alternate teacher's positive-class weight changes accordingly. This is part of the intended training-multiplicity sensitivity and must not be interpreted as an isolated row-count perturbation.
+
+
+### Held-out pattern-deduplicated A-to-R0-to-B chain evaluation implemented — 7 October 2026
+
+After the alternate neural teacher and its downstream alternate R0 were both frozen before held-out access, a write-once evaluator was added for the complete duplicate-dependence chain.
+
+The evaluator:
+
+- verifies both frozen source manifests and their file identities before scoring;
+- loads pre_drift and post_drift only, with no training or development access;
+- scores the pattern-deduplicated alternate System-A teacher at its frozen per-seed development MCC thresholds;
+- scores the matched alternate System-B rule state using the same alternate teacher, its frozen selected lambda and per-seed development fusion thresholds;
+- reports seed-level, aggregate and paired post-minus-pre detection results, plus the corrected-v2 class-conditional symbolic evidence for alternate B;
+- cannot be used to select a replacement for accepted System A, R0.v2 or corrected System B.
+
+This sensitivity intentionally keeps the accepted training-fitted preprocessing fixed. It therefore measures dependence on training-example multiplicity and the resulting teacher/rule state, not a fully deduplicated end-to-end preprocessing pipeline.
+
+
+### Deduplicated-training chain evaluator CSV-schema correction — 8 October 2026
+
+The first held-out invocation of `evaluate-pattern-dedup-chain` occurred only after
+the alternate System-A teacher and alternate R0 manifests had been frozen. The
+evaluator successfully verified those frozen sources, loaded and scored the
+pre_drift/post_drift partitions, and then failed while serializing
+`metrics_by_seed_system.csv`.
+
+Cause: the shared CSV writer inferred field names from the first neural-only
+System-A row, while later System-B rows additionally contained the frozen
+symbolic evidence fields (coverage, correctness, fidelity, and abstention
+metrics). Python's `csv.DictWriter` therefore rejected the later rows as
+containing fields outside the first-row schema.
+
+Scientific consequence classification:
+
+- frozen alternate teacher: unchanged;
+- frozen alternate R0: unchanged;
+- thresholds, neural weight, rules, and held-out scoring equations: unchanged;
+- no evaluation manifest was produced by the failed write;
+- no persisted result is accepted from the failed attempt;
+- pre/post had nevertheless been accessed and scored in memory, so the corrected
+  rerun is explicitly classified as an implementation-defect correction rather
+  than a pristine first-look evaluation.
+
+Correction: the evaluator now rectangularizes the mixed System-A/System-B row
+schema deterministically before aggregation and CSV serialization. A
+repository-only regression test reproduces the heterogeneous-row condition.
+The correction changes serialization only and must not be used to alter model,
+rule, threshold, fusion, or metric choices.
+
+
+### System-B implementation closure after full duplicate-dependence chain — 8 October 2026
+
+The full pattern-deduplicated A-to-R0-to-B robustness chain is now frozen after a serialization-only evaluator correction. Research Contract run #151 passed on the frozen evaluation commit.
+
+Frozen duplicate-chain identities:
+
+- alternate System-A teacher manifest: `9aaf25d65052f3b6521c248d88aab6d55dd5dd2e02ed73d18452bc0460db3c5f`;
+- alternate R0 manifest: `3e1d7a984776ccc5d336716f25063f0e9f655590f8b4a92c1b6928f4517fe681`;
+- full-chain evaluation summary artifact hash: `b38765fc0c1a936d1918da77ddf332ca46924d829e9d58aa5c7001ca27ed1f3d`.
+
+The alternate teacher removes training multiplicity under exact raw 77-feature-pattern-plus-binary-label deduplication while preserving label conflicts and reusing the accepted preprocessing state. The resulting alternate R0 selects neural weight 0.50 but has 8/8/8/9/8 active rules across seeds, demonstrating substantial symbolic-state dependence on upstream training multiplicity.
+
+Held-out alternate-B mean detection remains viable: MCC is approximately 0.762 pre-drift and 0.790 post-drift; F1 approximately 0.745 and 0.779. Its post-minus-pre MCC is approximately +0.0287 and F1 +0.0332. Symbolic behavior differs materially from accepted R0.v2: attack resolved coverage is approximately 0.897 pre and 0.907 post, while attack symbolic correctness is approximately 0.563 pre and 0.614 post. These differences are treated as assumption dependence, not as a basis to replace accepted System A or R0.v2.
+
+With this evidence frozen, the mandatory retrospective System-B robustness tranche is closed. No unresolved System-B implementation defect remains that requires reopening A, R0.v2, or corrected B before C/D design work. Remaining open controls belong to the prospective adaptive phase and must be frozen before any C/D held-out execution.

@@ -1,0 +1,1451 @@
+{
+  "artifact_format_version": 1,
+  "selection_id": "system_b_selection_robustness_v1",
+  "variant_id": "shap_background_natural_20261007",
+  "family": "shap_background",
+  "source_system_b_v2_manifest_sha256": "131027d2f136494eb388183f18dcb7eb0e9d7e9fe786f22dba25f4e1624c1483",
+  "seed": 4,
+  "selected_features": [
+    "Destination Port",
+    "Packet Length Variance",
+    "Min Packet Length",
+    "Bwd Packet Length Std",
+    "Packet Length Std",
+    "Idle Max",
+    "Average Packet Size",
+    "Init_Win_bytes_forward",
+    "Idle Mean",
+    "ACK Flag Count",
+    "FIN Flag Count",
+    "Bwd Packet Length Max"
+  ],
+  "sensitivity_shap_ranking": [
+    {
+      "rank": 1,
+      "feature": "Destination Port",
+      "selection_score": 1.0,
+      "mean_abs_shap_global": 37.97862752576475,
+      "mean_abs_shap_benign": 55.02538727695355,
+      "mean_abs_shap_attack": 20.93186777457595
+    },
+    {
+      "rank": 2,
+      "feature": "Packet Length Variance",
+      "selection_score": 0.501614371965397,
+      "mean_abs_shap_global": 7.103655363072903,
+      "mean_abs_shap_benign": 3.7075850183391594,
+      "mean_abs_shap_attack": 10.499725707806647
+    },
+    {
+      "rank": 3,
+      "feature": "Min Packet Length",
+      "selection_score": 0.2862569537384351,
+      "mean_abs_shap_global": 8.435784111730754,
+      "mean_abs_shap_benign": 10.87967551825568,
+      "mean_abs_shap_attack": 5.991892705205828
+    },
+    {
+      "rank": 4,
+      "feature": "Bwd Packet Length Std",
+      "selection_score": 0.27846799295452773,
+      "mean_abs_shap_global": 4.208304532639886,
+      "mean_abs_shap_benign": 2.587753857304051,
+      "mean_abs_shap_attack": 5.828855207975721
+    },
+    {
+      "rank": 5,
+      "feature": "Packet Length Std",
+      "selection_score": 0.1684183851352839,
+      "mean_abs_shap_global": 2.5683731345193337,
+      "mean_abs_shap_benign": 1.6114349005792974,
+      "mean_abs_shap_attack": 3.52531136845937
+    },
+    {
+      "rank": 6,
+      "feature": "Idle Max",
+      "selection_score": 0.16454650826856088,
+      "mean_abs_shap_global": 2.5590946178431295,
+      "mean_abs_shap_benign": 1.6739234818405748,
+      "mean_abs_shap_attack": 3.4442657538456842
+    },
+    {
+      "rank": 7,
+      "feature": "Average Packet Size",
+      "selection_score": 0.15470092028089868,
+      "mean_abs_shap_global": 2.2510827170344783,
+      "mean_abs_shap_benign": 1.2639862261439703,
+      "mean_abs_shap_attack": 3.2381792079249863
+    },
+    {
+      "rank": 8,
+      "feature": "Init_Win_bytes_forward",
+      "selection_score": 0.15041179299563043,
+      "mean_abs_shap_global": 5.257051494192638,
+      "mean_abs_shap_benign": 8.276467160605534,
+      "mean_abs_shap_attack": 2.237635827779741
+    },
+    {
+      "rank": 9,
+      "feature": "Idle Mean",
+      "selection_score": 0.14460060495037985,
+      "mean_abs_shap_global": 2.212853865654097,
+      "mean_abs_shap_benign": 1.39894698836315,
+      "mean_abs_shap_attack": 3.0267607429450436
+    },
+    {
+      "rank": 10,
+      "feature": "ACK Flag Count",
+      "selection_score": 0.12872937630409947,
+      "mean_abs_shap_global": 2.062661247386586,
+      "mean_abs_shap_benign": 1.430776211272132,
+      "mean_abs_shap_attack": 2.6945462835010403
+    },
+    {
+      "rank": 11,
+      "feature": "FIN Flag Count",
+      "selection_score": 0.12461194134467618,
+      "mean_abs_shap_global": 1.8014622870427957,
+      "mean_abs_shap_benign": 0.9945638947256157,
+      "mean_abs_shap_attack": 2.6083606793599756
+    },
+    {
+      "rank": 12,
+      "feature": "Bwd Packet Length Max",
+      "selection_score": 0.11083431500788496,
+      "mean_abs_shap_global": 1.5929178884555313,
+      "mean_abs_shap_benign": 0.865866550280316,
+      "mean_abs_shap_attack": 2.3199692266307466
+    },
+    {
+      "rank": 13,
+      "feature": "Fwd Packets/s",
+      "selection_score": 0.10351810213709042,
+      "mean_abs_shap_global": 1.8673081358838317,
+      "mean_abs_shap_benign": 1.5677890455590386,
+      "mean_abs_shap_attack": 2.166827226208625
+    },
+    {
+      "rank": 14,
+      "feature": "Bwd IAT Total",
+      "selection_score": 0.0999528831552989,
+      "mean_abs_shap_global": 1.9964490040702003,
+      "mean_abs_shap_benign": 1.9006974742460443,
+      "mean_abs_shap_attack": 2.0922005338943563
+    },
+    {
+      "rank": 15,
+      "feature": "Bwd Packet Length Min",
+      "selection_score": 0.09871923882556273,
+      "mean_abs_shap_global": 3.41583589498714,
+      "mean_abs_shap_benign": 4.7652937360708165,
+      "mean_abs_shap_attack": 2.0663780539034633
+    },
+    {
+      "rank": 16,
+      "feature": "Fwd IAT Total",
+      "selection_score": 0.09778058089838997,
+      "mean_abs_shap_global": 2.4883279531222797,
+      "mean_abs_shap_benign": 2.929925715958234,
+      "mean_abs_shap_attack": 2.0467301902863255
+    },
+    {
+      "rank": 17,
+      "feature": "PSH Flag Count",
+      "selection_score": 0.09480383859253406,
+      "mean_abs_shap_global": 3.3889477929005807,
+      "mean_abs_shap_benign": 4.793474171859998,
+      "mean_abs_shap_attack": 1.9844214139411633
+    },
+    {
+      "rank": 18,
+      "feature": "Flow Packets/s",
+      "selection_score": 0.07691516766597079,
+      "mean_abs_shap_global": 1.4088147317029325,
+      "mean_abs_shap_benign": 1.207651343962425,
+      "mean_abs_shap_attack": 1.60997811944344
+    },
+    {
+      "rank": 19,
+      "feature": "Bwd Packet Length Mean",
+      "selection_score": 0.07678762682353385,
+      "mean_abs_shap_global": 1.2566535585160636,
+      "mean_abs_shap_benign": 0.9059986656384353,
+      "mean_abs_shap_attack": 1.607308451393692
+    },
+    {
+      "rank": 20,
+      "feature": "Fwd IAT Std",
+      "selection_score": 0.06941039147860449,
+      "mean_abs_shap_global": 1.0684068517966807,
+      "mean_abs_shap_benign": 0.6839245669816592,
+      "mean_abs_shap_attack": 1.4528891366117023
+    },
+    {
+      "rank": 21,
+      "feature": "Packet Length Mean",
+      "selection_score": 0.06478649520274263,
+      "mean_abs_shap_global": 1.1940670364247694,
+      "mean_abs_shap_benign": 1.032031721687531,
+      "mean_abs_shap_attack": 1.3561023511620078
+    },
+    {
+      "rank": 22,
+      "feature": "Bwd IAT Std",
+      "selection_score": 0.06170290366939659,
+      "mean_abs_shap_global": 0.9657396711781985,
+      "mean_abs_shap_benign": 0.6399223214411904,
+      "mean_abs_shap_attack": 1.2915570209152065
+    },
+    {
+      "rank": 23,
+      "feature": "Down/Up Ratio",
+      "selection_score": 0.056933187056733836,
+      "mean_abs_shap_global": 1.8933837782915361,
+      "mean_abs_shap_benign": 2.5950496131263208,
+      "mean_abs_shap_attack": 1.1917179434567515
+    },
+    {
+      "rank": 24,
+      "feature": "Bwd Packets/s",
+      "selection_score": 0.05486512909869879,
+      "mean_abs_shap_global": 1.9440062542275882,
+      "mean_abs_shap_benign": 3.0189749766559544,
+      "mean_abs_shap_attack": 0.869037531799222
+    },
+    {
+      "rank": 25,
+      "feature": "Fwd Packet Length Std",
+      "selection_score": 0.05077675885347981,
+      "mean_abs_shap_global": 1.708603910577608,
+      "mean_abs_shap_benign": 2.7940108205812066,
+      "mean_abs_shap_attack": 0.6231970005740095
+    },
+    {
+      "rank": 26,
+      "feature": "Fwd IAT Max",
+      "selection_score": 0.049676989622162,
+      "mean_abs_shap_global": 0.6814829440338839,
+      "mean_abs_shap_benign": 0.3231337098576912,
+      "mean_abs_shap_attack": 1.0398321782100766
+    },
+    {
+      "rank": 27,
+      "feature": "Max Packet Length",
+      "selection_score": 0.049630103723833786,
+      "mean_abs_shap_global": 0.9946208451675602,
+      "mean_abs_shap_benign": 0.9503909215493422,
+      "mean_abs_shap_attack": 1.0388507687857782
+    },
+    {
+      "rank": 28,
+      "feature": "Avg Fwd Segment Size",
+      "selection_score": 0.04919728098190414,
+      "mean_abs_shap_global": 1.8352535943410544,
+      "mean_abs_shap_benign": 2.707099439002377,
+      "mean_abs_shap_attack": 0.9634077496797318
+    },
+    {
+      "rank": 29,
+      "feature": "Flow IAT Mean",
+      "selection_score": 0.0465311826381426,
+      "mean_abs_shap_global": 0.7804227877434187,
+      "mean_abs_shap_benign": 0.5868610131105925,
+      "mean_abs_shap_attack": 0.9739845623762449
+    },
+    {
+      "rank": 30,
+      "feature": "Fwd Packet Length Max",
+      "selection_score": 0.04206699129449699,
+      "mean_abs_shap_global": 1.354033491556038,
+      "mean_abs_shap_benign": 1.8275262836614274,
+      "mean_abs_shap_attack": 0.8805406994506484
+    },
+    {
+      "rank": 31,
+      "feature": "Bwd IAT Max",
+      "selection_score": 0.04149797378988274,
+      "mean_abs_shap_global": 0.845766814145918,
+      "mean_abs_shap_benign": 0.8229035280091921,
+      "mean_abs_shap_attack": 0.868630100282644
+    },
+    {
+      "rank": 32,
+      "feature": "Bwd IAT Mean",
+      "selection_score": 0.041354800698126935,
+      "mean_abs_shap_global": 0.6057653881182432,
+      "mean_abs_shap_benign": 0.34589755617935225,
+      "mean_abs_shap_attack": 0.8656332200571342
+    },
+    {
+      "rank": 33,
+      "feature": "Flow Duration",
+      "selection_score": 0.04021086813620524,
+      "mean_abs_shap_global": 0.7152358544844333,
+      "mean_abs_shap_benign": 0.5887831340409093,
+      "mean_abs_shap_attack": 0.8416885749279572
+    },
+    {
+      "rank": 34,
+      "feature": "Avg Bwd Segment Size",
+      "selection_score": 0.03484544476062716,
+      "mean_abs_shap_global": 0.5693299060172876,
+      "mean_abs_shap_benign": 0.40927956975883717,
+      "mean_abs_shap_attack": 0.729380242275738
+    },
+    {
+      "rank": 35,
+      "feature": "SYN Flag Count",
+      "selection_score": 0.03229888096449441,
+      "mean_abs_shap_global": 1.104052953063274,
+      "mean_abs_shap_benign": 1.777258433683528,
+      "mean_abs_shap_attack": 0.4308474724430198
+    },
+    {
+      "rank": 36,
+      "feature": "Fwd Packet Length Min",
+      "selection_score": 0.03190889894038342,
+      "mean_abs_shap_global": 1.1532566244600275,
+      "mean_abs_shap_benign": 1.7557995217757707,
+      "mean_abs_shap_attack": 0.5507137271442843
+    },
+    {
+      "rank": 37,
+      "feature": "Fwd Packet Length Mean",
+      "selection_score": 0.029946261716892016,
+      "mean_abs_shap_global": 1.1163848271611556,
+      "mean_abs_shap_benign": 1.6478046484689912,
+      "mean_abs_shap_attack": 0.58496500585332
+    },
+    {
+      "rank": 38,
+      "feature": "Fwd IAT Mean",
+      "selection_score": 0.0291097828058108,
+      "mean_abs_shap_global": 0.6505328355530651,
+      "mean_abs_shap_benign": 0.691743546468274,
+      "mean_abs_shap_attack": 0.6093221246378562
+    },
+    {
+      "rank": 39,
+      "feature": "Flow IAT Max",
+      "selection_score": 0.02453190206572175,
+      "mean_abs_shap_global": 0.5415835054760123,
+      "mean_abs_shap_benign": 0.5696684806534904,
+      "mean_abs_shap_attack": 0.5134985302985342
+    },
+    {
+      "rank": 40,
+      "feature": "Idle Min",
+      "selection_score": 0.023328264645382017,
+      "mean_abs_shap_global": 0.41966201797947633,
+      "mean_abs_shap_benign": 0.3510198849915014,
+      "mean_abs_shap_attack": 0.4883041509674513
+    },
+    {
+      "rank": 41,
+      "feature": "Flow IAT Std",
+      "selection_score": 0.019983725570398687,
+      "mean_abs_shap_global": 0.5850987347487262,
+      "mean_abs_shap_benign": 0.7519007682144547,
+      "mean_abs_shap_attack": 0.4182967012829977
+    },
+    {
+      "rank": 42,
+      "feature": "Total Length of Fwd Packets",
+      "selection_score": 0.01790792428601305,
+      "mean_abs_shap_global": 0.5867861872143294,
+      "mean_abs_shap_benign": 0.9853904691642299,
+      "mean_abs_shap_attack": 0.1881819052644289
+    },
+    {
+      "rank": 43,
+      "feature": "Flow Bytes/s",
+      "selection_score": 0.01689765311772519,
+      "mean_abs_shap_global": 0.6174351891847891,
+      "mean_abs_shap_benign": 0.9297999068744502,
+      "mean_abs_shap_attack": 0.305070471495128
+    },
+    {
+      "rank": 44,
+      "feature": "Fwd PSH Flags",
+      "selection_score": 0.015688983137887424,
+      "mean_abs_shap_global": 0.5790382910063272,
+      "mean_abs_shap_benign": 0.8632923731438495,
+      "mean_abs_shap_attack": 0.29478420886880485
+    },
+    {
+      "rank": 45,
+      "feature": "Fwd IAT Min",
+      "selection_score": 0.013470031968954202,
+      "mean_abs_shap_global": 0.4860934170043265,
+      "mean_abs_shap_benign": 0.6902339059151927,
+      "mean_abs_shap_attack": 0.2819529280934603
+    },
+    {
+      "rank": 46,
+      "feature": "Active Max",
+      "selection_score": 0.011566817690670096,
+      "mean_abs_shap_global": 0.32585444603955693,
+      "mean_abs_shap_benign": 0.4095937936053815,
+      "mean_abs_shap_attack": 0.24211509847373236
+    },
+    {
+      "rank": 47,
+      "feature": "Init_Win_bytes_backward",
+      "selection_score": 0.011078851624653536,
+      "mean_abs_shap_global": 0.3647085884118155,
+      "mean_abs_shap_benign": 0.6096181012304669,
+      "mean_abs_shap_attack": 0.11979907559316416
+    },
+    {
+      "rank": 48,
+      "feature": "ECE Flag Count",
+      "selection_score": 0.010286255638671178,
+      "mean_abs_shap_global": 0.2830026000738144,
+      "mean_abs_shap_benign": 0.5660052001476288,
+      "mean_abs_shap_attack": 0.0
+    },
+    {
+      "rank": 49,
+      "feature": "URG Flag Count",
+      "selection_score": 0.00982548644610781,
+      "mean_abs_shap_global": 0.35096194275064363,
+      "mean_abs_shap_benign": 0.4962581023904704,
+      "mean_abs_shap_attack": 0.20566578311081685
+    },
+    {
+      "rank": 50,
+      "feature": "Subflow Fwd Bytes",
+      "selection_score": 0.009523610226876388,
+      "mean_abs_shap_global": 0.30195140641877316,
+      "mean_abs_shap_benign": 0.5240403410086287,
+      "mean_abs_shap_attack": 0.07986247182891759
+    },
+    {
+      "rank": 51,
+      "feature": "Bwd IAT Min",
+      "selection_score": 0.008068431521593774,
+      "mean_abs_shap_global": 0.24776856934313685,
+      "mean_abs_shap_benign": 0.3266497969280522,
+      "mean_abs_shap_attack": 0.1688873417582215
+    },
+    {
+      "rank": 52,
+      "feature": "Idle Std",
+      "selection_score": 0.006734338563386758,
+      "mean_abs_shap_global": 0.1846094588615017,
+      "mean_abs_shap_benign": 0.22825663336496405,
+      "mean_abs_shap_attack": 0.14096228435803937
+    },
+    {
+      "rank": 53,
+      "feature": "Active Mean",
+      "selection_score": 0.006525117818432858,
+      "mean_abs_shap_global": 0.19497357989735598,
+      "mean_abs_shap_benign": 0.2533642564057459,
+      "mean_abs_shap_attack": 0.13658290338896606
+    },
+    {
+      "rank": 54,
+      "feature": "Total Fwd Packets",
+      "selection_score": 0.005821382376488233,
+      "mean_abs_shap_global": 0.18061660484195485,
+      "mean_abs_shap_benign": 0.3203238197534972,
+      "mean_abs_shap_attack": 0.04090938993041249
+    },
+    {
+      "rank": 55,
+      "feature": "Subflow Fwd Packets",
+      "selection_score": 0.005797832272425322,
+      "mean_abs_shap_global": 0.17863035903943114,
+      "mean_abs_shap_benign": 0.319027966157023,
+      "mean_abs_shap_attack": 0.03823275192183928
+    },
+    {
+      "rank": 56,
+      "feature": "Subflow Bwd Packets",
+      "selection_score": 0.005233359894406693,
+      "mean_abs_shap_global": 0.1504032881710966,
+      "mean_abs_shap_benign": 0.287967654949405,
+      "mean_abs_shap_attack": 0.012838921392788194
+    },
+    {
+      "rank": 57,
+      "feature": "Total Backward Packets",
+      "selection_score": 0.00518831948431514,
+      "mean_abs_shap_global": 0.14746032261919595,
+      "mean_abs_shap_benign": 0.28548928894100456,
+      "mean_abs_shap_attack": 0.009431356297387339
+    },
+    {
+      "rank": 58,
+      "feature": "Active Std",
+      "selection_score": 0.004790149409519,
+      "mean_abs_shap_global": 0.12649247491327742,
+      "mean_abs_shap_benign": 0.15271817576604008,
+      "mean_abs_shap_attack": 0.10026677406051476
+    },
+    {
+      "rank": 59,
+      "feature": "Subflow Bwd Bytes",
+      "selection_score": 0.004659262716299608,
+      "mean_abs_shap_global": 0.13371904390218603,
+      "mean_abs_shap_benign": 0.2563777353894565,
+      "mean_abs_shap_attack": 0.011060352414915542
+    },
+    {
+      "rank": 60,
+      "feature": "Total Length of Bwd Packets",
+      "selection_score": 0.004056881887453797,
+      "mean_abs_shap_global": 0.115980578454284,
+      "mean_abs_shap_benign": 0.22323149699400346,
+      "mean_abs_shap_attack": 0.008729659914564536
+    },
+    {
+      "rank": 61,
+      "feature": "Active Min",
+      "selection_score": 0.0026694022748009394,
+      "mean_abs_shap_global": 0.08975654531021249,
+      "mean_abs_shap_benign": 0.14688489396890247,
+      "mean_abs_shap_attack": 0.0326281966515225
+    },
+    {
+      "rank": 62,
+      "feature": "act_data_pkt_fwd",
+      "selection_score": 0.0025820386680165367,
+      "mean_abs_shap_global": 0.07270589729764154,
+      "mean_abs_shap_benign": 0.14207767767167923,
+      "mean_abs_shap_attack": 0.003334116923603858
+    },
+    {
+      "rank": 63,
+      "feature": "RST Flag Count",
+      "selection_score": 0.002115400397886848,
+      "mean_abs_shap_global": 0.05820036306977272,
+      "mean_abs_shap_benign": 0.11640072613954544,
+      "mean_abs_shap_attack": 0.0
+    },
+    {
+      "rank": 64,
+      "feature": "Flow IAT Min",
+      "selection_score": 0.0014593644554922452,
+      "mean_abs_shap_global": 0.04457924820617065,
+      "mean_abs_shap_benign": 0.0586112725950616,
+      "mean_abs_shap_attack": 0.0305472238172797
+    },
+    {
+      "rank": 65,
+      "feature": "Bwd Header Length",
+      "selection_score": 8.323424751191669e-06,
+      "mean_abs_shap_global": 0.00024021589818720712,
+      "mean_abs_shap_benign": 0.00045799967040490233,
+      "mean_abs_shap_attack": 2.2432125969511912e-05
+    },
+    {
+      "rank": 66,
+      "feature": "Fwd Header Length",
+      "selection_score": 3.697654654897603e-07,
+      "mean_abs_shap_global": 1.0950838526730224e-05,
+      "mean_abs_shap_benign": 2.0346487940217065e-05,
+      "mean_abs_shap_attack": 1.5551891132433836e-06
+    },
+    {
+      "rank": 67,
+      "feature": "min_seg_size_forward",
+      "selection_score": 1.4949042268459436e-07,
+      "mean_abs_shap_global": 3.885948727818875e-06,
+      "mean_abs_shap_benign": 4.642783694438352e-06,
+      "mean_abs_shap_attack": 3.129113761199398e-06
+    },
+    {
+      "rank": 68,
+      "feature": "Bwd PSH Flags",
+      "selection_score": 0.0,
+      "mean_abs_shap_global": 0.0,
+      "mean_abs_shap_benign": 0.0,
+      "mean_abs_shap_attack": 0.0
+    },
+    {
+      "rank": 69,
+      "feature": "Fwd URG Flags",
+      "selection_score": 0.0,
+      "mean_abs_shap_global": 0.0,
+      "mean_abs_shap_benign": 0.0,
+      "mean_abs_shap_attack": 0.0
+    },
+    {
+      "rank": 70,
+      "feature": "Bwd URG Flags",
+      "selection_score": 0.0,
+      "mean_abs_shap_global": 0.0,
+      "mean_abs_shap_benign": 0.0,
+      "mean_abs_shap_attack": 0.0
+    },
+    {
+      "rank": 71,
+      "feature": "CWE Flag Count",
+      "selection_score": 0.0,
+      "mean_abs_shap_global": 0.0,
+      "mean_abs_shap_benign": 0.0,
+      "mean_abs_shap_attack": 0.0
+    },
+    {
+      "rank": 72,
+      "feature": "Fwd Avg Bytes/Bulk",
+      "selection_score": 0.0,
+      "mean_abs_shap_global": 0.0,
+      "mean_abs_shap_benign": 0.0,
+      "mean_abs_shap_attack": 0.0
+    },
+    {
+      "rank": 73,
+      "feature": "Fwd Avg Packets/Bulk",
+      "selection_score": 0.0,
+      "mean_abs_shap_global": 0.0,
+      "mean_abs_shap_benign": 0.0,
+      "mean_abs_shap_attack": 0.0
+    },
+    {
+      "rank": 74,
+      "feature": "Fwd Avg Bulk Rate",
+      "selection_score": 0.0,
+      "mean_abs_shap_global": 0.0,
+      "mean_abs_shap_benign": 0.0,
+      "mean_abs_shap_attack": 0.0
+    },
+    {
+      "rank": 75,
+      "feature": "Bwd Avg Bytes/Bulk",
+      "selection_score": 0.0,
+      "mean_abs_shap_global": 0.0,
+      "mean_abs_shap_benign": 0.0,
+      "mean_abs_shap_attack": 0.0
+    },
+    {
+      "rank": 76,
+      "feature": "Bwd Avg Packets/Bulk",
+      "selection_score": 0.0,
+      "mean_abs_shap_global": 0.0,
+      "mean_abs_shap_benign": 0.0,
+      "mean_abs_shap_attack": 0.0
+    },
+    {
+      "rank": 77,
+      "feature": "Bwd Avg Bulk Rate",
+      "selection_score": 0.0,
+      "mean_abs_shap_global": 0.0,
+      "mean_abs_shap_benign": 0.0,
+      "mean_abs_shap_attack": 0.0
+    }
+  ],
+  "development_split_seed": 20261007,
+  "gates": {
+    "min_support": 0.001,
+    "min_covered": 100,
+    "min_class_precision": 0.8,
+    "min_neural_fidelity": 0.9,
+    "bootstrap_replicates": 100,
+    "bootstrap_random_state_base": 20261007,
+    "min_stability": 0.9,
+    "max_complexity": 4,
+    "same_class_redundancy_overlap": 0.95,
+    "cross_class_conflict_overlap": 0.5
+  },
+  "surrogate_training_neural_fidelity": 0.9653715571038415,
+  "candidate_log": [
+    {
+      "candidate": "s4-leaf4",
+      "rule_id": "r0-s4-267bc1397382961e",
+      "antecedent": [
+        {
+          "feature": "Destination Port",
+          "operator": "<=",
+          "threshold": -0.4180254191160202,
+          "raw_threshold": 84.00007338054002
+        },
+        {
+          "feature": "Bwd Packet Length Std",
+          "operator": "<=",
+          "threshold": 1.3048039078712463,
+          "raw_threshold": 1496.8329242530829
+        },
+        {
+          "feature": "Average Packet Size",
+          "operator": "<=",
+          "threshold": -0.6370151937007904,
+          "raw_threshold": 7.366668197078525
+        },
+        {
+          "feature": "Init_Win_bytes_forward",
+          "operator": "<=",
+          "threshold": -0.4516769051551819,
+          "raw_threshold": 274.49994838239036
+        }
+      ],
+      "consequent": 1,
+      "support": 0.009776558715493319,
+      "covered_count": 1219,
+      "class_precision": 0.009023789991796555,
+      "neural_fidelity": 0.004101722723543888,
+      "stability": 0.0,
+      "complexity": 4,
+      "accepted_by_quality_gate": false,
+      "reasons": [
+        "class_precision",
+        "neural_fidelity",
+        "stability"
+      ]
+    },
+    {
+      "candidate": "s4-leaf5",
+      "rule_id": "r0-s4-5a0a5e4f0f1bfeb5",
+      "antecedent": [
+        {
+          "feature": "Destination Port",
+          "operator": "<=",
+          "threshold": -0.4180254191160202,
+          "raw_threshold": 84.00007338054002
+        },
+        {
+          "feature": "Bwd Packet Length Std",
+          "operator": "<=",
+          "threshold": 1.3048039078712463,
+          "raw_threshold": 1496.8329242530829
+        },
+        {
+          "feature": "Average Packet Size",
+          "operator": "<=",
+          "threshold": -0.6370151937007904,
+          "raw_threshold": 7.366668197078525
+        },
+        {
+          "feature": "Init_Win_bytes_forward",
+          "operator": ">",
+          "threshold": -0.4516769051551819,
+          "raw_threshold": 274.49994838239036
+        }
+      ],
+      "consequent": 0,
+      "support": 0.039066134128931874,
+      "covered_count": 4871,
+      "class_precision": 0.9223978649148019,
+      "neural_fidelity": 0.9991788133853419,
+      "stability": 1.0,
+      "complexity": 4,
+      "accepted_by_quality_gate": true,
+      "reasons": []
+    },
+    {
+      "candidate": "s4-leaf7",
+      "rule_id": "r0-s4-de9c6dab6f02b0d4",
+      "antecedent": [
+        {
+          "feature": "Destination Port",
+          "operator": ">",
+          "threshold": -0.4180254191160202,
+          "raw_threshold": 84.00007338054002
+        },
+        {
+          "feature": "Bwd Packet Length Std",
+          "operator": "<=",
+          "threshold": 1.3048039078712463,
+          "raw_threshold": 1496.8329242530829
+        },
+        {
+          "feature": "Average Packet Size",
+          "operator": "<=",
+          "threshold": -0.6370151937007904,
+          "raw_threshold": 7.366668197078525
+        },
+        {
+          "feature": "Idle Max",
+          "operator": "<=",
+          "threshold": -0.10737547278404236,
+          "raw_threshold": 10216818.509933127
+        }
+      ],
+      "consequent": 0,
+      "support": 0.05807388159055547,
+      "covered_count": 7241,
+      "class_precision": 1.0,
+      "neural_fidelity": 0.998342770335589,
+      "stability": 1.0,
+      "complexity": 4,
+      "accepted_by_quality_gate": true,
+      "reasons": []
+    },
+    {
+      "candidate": "s4-leaf8",
+      "rule_id": "r0-s4-9c84b3d2b8322bfb",
+      "antecedent": [
+        {
+          "feature": "Destination Port",
+          "operator": ">",
+          "threshold": -0.4180254191160202,
+          "raw_threshold": 84.00007338054002
+        },
+        {
+          "feature": "Bwd Packet Length Std",
+          "operator": "<=",
+          "threshold": 1.3048039078712463,
+          "raw_threshold": 1496.8329242530829
+        },
+        {
+          "feature": "Average Packet Size",
+          "operator": "<=",
+          "threshold": -0.6370151937007904,
+          "raw_threshold": 7.366668197078525
+        },
+        {
+          "feature": "Idle Max",
+          "operator": ">",
+          "threshold": -0.10737547278404236,
+          "raw_threshold": 10216818.509933127
+        }
+      ],
+      "consequent": 1,
+      "support": 0.00030476557111464,
+      "covered_count": 38,
+      "class_precision": 0.0,
+      "neural_fidelity": 0.42105263157894735,
+      "stability": 0.0,
+      "complexity": 4,
+      "accepted_by_quality_gate": false,
+      "reasons": [
+        "support",
+        "covered_count",
+        "class_precision",
+        "neural_fidelity",
+        "stability"
+      ]
+    },
+    {
+      "candidate": "s4-leaf11",
+      "rule_id": "r0-s4-7917f151ba3bb25c",
+      "antecedent": [
+        {
+          "feature": "Destination Port",
+          "operator": "<=",
+          "threshold": -0.4207981824874878,
+          "raw_threshold": 32.00006432871669
+        },
+        {
+          "feature": "Bwd Packet Length Std",
+          "operator": "<=",
+          "threshold": -0.11707142367959023,
+          "raw_threshold": 302.066725118891
+        },
+        {
+          "feature": "Average Packet Size",
+          "operator": ">",
+          "threshold": -0.6370151937007904,
+          "raw_threshold": 7.366668197078525
+        }
+      ],
+      "consequent": 1,
+      "support": 0.0041464157964807595,
+      "covered_count": 517,
+      "class_precision": 0.0,
+      "neural_fidelity": 0.0,
+      "stability": 0.0,
+      "complexity": 3,
+      "accepted_by_quality_gate": false,
+      "reasons": [
+        "class_precision",
+        "neural_fidelity",
+        "stability"
+      ]
+    },
+    {
+      "candidate": "s4-leaf12",
+      "rule_id": "r0-s4-d921e73dd34c1c61",
+      "antecedent": [
+        {
+          "feature": "Destination Port",
+          "operator": "<=",
+          "threshold": -0.4207981824874878,
+          "raw_threshold": 32.00006432871669
+        },
+        {
+          "feature": "Bwd Packet Length Std",
+          "operator": ">",
+          "threshold": -0.11707142367959023,
+          "raw_threshold": 302.066725118891
+        },
+        {
+          "feature": "Bwd Packet Length Std",
+          "operator": "<=",
+          "threshold": 1.3048039078712463,
+          "raw_threshold": 1496.8329242530829
+        },
+        {
+          "feature": "Average Packet Size",
+          "operator": ">",
+          "threshold": -0.6370151937007904,
+          "raw_threshold": 7.366668197078525
+        }
+      ],
+      "consequent": 0,
+      "support": 0.003609065973726,
+      "covered_count": 450,
+      "class_precision": 1.0,
+      "neural_fidelity": 1.0,
+      "stability": 1.0,
+      "complexity": 4,
+      "accepted_by_quality_gate": true,
+      "reasons": []
+    },
+    {
+      "candidate": "s4-leaf14",
+      "rule_id": "r0-s4-8a8bd24bc943a6c6",
+      "antecedent": [
+        {
+          "feature": "Destination Port",
+          "operator": ">",
+          "threshold": -0.4207981824874878,
+          "raw_threshold": 32.00006432871669
+        },
+        {
+          "feature": "Bwd Packet Length Std",
+          "operator": "<=",
+          "threshold": 1.3048039078712463,
+          "raw_threshold": 1496.8329242530829
+        },
+        {
+          "feature": "Average Packet Size",
+          "operator": ">",
+          "threshold": -0.6370151937007904,
+          "raw_threshold": 7.366668197078525
+        },
+        {
+          "feature": "Idle Max",
+          "operator": "<=",
+          "threshold": 1.21871680021286,
+          "raw_threshold": 51093891.87084282
+        }
+      ],
+      "consequent": 0,
+      "support": 0.840655727186693,
+      "covered_count": 104818,
+      "class_precision": 0.9994848213093172,
+      "neural_fidelity": 0.9999141368848862,
+      "stability": 1.0,
+      "complexity": 4,
+      "accepted_by_quality_gate": true,
+      "reasons": []
+    },
+    {
+      "candidate": "s4-leaf15",
+      "rule_id": "r0-s4-62d1f83b944f50dc",
+      "antecedent": [
+        {
+          "feature": "Destination Port",
+          "operator": ">",
+          "threshold": -0.4207981824874878,
+          "raw_threshold": 32.00006432871669
+        },
+        {
+          "feature": "Bwd Packet Length Std",
+          "operator": "<=",
+          "threshold": 1.3048039078712463,
+          "raw_threshold": 1496.8329242530829
+        },
+        {
+          "feature": "Average Packet Size",
+          "operator": ">",
+          "threshold": -0.6370151937007904,
+          "raw_threshold": 7.366668197078525
+        },
+        {
+          "feature": "Idle Max",
+          "operator": ">",
+          "threshold": 1.21871680021286,
+          "raw_threshold": 51093891.87084282
+        }
+      ],
+      "consequent": 0,
+      "support": 0.036531767800715396,
+      "covered_count": 4555,
+      "class_precision": 1.0,
+      "neural_fidelity": 1.0,
+      "stability": 1.0,
+      "complexity": 4,
+      "accepted_by_quality_gate": true,
+      "reasons": []
+    },
+    {
+      "candidate": "s4-leaf18",
+      "rule_id": "r0-s4-75bd0de42217544f",
+      "antecedent": [
+        {
+          "feature": "Destination Port",
+          "operator": "<=",
+          "threshold": -0.40856069326400757,
+          "raw_threshold": 261.5001929515756
+        },
+        {
+          "feature": "Bwd Packet Length Std",
+          "operator": ">",
+          "threshold": 1.3048039078712463,
+          "raw_threshold": 1496.8329242530829
+        },
+        {
+          "feature": "Average Packet Size",
+          "operator": "<=",
+          "threshold": 1.4857116341590881,
+          "raw_threshold": 702.3137201762538
+        }
+      ],
+      "consequent": 1,
+      "support": 0.0017644322538215998,
+      "covered_count": 220,
+      "class_precision": 0.9772727272727273,
+      "neural_fidelity": 0.8636363636363636,
+      "stability": 0.06,
+      "complexity": 3,
+      "accepted_by_quality_gate": false,
+      "reasons": [
+        "neural_fidelity",
+        "stability"
+      ]
+    },
+    {
+      "candidate": "s4-leaf20",
+      "rule_id": "r0-s4-86f3a59764759137",
+      "antecedent": [
+        {
+          "feature": "Destination Port",
+          "operator": "<=",
+          "threshold": -0.40856069326400757,
+          "raw_threshold": 261.5001929515756
+        },
+        {
+          "feature": "Bwd Packet Length Std",
+          "operator": ">",
+          "threshold": 1.3048039078712463,
+          "raw_threshold": 1496.8329242530829
+        },
+        {
+          "feature": "Average Packet Size",
+          "operator": ">",
+          "threshold": 1.4857116341590881,
+          "raw_threshold": 702.3137201762538
+        },
+        {
+          "feature": "Init_Win_bytes_forward",
+          "operator": "<=",
+          "threshold": -0.19804887101054192,
+          "raw_threshold": 4289.499920116544
+        }
+      ],
+      "consequent": 1,
+      "support": 0.0,
+      "covered_count": 0,
+      "class_precision": 0.0,
+      "neural_fidelity": 0.0,
+      "stability": 0.0,
+      "complexity": 4,
+      "accepted_by_quality_gate": false,
+      "reasons": [
+        "support",
+        "covered_count",
+        "class_precision",
+        "neural_fidelity",
+        "stability"
+      ]
+    },
+    {
+      "candidate": "s4-leaf21",
+      "rule_id": "r0-s4-f48ae0810c82d1f6",
+      "antecedent": [
+        {
+          "feature": "Destination Port",
+          "operator": "<=",
+          "threshold": -0.40856069326400757,
+          "raw_threshold": 261.5001929515756
+        },
+        {
+          "feature": "Bwd Packet Length Std",
+          "operator": ">",
+          "threshold": 1.3048039078712463,
+          "raw_threshold": 1496.8329242530829
+        },
+        {
+          "feature": "Average Packet Size",
+          "operator": ">",
+          "threshold": 1.4857116341590881,
+          "raw_threshold": 702.3137201762538
+        },
+        {
+          "feature": "Init_Win_bytes_forward",
+          "operator": ">",
+          "threshold": -0.19804887101054192,
+          "raw_threshold": 4289.499920116544
+        }
+      ],
+      "consequent": 1,
+      "support": 0.00443514107437884,
+      "covered_count": 553,
+      "class_precision": 0.9945750452079566,
+      "neural_fidelity": 0.9367088607594937,
+      "stability": 1.0,
+      "complexity": 4,
+      "accepted_by_quality_gate": true,
+      "reasons": []
+    },
+    {
+      "candidate": "s4-leaf22",
+      "rule_id": "r0-s4-799502d6956c2bc7",
+      "antecedent": [
+        {
+          "feature": "Destination Port",
+          "operator": ">",
+          "threshold": -0.40856069326400757,
+          "raw_threshold": 261.5001929515756
+        },
+        {
+          "feature": "Bwd Packet Length Std",
+          "operator": ">",
+          "threshold": 1.3048039078712463,
+          "raw_threshold": 1496.8329242530829
+        }
+      ],
+      "consequent": 0,
+      "support": 0.00163610990808912,
+      "covered_count": 204,
+      "class_precision": 1.0,
+      "neural_fidelity": 1.0,
+      "stability": 1.0,
+      "complexity": 2,
+      "accepted_by_quality_gate": true,
+      "reasons": []
+    }
+  ],
+  "policy_decisions": [],
+  "rules": [
+    {
+      "rule_id": "r0-s4-5a0a5e4f0f1bfeb5",
+      "lineage_id": "shap_background_natural_20261007:s4-leaf5",
+      "rule_base_version": "robustness:shap_background_natural_20261007",
+      "seed": 4,
+      "antecedent": [
+        {
+          "feature": "Destination Port",
+          "operator": "<=",
+          "threshold": -0.4180254191160202,
+          "raw_threshold": 84.00007338054002
+        },
+        {
+          "feature": "Bwd Packet Length Std",
+          "operator": "<=",
+          "threshold": 1.3048039078712463,
+          "raw_threshold": 1496.8329242530829
+        },
+        {
+          "feature": "Average Packet Size",
+          "operator": "<=",
+          "threshold": -0.6370151937007904,
+          "raw_threshold": 7.366668197078525
+        },
+        {
+          "feature": "Init_Win_bytes_forward",
+          "operator": ">",
+          "threshold": -0.4516769051551819,
+          "raw_threshold": 274.49994838239036
+        }
+      ],
+      "consequent": 0,
+      "confidence": 0.9223978649148019,
+      "support": 0.039066134128931874,
+      "covered_count": 4871,
+      "class_precision": 0.9223978649148019,
+      "neural_fidelity": 0.9991788133853419,
+      "stability": 1.0,
+      "complexity": 4,
+      "lifecycle_state": "active",
+      "source_candidate_id": "s4-leaf5",
+      "validation_evidence_id": "development_split_20261007",
+      "relations": []
+    },
+    {
+      "rule_id": "r0-s4-62d1f83b944f50dc",
+      "lineage_id": "shap_background_natural_20261007:s4-leaf15",
+      "rule_base_version": "robustness:shap_background_natural_20261007",
+      "seed": 4,
+      "antecedent": [
+        {
+          "feature": "Destination Port",
+          "operator": ">",
+          "threshold": -0.4207981824874878,
+          "raw_threshold": 32.00006432871669
+        },
+        {
+          "feature": "Bwd Packet Length Std",
+          "operator": "<=",
+          "threshold": 1.3048039078712463,
+          "raw_threshold": 1496.8329242530829
+        },
+        {
+          "feature": "Average Packet Size",
+          "operator": ">",
+          "threshold": -0.6370151937007904,
+          "raw_threshold": 7.366668197078525
+        },
+        {
+          "feature": "Idle Max",
+          "operator": ">",
+          "threshold": 1.21871680021286,
+          "raw_threshold": 51093891.87084282
+        }
+      ],
+      "consequent": 0,
+      "confidence": 1.0,
+      "support": 0.036531767800715396,
+      "covered_count": 4555,
+      "class_precision": 1.0,
+      "neural_fidelity": 1.0,
+      "stability": 1.0,
+      "complexity": 4,
+      "lifecycle_state": "active",
+      "source_candidate_id": "s4-leaf15",
+      "validation_evidence_id": "development_split_20261007",
+      "relations": []
+    },
+    {
+      "rule_id": "r0-s4-799502d6956c2bc7",
+      "lineage_id": "shap_background_natural_20261007:s4-leaf22",
+      "rule_base_version": "robustness:shap_background_natural_20261007",
+      "seed": 4,
+      "antecedent": [
+        {
+          "feature": "Destination Port",
+          "operator": ">",
+          "threshold": -0.40856069326400757,
+          "raw_threshold": 261.5001929515756
+        },
+        {
+          "feature": "Bwd Packet Length Std",
+          "operator": ">",
+          "threshold": 1.3048039078712463,
+          "raw_threshold": 1496.8329242530829
+        }
+      ],
+      "consequent": 0,
+      "confidence": 1.0,
+      "support": 0.00163610990808912,
+      "covered_count": 204,
+      "class_precision": 1.0,
+      "neural_fidelity": 1.0,
+      "stability": 1.0,
+      "complexity": 2,
+      "lifecycle_state": "active",
+      "source_candidate_id": "s4-leaf22",
+      "validation_evidence_id": "development_split_20261007",
+      "relations": []
+    },
+    {
+      "rule_id": "r0-s4-8a8bd24bc943a6c6",
+      "lineage_id": "shap_background_natural_20261007:s4-leaf14",
+      "rule_base_version": "robustness:shap_background_natural_20261007",
+      "seed": 4,
+      "antecedent": [
+        {
+          "feature": "Destination Port",
+          "operator": ">",
+          "threshold": -0.4207981824874878,
+          "raw_threshold": 32.00006432871669
+        },
+        {
+          "feature": "Bwd Packet Length Std",
+          "operator": "<=",
+          "threshold": 1.3048039078712463,
+          "raw_threshold": 1496.8329242530829
+        },
+        {
+          "feature": "Average Packet Size",
+          "operator": ">",
+          "threshold": -0.6370151937007904,
+          "raw_threshold": 7.366668197078525
+        },
+        {
+          "feature": "Idle Max",
+          "operator": "<=",
+          "threshold": 1.21871680021286,
+          "raw_threshold": 51093891.87084282
+        }
+      ],
+      "consequent": 0,
+      "confidence": 0.9994848213093172,
+      "support": 0.840655727186693,
+      "covered_count": 104818,
+      "class_precision": 0.9994848213093172,
+      "neural_fidelity": 0.9999141368848862,
+      "stability": 1.0,
+      "complexity": 4,
+      "lifecycle_state": "active",
+      "source_candidate_id": "s4-leaf14",
+      "validation_evidence_id": "development_split_20261007",
+      "relations": []
+    },
+    {
+      "rule_id": "r0-s4-d921e73dd34c1c61",
+      "lineage_id": "shap_background_natural_20261007:s4-leaf12",
+      "rule_base_version": "robustness:shap_background_natural_20261007",
+      "seed": 4,
+      "antecedent": [
+        {
+          "feature": "Destination Port",
+          "operator": "<=",
+          "threshold": -0.4207981824874878,
+          "raw_threshold": 32.00006432871669
+        },
+        {
+          "feature": "Bwd Packet Length Std",
+          "operator": ">",
+          "threshold": -0.11707142367959023,
+          "raw_threshold": 302.066725118891
+        },
+        {
+          "feature": "Bwd Packet Length Std",
+          "operator": "<=",
+          "threshold": 1.3048039078712463,
+          "raw_threshold": 1496.8329242530829
+        },
+        {
+          "feature": "Average Packet Size",
+          "operator": ">",
+          "threshold": -0.6370151937007904,
+          "raw_threshold": 7.366668197078525
+        }
+      ],
+      "consequent": 0,
+      "confidence": 1.0,
+      "support": 0.003609065973726,
+      "covered_count": 450,
+      "class_precision": 1.0,
+      "neural_fidelity": 1.0,
+      "stability": 1.0,
+      "complexity": 4,
+      "lifecycle_state": "active",
+      "source_candidate_id": "s4-leaf12",
+      "validation_evidence_id": "development_split_20261007",
+      "relations": []
+    },
+    {
+      "rule_id": "r0-s4-de9c6dab6f02b0d4",
+      "lineage_id": "shap_background_natural_20261007:s4-leaf7",
+      "rule_base_version": "robustness:shap_background_natural_20261007",
+      "seed": 4,
+      "antecedent": [
+        {
+          "feature": "Destination Port",
+          "operator": ">",
+          "threshold": -0.4180254191160202,
+          "raw_threshold": 84.00007338054002
+        },
+        {
+          "feature": "Bwd Packet Length Std",
+          "operator": "<=",
+          "threshold": 1.3048039078712463,
+          "raw_threshold": 1496.8329242530829
+        },
+        {
+          "feature": "Average Packet Size",
+          "operator": "<=",
+          "threshold": -0.6370151937007904,
+          "raw_threshold": 7.366668197078525
+        },
+        {
+          "feature": "Idle Max",
+          "operator": "<=",
+          "threshold": -0.10737547278404236,
+          "raw_threshold": 10216818.509933127
+        }
+      ],
+      "consequent": 0,
+      "confidence": 0.998342770335589,
+      "support": 0.05807388159055547,
+      "covered_count": 7241,
+      "class_precision": 1.0,
+      "neural_fidelity": 0.998342770335589,
+      "stability": 1.0,
+      "complexity": 4,
+      "lifecycle_state": "active",
+      "source_candidate_id": "s4-leaf7",
+      "validation_evidence_id": "development_split_20261007",
+      "relations": []
+    },
+    {
+      "rule_id": "r0-s4-f48ae0810c82d1f6",
+      "lineage_id": "shap_background_natural_20261007:s4-leaf21",
+      "rule_base_version": "robustness:shap_background_natural_20261007",
+      "seed": 4,
+      "antecedent": [
+        {
+          "feature": "Destination Port",
+          "operator": "<=",
+          "threshold": -0.40856069326400757,
+          "raw_threshold": 261.5001929515756
+        },
+        {
+          "feature": "Bwd Packet Length Std",
+          "operator": ">",
+          "threshold": 1.3048039078712463,
+          "raw_threshold": 1496.8329242530829
+        },
+        {
+          "feature": "Average Packet Size",
+          "operator": ">",
+          "threshold": 1.4857116341590881,
+          "raw_threshold": 702.3137201762538
+        },
+        {
+          "feature": "Init_Win_bytes_forward",
+          "operator": ">",
+          "threshold": -0.19804887101054192,
+          "raw_threshold": 4289.499920116544
+        }
+      ],
+      "consequent": 1,
+      "confidence": 0.9367088607594937,
+      "support": 0.00443514107437884,
+      "covered_count": 553,
+      "class_precision": 0.9945750452079566,
+      "neural_fidelity": 0.9367088607594937,
+      "stability": 1.0,
+      "complexity": 4,
+      "lifecycle_state": "active",
+      "source_candidate_id": "s4-leaf21",
+      "validation_evidence_id": "development_split_20261007",
+      "relations": []
+    }
+  ],
+  "active_candidate_ids": [
+    "s4-leaf12",
+    "s4-leaf14",
+    "s4-leaf15",
+    "s4-leaf21",
+    "s4-leaf22",
+    "s4-leaf5",
+    "s4-leaf7"
+  ],
+  "active_rule_ids": [
+    "r0-s4-5a0a5e4f0f1bfeb5",
+    "r0-s4-62d1f83b944f50dc",
+    "r0-s4-799502d6956c2bc7",
+    "r0-s4-8a8bd24bc943a6c6",
+    "r0-s4-d921e73dd34c1c61",
+    "r0-s4-de9c6dab6f02b0d4",
+    "r0-s4-f48ae0810c82d1f6"
+  ],
+  "source_r0_v2_active_rule_ids": [
+    "r0-s4-62d1f83b944f50dc",
+    "r0-s4-66e3dc8cac434da1",
+    "r0-s4-799502d6956c2bc7",
+    "r0-s4-8a8bd24bc943a6c6",
+    "r0-s4-d921e73dd34c1c61",
+    "r0-s4-de9c6dab6f02b0d4"
+  ],
+  "selected_neural_weight": 0.5,
+  "fused_threshold": 0.9527904391288757,
+  "artifact_sha256": "e0cb3f009f995b6f8a73143c3eadb61df5653913c2b5e209e4ecdc89c6f960a1"
+}

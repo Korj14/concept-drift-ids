@@ -66,3 +66,19 @@ System D need not dominate C on every predictive metric. A defensible contributi
 ## Live literature obligation
 
 The novelty boundary must be rechecked adversarially before major later milestones, submission, and revision. If new work directly collapses the governing conjunction, the contribution must be reassessed rather than hidden.
+
+
+## October 2026 retrospective-assumption doctrine synchronization
+
+The current governing Word sources now include an explicit restart-versus-sensitivity rule.
+
+For future repository work:
+
+- restart/versioned rerun is reserved for realized defects that change the scientific object, such as future-information leakage, wrong frozen identity, treatment contamination, or a material implementation/protocol mismatch;
+- ordinary dependence on a reasonable modeling choice is handled as additive sensitivity unless it invalidates causal interpretation;
+- limited external validity is handled through prespecified scenario/dataset replication and claim narrowing, not by pretending one scenario is a population sample;
+- `sudden_benign_v1` must be described as BENIGN-source-regime-dominant rather than attack-invariant because its pre/post GoldenEye observations come from different Wednesday segments;
+- exact-pattern reuse, duplicate dependence, development-split dependence, fusion authority and explanation-extraction dependence are now explicit publication-strength robustness obligations;
+- raw bounded-metric seed-level t-intervals remain authoritative even when their numerical endpoints leave the physical metric range; publication graphics may respect physical axes without rewriting evidence.
+
+Current governing source hashes are recorded in `GOVERNING_SOURCES.md`. Historical A/B manifests retain the source hashes that governed them at their own freeze points.

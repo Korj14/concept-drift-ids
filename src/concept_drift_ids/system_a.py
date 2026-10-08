@@ -4,6 +4,7 @@ import argparse
 import hashlib
 import json
 import math
+import subprocess
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -38,6 +39,7 @@ from concept_drift_ids.scenario_loader import (
     load_partition,
 )
 from concept_drift_ids.scenario_manifest import sha256_file
+from concept_drift_ids.symbolic import reporting_windows
 
 
 ARTIFACT_DIR = PROJECT_ROOT / "artifacts" / "system_a"
@@ -49,6 +51,8 @@ EVALUATION_PATH = EVALUATION_DIR / "static_evaluation.json"
 EVALUATION_MANIFEST_PATH = EVALUATION_DIR / "evaluation_manifest.json"
 SUPPLEMENT_DIR = PROJECT_ROOT / "results" / "frozen" / "system_a_v1_supplement_v1"
 SUPPLEMENT_MANIFEST_PATH = SUPPLEMENT_DIR / "supplement_manifest.json"
+LONGITUDINAL_DIR = PROJECT_ROOT / "results" / "frozen" / "system_a_v1_longitudinal_v1"
+LONGITUDINAL_MANIFEST_PATH = LONGITUDINAL_DIR / "evaluation_manifest.json"
 
 SYSTEM_A_CONFIG: dict[str, Any] = {
     "protocol_version": 1,
@@ -770,6 +774,227 @@ def evaluate_system_a(*, device_name: str) -> None:
         )
 
 
+def _write_json_new(path: Path, payload: Any) -> None:
+    if path.exists():
+        raise FileExistsError(f"Refusing to overwrite accepted artifact: {path}")
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w", encoding="utf-8", newline="\n") as file:
+        json.dump(payload, file, indent=2, ensure_ascii=False, allow_nan=False)
+        file.write("\n")
+
+
+def _write_csv_new(path: Path, rows: list[dict[str, Any]]) -> None:
+    import csv
+
+    if path.exists():
+        raise FileExistsError(f"Refusing to overwrite accepted artifact: {path}")
+    if not rows:
+        raise ValueError("Cannot write empty longitudinal System-A evidence.")
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w", encoding="utf-8", newline="") as file:
+        writer = csv.DictWriter(file, fieldnames=list(rows[0]), lineterminator="\n")
+        writer.writeheader()
+        writer.writerows(rows)
+
+
+def _window_metrics_safe(
+    y_true: np.ndarray,
+    probabilities: np.ndarray,
+    threshold: float,
+) -> dict[str, float | None]:
+    y = np.asarray(y_true, dtype=np.int8)
+    p = np.asarray(probabilities, dtype=np.float64)
+    if len(np.unique(y)) >= 2:
+        return binary_metrics(y, p, threshold)
+
+    prediction = (p >= threshold).astype(np.int8)
+    tn = int(np.sum((y == 0) & (prediction == 0)))
+    fp = int(np.sum((y == 0) & (prediction == 1)))
+    fn = int(np.sum((y == 1) & (prediction == 0)))
+    tp = int(np.sum((y == 1) & (prediction == 1)))
+    accuracy = float(np.mean(prediction == y))
+    precision = tp / (tp + fp) if tp + fp else 0.0
+    recall = tp / (tp + fn) if tp + fn else 0.0
+    f1 = 2.0 * precision * recall / (precision + recall) if precision + recall else 0.0
+    fpr = fp / (fp + tn) if fp + tn else 0.0
+    balanced_accuracy = (
+        tn / (tn + fp) if np.all(y == 0) and tn + fp
+        else tp / (tp + fn) if tp + fn
+        else 0.0
+    )
+    return {
+        "accuracy": accuracy,
+        "balanced_accuracy": float(balanced_accuracy),
+        "precision": float(precision),
+        "recall": float(recall),
+        "f1": float(f1),
+        "fpr": float(fpr),
+        "mcc": 0.0,
+        "roc_auc": None,
+        "average_precision": None,
+    }
+
+
+def _longitudinal_git_state() -> dict[str, str]:
+    def run(*args: str) -> str:
+        return subprocess.run(
+            ["git", *args],
+            cwd=PROJECT_ROOT,
+            check=True,
+            capture_output=True,
+            text=True,
+        ).stdout.strip()
+
+    status = run("status", "--porcelain")
+    if status:
+        raise RuntimeError(
+            "System-A longitudinal rescoring requires a clean Git worktree."
+        )
+    return {
+        "commit": run("rev-parse", "HEAD"),
+        "branch": run("branch", "--show-current"),
+        "clean": "true",
+    }
+
+
+def rescore_system_a_longitudinal(*, device_name: str) -> None:
+    """Rescore frozen System A on the common reporting grid; no retraining/retuning."""
+    if device_name != "cpu":
+        raise ValueError("Frozen System-A longitudinal v1 rescoring uses CPU.")
+    if LONGITUDINAL_DIR.exists() or LONGITUDINAL_MANIFEST_PATH.exists():
+        raise FileExistsError(
+            "Frozen System-A longitudinal supplement already exists; refusing overwrite."
+        )
+
+    evaluation_git = _longitudinal_git_state()
+    frozen = _load_frozen_system_a_manifest()
+    preprocessing = load_frozen_preprocessing()
+    accepted_eval = _load_and_verify_evaluation_manifest(
+        frozen, preprocessing_hash=preprocessing.state_hash
+    )
+    device = torch.device("cpu")
+    rows: list[dict[str, Any]] = []
+
+    for partition_name in ("pre_drift", "post_drift"):
+        partition = load_partition(partition_name)
+        X = transform_frame(
+            partition.X,
+            preprocessing,
+            dtype=np.dtype("float32"),
+        )
+        y = partition.y.to_numpy(dtype=np.int8, copy=True)
+        del partition
+
+        for record in frozen["seed_records"]:
+            model = _load_checkpoint_model(
+                record,
+                device=device,
+                preprocessing_hash=preprocessing.state_hash,
+            )
+            probabilities = predict_probabilities(
+                model,
+                X,
+                device=device,
+                batch_size=int(SYSTEM_A_CONFIG["batch_size"]),
+            )
+            threshold = float(record["threshold"])
+
+            for window_index, (start, stop) in enumerate(
+                reporting_windows(
+                    len(y),
+                    window_size=5_000,
+                    min_remainder=1_000,
+                )
+            ):
+                wy = y[start:stop]
+                wp = probabilities[start:stop]
+                prediction = (wp >= threshold).astype(np.int8)
+                tn = int(np.sum((wy == 0) & (prediction == 0)))
+                fp = int(np.sum((wy == 0) & (prediction == 1)))
+                fn = int(np.sum((wy == 1) & (prediction == 0)))
+                tp = int(np.sum((wy == 1) & (prediction == 1)))
+                rows.append(
+                    {
+                        "system_id": frozen["system_id"],
+                        "scenario_id": frozen["scenario_id"],
+                        "scenario_version": frozen["scenario_version"],
+                        "partition": partition_name,
+                        "seed": int(record["seed"]),
+                        "threshold": threshold,
+                        "window_index": window_index,
+                        "row_start": start,
+                        "row_end": stop,
+                        "sample_count": int(stop - start),
+                        "benign_count": int(np.sum(wy == 0)),
+                        "attack_count": int(np.sum(wy == 1)),
+                        "attack_prevalence": float(np.mean(wy == 1)),
+                        "tn": tn,
+                        "fp": fp,
+                        "fn": fn,
+                        "tp": tp,
+                        **_window_metrics_safe(wy, wp, threshold),
+                    }
+                )
+            del model, probabilities
+        del X, y
+
+    LONGITUDINAL_DIR.mkdir(parents=True, exist_ok=False)
+    table_path = LONGITUDINAL_DIR / "window_metrics.csv"
+    _write_csv_new(table_path, rows)
+    summary_path = LONGITUDINAL_DIR / "longitudinal_rescore.json"
+    summary = {
+        "format_version": 1,
+        "evaluation_id": "system_a_longitudinal_v1",
+        "system_id": frozen["system_id"],
+        "scenario_id": frozen["scenario_id"],
+        "scenario_version": frozen["scenario_version"],
+        "system_manifest_sha256": frozen["manifest_sha256"],
+        "source_evaluation_manifest_sha256": accepted_eval["manifest_sha256"],
+        "preprocessing_state_hash": preprocessing.state_hash,
+        "backend": "cpu",
+        "evaluation_git": evaluation_git,
+        "window_policy": {
+            "size": 5000,
+            "stride": 5000,
+            "minimum_final_remainder": 1000,
+            "boundary_aligned": True,
+            "partitions_windowed_separately": True,
+        },
+        "row_count": len(rows),
+    }
+    _write_json_new(summary_path, summary)
+
+    manifest = {
+        "manifest_format_version": 1,
+        "evaluation_id": "system_a_longitudinal_v1",
+        "system_id": frozen["system_id"],
+        "scenario_id": frozen["scenario_id"],
+        "scenario_version": frozen["scenario_version"],
+        "system_manifest_sha256": frozen["manifest_sha256"],
+        "source_evaluation_manifest_sha256": accepted_eval["manifest_sha256"],
+        "preprocessing_state_hash": preprocessing.state_hash,
+        "evaluation_git": evaluation_git,
+        "files": {
+            "summary": {
+                "path": summary_path.relative_to(PROJECT_ROOT).as_posix(),
+                "sha256": sha256_file(summary_path),
+            },
+            "window_metrics": {
+                "path": table_path.relative_to(PROJECT_ROOT).as_posix(),
+                "sha256": sha256_file(table_path),
+            },
+        },
+    }
+    manifest["manifest_sha256"] = _json_hash(manifest)
+    _write_json_new(LONGITUDINAL_MANIFEST_PATH, manifest)
+    print(f"longitudinal_manifest={LONGITUDINAL_MANIFEST_PATH}")
+    print(f"longitudinal_manifest_hash={manifest['manifest_sha256']}")
+    print(f"window_rows={len(rows)}")
+    print("retrained=false")
+    print("rethresholded=false")
+    print("status=frozen_system_a_longitudinal_rescore_written")
+
+
 def _parse_seeds(value: str) -> list[int]:
     seeds = [int(item.strip()) for item in value.split(",") if item.strip()]
     if not seeds:
@@ -801,12 +1026,42 @@ def main() -> None:
         ),
     )
 
+    rescore_parser = subparsers.add_parser(
+        "rescore-windows",
+        help="Rescore frozen System A on the common 5,000-row reporting grid.",
+    )
+    rescore_parser.add_argument("--device", default="cpu")
+
+    subparsers.add_parser(
+        "build-pattern-dedup-robustness",
+        help=(
+            "Train the post-hoc exact-pattern+binary-label deduplicated "
+            "System-A robustness teacher using training/development only."
+        ),
+    )
+    subparsers.add_parser(
+        "verify-pattern-dedup-robustness",
+        help="Verify the frozen alternate-teacher robustness manifest/checkpoints.",
+    )
+
     args = parser.parse_args()
 
     if args.command == "train":
         train_system_a(device_name=args.device, seeds=args.seeds)
     elif args.command == "evaluate":
         evaluate_system_a(device_name=args.device)
+    elif args.command == "rescore-windows":
+        rescore_system_a_longitudinal(device_name=args.device)
+    elif args.command == "build-pattern-dedup-robustness":
+        from concept_drift_ids.system_a_duplicate_robustness import (
+            build_pattern_dedup_teacher,
+        )
+        build_pattern_dedup_teacher()
+    elif args.command == "verify-pattern-dedup-robustness":
+        from concept_drift_ids.system_a_duplicate_robustness import (
+            verify_pattern_dedup_teacher,
+        )
+        verify_pattern_dedup_teacher()
     else:
         verify_system_a()
 

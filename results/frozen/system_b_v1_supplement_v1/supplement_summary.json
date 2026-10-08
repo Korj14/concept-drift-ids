@@ -1,0 +1,41 @@
+{
+  "format_version": 1,
+  "supplement_id": "system_b_v1_supplement_v1",
+  "source_evaluation_manifest_sha256": "f44cad2ed9674bcb7118f05f174f845b5dfb135f95e2cb2b4a230f0f998c3e42",
+  "source_system_manifest_sha256": "6e3589056d4c252c1a6c7cfd87b891fb8a24f1e30e86b17833b6035ea9ee86a8",
+  "scenario_id": "cicids2017_sudden_benign_v1",
+  "scenario_version": 1,
+  "derivation_git": {
+    "commit": "ab4c1b08c17891415d3a1f6a42f4dac65f917ec0",
+    "branch": "stage4-system-b",
+    "clean": "true"
+  },
+  "runtime": {
+    "python": "3.11.9",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "numpy": "2.4.6",
+    "torch": "2.14.1+cpu",
+    "scikit_learn": "1.9.1",
+    "shap": "0.51.0",
+    "cpu_count": 16
+  },
+  "derivation_contract": {
+    "source_frozen_evidence_only": true,
+    "raw_training_loaded": false,
+    "raw_development_loaded": false,
+    "raw_pre_drift_loaded": false,
+    "raw_post_drift_loaded": false,
+    "model_checkpoint_loaded": false,
+    "r0_modified": false,
+    "thresholds_modified": false,
+    "fusion_weight_modified": false
+  },
+  "rows": {
+    "metrics_by_seed": 140,
+    "aggregate_metrics": 28,
+    "paired_deltas_by_seed": 70,
+    "aggregate_paired_deltas": 14,
+    "rule_staleness_deltas": 36
+  },
+  "note": "Additive derivation from the immutable first System-B evaluation. No model or held-out partition was rerun."
+}

@@ -1,0 +1,24 @@
+{
+  "format_version": 1,
+  "evaluation_id": "system_a_longitudinal_v1",
+  "system_id": "system_a_static_neural_v1",
+  "scenario_id": "cicids2017_sudden_benign_v1",
+  "scenario_version": 1,
+  "system_manifest_sha256": "42004b5ed100b690023b9998bdc959fac41ab947b996fb7c58e44cee5e8dc6de",
+  "source_evaluation_manifest_sha256": "e721b641b5898976c76c0449dedf7152cb302be4447604525afb7ddf1c94c5b3",
+  "preprocessing_state_hash": "4527f77220f2cf6063108a7d71d80aaa0e82099ad282ff25408a2d9ce3488b1e",
+  "backend": "cpu",
+  "evaluation_git": {
+    "commit": "e29830bdf0ded41240058f19b4928259b01b5280",
+    "branch": "stage4-system-b",
+    "clean": "true"
+  },
+  "window_policy": {
+    "size": 5000,
+    "stride": 5000,
+    "minimum_final_remainder": 1000,
+    "boundary_aligned": true,
+    "partitions_windowed_separately": true
+  },
+  "row_count": 140
+}

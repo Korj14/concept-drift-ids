@@ -1,0 +1,65 @@
+{
+  "manifest_format_version": 1,
+  "selection_id": "system_b_fusion_authority_v1",
+  "evidence_status": "posthoc_fusion_authority_sensitivity_not_model_selection",
+  "source_system_b_v2_manifest_sha256": "131027d2f136494eb388183f18dcb7eb0e9d7e9fe786f22dba25f4e1624c1483",
+  "build_git": {
+    "commit": "8345b3d079428ec1c127fa754f6c36a917090894",
+    "branch": "stage4-system-b",
+    "clean": "true"
+  },
+  "data_access": {
+    "training_used": false,
+    "development_used": true,
+    "pre_drift_used": false,
+    "post_drift_used": false
+  },
+  "source_rule_state": "accepted_R0.v2_reused_without_rebuild",
+  "source_primary_neural_weight": 0.5,
+  "sensitivity_neural_weights": [
+    0.7,
+    0.9,
+    1.0
+  ],
+  "threshold_selection": {
+    "partition": "original_R0.v2_development_fusion_slice",
+    "objective": "MCC",
+    "tie_break": [
+      "F1",
+      "lower_FPR",
+      "closest_to_0.5"
+    ]
+  },
+  "development_fusion_rows_sha256": "ed5924c9270da806e24e601c7bf768594c02793a8b337070dba020731b179bcd",
+  "per_weight_seed_thresholds": {
+    "0.70": {
+      "0": 0.698998749256134,
+      "1": 0.9423287034034729,
+      "2": 0.8308807015419006,
+      "3": 0.9747405052185059,
+      "4": 0.9527904391288757
+    },
+    "0.90": {
+      "0": 0.9025245904922485,
+      "1": 0.9258511900901795,
+      "2": 0.8964613080024719,
+      "3": 0.9747405052185059,
+      "4": 0.9527904391288757
+    },
+    "1.00": {
+      "0": 0.9448108673095703,
+      "1": 0.9337316751480103,
+      "2": 0.9123510122299194,
+      "3": 0.9789738655090332,
+      "4": 0.9561389088630676
+    }
+  },
+  "interpretation_firewall": "These weights are prespecified authority sensitivities. Held-out outcomes cannot select a replacement lambda or alter accepted R0.v2.",
+  "files": {
+    "development_thresholds": {
+      "path": "data/robustness/system_b_fusion_authority_v1/development_thresholds.csv",
+      "sha256": "bd060e6fbfc52099dfa44e9cda0b0f875d324e3d050ee7db3b94a4b0a9a52407"
+    }
+  },
+  "manifest_sha256": "4532ab3996b1c79b0763e096ec549ae4368ff9ee88254f27639b1925d6a2bff9"
+}

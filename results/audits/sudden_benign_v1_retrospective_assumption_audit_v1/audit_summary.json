@@ -1,0 +1,88 @@
+{
+  "audit_format_version": 1,
+  "audit_id": "sudden_benign_v1_retrospective_assumption_audit_v1",
+  "evidence_status": "posthoc_retrospective_diagnostic_not_model_selection",
+  "scenario_id": "cicids2017_sudden_benign_v1",
+  "scenario_version": 1,
+  "audit_git": {
+    "commit": "2d8bc3dbb7e2cfd0aa486fd5a95256d1875926f8",
+    "branch": "stage4-system-b",
+    "clean": "true"
+  },
+  "data_access": {
+    "training_used": true,
+    "development_used": true,
+    "pre_drift_used": true,
+    "post_drift_used": true
+  },
+  "exact_pattern_dependence": {
+    "training": {
+      "rows": 1322179,
+      "training_seen_rows": 1322179,
+      "training_seen_fraction": 1.0,
+      "training_seen_benign_rows": 1064858,
+      "training_seen_attack_rows": 257321,
+      "exact_duplicate_excess_rows": 113858,
+      "exact_duplicate_excess_fraction": 0.08611390742100729
+    },
+    "development": {
+      "rows": 207810,
+      "training_seen_rows": 9915,
+      "training_seen_fraction": 0.047711852172657714,
+      "training_seen_benign_rows": 9915,
+      "training_seen_attack_rows": 0,
+      "exact_duplicate_excess_rows": null,
+      "exact_duplicate_excess_fraction": null
+    },
+    "pre_drift": {
+      "rows": 69260,
+      "training_seen_rows": 4324,
+      "training_seen_fraction": 0.06243141784579844,
+      "training_seen_benign_rows": 4324,
+      "training_seen_attack_rows": 0,
+      "exact_duplicate_excess_rows": null,
+      "exact_duplicate_excess_fraction": null
+    },
+    "post_drift": {
+      "rows": 69270,
+      "training_seen_rows": 3459,
+      "training_seen_fraction": 0.04993503681247293,
+      "training_seen_benign_rows": 3459,
+      "training_seen_attack_rows": 0,
+      "exact_duplicate_excess_rows": null,
+      "exact_duplicate_excess_fraction": null
+    }
+  },
+  "training_duplicate_candidate_distinct_patterns": 21284,
+  "regime_shift": {
+    "benign_source_regime": {
+      "features_evaluated": 77,
+      "mean_ks": 0.15217030622544983,
+      "median_ks": 0.17388000000000003,
+      "p90_ks": 0.25391263581946355,
+      "max_ks": 0.31556,
+      "features_ks_ge_0_10": 58,
+      "features_ks_ge_0_20": 25,
+      "features_ks_ge_0_30": 1
+    },
+    "goldeneye_temporal_movement": {
+      "features_evaluated": 77,
+      "mean_ks": 0.08392808190258136,
+      "median_ks": 0.11136798331999453,
+      "p90_ks": 0.15885842995869226,
+      "max_ks": 0.2153765856536638,
+      "features_ks_ge_0_10": 44,
+      "features_ks_ge_0_20": 1,
+      "features_ks_ge_0_30": 0
+    },
+    "benign_ks_sample_size_each": 50000,
+    "pre_attack_rows": 3589,
+    "post_attack_rows": 3573
+  },
+  "interpretation": {
+    "attack_family_invariant_claim": false,
+    "recommended_scenario_wording": "controlled BENIGN-source-regime-dominant composite shift with smaller nonzero GoldenEye temporal movement",
+    "seen_pattern_claim": "training-seen exact feature-pattern reporting is required as a descriptive robustness stratification; it does not change the frozen primary full-stream evaluation"
+  },
+  "artifact_sha256": "21d54ce4cd2ec609fd53c9958685996a18dda47f682ebdbe47e053151c9705f9"
+}

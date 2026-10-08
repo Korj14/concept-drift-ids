@@ -1,0 +1,155 @@
+comparison,feature,before_n,after_n,ks_statistic,ks_pvalue
+pre_benign_vs_post_benign,Destination Port,50000,50000,0.17987999999999998,0.0
+pre_benign_vs_post_benign,Flow Duration,50000,50000,0.23197999999999996,0.0
+pre_benign_vs_post_benign,Total Fwd Packets,50000,50000,0.23578,0.0
+pre_benign_vs_post_benign,Total Backward Packets,50000,50000,0.18397999999999992,0.0
+pre_benign_vs_post_benign,Total Length of Fwd Packets,50000,50000,0.19733999999999996,0.0
+pre_benign_vs_post_benign,Total Length of Bwd Packets,50000,50000,0.16318,0.0
+pre_benign_vs_post_benign,Fwd Packet Length Max,50000,50000,0.2926599999999999,0.0
+pre_benign_vs_post_benign,Fwd Packet Length Min,50000,50000,0.16948,0.0
+pre_benign_vs_post_benign,Fwd Packet Length Mean,50000,50000,0.22721999999999998,0.0
+pre_benign_vs_post_benign,Fwd Packet Length Std,50000,50000,0.25559999999999994,0.0
+pre_benign_vs_post_benign,Bwd Packet Length Max,50000,50000,0.17044000000000004,0.0
+pre_benign_vs_post_benign,Bwd Packet Length Min,50000,50000,0.21130000000000002,0.0
+pre_benign_vs_post_benign,Bwd Packet Length Mean,50000,50000,0.12294000000000005,0.0
+pre_benign_vs_post_benign,Bwd Packet Length Std,50000,50000,0.19935999999999998,0.0
+pre_benign_vs_post_benign,Flow Bytes/s,49968,49956,0.18306585299386224,0.0
+pre_benign_vs_post_benign,Flow Packets/s,49968,49956,0.25386772636577254,0.0
+pre_benign_vs_post_benign,Flow IAT Mean,50000,50000,0.27266,0.0
+pre_benign_vs_post_benign,Flow IAT Std,50000,50000,0.18716,0.0
+pre_benign_vs_post_benign,Flow IAT Max,50000,50000,0.22926000000000007,0.0
+pre_benign_vs_post_benign,Flow IAT Min,50000,50000,0.17323999999999995,0.0
+pre_benign_vs_post_benign,Fwd IAT Total,50000,50000,0.29147999999999996,0.0
+pre_benign_vs_post_benign,Fwd IAT Mean,50000,50000,0.29035999999999995,0.0
+pre_benign_vs_post_benign,Fwd IAT Std,50000,50000,0.23597999999999997,0.0
+pre_benign_vs_post_benign,Fwd IAT Max,50000,50000,0.29084,0.0
+pre_benign_vs_post_benign,Fwd IAT Min,50000,50000,0.17388000000000003,0.0
+pre_benign_vs_post_benign,Bwd IAT Total,50000,50000,0.20711999999999997,0.0
+pre_benign_vs_post_benign,Bwd IAT Mean,50000,50000,0.20567999999999997,0.0
+pre_benign_vs_post_benign,Bwd IAT Std,50000,50000,0.18430000000000002,0.0
+pre_benign_vs_post_benign,Bwd IAT Max,50000,50000,0.20655999999999997,0.0
+pre_benign_vs_post_benign,Bwd IAT Min,50000,50000,0.11184000000000005,7.926846489889365e-273
+pre_benign_vs_post_benign,Fwd PSH Flags,50000,50000,0.035660000000000025,4.6765137047420335e-28
+pre_benign_vs_post_benign,Bwd PSH Flags,50000,50000,0.0,1.0
+pre_benign_vs_post_benign,Fwd URG Flags,50000,50000,0.0,1.0
+pre_benign_vs_post_benign,Bwd URG Flags,50000,50000,0.0,1.0
+pre_benign_vs_post_benign,Fwd Header Length,50000,50000,0.20933999999999997,0.0
+pre_benign_vs_post_benign,Bwd Header Length,50000,50000,0.18516,0.0
+pre_benign_vs_post_benign,Fwd Packets/s,50000,50000,0.25398000000000004,0.0
+pre_benign_vs_post_benign,Bwd Packets/s,50000,50000,0.31556,0.0
+pre_benign_vs_post_benign,Min Packet Length,50000,50000,0.17036,0.0
+pre_benign_vs_post_benign,Max Packet Length,50000,50000,0.18511999999999995,0.0
+pre_benign_vs_post_benign,Packet Length Mean,50000,50000,0.14026000000000005,0.0
+pre_benign_vs_post_benign,Packet Length Std,50000,50000,0.17755999999999994,0.0
+pre_benign_vs_post_benign,Packet Length Variance,50000,50000,0.17755999999999994,0.0
+pre_benign_vs_post_benign,FIN Flag Count,50000,50000,0.03073999999999999,5.8711377912019456e-21
+pre_benign_vs_post_benign,SYN Flag Count,50000,50000,0.035660000000000025,4.6765137047420335e-28
+pre_benign_vs_post_benign,RST Flag Count,50000,50000,0.00024000000000001798,1.0
+pre_benign_vs_post_benign,PSH Flag Count,50000,50000,0.20363999999999993,0.0
+pre_benign_vs_post_benign,ACK Flag Count,50000,50000,0.01314000000000004,0.0003530687407764953
+pre_benign_vs_post_benign,URG Flag Count,50000,50000,0.12071999999999994,6.02929e-318
+pre_benign_vs_post_benign,CWE Flag Count,50000,50000,0.0,1.0
+pre_benign_vs_post_benign,ECE Flag Count,50000,50000,0.00021999999999999797,1.0
+pre_benign_vs_post_benign,Down/Up Ratio,50000,50000,0.20360000000000003,0.0
+pre_benign_vs_post_benign,Average Packet Size,50000,50000,0.16554000000000002,0.0
+pre_benign_vs_post_benign,Avg Fwd Segment Size,50000,50000,0.22721999999999998,0.0
+pre_benign_vs_post_benign,Avg Bwd Segment Size,50000,50000,0.12294000000000005,0.0
+pre_benign_vs_post_benign,Fwd Avg Bytes/Bulk,50000,50000,0.0,1.0
+pre_benign_vs_post_benign,Fwd Avg Packets/Bulk,50000,50000,0.0,1.0
+pre_benign_vs_post_benign,Fwd Avg Bulk Rate,50000,50000,0.0,1.0
+pre_benign_vs_post_benign,Bwd Avg Bytes/Bulk,50000,50000,0.0,1.0
+pre_benign_vs_post_benign,Bwd Avg Packets/Bulk,50000,50000,0.0,1.0
+pre_benign_vs_post_benign,Bwd Avg Bulk Rate,50000,50000,0.0,1.0
+pre_benign_vs_post_benign,Subflow Fwd Packets,50000,50000,0.23578,0.0
+pre_benign_vs_post_benign,Subflow Fwd Bytes,50000,50000,0.19733999999999996,0.0
+pre_benign_vs_post_benign,Subflow Bwd Packets,50000,50000,0.18397999999999992,0.0
+pre_benign_vs_post_benign,Subflow Bwd Bytes,50000,50000,0.16318,0.0
+pre_benign_vs_post_benign,Init_Win_bytes_forward,50000,50000,0.22734,0.0
+pre_benign_vs_post_benign,Init_Win_bytes_backward,50000,50000,0.10343999999999998,2.3631565720929283e-233
+pre_benign_vs_post_benign,act_data_pkt_fwd,50000,50000,0.2087,0.0
+pre_benign_vs_post_benign,min_seg_size_forward,50000,50000,0.09083999999999998,5.7327824193927605e-180
+pre_benign_vs_post_benign,Active Mean,50000,50000,0.13673999999999997,0.0
+pre_benign_vs_post_benign,Active Std,50000,50000,0.09042000000000006,2.6162100247714044e-178
+pre_benign_vs_post_benign,Active Max,50000,50000,0.13670000000000004,0.0
+pre_benign_vs_post_benign,Active Min,50000,50000,0.1361,0.0
+pre_benign_vs_post_benign,Idle Mean,50000,50000,0.13469999999999993,0.0
+pre_benign_vs_post_benign,Idle Std,50000,50000,0.08979999999999999,7.128044212627644e-176
+pre_benign_vs_post_benign,Idle Max,50000,50000,0.13469999999999993,0.0
+pre_benign_vs_post_benign,Idle Min,50000,50000,0.13469999999999993,0.0
+pre_goldeneye_vs_post_goldeneye,Destination Port,3589,3573,0.0,1.0
+pre_goldeneye_vs_post_goldeneye,Flow Duration,3589,3573,0.188972399650423,1.9127492928460665e-56
+pre_goldeneye_vs_post_goldeneye,Total Fwd Packets,3589,3573,0.053623516268612226,6.493238277767259e-05
+pre_goldeneye_vs_post_goldeneye,Total Backward Packets,3589,3573,0.11136798331999453,8.589557996774537e-20
+pre_goldeneye_vs_post_goldeneye,Total Length of Fwd Packets,3589,3573,0.11434306882124276,7.642099984725922e-21
+pre_goldeneye_vs_post_goldeneye,Total Length of Bwd Packets,3589,3573,0.11136798331999453,8.589557996774537e-20
+pre_goldeneye_vs_post_goldeneye,Fwd Packet Length Max,3589,3573,0.11461795483712436,6.0913530934904996e-21
+pre_goldeneye_vs_post_goldeneye,Fwd Packet Length Min,3589,3573,0.0,1.0
+pre_goldeneye_vs_post_goldeneye,Fwd Packet Length Mean,3589,3573,0.12195253759563401,1.1699294113892877e-23
+pre_goldeneye_vs_post_goldeneye,Fwd Packet Length Std,3589,3573,0.12189888608388177,1.2264503319392365e-23
+pre_goldeneye_vs_post_goldeneye,Bwd Packet Length Max,3589,3573,0.11136798331999453,8.589557996774537e-20
+pre_goldeneye_vs_post_goldeneye,Bwd Packet Length Min,3589,3573,0.05774446705138225,1.2497274750186743e-05
+pre_goldeneye_vs_post_goldeneye,Bwd Packet Length Mean,3589,3573,0.11136798331999453,8.589557996774537e-20
+pre_goldeneye_vs_post_goldeneye,Bwd Packet Length Std,3589,3573,0.06738809234329757,1.6396748610529722e-07
+pre_goldeneye_vs_post_goldeneye,Flow Bytes/s,3589,3573,0.11164661246460306,6.866745792678839e-20
+pre_goldeneye_vs_post_goldeneye,Flow Packets/s,3589,3573,0.15763211860228143,2.5754368236917874e-39
+pre_goldeneye_vs_post_goldeneye,Flow IAT Mean,3589,3573,0.1573534894576728,3.539193584099397e-39
+pre_goldeneye_vs_post_goldeneye,Flow IAT Std,3589,3573,0.16264229640323546,7.68784465226466e-42
+pre_goldeneye_vs_post_goldeneye,Flow IAT Max,3589,3573,0.16072355302145735,7.283969229920514e-41
+pre_goldeneye_vs_post_goldeneye,Flow IAT Min,3589,3573,0.2153765856536638,2.307156115527683e-73
+pre_goldeneye_vs_post_goldeneye,Fwd IAT Total,3589,3573,0.16207646011068577,1.4963243542140187e-41
+pre_goldeneye_vs_post_goldeneye,Fwd IAT Mean,3589,3573,0.15763211860228132,2.5754368236921198e-39
+pre_goldeneye_vs_post_goldeneye,Fwd IAT Std,3589,3573,0.12443555763299208,1.2878489055927586e-24
+pre_goldeneye_vs_post_goldeneye,Fwd IAT Max,3589,3573,0.15964397231114102,2.550463426204531e-40
+pre_goldeneye_vs_post_goldeneye,Fwd IAT Min,3589,3573,0.15763211860228132,2.5754368236921198e-39
+pre_goldeneye_vs_post_goldeneye,Bwd IAT Total,3589,3573,0.14242043336540733,3.8317515643935103e-32
+pre_goldeneye_vs_post_goldeneye,Bwd IAT Mean,3589,3573,0.0997805824729402,5.753919743862442e-16
+pre_goldeneye_vs_post_goldeneye,Bwd IAT Std,3589,3573,0.13627772517902093,1.861789780637558e-29
+pre_goldeneye_vs_post_goldeneye,Bwd IAT Max,3589,3573,0.15833473505705975,1.1524293544466694e-39
+pre_goldeneye_vs_post_goldeneye,Bwd IAT Min,3589,3573,0.07704661216827202,1.0919365595121105e-09
+pre_goldeneye_vs_post_goldeneye,Fwd PSH Flags,3589,3573,0.0,1.0
+pre_goldeneye_vs_post_goldeneye,Bwd PSH Flags,3589,3573,0.0,1.0
+pre_goldeneye_vs_post_goldeneye,Fwd URG Flags,3589,3573,0.0,1.0
+pre_goldeneye_vs_post_goldeneye,Bwd URG Flags,3589,3573,0.0,1.0
+pre_goldeneye_vs_post_goldeneye,Fwd Header Length,3589,3573,0.053623516268612226,6.493238277767259e-05
+pre_goldeneye_vs_post_goldeneye,Bwd Header Length,3589,3573,0.11136798331999453,8.589557996774537e-20
+pre_goldeneye_vs_post_goldeneye,Fwd Packets/s,3589,3573,0.15763211860228143,2.5754368236917874e-39
+pre_goldeneye_vs_post_goldeneye,Bwd Packets/s,3589,3573,0.11721919535677355,6.930736309801121e-22
+pre_goldeneye_vs_post_goldeneye,Min Packet Length,3589,3573,0.0,1.0
+pre_goldeneye_vs_post_goldeneye,Max Packet Length,3589,3573,0.11136798331999453,8.589557996774537e-20
+pre_goldeneye_vs_post_goldeneye,Packet Length Mean,3589,3573,0.11136798331999453,8.589557996774537e-20
+pre_goldeneye_vs_post_goldeneye,Packet Length Std,3589,3573,0.11136798331999453,8.589557996774537e-20
+pre_goldeneye_vs_post_goldeneye,Packet Length Variance,3589,3573,0.11136798331999453,8.589557996774537e-20
+pre_goldeneye_vs_post_goldeneye,FIN Flag Count,3589,3573,0.0,1.0
+pre_goldeneye_vs_post_goldeneye,SYN Flag Count,3589,3573,0.0,1.0
+pre_goldeneye_vs_post_goldeneye,RST Flag Count,3589,3573,0.0,1.0
+pre_goldeneye_vs_post_goldeneye,PSH Flag Count,3589,3573,0.053623516268612226,6.493238277767259e-05
+pre_goldeneye_vs_post_goldeneye,ACK Flag Count,3589,3573,0.05221415032108634,0.0001109295571573118
+pre_goldeneye_vs_post_goldeneye,URG Flag Count,3589,3573,0.0,1.0
+pre_goldeneye_vs_post_goldeneye,CWE Flag Count,3589,3573,0.0,1.0
+pre_goldeneye_vs_post_goldeneye,ECE Flag Count,3589,3573,0.0,1.0
+pre_goldeneye_vs_post_goldeneye,Down/Up Ratio,3589,3573,0.014580656118997837,0.8356491207687247
+pre_goldeneye_vs_post_goldeneye,Average Packet Size,3589,3573,0.11136798331999453,8.589557996774537e-20
+pre_goldeneye_vs_post_goldeneye,Avg Fwd Segment Size,3589,3573,0.12195253759563401,1.1699294113892877e-23
+pre_goldeneye_vs_post_goldeneye,Avg Bwd Segment Size,3589,3573,0.11136798331999453,8.589557996774537e-20
+pre_goldeneye_vs_post_goldeneye,Fwd Avg Bytes/Bulk,3589,3573,0.0,1.0
+pre_goldeneye_vs_post_goldeneye,Fwd Avg Packets/Bulk,3589,3573,0.0,1.0
+pre_goldeneye_vs_post_goldeneye,Fwd Avg Bulk Rate,3589,3573,0.0,1.0
+pre_goldeneye_vs_post_goldeneye,Bwd Avg Bytes/Bulk,3589,3573,0.0,1.0
+pre_goldeneye_vs_post_goldeneye,Bwd Avg Packets/Bulk,3589,3573,0.0,1.0
+pre_goldeneye_vs_post_goldeneye,Bwd Avg Bulk Rate,3589,3573,0.0,1.0
+pre_goldeneye_vs_post_goldeneye,Subflow Fwd Packets,3589,3573,0.053623516268612226,6.493238277767259e-05
+pre_goldeneye_vs_post_goldeneye,Subflow Fwd Bytes,3589,3573,0.11434306882124276,7.642099984725922e-21
+pre_goldeneye_vs_post_goldeneye,Subflow Bwd Packets,3589,3573,0.11136798331999453,8.589557996774537e-20
+pre_goldeneye_vs_post_goldeneye,Subflow Bwd Bytes,3589,3573,0.11136798331999453,8.589557996774537e-20
+pre_goldeneye_vs_post_goldeneye,Init_Win_bytes_forward,3589,3573,0.053623516268612226,6.493238277767259e-05
+pre_goldeneye_vs_post_goldeneye,Init_Win_bytes_backward,3589,3573,0.11136798331999453,8.589557996774537e-20
+pre_goldeneye_vs_post_goldeneye,act_data_pkt_fwd,3589,3573,0.11136798331999453,8.589557996774537e-20
+pre_goldeneye_vs_post_goldeneye,min_seg_size_forward,3589,3573,0.0,1.0
+pre_goldeneye_vs_post_goldeneye,Active Mean,3589,3573,0.10770244653233046,1.5492141257758871e-18
+pre_goldeneye_vs_post_goldeneye,Active Std,3589,3573,0.005557610377262878,0.9999999956916817
+pre_goldeneye_vs_post_goldeneye,Active Max,3589,3573,0.10770244653233046,1.5492141257758871e-18
+pre_goldeneye_vs_post_goldeneye,Active Min,3589,3573,0.1102088611242315,2.1666060708787472e-19
+pre_goldeneye_vs_post_goldeneye,Idle Mean,3589,3573,0.16072355302145735,7.283969229920514e-41
+pre_goldeneye_vs_post_goldeneye,Idle Std,3589,3573,0.008060281840437167,0.9997730114978147
+pre_goldeneye_vs_post_goldeneye,Idle Max,3589,3573,0.16072355302145735,7.283969229920514e-41
+pre_goldeneye_vs_post_goldeneye,Idle Min,3589,3573,0.15763211860228132,2.5754368236921198e-39

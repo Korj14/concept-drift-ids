@@ -1,0 +1,65 @@
+{
+  "analysis_format_version": 1,
+  "analysis_id": "system_b_duplicate_aware_validation_v1",
+  "evidence_status": "posthoc_duplicate_dependence_robustness",
+  "analysis_git": {
+    "commit": "40fa6d1783fcf4c8aacbab71db79b1bc2d1677c9",
+    "branch": "stage4-system-b",
+    "clean": "true"
+  },
+  "source_system_b_v2_manifest_sha256": "131027d2f136494eb388183f18dcb7eb0e9d7e9fe786f22dba25f4e1624c1483",
+  "data_access": {
+    "training_used": false,
+    "development_used": true,
+    "pre_drift_used": false,
+    "post_drift_used": false
+  },
+  "validation_rows": 124686,
+  "exact_pattern_groups": 121366,
+  "duplicate_excess_validation_rows": 3320,
+  "pattern_weighting": "Each exact raw 77-feature pattern has equal total weight. Label contradictions within a pattern are preserved as correctness proportions.",
+  "bootstrap": "Unstratified exact-pattern cluster bootstrap with the original replicate count and seed-matched RNG. This is a dependence sensitivity, not a replacement for the primary stratified row bootstrap.",
+  "seed_summaries": {
+    "0": {
+      "candidate_count": 13,
+      "original_quality_pass_count": 7,
+      "pattern_quality_pass_count": 7,
+      "quality_gate_decision_change_count": 0,
+      "r0_v2_active_candidate_count": 7,
+      "r0_v2_active_candidates_failing_pattern_gate": []
+    },
+    "1": {
+      "candidate_count": 12,
+      "original_quality_pass_count": 6,
+      "pattern_quality_pass_count": 6,
+      "quality_gate_decision_change_count": 0,
+      "r0_v2_active_candidate_count": 6,
+      "r0_v2_active_candidates_failing_pattern_gate": []
+    },
+    "2": {
+      "candidate_count": 13,
+      "original_quality_pass_count": 7,
+      "pattern_quality_pass_count": 7,
+      "quality_gate_decision_change_count": 0,
+      "r0_v2_active_candidate_count": 7,
+      "r0_v2_active_candidates_failing_pattern_gate": []
+    },
+    "3": {
+      "candidate_count": 12,
+      "original_quality_pass_count": 6,
+      "pattern_quality_pass_count": 6,
+      "quality_gate_decision_change_count": 0,
+      "r0_v2_active_candidate_count": 6,
+      "r0_v2_active_candidates_failing_pattern_gate": []
+    },
+    "4": {
+      "candidate_count": 12,
+      "original_quality_pass_count": 6,
+      "pattern_quality_pass_count": 6,
+      "quality_gate_decision_change_count": 0,
+      "r0_v2_active_candidate_count": 6,
+      "r0_v2_active_candidates_failing_pattern_gate": []
+    }
+  },
+  "artifact_sha256": "40d4a1bd4f47319e528155046f4f48ff0e8f9fa7f99105da6a904e95a1cdd630"
+}

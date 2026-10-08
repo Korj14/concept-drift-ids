@@ -1,0 +1,574 @@
+{
+  "manifest_format_version": 1,
+  "robustness_id": "system_a_pattern_dedup_training_v1",
+  "evidence_status": "posthoc_training_duplicate_sensitivity_not_replacement",
+  "source_system_a_manifest_sha256": "42004b5ed100b690023b9998bdc959fac41ab947b996fb7c58e44cee5e8dc6de",
+  "source_system_a_config_sha256": "e8fba7b11bcdf474c8a7929d4d00b8cc16c87bb3b5d2cd5bd006f40a2b02fcde",
+  "preprocessing_state_hash": "4527f77220f2cf6063108a7d71d80aaa0e82099ad282ff25408a2d9ce3488b1e",
+  "build_git": {
+    "commit": "24198edaa8efd1635e7831492eb3897038d214e3",
+    "branch": "stage4-system-b",
+    "clean": "true"
+  },
+  "data_access": {
+    "training_used": true,
+    "development_used": true,
+    "pre_drift_used": false,
+    "post_drift_used": false
+  },
+  "deduplication_policy": {
+    "unit": "exact_raw_77_feature_pattern_plus_binary_label",
+    "keep": "first_occurrence_in_frozen_training_order",
+    "binary_label_conflicts_preserved": true,
+    "majority_relabeling": false,
+    "preprocessing_refit": false
+  },
+  "training_rows_original": 1322179,
+  "training_rows_retained": 1208362,
+  "training_rows_removed": 113817,
+  "original_class_counts": {
+    "benign": 1064858,
+    "attack": 257321
+  },
+  "retained_class_counts": {
+    "benign": 1014632,
+    "attack": 193730
+  },
+  "retained_training_scenario_rows_sha256": "06cc15b3e84a70c49b72a1645242030f35a8c0390e0f864d5deffdd18b4e49c2",
+  "development_scenario_rows_sha256": "d855445adafffc898360401d43153bdf2c57c74747470b1a6580c8c8a02995bf",
+  "training_protocol": {
+    "protocol_version": 1,
+    "input_features": 77,
+    "hidden_layers": [
+      128,
+      64
+    ],
+    "activation": "ReLU",
+    "dropout": 0.1,
+    "weight_initialization": "kaiming_uniform_relu",
+    "loss": "BCEWithLogitsLoss",
+    "positive_class_weight": "training_benign/training_attack",
+    "optimizer": "Adam",
+    "learning_rate": 0.001,
+    "weight_decay": 1e-05,
+    "batch_size": 4096,
+    "max_epochs": 20,
+    "early_stopping_metric": "development_average_precision",
+    "early_stopping_patience": 3,
+    "early_stopping_min_delta": 0.0001,
+    "threshold_objective": "MCC",
+    "threshold_tiebreak": [
+      "F1",
+      "lower_FPR",
+      "closest_to_0.5"
+    ],
+    "probability_calibration": "none",
+    "num_workers": 0,
+    "seeds": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ]
+  },
+  "seed_records": [
+    {
+      "seed": 0,
+      "best_epoch": 13,
+      "threshold": 0.8336294293403625,
+      "development_metrics": {
+        "accuracy": 0.9961118329243058,
+        "balanced_accuracy": 0.8197188616128432,
+        "precision": 0.9394602479941648,
+        "recall": 0.6398410332836563,
+        "f1": 0.7612293144208038,
+        "fpr": 0.0004033100579697469,
+        "mcc": 0.7736153174545906,
+        "roc_auc": 0.9176580077810775,
+        "average_precision": 0.6871556391555341
+      },
+      "positive_class_weight": 5.237350952356373,
+      "epochs_ran": 16,
+      "history": [
+        {
+          "epoch": 1,
+          "training_loss": 0.17243308047283476,
+          "development_average_precision": 0.4958855687283027
+        },
+        {
+          "epoch": 2,
+          "training_loss": 0.0827548916192755,
+          "development_average_precision": 0.585805590222839
+        },
+        {
+          "epoch": 3,
+          "training_loss": 0.06892861121643025,
+          "development_average_precision": 0.6346316348768332
+        },
+        {
+          "epoch": 4,
+          "training_loss": 0.06116700595352399,
+          "development_average_precision": 0.6208627490014073
+        },
+        {
+          "epoch": 5,
+          "training_loss": 0.05606546480746045,
+          "development_average_precision": 0.6254813143148942
+        },
+        {
+          "epoch": 6,
+          "training_loss": 0.05314905916846383,
+          "development_average_precision": 0.6493019350121105
+        },
+        {
+          "epoch": 7,
+          "training_loss": 0.049740879589311296,
+          "development_average_precision": 0.619007026174345
+        },
+        {
+          "epoch": 8,
+          "training_loss": 0.046445660417116036,
+          "development_average_precision": 0.6568568819861313
+        },
+        {
+          "epoch": 9,
+          "training_loss": 0.041572327698479565,
+          "development_average_precision": 0.6527382989754201
+        },
+        {
+          "epoch": 10,
+          "training_loss": 0.03943972964266378,
+          "development_average_precision": 0.6647840360577506
+        },
+        {
+          "epoch": 11,
+          "training_loss": 0.03511546745072508,
+          "development_average_precision": 0.6282933285964394
+        },
+        {
+          "epoch": 12,
+          "training_loss": 0.03476324066210729,
+          "development_average_precision": 0.6867706401779117
+        },
+        {
+          "epoch": 13,
+          "training_loss": 0.030789173433250706,
+          "development_average_precision": 0.6871556391555341
+        },
+        {
+          "epoch": 14,
+          "training_loss": 0.030728640752739324,
+          "development_average_precision": 0.6823580039761095
+        },
+        {
+          "epoch": 15,
+          "training_loss": 0.02722965556133383,
+          "development_average_precision": 0.6626734778842368
+        },
+        {
+          "epoch": 16,
+          "training_loss": 0.026470266973160395,
+          "development_average_precision": 0.6825563010144929
+        }
+      ],
+      "checkpoint_file": "artifacts/robustness/system_a_pattern_dedup_training_v1/checkpoints/seed_0.pt",
+      "checkpoint_sha256": "ad698b20652971be859a1de17cf2a8be495c8f7f1978a64987febc846549f75e",
+      "device": "cpu",
+      "torch_version": "2.14.1+cpu"
+    },
+    {
+      "seed": 1,
+      "best_epoch": 7,
+      "threshold": 0.942894697189331,
+      "development_metrics": {
+        "accuracy": 0.9956594966555988,
+        "balanced_accuracy": 0.793173198246732,
+        "precision": 0.9440447641886491,
+        "recall": 0.5866865375062096,
+        "f1": 0.7236519607843137,
+        "fpr": 0.00034014101274556965,
+        "mcc": 0.7424119463683158,
+        "roc_auc": 0.9805940222550033,
+        "average_precision": 0.6899316015650304
+      },
+      "positive_class_weight": 5.237350952356373,
+      "epochs_ran": 10,
+      "history": [
+        {
+          "epoch": 1,
+          "training_loss": 0.1990322621287357,
+          "development_average_precision": 0.44617534349739246
+        },
+        {
+          "epoch": 2,
+          "training_loss": 0.08845395833827384,
+          "development_average_precision": 0.5165514924345093
+        },
+        {
+          "epoch": 3,
+          "training_loss": 0.07187138764282083,
+          "development_average_precision": 0.6019077122006752
+        },
+        {
+          "epoch": 4,
+          "training_loss": 0.061887663849233665,
+          "development_average_precision": 0.6146319791232239
+        },
+        {
+          "epoch": 5,
+          "training_loss": 0.05513699621308611,
+          "development_average_precision": 0.6316476781549464
+        },
+        {
+          "epoch": 6,
+          "training_loss": 0.0502173555360714,
+          "development_average_precision": 0.6472317075900729
+        },
+        {
+          "epoch": 7,
+          "training_loss": 0.04598632493625741,
+          "development_average_precision": 0.6899316015650304
+        },
+        {
+          "epoch": 8,
+          "training_loss": 0.04532377864897633,
+          "development_average_precision": 0.6684306043805944
+        },
+        {
+          "epoch": 9,
+          "training_loss": 0.04063899744426208,
+          "development_average_precision": 0.6392301317481912
+        },
+        {
+          "epoch": 10,
+          "training_loss": 0.03802686925780171,
+          "development_average_precision": 0.6738121291476217
+        }
+      ],
+      "checkpoint_file": "artifacts/robustness/system_a_pattern_dedup_training_v1/checkpoints/seed_1.pt",
+      "checkpoint_sha256": "c37e967b4b2c7f6cfb44d024cf3a40a2f86fd77139526f676991bf19ad876b39",
+      "device": "cpu",
+      "torch_version": "2.14.1+cpu"
+    },
+    {
+      "seed": 2,
+      "best_epoch": 14,
+      "threshold": 0.73223477602005,
+      "development_metrics": {
+        "accuracy": 0.9961695779798855,
+        "balanced_accuracy": 0.8300781650130288,
+        "precision": 0.9216909216909217,
+        "recall": 0.6607054148037754,
+        "f1": 0.7696759259259259,
+        "fpr": 0.0005490847777178482,
+        "mcc": 0.7786367689843685,
+        "roc_auc": 0.9217320672189416,
+        "average_precision": 0.6860314680289196
+      },
+      "positive_class_weight": 5.237350952356373,
+      "epochs_ran": 17,
+      "history": [
+        {
+          "epoch": 1,
+          "training_loss": 0.19649704721262073,
+          "development_average_precision": 0.46939994183911643
+        },
+        {
+          "epoch": 2,
+          "training_loss": 0.08796776808506582,
+          "development_average_precision": 0.5707127007230001
+        },
+        {
+          "epoch": 3,
+          "training_loss": 0.06993864127564524,
+          "development_average_precision": 0.5966653449077289
+        },
+        {
+          "epoch": 4,
+          "training_loss": 0.060428792720502784,
+          "development_average_precision": 0.6312552751593872
+        },
+        {
+          "epoch": 5,
+          "training_loss": 0.05433711386816795,
+          "development_average_precision": 0.6413383082883375
+        },
+        {
+          "epoch": 6,
+          "training_loss": 0.049231252116996964,
+          "development_average_precision": 0.6469145637668496
+        },
+        {
+          "epoch": 7,
+          "training_loss": 0.044327409614797766,
+          "development_average_precision": 0.5993122292960633
+        },
+        {
+          "epoch": 8,
+          "training_loss": 0.04599652843220354,
+          "development_average_precision": 0.651880929071391
+        },
+        {
+          "epoch": 9,
+          "training_loss": 0.040804724052633815,
+          "development_average_precision": 0.629480710584008
+        },
+        {
+          "epoch": 10,
+          "training_loss": 0.04037372221343186,
+          "development_average_precision": 0.6745414048500861
+        },
+        {
+          "epoch": 11,
+          "training_loss": 0.03553627516510674,
+          "development_average_precision": 0.6677023775418951
+        },
+        {
+          "epoch": 12,
+          "training_loss": 0.03196747834022828,
+          "development_average_precision": 0.6794712720630126
+        },
+        {
+          "epoch": 13,
+          "training_loss": 0.030531384116752887,
+          "development_average_precision": 0.6816766375907859
+        },
+        {
+          "epoch": 14,
+          "training_loss": 0.029213577050495335,
+          "development_average_precision": 0.6860314680289196
+        },
+        {
+          "epoch": 15,
+          "training_loss": 0.02921339101509112,
+          "development_average_precision": 0.6752850173757097
+        },
+        {
+          "epoch": 16,
+          "training_loss": 0.027476603677228793,
+          "development_average_precision": 0.564704694448667
+        },
+        {
+          "epoch": 17,
+          "training_loss": 0.039714355259498145,
+          "development_average_precision": 0.6815909072509805
+        }
+      ],
+      "checkpoint_file": "artifacts/robustness/system_a_pattern_dedup_training_v1/checkpoints/seed_2.pt",
+      "checkpoint_sha256": "3a47ad9eb31755640e6e03f9fcf72d5a0ce19055e08570db53afc31c68ac8c12",
+      "device": "cpu",
+      "torch_version": "2.14.1+cpu"
+    },
+    {
+      "seed": 3,
+      "best_epoch": 18,
+      "threshold": 0.4887380003929138,
+      "development_metrics": {
+        "accuracy": 0.9961840142437803,
+        "balanced_accuracy": 0.8352505279771342,
+        "precision": 0.9116059379217274,
+        "recall": 0.6711376055638351,
+        "f1": 0.77310443490701,
+        "fpr": 0.000636549609566709,
+        "mcc": 0.7804367061860966,
+        "roc_auc": 0.9811494736633444,
+        "average_precision": 0.7172014833600766
+      },
+      "positive_class_weight": 5.237350952356373,
+      "epochs_ran": 20,
+      "history": [
+        {
+          "epoch": 1,
+          "training_loss": 0.20831575675806144,
+          "development_average_precision": 0.44727633028852737
+        },
+        {
+          "epoch": 2,
+          "training_loss": 0.09177279080847253,
+          "development_average_precision": 0.5233285999239664
+        },
+        {
+          "epoch": 3,
+          "training_loss": 0.0729900942022626,
+          "development_average_precision": 0.621959279751109
+        },
+        {
+          "epoch": 4,
+          "training_loss": 0.06390470719034044,
+          "development_average_precision": 0.6053891863261557
+        },
+        {
+          "epoch": 5,
+          "training_loss": 0.057494615294769326,
+          "development_average_precision": 0.6410480742395915
+        },
+        {
+          "epoch": 6,
+          "training_loss": 0.05133789661128503,
+          "development_average_precision": 0.653522829471642
+        },
+        {
+          "epoch": 7,
+          "training_loss": 0.04672711657332176,
+          "development_average_precision": 0.6508320389512243
+        },
+        {
+          "epoch": 8,
+          "training_loss": 0.042925389914351346,
+          "development_average_precision": 0.6701127895884259
+        },
+        {
+          "epoch": 9,
+          "training_loss": 0.04141865612127608,
+          "development_average_precision": 0.6415011884992455
+        },
+        {
+          "epoch": 10,
+          "training_loss": 0.03718365317225356,
+          "development_average_precision": 0.6715466428687453
+        },
+        {
+          "epoch": 11,
+          "training_loss": 0.035977947200508086,
+          "development_average_precision": 0.6719498133220877
+        },
+        {
+          "epoch": 12,
+          "training_loss": 0.03231549934799615,
+          "development_average_precision": 0.6724470998205588
+        },
+        {
+          "epoch": 13,
+          "training_loss": 0.030434687567519478,
+          "development_average_precision": 0.47869440670514196
+        },
+        {
+          "epoch": 14,
+          "training_loss": 0.04188470380683869,
+          "development_average_precision": 0.654210089130029
+        },
+        {
+          "epoch": 15,
+          "training_loss": 0.03446773840581973,
+          "development_average_precision": 0.6812447603756131
+        },
+        {
+          "epoch": 16,
+          "training_loss": 0.032054637724840095,
+          "development_average_precision": 0.6710428453012127
+        },
+        {
+          "epoch": 17,
+          "training_loss": 0.029801348401140466,
+          "development_average_precision": 0.605654167273561
+        },
+        {
+          "epoch": 18,
+          "training_loss": 0.030520104805372344,
+          "development_average_precision": 0.7172014833600766
+        },
+        {
+          "epoch": 19,
+          "training_loss": 0.028348747204053077,
+          "development_average_precision": 0.6711231728986451
+        },
+        {
+          "epoch": 20,
+          "training_loss": 0.024831822719156793,
+          "development_average_precision": 0.6806346067022518
+        }
+      ],
+      "checkpoint_file": "artifacts/robustness/system_a_pattern_dedup_training_v1/checkpoints/seed_3.pt",
+      "checkpoint_sha256": "bcff766106383a4bbaa4fcc5424816c02ae8c75139cdbb1344009e773b25a5f7",
+      "device": "cpu",
+      "torch_version": "2.14.1+cpu"
+    },
+    {
+      "seed": 4,
+      "best_epoch": 9,
+      "threshold": 0.8995010256767273,
+      "development_metrics": {
+        "accuracy": 0.9958712285260575,
+        "balanced_accuracy": 0.8043481159109905,
+        "precision": 0.9452582883577486,
+        "recall": 0.6090412319920516,
+        "f1": 0.740785498489426,
+        "fpr": 0.0003450001700705064,
+        "mcc": 0.7570042793185129,
+        "roc_auc": 0.9868013917640412,
+        "average_precision": 0.7108443752872466
+      },
+      "positive_class_weight": 5.237350952356373,
+      "epochs_ran": 12,
+      "history": [
+        {
+          "epoch": 1,
+          "training_loss": 0.19726131473528558,
+          "development_average_precision": 0.4469534520222106
+        },
+        {
+          "epoch": 2,
+          "training_loss": 0.08724359537455291,
+          "development_average_precision": 0.5305214682026542
+        },
+        {
+          "epoch": 3,
+          "training_loss": 0.06997121068106155,
+          "development_average_precision": 0.6222419217373173
+        },
+        {
+          "epoch": 4,
+          "training_loss": 0.061465642989436346,
+          "development_average_precision": 0.6311512869118089
+        },
+        {
+          "epoch": 5,
+          "training_loss": 0.05425817790744157,
+          "development_average_precision": 0.6331569069172803
+        },
+        {
+          "epoch": 6,
+          "training_loss": 0.04905848273671718,
+          "development_average_precision": 0.6254025301646238
+        },
+        {
+          "epoch": 7,
+          "training_loss": 0.04525415316163792,
+          "development_average_precision": 0.6450617927179455
+        },
+        {
+          "epoch": 8,
+          "training_loss": 0.04057584165228353,
+          "development_average_precision": 0.6931085253938981
+        },
+        {
+          "epoch": 9,
+          "training_loss": 0.03846085592282208,
+          "development_average_precision": 0.7108443752872466
+        },
+        {
+          "epoch": 10,
+          "training_loss": 0.03739336515380055,
+          "development_average_precision": 0.6357101696079499
+        },
+        {
+          "epoch": 11,
+          "training_loss": 0.03325934900684454,
+          "development_average_precision": 0.68166112270173
+        },
+        {
+          "epoch": 12,
+          "training_loss": 0.03187130762399414,
+          "development_average_precision": 0.5550862401123058
+        }
+      ],
+      "checkpoint_file": "artifacts/robustness/system_a_pattern_dedup_training_v1/checkpoints/seed_4.pt",
+      "checkpoint_sha256": "97700ab7d11174a25a727d11aef8f5fffacb94e975caba16aad7d86ba43ce23f",
+      "device": "cpu",
+      "torch_version": "2.14.1+cpu"
+    }
+  ],
+  "interpretation_firewall": "This alternate teacher quantifies dependence on training multiplicity. It cannot replace accepted System A or R0.v2 based on held-out results.",
+  "manifest_sha256": "9aaf25d65052f3b6521c248d88aab6d55dd5dd2e02ed73d18452bc0460db3c5f"
+}

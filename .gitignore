@@ -34,5 +34,11 @@ data/processed/*
 results/*
 !results/frozen/
 !results/frozen/**
+!results/audits/
+!results/audits/**
+!results/analysis/
+!results/analysis/**
+!results/robustness/
+!results/robustness/**
 # Generated model artifacts
 artifacts/*

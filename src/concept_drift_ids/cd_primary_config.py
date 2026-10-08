@@ -222,7 +222,6 @@ def _requirements_identity(
     return {
         "path": "requirements-lock.txt",
         "binding_normalized_text_sha256": normalized,
-        "freeze_checkout_raw_sha256": sha256_file(path),
         "installed_distributions": installed,
         "installed_distributions_sha256": canonical_sha256(installed),
     }

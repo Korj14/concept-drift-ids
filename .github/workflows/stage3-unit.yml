@@ -58,6 +58,7 @@ jobs:
               "D_TRIGGER_ABLATION_PROTOCOL.md",
               "C_D_FINAL_ANALYSIS_REPRODUCIBILITY_PROTOCOL.md",
               "STAGE5_HANDOFF.md",
+              "STAGE6_CONTROL_PLANE_IMPLEMENTATION.md",
           ]
           missing = [path for path in required if not Path(path).is_file()]
           assert not missing, f"Missing governance artifacts: {missing}"

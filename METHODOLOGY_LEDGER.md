@@ -2322,3 +2322,83 @@ succeeds, the corrected implementation-ready state must receive a new annotated 
 No detector, neural adaptation, replay, symbolic rule, lifecycle threshold, fusion parameter,
 statistical endpoint, or treatment definition changed. Primary adaptive pre/post execution remains
 locked and untouched.
+
+
+### Stage 8 primary-execution surface frozen prospectively before run-config generation — 9 October 2026
+
+The corrected implementation-ready annotated tag `cd-implementation-ready-v1.1` was verified
+remotely to resolve to accepted commit
+`5627e36c7f1fef9620346e31e2aee01a2dd155ee`. Accepted `main` was identical to that commit when
+`stage8-cd-primary-evaluation` was created.
+
+No primary adaptive pre/post row had been processed when the Stage-8 execution surface below was
+implemented.
+
+Stage 8 now freezes a five-gate primary workflow:
+
+1. no-data run-config generation and commit;
+2. all five Phase-A shared detector/neural trajectories;
+3. all five Phase-B C/D-drift/D-periodic symbolic trajectories;
+4. all five Phase-C offline boundary-aware evaluations followed by the prespecified aggregate;
+5. compact evidence export for Git after the complete primary analysis.
+
+`STAGE8_PRIMARY_EXECUTION_PROTOCOL.md` is the prospective execution contract.
+
+The run-config builder hashes the governing-source identities, protocol bundle, scientific source
+tree, requirements lock, accepted scenario/preprocessing/System-A/R0 identities, control-plane and
+symbolic configurations, fusion thresholds, seeds, arms, phase order and runtime contract. The config
+is generated without loading any scenario partition. Primary execution fails closed if the tracked
+config, source hashes, protocol hashes, dependency lock, corrected implementation-ready ancestry or
+clean-worktree condition changes.
+
+The primary runtime launcher `scripts/run_primary.ps1` sets
+`PYTHONHASHSEED=0`, `OMP_NUM_THREADS=1`, `MKL_NUM_THREADS=1`,
+`OPENBLAS_NUM_THREADS=1` and `NUMEXPR_NUM_THREADS=1` before Python starts. The existing Python
+runtime verifier then enforces deterministic/single-thread numerical execution.
+
+The Stage-8 scenario adapter is deliberately separated from the treatment-independent shared runner.
+It may reconstruct the frozen scenario and evaluator-known partition lengths, but adaptive row
+identities are neutral `stream:<index>` values and no boundary/partition field is supplied to the
+shared control plane. The training anchor uses the frozen uniform sampling seed and accepted
+training-only preprocessing state.
+
+Several additional implementation/audit hardenings were made prospectively before primary access:
+
+- D-periodic received the same local seed-mismatch guard as C and D-drift; a duplicated D-drift seed
+  check was removed.
+- Symbolic maintenance records now retain complete candidate-generation provenance, including
+  selected features, SHAP ranking, background/attribution row IDs, candidate structures and timing,
+  rather than only counts/evidence IDs.
+- Verified `RuleBaseState` deserialization was added so Phase C scores immutable Phase-B symbolic
+  versions rather than rerunning candidate generation or lifecycle maintenance.
+- Phase-A and Phase-B technical failures are preserved in write-once failure artifacts.
+- Phase-A command output was intentionally narrowed to integrity hashes/status and does not print
+  drift/update/pending-state outcomes during held-out execution.
+- Heavy primary execution evidence was moved to the Git-ignored
+  `artifacts/cd_primary_v1/` tree so one successful seed does not invalidate the clean-worktree
+  gate for the next seed.
+- A prospective compact export step copies only manifests, summaries, states and version evidence to
+  `results/frozen/cd_primary_v1/` after the entire primary evaluation, while retaining exact hashes
+  back to the heavy evidence tree.
+- Phase C verifies both compressed prediction-trace file hashes and the canonical uncompressed JSONL
+  content identity.
+- Phase B cannot begin until all five Phase-A seeds verify; Phase C cannot begin until all five
+  Phase-A and all five Phase-B seeds verify. This prevents partially observed earlier seeds from
+  influencing implementation of later treatment/evaluation stages.
+- The five-seed confirmatory aggregate has its own integrity verifier and compact export requires
+  that aggregate to verify.
+
+These changes alter no frozen drift detector parameter, verification latency, replay/neural update
+budget, symbolic gate, trigger schedule, fusion authority/threshold, confirmatory endpoint or
+inferential unit. They are execution/evidence hardening performed before primary held-out access.
+
+The root runner now exposes gated commands for config preparation, Phase A, Phase B, Phase C and
+compact export. Repository-only Stage-8 tests cover no-data preparation, deferred scenario-adapter
+access, source/config hashing, rule-state round-trip, periodic seed rejection, candidate provenance,
+Git-ignored heavy evidence, deterministic trace content identity and launcher environment ordering.
+
+**Current gate:** the primary run config
+`data/manifests/cd_primary_run_config_v1.json` has not yet been generated. No primary adaptive
+pre/post execution has occurred. The next permitted action after exact-head CI is local no-data
+`cd-primary-prepare`, followed by committing that generated manifest and requiring clean,
+exact-config-head CI before the first Phase-A seed.

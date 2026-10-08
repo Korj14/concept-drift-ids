@@ -21,6 +21,7 @@ from concept_drift_ids.cd_primary_phase_c import (
     _phase_c_dir,
     _phase_c_root,
     verify_phase_c_seed,
+    verify_primary_aggregate,
 )
 from concept_drift_ids.scenario_manifest import sha256_file
 
@@ -95,11 +96,8 @@ def export_primary_compact_evidence() -> dict[str, Any]:
     for seed in PRIMARY_SEEDS:
         verify_phase_c_seed(seed)
 
+    verify_primary_aggregate()
     confirmatory = _phase_c_root() / "confirmatory_analysis.json"
-    if not confirmatory.is_file():
-        raise FileNotFoundError(
-            "Five-seed confirmatory aggregate must exist before compact export."
-        )
     if COMPACT_EXPORT_ROOT.exists():
         raise FileExistsError(
             f"Compact primary export already exists: {COMPACT_EXPORT_ROOT}"

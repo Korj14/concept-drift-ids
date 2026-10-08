@@ -2193,3 +2193,94 @@ No primary adaptive pre/post stream has been executed or inspected.
 **Next gate:** exact terminal head CI -> PR #4 acceptance into main -> Stage 7 symbolic lifecycle
 implementation. Primary held-out execution remains locked until
 `cd-implementation-ready-v1`.
+
+
+### Stage 7 symbolic lifecycle and C/D evaluation implementation complete pending milestone acceptance — 8 October 2026
+
+Stage 7 was implemented on `stage7-cd-symbolic-lifecycle` from accepted Stage-6 main
+`f11f2709bc1f6a32a7c416012860342d9a772ff7`.
+
+No primary adaptive pre/post stream was loaded, executed, or inspected.
+
+The implementation now covers the accepted R0.v2 migration, online candidate generation,
+independent future symbolic validation, Wilson/bootstrap rule gating, explicit rule revision/lineage
+history, D lifecycle transitions, trigger-arm orchestration, dynamic fused evaluation, MCSC, the
+frozen confirmatory statistics, trigger-efficiency summaries, symbolic evidence serialization and
+a no-data implementation-readiness preflight.
+
+The accepted R0.v2 migration is hash-pinned rather than rebuilt. Stage 7 verifies the accepted
+manifest identity and each seed's raw/canonical rule artifact identity, then wraps the existing
+antecedent/consequent/confidence semantics in the expanded lifecycle schema.
+
+The lifecycle implementation separates two identities:
+
+- a canonical **inference rule-base hash**, which changes only when inference-relevant symbolic
+  state changes;
+- a **lifecycle-history hash**, which also changes for audit-only transitions such as a previously
+  demoted rule becoming retired.
+
+This prevents audit-state progress from being misreported as a predictive rule-base publication.
+
+Candidate generation preserves the frozen extraction family: DeepExplainer raw attack logit,
+class-balanced 128/class background, up-to-1024/class attribution, top-12 normalized SHAP selection,
+weighted CART depth 4/min leaf 100, equal-total neural-decision weights and fitted weighted-leaf
+consequents.
+
+The D-drift and D-periodic runners consume a caller-supplied frozen shared trajectory and cannot
+generate or alter drift events, replay or neural checkpoints. All matched arms now fail closed unless
+they share one seed, one accepted R0 starting inference hash, and one shared-control-plane identity;
+the two D trigger arms additionally share one symbolic operator configuration hash.
+
+A prospective code audit found and corrected three issues before held-out access.
+
+1. **Toy Wilson fixture error.** The first Stage-7 CI failure was caused by a test-only helper with a
+   one-sided Wilson-LCB cutoff of .60 on only four perfectly correct covered rows. The implementation
+   correctly rejected that toy evidence. The toy threshold was lowered to .50 solely to make the
+   small fixture exercise the intended transition. The primary frozen .80 precision-LCB and .90
+   fidelity-LCB requirements were unchanged.
+
+2. **Periodic validation chronology defect.** Initial orchestration anchored independent validation
+   only to the current neural checkpoint's publication time. A long-lived checkpoint could therefore
+   contribute validation rows that occurred before a later periodic maintenance target. This was a
+   real causal-timing implementation defect. It was corrected by introducing an explicit
+   `validation_start_index`: D-periodic uses `target_clock + 1`, whereas D-drift uses the
+   associated child checkpoint effective index. The validation-start field is serialized and a
+   regression test rejects pre-target periodic validation rows.
+
+3. **Stale refinement/conflict-history hardening.** Adversarial review found that a stale incumbent
+   demoted during the same maintenance opportunity could otherwise be omitted from refinement-parent
+   selection, and unresolved conflict relations could be accumulated rather than reconstructed.
+   Stale same-class incumbents now remain eligible refinement parents and preserve lineage on
+   successful refinement. Unresolved opposite-class relations are deterministically rebuilt from the
+   final surviving active set on every completed maintenance opportunity. Adversarial tests cover
+   both cases.
+
+These corrections did not alter the frozen design thresholds, lifecycle transition doctrine,
+periodic schedule, detector/neural trajectory, fusion rule, or confirmatory endpoints.
+
+Symbolic maintenance cost instrumentation now records SHAP, surrogate, lifecycle and serialization
+time using `perf_counter_ns`, plus validation waiting rows, opportunity/publication counts and
+lifecycle decisions.
+
+A safe root command, `python run.py cd-preflight`, was added. It performs implementation-readiness
+file/hash/config checks only and exposes no primary C/D execution command. It checks SAP/protocol
+presence, frozen scenario/preprocessing identities, accepted System-A manifest/checkpoint bytes,
+accepted R0.v2 identities, and frozen primary control-plane/symbolic configurations. CI verifies the
+repository-only parts and verifies that missing external checkpoint bytes fail closed.
+
+`STAGE7_SYMBOLIC_IMPLEMENTATION.md` and `STAGE7_HANDOFF.md` now document the implementation and
+portable continuation state.
+
+Historical Research Contract runs record the implementation journey:
+
+- #306 and #310 failed only on the pre-correction toy Wilson fixture;
+- #323 succeeded on the full Stage-7 symbolic suite before the later periodic-validation chronology
+  correction and additional hardening;
+- a final exact-terminal-head Research Contract run remains mandatory before PR #5 acceptance.
+
+**Gate remains locked:** Stage 7 must pass terminal-head CI and be accepted into main. The accepted
+merge must then receive the local annotated tag `cd-implementation-ready-v1`, and the project owner
+must run `python run.py cd-preflight` successfully before Stage 8 run-manifest preparation.
+
+Primary adaptive pre/post execution remains prohibited until the Stage-8 run/config manifest is
+committed on a clean, CI-green implementation-ready parent.

@@ -21,7 +21,7 @@ def main() -> None:
     )
     parser.add_argument(
         "command",
-        choices=("stage3a-preprocess", "system-a", "system-b"),
+        choices=("stage3a-preprocess", "system-a", "system-b", "cd-preflight"),
         help="Project command to execute.",
     )
     args, remainder = parser.parse_known_args()
@@ -42,8 +42,15 @@ def main() -> None:
         run_system_a()
         return
 
-    from concept_drift_ids.system_b import main as run_system_b
-    run_system_b()
+    if args.command == "system-b":
+        from concept_drift_ids.system_b import main as run_system_b
+        run_system_b()
+        return
+
+    from concept_drift_ids.cd_implementation_preflight import (
+        main as run_cd_preflight,
+    )
+    run_cd_preflight()
 
 
 if __name__ == "__main__":

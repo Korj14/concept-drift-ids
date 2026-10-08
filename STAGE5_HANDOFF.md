@@ -125,6 +125,46 @@ Primary decision-policy controls:
 
 All neural-side causal controls are now prospectively specified.
 
+### Packet 6 — D symbolic lifecycle / online validation
+
+`D_SYMBOLIC_LIFECYCLE_PROTOCOL.md` is frozen.
+
+Primary symbolic-treatment decisions:
+
+- candidate generation and candidate acceptance are separate stages;
+- D-drift candidate generation uses the 10,000-row neural current-evidence window associated with the shared child checkpoint;
+- candidate acceptance uses a different chronological 10,000-row future validation block predicted by that child checkpoint and matured while that checkpoint remains active;
+- checkpoint supersession before validation completion aborts the symbolic transaction with no partial publication;
+- online SHAP preserves the R0 extraction family: DeepExplainer raw attack logit, balanced background up to 128/class, attribution up to 1024/class, top-12 features;
+- online surrogate remains weighted CART with max_depth=4, min_samples_leaf=100 and **weighted fitted-leaf consequent semantics**;
+- online rule acceptance uses support>=.001, covered>=25, point precision>=.80 plus one-sided 95% Wilson LCB>=.80, point fidelity>=.90 plus Wilson LCB>=.90, 100-replicate full-gate persistence>=.90, complexity<=4;
+- existing D rules are assessed for staleness before candidate integration;
+- first completed failure demotes an active rule, second consecutive completed failure retires it; later full-gate pass may reactivate the lineage;
+- confidence is refreshed only at completed independent maintenance validation as min(point precision, point neural fidelity);
+- same-class overlap>=.95 uses merge/consolidation; overlap [.50,.95) permits refinement only when candidate dominates or resolves documented staleness; lower overlap permits new addition;
+- cross-class overlap>=.50 preserves Pareto resolution and unresolved conflict abstention/neural fallback;
+- maintenance events, rejected candidates, no-ops, censored transactions, rule revisions and parent-hash rule-base versions are immutable evidence;
+- symbolic recovery requires a documented valid -> stale/demoted -> refinement/reactivation/replacement -> post-publication improvement chain.
+
+### Packet 7 — D-drift versus D-periodic trigger ablation
+
+`D_TRIGGER_ABLATION_PROTOCOL.md` is frozen.
+
+Trigger-ablation decisions:
+
+- D-drift and D-periodic use the exact same symbolic operator/configuration and shared neural trajectory;
+- maximum symbolic maintenance budget = four opportunities per seed per trigger arm;
+- every opportunity consumes a slot regardless of publication/no-op/censoring; no retries beyond four;
+- D-drift uses the first four confirmed primary detector events for its symbolic slots;
+- D-periodic uses fixed clocks 27,706; 55,412; 83,118; 110,824;
+- those clocks equal floor(i*N/5) for N=138,530 and were derived from the frozen 25,000-row symbolic evidence footprint, not from the known boundary or detector results;
+- periodic scheduling never consults detector alarms;
+- periodic candidate generation uses the most recent 10,000 mature rows at the fixed target clock and the current shared checkpoint;
+- periodic validation uses the same future 10,000-row checkpoint-pure validation contract;
+- checkpoint supersession aborts the transaction; the periodic schedule does not move;
+- at most one symbolic transaction is outstanding per seed/arm; a periodic target arriving while a transaction remains pending is logged pending_transaction_skip and consumes its slot;
+- opportunity, completed validation, publication, no-op and censored/aborted transaction are distinct outcomes.
+
 ## Current scientific gate
 
 **Status: NOT READY FOR ADAPTIVE IMPLEMENTATION.**
@@ -135,39 +175,36 @@ No adaptive detector/updater/lifecycle implementation should begin until the rem
 
 ## Remaining blocking controls
 
-1. D symbolic lifecycle/operator state machine;
-2. symbolic candidate-generation evidence;
-3. independent online symbolic validation evidence;
-4. online support/count/uncertainty gate semantics;
-5. rule-confidence update semantics;
-6. D-periodic cadence/opportunity matching;
-7. confirmatory endpoints, intervals/tests and multiplicity;
-8. runtime/thread/determinism and cost scopes;
-9. final event/lifecycle/evidence serialization schemas;
-10. fail-closed contamination/integrity verifiers and implementation tests.
+1. final confirmatory endpoint hierarchy;
+2. exact paired interval/test choices and multiplicity handling;
+3. recovery/reference definitions not already frozen;
+4. missing/censored/failure analysis rules;
+5. runtime/thread/backend and cost-measurement scope;
+6. exact event/evidence/lifecycle serialized schemas;
+7. fail-closed treatment-contamination/integrity verifiers;
+8. implementation test matrix;
+9. stage/branch execution order and held-out access gate.
 
 ## Exact next packet
 
-**D symbolic lifecycle / online validation protocol.**
+**Final statistical / runtime / reproducibility design freeze.**
 
-This is the next high-risk design packet and should begin from the already frozen shared control plane rather than from the static R0 implementation details alone.
+This packet must remove the remaining material TBDs before any adaptive implementation code is authorized.
 
 Required order:
 
-1. define the immutable symbolic version/event state machine;
-2. separate candidate generation from candidate acceptance;
-3. define which shared neural checkpoint and which current-evidence rows candidate generation may use;
-4. create an independent, time-respecting symbolic validation evidence slice/pool;
-5. resolve the static R0 min-covered=100/sample-size problem for online validation without weakening gates after seeing C/D outcomes;
-6. freeze add/refine/merge/retain/demote/retire/reactivate semantics;
-7. freeze conflict resolution and abstention semantics across versions;
-8. freeze confidence update source/timing and whether confidence can change without structural rule change;
-9. define lineage IDs, parent/source IDs, version hashes and rejected-change records;
-10. define staleness tests for existing R0/Rt rules before permitting retirement/replacement;
-11. only after the operator is frozen, freeze D-drift versus D-periodic opportunity matching;
-12. then finish the confirmatory statistical and runtime/reproducibility freeze.
+1. define a small confirmatory endpoint family for the primary C-vs-D causal question;
+2. separate detection, explanation/lifecycle, trigger-quality and cost endpoints into confirmatory versus secondary/exploratory families;
+3. freeze seed-paired effect estimands, confidence intervals/tests, small-n interpretation and multiplicity;
+4. freeze recovery reference and censoring/failure rules without treating longitudinal windows/events as independent replicates;
+5. freeze D-drift-vs-D-periodic estimands and opportunity/publication efficiency measures;
+6. freeze runtime/backend/thread/environment controls and cost scopes;
+7. freeze write-once event/checkpoint/rule-version schema requirements;
+8. define fail-closed verifiers for C/D neural equality, label timing, replay identity, detector-event identity, threshold identity, lambda=1 negative control and symbolic evidence chronology;
+9. define the repository-only/unit/integration test matrix using toy/generated data;
+10. define the implementation branch/stage sequence and the exact gate that must pass before any adaptive held-out execution.
 
-No symbolic update may use the evaluator-known boundary, pending labels, future rows, or C/D outcome direction.
+Only after this packet and its CI pass may adaptive implementation begin.
 
 ## Prohibited actions until later gate
 

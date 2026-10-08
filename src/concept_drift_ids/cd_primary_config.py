@@ -93,6 +93,8 @@ PROTOCOL_PATHS = (
 )
 
 SCIENTIFIC_SOURCE_PATHS = (
+    ".gitattributes",
+    ".gitignore",
     "src/concept_drift_ids/neural.py",
     "src/concept_drift_ids/frozen_preprocessing.py",
     "src/concept_drift_ids/scenario_loader.py",

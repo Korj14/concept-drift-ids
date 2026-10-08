@@ -15,6 +15,8 @@ from concept_drift_ids.cd_primary_config import (
     require_clean_worktree,
     verify_primary_run_config_for_execution,
 )
+from concept_drift_ids.cd_primary_phase_a import verify_phase_a_seed
+from concept_drift_ids.cd_primary_phase_b import verify_phase_b_seed
 from concept_drift_ids.cd_primary_phase_c import (
     ARM_NAMES,
     _phase_b_dir,
@@ -94,6 +96,8 @@ def export_primary_compact_evidence() -> dict[str, Any]:
     config = verify_primary_run_config_for_execution()
     require_clean_worktree()
     for seed in PRIMARY_SEEDS:
+        verify_phase_a_seed(seed)
+        verify_phase_b_seed(seed)
         verify_phase_c_seed(seed)
 
     verify_primary_aggregate()

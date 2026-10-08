@@ -342,3 +342,14 @@ def verify_periodic_schedule(
         raise ValueError("Periodic opportunity IDs differ from frozen budget.")
     if any(item.source != "periodic" for item in items):
         raise ValueError("Non-periodic source present in periodic schedule.")
+
+
+
+def verify_primary_symbolic_operator_config(
+    config: SymbolicOperatorConfig,
+) -> None:
+    if config != SymbolicOperatorConfig():
+        raise ValueError(
+            "Primary symbolic operator differs from the frozen configuration."
+        )
+    verify_periodic_schedule(frozen_periodic_opportunities())

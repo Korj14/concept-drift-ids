@@ -142,3 +142,41 @@ Project consequence:
 Novelty consequence:
 
 Delayed-label adaptive NIDS and interpretable online NIDS are occupied territory. This refresh does not collapse the governing contribution, which remains the controlled flow-level question of whether an endogenous statistical drift event can gate a validated/versioned symbolic lifecycle whose incremental value is isolated from a matched adaptive neural control.
+
+
+## 8 October 2026 — primary drift-monitor selection refresh
+
+The detector freeze was reviewed against the original ADWIN method, recent delayed-label stream
+methodology, and the 2026 concept-drift-resilient NIDS survey.
+
+Material points:
+
+- Bifet & Gavaldà, *Learning from Time-Changing Data with Adaptive Windowing*, SIAM SDM 2007,
+  DOI 10.1137/1.9781611972771.42, explicitly presents ADWIN as an adaptive-window statistical
+  change detector and demonstrates monitoring a predictor's error rate as a model-revision signal.
+- Komarchesqui et al., *A Comprehensive Survey on Concept-Drift-Resilient Network Intrusion
+  Detection Systems*, IEEE Access 14 (2026), 69689-69718, reinforces that drift detection,
+  adaptation, benchmark construction and dynamic evaluation are distinct experimental design
+  stages in modern NIDS work.
+- Cassales et al., Digital Signal Processing 182 (2026), 106325, reinforces that supervised detector
+  behavior must be interpreted together with label delay/availability rather than under an implicit
+  immediate-label oracle.
+
+Project consequence:
+
+- primary trigger input is delayed neural-only prequential 0/1 error, not fused C/D error;
+- the primary detector is River 0.26.1 ADWIN at its exact locked defaults, with no adaptive held-out
+  hyperparameter search;
+- the fixed monitor decision thresholds are the already accepted seed-specific System-A
+  development thresholds and do not adapt;
+- because delayed labels after a neural update initially describe predictions made by the old
+  checkpoint, detector epochs are checkpoint-pure and stale old-checkpoint errors are quarantined
+  from the next epoch;
+- one ADWIN statistical detection is the confirmed event; no extra outcome-tuned persistence rule is
+  added;
+- Page-Hinkley on the same hard-error stream and ADWIN on delayed Brier loss are prespecified
+  robustness conditions.
+
+ADWIN is adopted as a transparent statistical gate, not claimed to be globally optimal. In the
+primary BENIGN-source-regime-dominant scenario, an ADWIN event is reported precisely as a
+statistical change in delayed neural error, not as proof of real drift in P(Y|X).

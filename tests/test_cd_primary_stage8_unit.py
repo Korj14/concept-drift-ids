@@ -4,6 +4,7 @@ import ast
 import gzip
 import inspect
 import json
+import os
 from pathlib import Path
 
 import numpy as np
@@ -371,6 +372,24 @@ def test_exact_config_commit_gate_rejects_later_head(
 def test_committed_primary_config_verifies_exact_head_when_present() -> None:
     if not primary_config.PRIMARY_CONFIG_PATH.is_file():
         pytest.skip("Primary run config has not been generated yet.")
+
+    head = primary_config._git_output("rev-parse", "HEAD")
+    config_commit = primary_config._git_output(
+        "log",
+        "-1",
+        "--format=%H",
+        "--",
+        "data/manifests/cd_primary_run_config_v1.json",
+    )
+    if (
+        os.environ.get("GITHUB_EVENT_NAME") == "pull_request"
+        and head != config_commit
+    ):
+        pytest.skip(
+            "PR workflow is testing a synthetic merge commit; the exact "
+            "config-head push run is the primary execution gate."
+        )
+
     config = primary_config.verify_primary_run_config_for_execution()
     assert config["status"] == "frozen_before_primary_adaptive_access"
     assert config["preparation"]["heldout_access_occurred"] is False

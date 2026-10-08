@@ -624,3 +624,67 @@ def test_phase_c_verifier_rebinds_arm_summary_to_verified_phase_a(
 
     with pytest.raises(ValueError, match="verified Phase A"):
         phase_c.verify_phase_c_seed(0)
+
+
+
+def test_primary_config_freeze_commit_is_parent_bound_and_config_only(
+    monkeypatch,
+    tmp_path: Path,
+) -> None:
+    config = {
+        "implementation_ready": {
+            "prepared_from_git_commit": "source-head",
+        }
+    }
+
+    def valid_git(*args, **kwargs):
+        if args[:2] == ("rev-parse", "HEAD^"):
+            return "source-head"
+        if args[:4] == (
+            "diff-tree",
+            "--no-commit-id",
+            "--name-only",
+            "-r",
+        ):
+            return "data/manifests/cd_primary_run_config_v1.json"
+        raise AssertionError(args)
+
+    monkeypatch.setattr(primary_config, "_git_output", valid_git)
+    primary_config._require_config_only_freeze_commit(
+        config,
+        project_root=tmp_path,
+    )
+
+    def wrong_parent(*args, **kwargs):
+        if args[:2] == ("rev-parse", "HEAD^"):
+            return "different-parent"
+        raise AssertionError(args)
+
+    monkeypatch.setattr(primary_config, "_git_output", wrong_parent)
+    with pytest.raises(RuntimeError, match="parent differs"):
+        primary_config._require_config_only_freeze_commit(
+            config,
+            project_root=tmp_path,
+        )
+
+    def extra_file(*args, **kwargs):
+        if args[:2] == ("rev-parse", "HEAD^"):
+            return "source-head"
+        if args[:4] == (
+            "diff-tree",
+            "--no-commit-id",
+            "--name-only",
+            "-r",
+        ):
+            return (
+                "data/manifests/cd_primary_run_config_v1.json\n"
+                "METHODOLOGY_LEDGER.md"
+            )
+        raise AssertionError(args)
+
+    monkeypatch.setattr(primary_config, "_git_output", extra_file)
+    with pytest.raises(RuntimeError, match="exactly one file"):
+        primary_config._require_config_only_freeze_commit(
+            config,
+            project_root=tmp_path,
+        )

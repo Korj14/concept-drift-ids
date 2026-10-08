@@ -557,6 +557,62 @@ Right-censored or superseded symbolic transactions remain part of the adaptation
 be silently removed from update-rate/cost reporting.
 
 
+### 15.6 Frozen trigger-ablation analysis contract — 8 October 2026
+
+`D_TRIGGER_ABLATION_PROTOCOL.md` freezes the primary trigger comparison before adaptive execution.
+
+Both D-drift and D-periodic:
+
+- start from the same accepted R0.v2;
+- consume the same shared neural checkpoint chain;
+- use the identical symbolic evolution operator/configuration;
+- use the same generation/validation budgets and RNG namespace;
+- have the same maximum symbolic opportunity budget: four slots per seed.
+
+D-drift consumes symbolic slots on the first four confirmed primary detector events.
+
+D-periodic uses exact fixed logical clocks:
+
+- 27,706
+- 55,412
+- 83,118
+- 110,824
+
+These clocks equal `floor(i*N/5)` for `i=1..4`, with `N=138,530`.
+They are derived from the frozen stream length and symbolic evidence footprint, not the synthetic
+boundary or detector outcomes.
+
+Every trigger/scheduled slot consumes one opportunity budget slot whether it ends in publication,
+validated no-op, insufficient generation evidence, checkpoint supersession, right-censoring or
+pending-transaction skip.
+
+The trigger-analysis unit therefore distinguishes:
+
+- opportunity;
+- completed validation;
+- publication;
+- no-op;
+- censored/aborted transaction.
+
+These are not interchangeable counts.
+
+Primary trigger-ablation summaries must report both effectiveness and efficiency, including:
+
+- publication and no-op frequency;
+- cost per opportunity and per publication;
+- accepted lifecycle actions;
+- active-rule/conflict/abstention trajectories;
+- predictive and explanation recovery;
+- maintenance attempts avoided;
+- improvement/recovery per maintenance opportunity.
+
+Trigger opportunities/events within one seed are longitudinally dependent observations. They do not
+increase inferential sample size beyond the matched seed/scenario block.
+
+The evaluator-known controlled boundary may be used only after trajectories are frozen to describe
+opportunity timing/delay/unnecessary maintenance. It cannot alter either trigger schedule.
+
+
 ## 16. Corrected System-B v2 evidence status
 
 The R0.v2 evaluation is a protocol-defect correction conducted after historical R0.v1 held-out outcomes were known. It is therefore not treated as a new untouched confirmatory experiment.

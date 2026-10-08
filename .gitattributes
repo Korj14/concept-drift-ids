@@ -16,3 +16,6 @@ data/manifests/system_b_v2.json text eol=lf
 # Primary C/D configuration and compact evidence use repository-canonical LF.
 data/manifests/cd_primary_run_config_v1.json text eol=lf
 results/frozen/cd_primary_v1/** text eol=lf
+
+# Frozen dependency lock is canonical UTF-8/LF text.
+requirements-lock.txt text eol=lf

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import json
 from pathlib import Path
 from typing import Any
@@ -8,7 +9,6 @@ from concept_drift_ids.cd_symbolic_lifecycle import (
     RuleBaseState,
     migrate_r0_v2_rules,
 )
-from concept_drift_ids.scenario_manifest import sha256_file
 from concept_drift_ids.symbolic import (
     Condition,
     Rule,
@@ -22,6 +22,13 @@ ACCEPTED_R0_V2_MANIFEST_SHA256 = (
     "131027d2f136494eb388183f18dcb7eb0e9d7e9fe786f22dba25f4e1624c1483"
 )
 EXPECTED_ACTIVE_COUNTS = {0: 7, 1: 6, 2: 7, 3: 6, 4: 6}
+
+
+def _sha256_repository_lf_utf8(path: Path) -> str:
+    """Hash UTF-8 text after normalizing only CRLF/CR line endings to LF."""
+    text = path.read_bytes().decode("utf-8")
+    normalized = text.replace("\r\n", "\n").replace("\r", "\n")
+    return hashlib.sha256(normalized.encode("utf-8")).hexdigest()
 
 
 def _condition(payload: dict[str, Any]) -> Condition:
@@ -89,9 +96,14 @@ def load_accepted_r0_v2_rules(
     path = project_root / str(entry["path"])
     if not path.is_file():
         raise FileNotFoundError(f"Missing accepted R0.v2 rule artifact: {path}")
-    actual_file_hash = sha256_file(path)
-    if actual_file_hash != entry["sha256"]:
-        raise ValueError("R0.v2 raw rule artifact hash mismatch.")
+    # The accepted manifest hash was generated from repository-canonical LF
+    # UTF-8 text. Git may materialize text files with CRLF on Windows unless
+    # an explicit EOL attribute is present. Normalize UTF-8 line endings only
+    # before comparing that accepted LF identity; the canonical JSON artifact hash
+    # below remains an independent semantic-integrity check.
+    actual_text_hash = _sha256_repository_lf_utf8(path)
+    if actual_text_hash != entry["sha256"]:
+        raise ValueError("R0.v2 normalized rule artifact hash mismatch.")
 
     payload = json.loads(path.read_text(encoding="utf-8"))
     stored_artifact_hash = payload.get("artifact_sha256")

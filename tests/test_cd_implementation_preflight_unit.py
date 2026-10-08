@@ -56,6 +56,7 @@ def test_implementation_preflight_fails_closed_when_checkpoint_bytes_are_missing
         "STAGE6_HANDOFF.md",
         "STAGE7_SYMBOLIC_IMPLEMENTATION.md",
         "STAGE7_HANDOFF.md",
+        "STAGE7_R0_V2_PORTABILITY_CORRECTION.md",
         "data/manifests/sudden_benign_v1.json",
         "data/manifests/sudden_benign_v1_preprocessing_v1.json",
         "data/manifests/system_a_v1.json",
@@ -89,3 +90,12 @@ def test_root_runner_exposes_only_preflight_not_primary_cd_execution() -> None:
     assert '"cd-primary"' not in text
     assert '"system-c"' not in text
     assert '"system-d"' not in text
+
+
+
+def test_r0_v2_paths_are_pinned_to_lf_in_gitattributes() -> None:
+    text = (preflight.PROJECT_ROOT / ".gitattributes").read_text(
+        encoding="utf-8"
+    )
+    assert "data/rules/system_b_r0_v2/*.json text eol=lf" in text
+    assert "data/manifests/system_b_v2.json text eol=lf" in text

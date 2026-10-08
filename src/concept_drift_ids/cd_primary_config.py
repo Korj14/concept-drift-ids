@@ -428,12 +428,10 @@ def _require_config_tracked_clean(
         )
 
 
-def verify_primary_run_config_for_execution(
+def _require_exact_config_commit(
     *,
     project_root: Path = PROJECT_ROOT,
-) -> dict[str, Any]:
-    verify_implementation_tag(project_root=project_root)
-    _require_config_tracked_clean(project_root=project_root)
+) -> str:
     head = _git_output("rev-parse", "HEAD", project_root=project_root)
     config_commit = _git_output(
         "log",
@@ -448,6 +446,16 @@ def verify_primary_run_config_for_execution(
             "Primary execution requires HEAD to be exactly the commit that "
             "froze cd_primary_run_config_v1.json."
         )
+    return head
+
+
+def verify_primary_run_config_for_execution(
+    *,
+    project_root: Path = PROJECT_ROOT,
+) -> dict[str, Any]:
+    verify_implementation_tag(project_root=project_root)
+    _require_config_tracked_clean(project_root=project_root)
+    _require_exact_config_commit(project_root=project_root)
     config = load_primary_run_config(
         path=project_root
         / "data"

@@ -604,203 +604,229 @@ def execute_phase_c_seed(seed: int) -> dict[str, Any]:
         )
     output_dir.mkdir(parents=True, exist_ok=False)
 
-    phase_a_dir = _phase_a_dir(seed)
-    predictions = read_jsonl(phase_a_dir / "predictions.jsonl")
-    events = read_jsonl(phase_a_dir / "events.jsonl")
-    checkpoint_chain = read_jsonl(
-        phase_a_dir / "checkpoint_chain.jsonl"
-    )
-    preprocessing = load_frozen_preprocessing()
-    stream_rows = load_primary_stream(preprocessing=preprocessing)
-    X = np.stack(
-        [np.asarray(row.features, dtype=np.float32) for row in stream_rows]
-    )
-    y = np.asarray(
-        [int(row.label) for row in stream_rows],
-        dtype=np.int8,
-    )
-    neural_probability = np.asarray(
-        [float(item["neural_probability"]) for item in predictions],
-        dtype=np.float64,
-    )
-    checkpoint_ids = [
-        str(item["checkpoint_sha256"]) for item in predictions
-    ]
-    if len(X) != int(config["scenario"]["stream_rows"]):
-        raise ValueError("Phase-C stream length differs from frozen config.")
-
-    arm_summaries: dict[str, Any] = {}
-    lambda_one_evaluations: dict[str, SymbolicArmEvaluation] = {}
-
-    for arm in ARM_NAMES:
-        trajectory = load_frozen_arm_trajectory(seed, arm)
-        base = evaluate_dynamic_symbolic_trajectory(
-            seed=seed,
-            X=X,
-            y_true=y,
-            neural_probability=neural_probability,
-            feature_names=preprocessing.feature_columns,
-            trajectory=trajectory,
-            neural_weight=PRIMARY_NEURAL_WEIGHT,
-        )
-        explanation = _explanation_by_domain(y=y, evaluation=base)
-        evaluations: dict[float, SymbolicArmEvaluation] = {
-            PRIMARY_NEURAL_WEIGHT: base
-        }
-        for weight in PRIMARY_WEIGHTS:
-            if weight == PRIMARY_NEURAL_WEIGHT:
-                continue
-            evaluations[weight] = _evaluation_for_weight(
-                seed=seed,
-                base=base,
-                y_true=y,
-                weight=weight,
-            )
-        lambda_one_evaluations[arm] = evaluations[1.0]
-
-        metrics_by_weight: dict[str, Any] = {}
-        for weight in PRIMARY_WEIGHTS:
-            evaluation = evaluations[weight]
-            threshold = fused_threshold(
-                seed=seed,
-                neural_weight=weight,
-            )
-            metrics_by_weight[str(weight)] = _metrics_by_domain(
-                y=y,
-                probability=evaluation.fused_probability,
-                decision=evaluation.thresholded_decision,
-                threshold=threshold,
-            )
-
-        primary_threshold = fused_threshold(
-            seed=seed,
-            neural_weight=PRIMARY_NEURAL_WEIGHT,
-        )
-        windows = _window_summaries(
-            y=y,
-            evaluation=base,
-            threshold=primary_threshold,
-        )
-        recovery = _recovery_summary(windows)
-        rule_versions = _rule_version_ids(trajectory, len(y))
-
-        def trace_rows():
-            for index in range(len(y)):
-                symbolic_probability = (
-                    None
-                    if np.isnan(base.symbolic_attack_probability[index])
-                    else float(base.symbolic_attack_probability[index])
-                )
-                row: dict[str, Any] = {
-                    "row_id": stream_rows[index].row_id,
-                    "origin_index": index,
-                    "true_label": int(y[index]),
-                    "neural_checkpoint_sha256": checkpoint_ids[index],
-                    "rule_base_version_id": rule_versions[index],
-                    "neural_probability": float(
-                        neural_probability[index]
-                    ),
-                    "symbolic_attack_probability": symbolic_probability,
-                    "symbolic_class": int(base.symbolic_class[index]),
-                    "covered": bool(base.covered[index]),
-                    "uncovered": bool(base.uncovered[index]),
-                    "conflict_abstain": bool(
-                        base.conflict_abstain[index]
-                    ),
-                }
-                for weight in PRIMARY_WEIGHTS:
-                    key = str(weight).replace(".", "_")
-                    evaluation = evaluations[weight]
-                    row[f"fused_probability_lambda_{key}"] = float(
-                        evaluation.fused_probability[index]
-                    )
-                    row[f"decision_lambda_{key}"] = int(
-                        evaluation.thresholded_decision[index]
-                    )
-                yield row
-
-        trace_path = output_dir / f"{arm}_prediction_trace.jsonl.gz"
-        trace_identity = _write_trace_gzip_new(
-            trace_path,
-            trace_rows(),
-        )
-
-        arm_manifest = _arm_manifest(seed, arm)
-        summary = {
-            "seed": seed,
-            "arm": arm,
-            "primary_config_manifest_sha256": config["manifest_sha256"],
-            "phase_b_arm_manifest_sha256": arm_manifest[
-                "manifest_sha256"
-            ],
-            "shared_identity_sha256": trajectory.shared_identity_sha256,
-            "metrics_by_neural_weight": metrics_by_weight,
-            "explanation": explanation,
-            "primary_windows": windows,
-            "primary_recovery": recovery,
-            "maintenance_summary": arm_manifest[
-                "maintenance_summary"
-            ],
-            "prediction_trace": {
-                "path": trace_path.name,
-                **trace_identity,
-            },
-        }
-        summary["summary_sha256"] = canonical_sha256(summary)
-        write_json_new(
-            output_dir / f"{arm}_evaluation.json",
-            summary,
-        )
-        arm_summaries[arm] = summary
-
-    verify_lambda_one_negative_control(
-        lambda_one_evaluations["c_frozen_symbolic"],
-        lambda_one_evaluations["d_drift"],
-    )
-    verify_lambda_one_negative_control(
-        lambda_one_evaluations["c_frozen_symbolic"],
-        lambda_one_evaluations["d_periodic"],
-    )
-
-    X_pre = X[:EXPECTED_PRE_ROWS]
-    y_pre = y[:EXPECTED_PRE_ROWS]
-    retention = _retention_probes(
-        seed=seed,
-        checkpoint_chain=checkpoint_chain,
-        phase_a_dir=phase_a_dir,
-        X_pre=X_pre,
-        y_pre=y_pre,
-    )
-    trigger = _trigger_diagnostics(events)
-    seed_manifest = {
-        "schema_version": 1,
-        "seed": seed,
-        "status": "complete_offline_evaluation",
-        "primary_config_manifest_sha256": config["manifest_sha256"],
-        "arm_summary_sha256": {
-            arm: summary["summary_sha256"]
-            for arm, summary in arm_summaries.items()
-        },
-        "lambda_one_predictive_equality": True,
-        "trigger_diagnostics": trigger,
-        "neural_retention_probes": retention,
-        "boundary_index": EXPECTED_PRE_ROWS,
-        "adaptive_components_received_boundary": False,
-    }
-    seed_manifest["manifest_sha256"] = canonical_sha256(seed_manifest)
     write_json_new(
-        output_dir / "phase_c_seed_manifest.json",
-        seed_manifest,
+        output_dir / "attempt.json",
+        {
+            "seed": seed,
+            "primary_config_manifest_sha256": config["manifest_sha256"],
+            "phase": "offline_boundary_aware_evaluation",
+            "adaptive_components_received_boundary": False,
+        },
     )
-    verified = verify_phase_c_seed(seed)
-    return {
-        "status": "phase_c_seed_complete",
-        "seed": seed,
-        "phase_c_manifest_sha256": verified[
-            "phase_c_manifest_sha256"
-        ],
-        "lambda_one_predictive_equality": True,
-    }
+
+    try:
+        phase_a_dir = _phase_a_dir(seed)
+        predictions = read_jsonl(phase_a_dir / "predictions.jsonl")
+        events = read_jsonl(phase_a_dir / "events.jsonl")
+        checkpoint_chain = read_jsonl(
+            phase_a_dir / "checkpoint_chain.jsonl"
+        )
+        preprocessing = load_frozen_preprocessing()
+        stream_rows = load_primary_stream(preprocessing=preprocessing)
+        X = np.stack(
+            [np.asarray(row.features, dtype=np.float32) for row in stream_rows]
+        )
+        y = np.asarray(
+            [int(row.label) for row in stream_rows],
+            dtype=np.int8,
+        )
+        neural_probability = np.asarray(
+            [float(item["neural_probability"]) for item in predictions],
+            dtype=np.float64,
+        )
+        checkpoint_ids = [
+            str(item["checkpoint_sha256"]) for item in predictions
+        ]
+        if len(X) != int(config["scenario"]["stream_rows"]):
+            raise ValueError("Phase-C stream length differs from frozen config.")
+
+        arm_summaries: dict[str, Any] = {}
+        lambda_one_evaluations: dict[str, SymbolicArmEvaluation] = {}
+
+        for arm in ARM_NAMES:
+            trajectory = load_frozen_arm_trajectory(seed, arm)
+            base = evaluate_dynamic_symbolic_trajectory(
+                seed=seed,
+                X=X,
+                y_true=y,
+                neural_probability=neural_probability,
+                feature_names=preprocessing.feature_columns,
+                trajectory=trajectory,
+                neural_weight=PRIMARY_NEURAL_WEIGHT,
+            )
+            explanation = _explanation_by_domain(y=y, evaluation=base)
+            evaluations: dict[float, SymbolicArmEvaluation] = {
+                PRIMARY_NEURAL_WEIGHT: base
+            }
+            for weight in PRIMARY_WEIGHTS:
+                if weight == PRIMARY_NEURAL_WEIGHT:
+                    continue
+                evaluations[weight] = _evaluation_for_weight(
+                    seed=seed,
+                    base=base,
+                    y_true=y,
+                    weight=weight,
+                )
+            lambda_one_evaluations[arm] = evaluations[1.0]
+
+            metrics_by_weight: dict[str, Any] = {}
+            for weight in PRIMARY_WEIGHTS:
+                evaluation = evaluations[weight]
+                threshold = fused_threshold(
+                    seed=seed,
+                    neural_weight=weight,
+                )
+                metrics_by_weight[str(weight)] = _metrics_by_domain(
+                    y=y,
+                    probability=evaluation.fused_probability,
+                    decision=evaluation.thresholded_decision,
+                    threshold=threshold,
+                )
+
+            primary_threshold = fused_threshold(
+                seed=seed,
+                neural_weight=PRIMARY_NEURAL_WEIGHT,
+            )
+            windows = _window_summaries(
+                y=y,
+                evaluation=base,
+                threshold=primary_threshold,
+            )
+            recovery = _recovery_summary(windows)
+            rule_versions = _rule_version_ids(trajectory, len(y))
+
+            def trace_rows():
+                for index in range(len(y)):
+                    symbolic_probability = (
+                        None
+                        if np.isnan(base.symbolic_attack_probability[index])
+                        else float(base.symbolic_attack_probability[index])
+                    )
+                    row: dict[str, Any] = {
+                        "row_id": stream_rows[index].row_id,
+                        "origin_index": index,
+                        "true_label": int(y[index]),
+                        "neural_checkpoint_sha256": checkpoint_ids[index],
+                        "rule_base_version_id": rule_versions[index],
+                        "neural_probability": float(
+                            neural_probability[index]
+                        ),
+                        "symbolic_attack_probability": symbolic_probability,
+                        "symbolic_class": int(base.symbolic_class[index]),
+                        "covered": bool(base.covered[index]),
+                        "uncovered": bool(base.uncovered[index]),
+                        "conflict_abstain": bool(
+                            base.conflict_abstain[index]
+                        ),
+                    }
+                    for weight in PRIMARY_WEIGHTS:
+                        key = str(weight).replace(".", "_")
+                        evaluation = evaluations[weight]
+                        row[f"fused_probability_lambda_{key}"] = float(
+                            evaluation.fused_probability[index]
+                        )
+                        row[f"decision_lambda_{key}"] = int(
+                            evaluation.thresholded_decision[index]
+                        )
+                    yield row
+
+            trace_path = output_dir / f"{arm}_prediction_trace.jsonl.gz"
+            trace_identity = _write_trace_gzip_new(
+                trace_path,
+                trace_rows(),
+            )
+
+            arm_manifest = _arm_manifest(seed, arm)
+            summary = {
+                "seed": seed,
+                "arm": arm,
+                "primary_config_manifest_sha256": config["manifest_sha256"],
+                "phase_b_arm_manifest_sha256": arm_manifest[
+                    "manifest_sha256"
+                ],
+                "shared_identity_sha256": trajectory.shared_identity_sha256,
+                "metrics_by_neural_weight": metrics_by_weight,
+                "explanation": explanation,
+                "primary_windows": windows,
+                "primary_recovery": recovery,
+                "maintenance_summary": arm_manifest[
+                    "maintenance_summary"
+                ],
+                "prediction_trace": {
+                    "path": trace_path.name,
+                    **trace_identity,
+                },
+            }
+            summary["summary_sha256"] = canonical_sha256(summary)
+            write_json_new(
+                output_dir / f"{arm}_evaluation.json",
+                summary,
+            )
+            arm_summaries[arm] = summary
+
+        verify_lambda_one_negative_control(
+            lambda_one_evaluations["c_frozen_symbolic"],
+            lambda_one_evaluations["d_drift"],
+        )
+        verify_lambda_one_negative_control(
+            lambda_one_evaluations["c_frozen_symbolic"],
+            lambda_one_evaluations["d_periodic"],
+        )
+
+        X_pre = X[:EXPECTED_PRE_ROWS]
+        y_pre = y[:EXPECTED_PRE_ROWS]
+        retention = _retention_probes(
+            seed=seed,
+            checkpoint_chain=checkpoint_chain,
+            phase_a_dir=phase_a_dir,
+            X_pre=X_pre,
+            y_pre=y_pre,
+        )
+        trigger = _trigger_diagnostics(events)
+        seed_manifest = {
+            "schema_version": 1,
+            "seed": seed,
+            "status": "complete_offline_evaluation",
+            "primary_config_manifest_sha256": config["manifest_sha256"],
+            "arm_summary_sha256": {
+                arm: summary["summary_sha256"]
+                for arm, summary in arm_summaries.items()
+            },
+            "lambda_one_predictive_equality": True,
+            "trigger_diagnostics": trigger,
+            "neural_retention_probes": retention,
+            "boundary_index": EXPECTED_PRE_ROWS,
+            "adaptive_components_received_boundary": False,
+        }
+        seed_manifest["manifest_sha256"] = canonical_sha256(seed_manifest)
+        write_json_new(
+            output_dir / "phase_c_seed_manifest.json",
+            seed_manifest,
+        )
+        verified = verify_phase_c_seed(seed)
+        return {
+            "status": "phase_c_seed_complete",
+            "seed": seed,
+            "phase_c_manifest_sha256": verified[
+                "phase_c_manifest_sha256"
+            ],
+            "lambda_one_predictive_equality": True,
+        }
+
+    except Exception as exc:
+        failure_path = output_dir / "failure.json"
+        if not failure_path.exists():
+            write_json_new(
+                failure_path,
+                {
+                    "seed": seed,
+                    "exception_type": type(exc).__name__,
+                    "message": str(exc),
+                    "phase": "offline_boundary_aware_evaluation",
+                    "adaptive_components_received_boundary": False,
+                },
+            )
+        raise
 
 
 def verify_phase_c_seed(seed: int) -> dict[str, Any]:

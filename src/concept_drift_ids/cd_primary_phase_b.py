@@ -471,48 +471,12 @@ def execute_phase_b_seed(seed: int) -> dict[str, Any]:
     output_dir.mkdir(parents=True, exist_ok=False)
 
     phase_a_dir = _phase_a_dir(seed)
-    predictions = read_jsonl(phase_a_dir / "predictions.jsonl")
-    events = read_jsonl(phase_a_dir / "events.jsonl")
-    replay = read_jsonl(phase_a_dir / "replay_transactions.jsonl")
-    checkpoint_chain = read_jsonl(
-        phase_a_dir / "checkpoint_chain.jsonl"
-    )
     identity = _verify_json_payload(
         phase_a_dir / "shared_identity.json"
     )["shared_identity"]
-    if identity["identity_sha256"] != shared_identities[seed]:
-        raise ValueError("Phase-A shared identity changed before Phase B.")
-
-    preprocessing = load_frozen_preprocessing()
-    stream_rows = load_primary_stream(preprocessing=preprocessing)
-    symbolic_rows = _shared_symbolic_rows(
-        stream_rows=stream_rows,
-        predictions=predictions,
-    )
-    initial_checkpoint_sha256 = str(
-        checkpoint_chain[0]["checkpoint_file_sha256"]
-    )
-    initial_state = migrate_accepted_r0_v2_state(
-        seed,
-        neural_checkpoint_sha256=initial_checkpoint_sha256,
-    )
-    model_resolver = _build_model_resolver(
-        seed,
-        phase_a_dir=phase_a_dir,
-        checkpoint_chain=checkpoint_chain,
-    )
-    raw_affine = {
-        feature: (
-            float(preprocessing.means[index]),
-            float(preprocessing.scales[index]),
-        )
-        for index, feature in enumerate(preprocessing.feature_columns)
-    }
     operator = SymbolicOperatorConfig()
-
-    attempt_path = output_dir / "attempt.json"
     write_json_new(
-        attempt_path,
+        output_dir / "attempt.json",
         {
             "run_id": f"{PRIMARY_RUN_ID}-phase-b-seed-{seed}",
             "seed": seed,
@@ -525,6 +489,45 @@ def execute_phase_b_seed(seed: int) -> dict[str, Any]:
     )
 
     try:
+        predictions = read_jsonl(phase_a_dir / "predictions.jsonl")
+        events = read_jsonl(phase_a_dir / "events.jsonl")
+        replay = read_jsonl(phase_a_dir / "replay_transactions.jsonl")
+        checkpoint_chain = read_jsonl(
+            phase_a_dir / "checkpoint_chain.jsonl"
+        )
+        if identity["identity_sha256"] != shared_identities[seed]:
+            raise ValueError(
+                "Phase-A shared identity changed before Phase B."
+            )
+
+        preprocessing = load_frozen_preprocessing()
+        stream_rows = load_primary_stream(preprocessing=preprocessing)
+        symbolic_rows = _shared_symbolic_rows(
+            stream_rows=stream_rows,
+            predictions=predictions,
+        )
+        initial_checkpoint_sha256 = str(
+            checkpoint_chain[0]["checkpoint_file_sha256"]
+        )
+        initial_state = migrate_accepted_r0_v2_state(
+            seed,
+            neural_checkpoint_sha256=initial_checkpoint_sha256,
+        )
+        model_resolver = _build_model_resolver(
+            seed,
+            phase_a_dir=phase_a_dir,
+            checkpoint_chain=checkpoint_chain,
+        )
+        raw_affine = {
+            feature: (
+                float(preprocessing.means[index]),
+                float(preprocessing.scales[index]),
+            )
+            for index, feature in enumerate(
+                preprocessing.feature_columns
+            )
+        }
+
         c_arm = frozen_c_arm(
             seed=seed,
             initial_state=initial_state,
@@ -575,9 +578,14 @@ def execute_phase_b_seed(seed: int) -> dict[str, Any]:
             "seed": seed,
             "git_commit": _git_output("rev-parse", "HEAD"),
             "status": "complete_unscored_symbolic_trajectories",
-            "primary_config_manifest_sha256": config["manifest_sha256"],
+            "primary_config_manifest_sha256": config[
+                "manifest_sha256"
+            ],
             "shared_identity_sha256": identity["identity_sha256"],
-            "all_phase_a_shared_identity_sha256": shared_identities,
+            "all_phase_a_shared_identity_sha256": {
+                str(key): value
+                for key, value in sorted(shared_identities.items())
+            },
             "operator_config_sha256": operator.sha256(),
             "arm_isolation_sha256": isolation,
             "arms": arm_files,

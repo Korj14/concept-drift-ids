@@ -76,7 +76,6 @@ def test_primary_config_build_is_no_data_and_freezes_complete_surface(
         lambda **_: {
             "path": "requirements-lock.txt",
             "binding_normalized_text_sha256": "text",
-            "freeze_checkout_raw_sha256": "raw",
             "installed_distributions": {"numpy": "2.4.6"},
             "installed_distributions_sha256": "installed",
         },
@@ -406,7 +405,7 @@ def test_dependency_lock_binding_is_normalized_text_not_raw_checkout_bytes() -> 
         identity["binding_normalized_text_sha256"]
         == primary_config.EXPECTED_REQUIREMENTS_NORMALIZED_SHA256
     )
-    assert "freeze_checkout_raw_sha256" in identity
+    assert "freeze_checkout_raw_sha256" not in identity
     assert identity["installed_distributions"]["numpy"] == "2.4.6"
     assert len(identity["installed_distributions_sha256"]) == 64
     attrs = (primary_config.PROJECT_ROOT / ".gitattributes").read_text(

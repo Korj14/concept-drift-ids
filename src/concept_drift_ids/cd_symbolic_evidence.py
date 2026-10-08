@@ -50,6 +50,7 @@ def maintenance_event_payload(
         "checkpoint_publication_effective_index": (
             transaction.checkpoint_publication_effective_index
         ),
+        "validation_start_index": transaction.validation_start_index,
         "generation_evidence_id": transaction.generation_evidence_id,
         "generation_row_ids_sha256": canonical_sha256(
             list(transaction.generation_row_ids)

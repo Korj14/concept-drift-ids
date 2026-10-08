@@ -46,6 +46,9 @@ from concept_drift_ids.scenario_manifest import (
 
 PRIMARY_CONFIG_SCHEMA_VERSION = 1
 PRIMARY_RUN_ID = "cd-primary-v1"
+EXPECTED_REQUIREMENTS_NORMALIZED_SHA256 = (
+    "9f63cbe19dcb1b916c16603f5b7c01a2fa33ac11271ce2ef0014910158d6741d"
+)
 IMPLEMENTATION_READY_TAG = "cd-implementation-ready-v1.1"
 IMPLEMENTATION_READY_COMMIT = (
     "5627e36c7f1fef9620346e31e2aee01a2dd155ee"
@@ -209,10 +212,13 @@ def _requirements_identity(
     path = project_root / "requirements-lock.txt"
     if not path.is_file():
         raise FileNotFoundError(f"Missing requirements lock: {path}")
+    normalized = sha256_normalized_text(path)
+    if normalized != EXPECTED_REQUIREMENTS_NORMALIZED_SHA256:
+        raise ValueError("Frozen dependency lock normalized-text hash changed.")
     return {
         "path": "requirements-lock.txt",
-        "sha256": sha256_file(path),
-        "normalized_text_sha256": sha256_normalized_text(path),
+        "binding_normalized_text_sha256": normalized,
+        "freeze_checkout_raw_sha256": sha256_file(path),
     }
 
 
@@ -500,7 +506,13 @@ def verify_primary_run_config_for_execution(
         raise ValueError("Protocol-bundle identity mismatch.")
 
     requirements = _requirements_identity(project_root=project_root)
-    if requirements != config["requirements"]:
+    frozen_requirements = config["requirements"]
+    if frozen_requirements.get("path") != requirements["path"]:
+        raise ValueError("Frozen dependency lock path changed.")
+    if (
+        frozen_requirements.get("binding_normalized_text_sha256")
+        != requirements["binding_normalized_text_sha256"]
+    ):
         raise ValueError("Frozen dependency lock changed after config freeze.")
     return config
 

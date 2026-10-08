@@ -59,6 +59,32 @@ These controls have been propagated into:
 - `LITERATURE_WATCH.md`;
 - `METHODOLOGY_LEDGER.md`.
 
+### Packet 3 — treatment-independent drift monitor
+
+`C_D_DRIFT_MONITOR_PROTOCOL.md` is frozen.
+
+Primary detector decisions:
+
+- signal = delayed neural-only 0/1 prequential error;
+- each error uses the neural prediction stored at original arrival and the label only after maturity;
+- monitor-only decision threshold = fixed accepted System-A development threshold for that seed;
+- primary detector = `river.drift.ADWIN` under `river==0.26.1`;
+- exact primary ADWIN parameters are River defaults: delta=.002, clock=32, max_buckets=5, min_window_length=5, grace_period=10;
+- one ADWIN detection is one confirmed statistical drift event; no extra hit/majority rule;
+- detector starts fresh per seed with no training/development preload;
+- detector event terminology is statistical neural-error/performance drift, not proof of P(Y|X) change;
+- detector epochs are checkpoint-pure;
+- after an event, the detector is disarmed during the neural-response transaction;
+- after a new neural checkpoint is published, old-checkpoint delayed errors are quarantined from the new detector epoch;
+- the next epoch receives input only when labels mature for predictions actually produced by the new checkpoint;
+- no arbitrary primary cooldown is added beyond this causal feedback-quarantine rule;
+- robustness: default Page-Hinkley on the same hard-error signal, ADWIN on delayed Brier loss, plus L=0/L=10,000 latency conditions;
+- synthetic boundary remains post-hoc scoring only.
+
+A provisional idea to set ADWIN grace_period=5,000 was explicitly rejected before freeze. River's default grace_period=10 remains primary; delayed-feedback contamination is handled by checkpoint-pure epoch eligibility instead of by detector tuning.
+
+These controls have been propagated into the control register, statistical plan, literature watch and methodology ledger.
+
 ## Current scientific gate
 
 **Status: NOT READY FOR ADAPTIVE IMPLEMENTATION.**
@@ -69,44 +95,37 @@ No adaptive detector/updater/lifecycle implementation should begin until the rem
 
 ## Remaining blocking controls
 
-1. primary treatment-independent drift-monitor signal;
-2. detector family/configuration;
-3. detector initialization/warm-up/reference state;
-4. confirmation/persistence/reset/refractory semantics;
-5. adaptation evidence horizon/window;
-6. serious neural continual-learning/replay procedure;
-7. replay capacity/sampling/eviction;
-8. neural update budget/stopping;
-9. matched C/D threshold policy;
-10. D symbolic lifecycle/operator state machine;
-11. online symbolic validation/sample-size semantics;
-12. rule-confidence update semantics;
-13. D-periodic cadence/opportunity matching;
-14. confirmatory endpoints, intervals/tests, multiplicity;
-15. runtime/thread/determinism and cost scopes;
-16. final event/evidence serialization schemas and fail-closed verifiers.
+1. adaptation evidence horizon/window after a confirmed event;
+2. serious shared neural continual-learning/replay procedure;
+3. replay capacity/sampling/eviction;
+4. neural update budget/stopping/publication transaction;
+5. matched C/D operational/fusion threshold policy;
+6. D symbolic lifecycle/operator state machine;
+7. online symbolic validation/sample-size semantics;
+8. rule-confidence update semantics;
+9. D-periodic cadence/opportunity matching;
+10. confirmatory endpoints, intervals/tests, multiplicity;
+11. runtime/thread/determinism and cost scopes;
+12. final event/evidence serialization schemas and fail-closed verifiers.
 
 ## Exact next packet
 
-**Treatment-independent drift-monitor signal and detector audit.**
-
-The next packet must begin from the frozen information-time contract, not from a preferred library implementation.
+**Shared neural adaptation / replay protocol.**
 
 Required order:
 
-1. define what the primary trigger must mean scientifically;
-2. compare admissible signal classes:
-   - delayed neural-only prequential error/loss;
-   - label-free covariate/representation/prediction-distribution shift;
-3. distinguish genuine `P(Y|X)` concept evidence from covariate/data-drift evidence in terminology;
-4. evaluate detector families for the chosen signal using design/development evidence only;
-5. freeze detector initialization/warm-up;
-6. freeze persistence/confirmation/reset/refractory policy;
-7. freeze false-alarm and detection-delay diagnostics;
-8. do not use the synthetic boundary to tune the detector;
-9. only then move to neural adaptation/replay design.
+1. define the neural-adaptation objective and what counts as a scientifically serious System-C comparator;
+2. distinguish current-event evidence from replay/retention evidence;
+3. freeze the adaptation evidence horizon and label-maturity eligibility;
+4. compare simple replay-based fine-tuning against reasonable continual-learning alternatives using training/development/design evidence only;
+5. freeze replay capacity, class handling, admission/eviction, sampling and RNG;
+6. freeze optimizer state policy, learning rate, epochs/update budget, batch size and stopping;
+7. freeze catastrophic-forgetting/retention diagnostics;
+8. define the neural adaptation transaction and publication/checkpoint hash semantics that the detector re-arm rule depends on;
+9. require the exact same neural transaction trajectory for matched C and D;
+10. only after that move to the matched operational/fusion threshold policy.
 
-The primary detector must produce the **same confirmed-event stream** for matched C and D because it lives upstream of symbolic treatment.
+The neural-adaptation design must be credible enough that D cannot appear useful merely because C is an intentionally weak adaptive baseline.
 
 ## Prohibited actions until later gate
 

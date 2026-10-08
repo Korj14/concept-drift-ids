@@ -2304,7 +2304,7 @@ main `a5fb8e5a00262ce59c3e4029821d0990bd9b933a`.
 
 The correction does not rewrite any R0.v2 artifact. Instead:
 
-- the loader compares the frozen repository-LF manifest hash to `sha256_normalized_text(path)`;
+- the loader compares the frozen repository-LF manifest hash using a dedicated UTF-8 verifier that normalizes only CRLF/CR line endings to LF;
 - the existing independent canonical JSON artifact-hash verification remains mandatory;
 - `.gitattributes` pins the R0.v2 rule JSONs and System-B-v2 manifest to LF for future checkouts;
 - regression tests construct a CRLF copy of an accepted rule artifact and require successful loading;

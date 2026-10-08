@@ -239,6 +239,9 @@ held-out access:
   any compact evidence.
 - The lambda=1 negative control now requires each arm's fused scores to equal its shared neural scores
   exactly, in addition to cross-arm predictive equality.
+- Recovery evidence preserves the absolute qualifying post-window clock and separately reports
+  `recovery_rows_from_boundary = recovery_clock - boundary_index`, which is the frozen reporting
+  scale required by the analysis protocol. The two-window persistence rule and baseline are unchanged.
 - The frozen run config includes the Research Contract workflow and Git execution policies in its
   scientific source identity.
 

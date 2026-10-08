@@ -24,10 +24,16 @@ def verify_locked_distributions(
 ) -> dict[str, str]:
     if not lock_path.is_file():
         raise FileNotFoundError(f"Missing frozen dependency lock: {lock_path}")
+    raw = lock_path.read_bytes()
+    if raw.startswith(b"\xef\xbb\xbf"):
+        text = raw.decode("utf-8-sig")
+    elif raw.startswith((b"\xff\xfe", b"\xfe\xff")):
+        text = raw.decode("utf-16")
+    else:
+        text = raw.decode("utf-8")
+
     expected: dict[str, str] = {}
-    for raw_line in lock_path.read_text(
-        encoding="utf-8-sig"
-    ).splitlines():
+    for raw_line in text.splitlines():
         line = raw_line.strip()
         if not line or line.startswith("#"):
             continue

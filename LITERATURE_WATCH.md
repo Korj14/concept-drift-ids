@@ -180,3 +180,43 @@ Project consequence:
 ADWIN is adopted as a transparent statistical gate, not claimed to be globally optimal. In the
 primary BENIGN-source-regime-dominant scenario, an ADWIN event is reported precisely as a
 statistical change in delayed neural error, not as proof of real drift in P(Y|X).
+
+
+## 8 October 2026 — shared neural adaptation / replay refresh
+
+A targeted continual-learning review was performed before freezing System C's neural adaptation
+protocol.
+
+Material evidence:
+
+- Ansam Khraisat and Gang Li, *Adaptive memory replay for network intrusion detection: Tackling data
+  drift and catastrophic forgetting*, Computer Networks 272 (2025), 111712,
+  DOI 10.1016/j.comnet.2025.111712. This directly supports memory replay as a practical NIDS
+  continual-learning strategy and motivates explicit retention rather than naive sequential
+  fine-tuning.
+- Nicholas Costagliola, Goktug Ekinci, Nathaniel D. Bastian, Lance Fiondella, and Gokhan Kul,
+  *Replay or Regret: Evaluating Continual Learning Methods for Robust Intrusion Detection*,
+  MILCOM 2025, DOI 10.1109/MILCOM64451.2025.11310341. Their comparative evaluation reports
+  replay as the strongest tested mechanism against catastrophic forgetting and documents cases where
+  model-repair strategies improve selected classes while degrading others.
+- O. Delgado, Hyunjae Kang, U. Lam, J. Seo, and Dan Dongseong Kim, *Continual learning for
+  adaptive IoT network intrusion detection via domain-incremental learning methods*, Applied Soft
+  Computing 203 (2026), 116022. Their multi-method evaluation across multiple NIDS datasets reports
+  materially stronger retention for replay-based strategies than naive and regularization-only
+  sequential updating.
+- Xinchen Zhang et al., *Continual Learning with Strategic Selection and Forgetting for Network
+  Intrusion Detection*, IEEE INFOCOM 2025, shows that memory selection/forgetting strategy itself can
+  materially alter adaptive behavior.
+
+Project consequence:
+
+- System C must use a genuine replay-based continual-learning response rather than token fine-tuning;
+- the primary method is intentionally simple fixed-budget experience replay rather than task-aware or
+  error-prioritized replay, because the latter would introduce extra treatment logic and
+  hyperparameters unrelated to the symbolic-lifecycle contribution;
+- current evidence and replay evidence each receive a fixed 10,000-row budget;
+- catastrophic forgetting is measured explicitly rather than assumed controlled;
+- a no-replay sequential fine-tuning ablation is prespecified to quantify replay's contribution.
+
+This literature occupies broad novelty claims around replay-based adaptive NIDS. Replay is a control
+mechanism here, not a claimed contribution.

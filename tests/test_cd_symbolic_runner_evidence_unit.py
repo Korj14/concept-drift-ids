@@ -247,37 +247,45 @@ def test_symbolic_evidence_is_write_once_for_published_result(
         SymbolicTransactionResult,
         ValidationBlockResult,
     )
-    from concept_drift_ids.cd_symbolic_lifecycle import LifecycleResult
+    from concept_drift_ids.cd_symbolic_lifecycle import (
+        OnlineRuleGate,
+        apply_lifecycle_maintenance,
+    )
 
     parent = migrate_r0_v2_rules(
         seed=0,
         rules=[_rule()],
         neural_checkpoint_sha256="initial",
     )
-    child = migrate_r0_v2_rules(
-        seed=0,
-        rules=[],
-        neural_checkpoint_sha256="child",
+    X = np.array([[0.0], [0.1], [0.8], [0.9]], dtype=np.float64)
+    y = np.array([1, 1, 0, 0], dtype=np.int8)
+    neural = y.copy()
+    lifecycle = apply_lifecycle_maintenance(
+        parent,
+        candidates=[],
+        X_validation=X,
+        y_validation=y,
+        neural_decision=neural,
+        feature_names=("x",),
+        opportunity_id=1,
+        validation_evidence_id="validation",
+        neural_checkpoint_sha256="child-checkpoint",
+        publication_effective_index=20,
+        bootstrap_random_state=1,
+        gate=OnlineRuleGate(
+            min_support=0.0,
+            min_covered=1,
+            min_class_precision=0.75,
+            min_precision_lcb=0.0,
+            min_neural_fidelity=0.75,
+            min_fidelity_lcb=0.0,
+            min_stability=0.0,
+            max_complexity=4,
+            bootstrap_replicates=2,
+        ),
     )
-    child = child.__class__(
-        seed=0,
-        rule_base_version_id="d-s0-v0001",
-        version_number=1,
-        parent_version_id=parent.rule_base_version_id,
-        parent_version_sha256=parent.canonical_sha256,
-        revisions=parent.revisions,
-        active_revision_ids=(),
-        canonical_sha256=child.canonical_sha256,
-        history_sha256=parent.history_sha256,
-    )
-    lifecycle = LifecycleResult(
-        state=child,
-        published=True,
-        maintenance_status="published",
-        decisions=({"type": "demoted"},),
-        staleness_snapshot=(),
-        candidate_evidence=(),
-    )
+    assert lifecycle.published
+    child = lifecycle.state
     transaction = PendingSymbolicTransaction(
         arm="d_drift",
         opportunity_id=1,

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+from dataclasses import replace
 
 import numpy as np
 import pytest
@@ -16,6 +17,7 @@ from concept_drift_ids.cd_shared_runner import (
     SharedControlPlaneRunner,
     StreamRow,
     freeze_shared_trajectory,
+    verify_shared_trajectory,
 )
 from concept_drift_ids.neural import BinaryMLP
 
@@ -132,6 +134,8 @@ def test_runner_publishes_shared_child_and_quarantines_stale_errors(
         first_transaction["replay_row_ids"]
     )
 
+    verify_shared_trajectory(trajectory, label_latency=1)
+
 
 def test_runner_is_deterministic_at_state_level_for_same_inputs(
     tmp_path,
@@ -247,3 +251,40 @@ def test_runner_rejects_anchor_stream_identity_collision(tmp_path) -> None:
     )
     with pytest.raises(ValueError, match="disjoint"):
         runner.run(collision)
+
+
+
+def test_shared_trajectory_verifier_rejects_maturity_tampering(
+    tmp_path,
+    monkeypatch,
+) -> None:
+    monkeypatch.setattr(
+        SharedErrorDriftMonitor,
+        "_new_adwin",
+        staticmethod(lambda: _FakeADWIN()),
+    )
+    torch.manual_seed(29)
+    model = BinaryMLP(input_features=3, hidden_layers=(4, 2), dropout=0.1)
+    trajectory = SharedControlPlaneRunner(
+        seed=3,
+        initial_model=model,
+        initial_checkpoint_sha256="initial-file-sha",
+        monitor_threshold=0.5,
+        anchor_rows=_anchors(4),
+        checkpoint_dir=tmp_path / "checkpoints",
+        run_id="toy-run",
+        git_commit="deadbeef",
+        config=_config(),
+    ).run(_rows("stream", 6))
+
+    tampered_schedule = list(trajectory.label_schedule)
+    tampered_schedule[0] = dict(
+        tampered_schedule[0],
+        maturity_index=99,
+    )
+    tampered = replace(
+        trajectory,
+        label_schedule=tuple(tampered_schedule),
+    )
+    with pytest.raises(ValueError, match="maturity"):
+        verify_shared_trajectory(tampered, label_latency=1)

@@ -1533,3 +1533,60 @@ making label timing a first-class design variable, while recent continual-NIDS
 comparisons support replay as a serious candidate neural adaptation baseline.
 These observations motivate later design choices but do not freeze a detector,
 delay value, replay variant, or update hyperparameter.
+
+
+### C/D stream-time and information-availability contract frozen — 8 October 2026
+
+Before choosing the drift detector or implementing any adaptive component, the project froze
+`C_D_STREAM_TIME_CONTRACT.md`.
+
+This ordering is deliberate. A detector or updater that is selected before deciding when labels and
+observations legally exist can force hidden assumptions into the experiment. The timing contract was
+therefore treated as upstream of detector choice.
+
+The frozen scenario manifest was rechecked and confirms that the MachineLearningCSV scenario used
+here does not support true timestamp chronology. The adaptive experiment therefore uses row index as
+a logical observation clock and makes no wall-clock label-delay or production-throughput claim.
+
+Primary information-time decisions:
+
+- the adaptive stream is the uninterrupted ordered concatenation of pre_drift followed by post_drift;
+- no detector, label queue, replay/buffer, model, rule, threshold or RNG state is reset at the evaluator-known synthetic boundary;
+- the primary verification latency is a fixed 5,000 stream rows;
+- label `y_j` becomes adaptively visible only after the prediction at row `j+5000` is committed;
+- labels whose maturity falls beyond the end of the stream are not flushed into adaptive components;
+- the offline evaluator may use all labels after predictions are frozen, but this scoring channel is logically separated from adaptive label availability;
+- prediction always precedes label release, including the zero-delay sensitivity;
+- a supervised prequential drift statistic must use the prediction stored at the origin row, rather than rescoring that historical row under a later model;
+- updates may use only observations already arrived and labels already mature at their causal update clock;
+- any new adaptive state can affect the next logical prediction at earliest;
+- the primary logical stream is synchronous between predictions because no trustworthy event timestamps exist to model backlog during computation; update wall-clock cost is measured separately.
+
+The 5,000-row delay is an explicit controlled simulation assumption, not an estimate of SOC
+investigation latency. It reuses an already frozen stream granularity to avoid adding an
+outcome-sensitive scale while remaining logically independent of the reporting-window mechanism.
+Prespecified latency robustness conditions are `L=0` and `L=10,000`.
+
+The primary condition assumes complete eventual supervision subject to the fixed delay and terminal
+right-censoring. Partial/selective label acquisition is excluded from the primary causal contrast
+because it would add a second evidence-acquisition treatment; it may be studied later only as a
+separately frozen robustness condition.
+
+A targeted literature refresh was performed before freeze. Recent Pattern Recognition and Digital
+Signal Processing work confirms that processing framework, verification latency and partial label
+availability materially affect drift evaluation. NOCTOWL (IEEE Access 2025) further confirms that
+delayed/selective supervision is already an explicit NIDS operating constraint. These works motivate
+the methodological control but do not supply an empirically correct CICIDS2017 delay value.
+
+The information-time decisions were propagated into `EXPERIMENT_CONTROL_REGISTER.md` and
+`STATISTICAL_ANALYSIS_PLAN.md`. No detector family, detector hyperparameter, adaptation window,
+replay policy, neural update, threshold adaptation, or symbolic lifecycle decision was selected from
+this packet.
+
+The remote annotated tag `system-b-v2` was also verified through the GitHub compare interface to
+resolve to accepted `main` milestone
+`4c13d71a111ce7b72b3ef26a01b2918592425aa1` exactly.
+
+**Gate after this packet:** timing/label availability is frozen; adaptive implementation remains
+prohibited. The next packet must select the treatment-independent drift-monitor signal and detector
+under this timing contract.

@@ -62,6 +62,7 @@ jobs:
               "STAGE6_HANDOFF.md",
               "STAGE7_SYMBOLIC_IMPLEMENTATION.md",
               "STAGE7_HANDOFF.md",
+              "STAGE8_PRIMARY_EXECUTION_PROTOCOL.md",
           ]
           missing = [path for path in required if not Path(path).is_file()]
           assert not missing, f"Missing governance artifacts: {missing}"
@@ -112,6 +113,9 @@ jobs:
 
       - name: Run Stage 7 repository-only tests
         run: python -m pytest -q tests/test_cd_symbolic_lifecycle_unit.py tests/test_cd_symbolic_candidates_unit.py tests/test_cd_symbolic_arms_analysis_unit.py tests/test_cd_symbolic_runner_evidence_unit.py tests/test_cd_implementation_preflight_unit.py
+
+      - name: Run Stage 8 repository-only tests
+        run: python -m pytest -q tests/test_cd_primary_stage8_unit.py
 
       - name: Run Stage 2 repository-only regression tests
         run: python -m pytest -q tests/test_sudden_benign_manifest.py -k "not provenance_files_still_match_frozen_manifest"

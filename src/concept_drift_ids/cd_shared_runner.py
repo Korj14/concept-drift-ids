@@ -584,3 +584,74 @@ def freeze_shared_trajectory(
         "sha256": digest,
     }
     return files
+
+
+
+def verify_shared_trajectory(
+    trajectory: SharedTrajectory,
+    *,
+    label_latency: int,
+) -> None:
+    if len(trajectory.predictions) != len(trajectory.label_schedule):
+        raise ValueError("Prediction/label-schedule length mismatch.")
+
+    for expected_index, (prediction, schedule) in enumerate(
+        zip(trajectory.predictions, trajectory.label_schedule)
+    ):
+        if int(prediction["origin_index"]) != expected_index:
+            raise ValueError("Prediction origin indices are not contiguous.")
+        if int(schedule["origin_index"]) != expected_index:
+            raise ValueError("Label schedule origin indices are not contiguous.")
+        if schedule["row_id"] != prediction["row_id"]:
+            raise ValueError("Prediction/label-schedule row identity mismatch.")
+        expected_maturity = expected_index + int(label_latency)
+        if int(schedule["maturity_index"]) != expected_maturity:
+            raise ValueError("Label maturity schedule violates frozen latency.")
+        if int(prediction["maturity_index"]) != expected_maturity:
+            raise ValueError("Prediction record maturity index mismatch.")
+
+    for observation in trajectory.detector_observations:
+        if observation["admitted"] and (
+            observation["prediction_checkpoint_sha256"]
+            != observation["epoch_checkpoint_sha256"]
+        ):
+            raise ValueError("Checkpoint-impure detector observation admitted.")
+        if int(observation["maturity_index"]) < int(
+            observation["origin_index"]
+        ):
+            raise ValueError("Detector observation maturity precedes origin.")
+
+    for event in trajectory.events:
+        if event["event_type"] in {"label_release", "detector_observation"}:
+            if int(event["maturity_index"]) > int(event["logical_clock"]):
+                raise ValueError("Label-dependent event precedes maturity.")
+        if event["event_type"] == "neural_publication":
+            effective = int(event["payload"]["publication_effective_index"])
+            if effective != int(event["logical_clock"]) + 1:
+                raise ValueError(
+                    "Neural publication must become effective next logical row."
+                )
+
+    verify_checkpoint_chain(trajectory.checkpoint_chain)
+
+    expected_identity = build_shared_identity(
+        label_schedule_sha256=records_sha256(trajectory.label_schedule),
+        detector_events_sha256=records_sha256(
+            trajectory.detector_observations
+        ),
+        replay_evidence_sha256=records_sha256(
+            trajectory.replay_transactions
+        ),
+        checkpoint_chain_sha256=records_sha256(
+            trajectory.checkpoint_chain
+        ),
+    )
+    if dict(trajectory.shared_identity) != expected_identity:
+        raise ValueError("Shared trajectory identity hash mismatch.")
+
+    if trajectory.checkpoint_chain:
+        final = trajectory.checkpoint_chain[-1]
+        if final["checkpoint_file_sha256"] != trajectory.final_checkpoint_sha256:
+            raise ValueError("Final checkpoint file identity mismatch.")
+        if final["child_state_sha256"] != trajectory.final_state_sha256:
+            raise ValueError("Final checkpoint state identity mismatch.")

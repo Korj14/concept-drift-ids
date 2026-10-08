@@ -1473,3 +1473,63 @@ The alternate teacher removes training multiplicity under exact raw 77-feature-p
 Held-out alternate-B mean detection remains viable: MCC is approximately 0.762 pre-drift and 0.790 post-drift; F1 approximately 0.745 and 0.779. Its post-minus-pre MCC is approximately +0.0287 and F1 +0.0332. Symbolic behavior differs materially from accepted R0.v2: attack resolved coverage is approximately 0.897 pre and 0.907 post, while attack symbolic correctness is approximately 0.563 pre and 0.614 post. These differences are treated as assumption dependence, not as a basis to replace accepted System A or R0.v2.
 
 With this evidence frozen, the mandatory retrospective System-B robustness tranche is closed. No unresolved System-B implementation defect remains that requires reopening A, R0.v2, or corrected B before C/D design work. Remaining open controls belong to the prospective adaptive phase and must be frozen before any C/D held-out execution.
+
+
+### System-B milestone acceptance and C/D adversarial design gate — 8 October 2026
+
+System B was formally accepted into `main` through pull request #2 after the exact
+`stage4-system-b` closure head
+`317b8d957c3ac983598523215a1205b6869f8c17` passed PR-specific Research
+Contract run #156. The pull request was merged with a normal merge commit rather
+than a squash so the 94-commit System-B scientific history remains part of the
+audit trail. The resulting accepted `main` milestone is
+`4c13d71a111ce7b72b3ef26a01b2918592425aa1`.
+
+The next stage branch, `stage5-cd-design-audit`, was created from that exact
+accepted parent. No adaptive implementation code was introduced at branch
+creation.
+
+A prospective adversarial review was then frozen in
+`C_D_ADVERSARIAL_DESIGN_AUDIT.md`. Its purpose is to attempt to falsify the
+C-versus-D causal design before implementation rather than to confirm readiness.
+
+The audit identified treatment-contamination risks that must be eliminated
+prospectively. Most importantly:
+
+- D symbolic state must not affect the signal or state used to produce the
+  shared drift-event stream;
+- C/D fused outputs must not determine label acquisition, replay membership,
+  neural-update evidence, or symbolic evidence availability in the primary
+  causal comparison;
+- label maturity and prequential information timing must be explicit before a
+  detector or updater is selected;
+- adaptation windows must not use post-trigger future rows before their claimed
+  publication time;
+- matched C/D neural trajectories must be mechanically verifiable through
+  detector-event, replay-row, update-row, and checkpoint hashes rather than
+  asserted from common hyperparameters;
+- independent threshold adaptation from C/D fused scores is not admissible for
+  the primary contrast because it creates a treatment-dependent operating-point
+  trajectory;
+- D-drift and D-periodic must be opportunity/budget matched with only the
+  symbolic trigger schedule differing;
+- online symbolic gate/count semantics, confidence timing, and the complete
+  lifecycle state machine remain unresolved blockers.
+
+The audit therefore classifies the project as ready for **prospective C/D design
+freeze but not adaptive implementation**. This is not a defect in accepted A/B
+evidence and does not reopen System B.
+
+The preferred causal architecture emerging from the audit is a shared per-seed
+non-symbolic control plane: one treatment-independent detector/event stream,
+one replay/buffer trajectory, and one neural-checkpoint trajectory are consumed
+by both C and D. System C holds accepted R0.v2 frozen; System D alone receives
+the symbolic-evolution treatment. Any divergence in required non-symbolic state
+is an experimental abort condition.
+
+Current 2025-2026 literature was consulted prospectively only. Recent
+stream-learning work on delayed labels and processing-framework choice supports
+making label timing a first-class design variable, while recent continual-NIDS
+comparisons support replay as a serious candidate neural adaptation baseline.
+These observations motivate later design choices but do not freeze a detector,
+delay value, replay variant, or update hyperparameter.

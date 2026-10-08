@@ -85,6 +85,46 @@ A provisional idea to set ADWIN grace_period=5,000 was explicitly rejected befor
 
 These controls have been propagated into the control register, statistical plan, literature watch and methodology ledger.
 
+### Packet 4 — shared neural adaptation / replay
+
+`C_D_NEURAL_ADAPTATION_PROTOCOL.md` is frozen.
+
+Primary neural-control decisions:
+
+- one shared neural update is executed once per seed/event and the resulting child checkpoint bytes/hash are consumed by both C and D;
+- current evidence budget = 10,000 most recent mature labeled observations whose original prediction was produced by the parent checkpoint;
+- if that budget is unavailable at event time, the parent remains active and the detector remains disarmed until the full budget matures;
+- terminal shortfall is a right-censored response; the window is not shrunk and no terminal update is forced;
+- replay memory = immutable 10,000-row uniform training anchor + 10,000-row uniform mature-stream reservoir;
+- each update replays 5,000 anchor + 5,000 eligible online rows, excluding current-window row IDs;
+- update dataset = 10,000 current + 10,000 replay;
+- fixed original pos_weight=4.138247558496975;
+- all MLP parameters trainable;
+- fresh Adam per event, lr=1e-4, weight_decay=1e-5, batch=1024, exactly 5 epochs;
+- no scheduler, no early stopping, no performance-based publication gate;
+- technically valid but harmful updates are retained as evidence;
+- deterministic replay/adaptation seeds are frozen;
+- catastrophic forgetting is measured on the full historical development probe and by offline pre-drift checkpoint rescoring, never used to control the update;
+- no-replay fine-tuning is a prespecified secondary ablation.
+
+### Packet 5 — fusion and operational threshold
+
+`C_D_FUSION_THRESHOLD_PROTOCOL.md` is frozen.
+
+Primary decision-policy controls:
+
+- accepted R0.v2 fusion rule remains primary;
+- lambda=.50 on resolved symbolic coverage;
+- neural fallback on uncovered/conflict;
+- accepted R0.v2 fused threshold for each seed remains fixed for the entire adaptive trajectory;
+- C and D use exactly the same lambda and threshold within a matched seed;
+- no per-event, per-window or per-arm threshold recalibration;
+- threshold-free ROC-AUC/AP remain mandatory alongside thresholded metrics;
+- accepted R0.v2 development-grid lambda=.70 and lambda=.90 pairs are frozen as secondary fusion-authority sensitivities;
+- lambda=1.00 is a causal negative control: C/D predictive scores and thresholded decisions must be identical because symbolic predictive authority is zero and the neural checkpoint chain is shared.
+
+All neural-side causal controls are now prospectively specified.
+
 ## Current scientific gate
 
 **Status: NOT READY FOR ADAPTIVE IMPLEMENTATION.**
@@ -95,37 +135,39 @@ No adaptive detector/updater/lifecycle implementation should begin until the rem
 
 ## Remaining blocking controls
 
-1. adaptation evidence horizon/window after a confirmed event;
-2. serious shared neural continual-learning/replay procedure;
-3. replay capacity/sampling/eviction;
-4. neural update budget/stopping/publication transaction;
-5. matched C/D operational/fusion threshold policy;
-6. D symbolic lifecycle/operator state machine;
-7. online symbolic validation/sample-size semantics;
-8. rule-confidence update semantics;
-9. D-periodic cadence/opportunity matching;
-10. confirmatory endpoints, intervals/tests, multiplicity;
-11. runtime/thread/determinism and cost scopes;
-12. final event/evidence serialization schemas and fail-closed verifiers.
+1. D symbolic lifecycle/operator state machine;
+2. symbolic candidate-generation evidence;
+3. independent online symbolic validation evidence;
+4. online support/count/uncertainty gate semantics;
+5. rule-confidence update semantics;
+6. D-periodic cadence/opportunity matching;
+7. confirmatory endpoints, intervals/tests and multiplicity;
+8. runtime/thread/determinism and cost scopes;
+9. final event/lifecycle/evidence serialization schemas;
+10. fail-closed contamination/integrity verifiers and implementation tests.
 
 ## Exact next packet
 
-**Shared neural adaptation / replay protocol.**
+**D symbolic lifecycle / online validation protocol.**
+
+This is the next high-risk design packet and should begin from the already frozen shared control plane rather than from the static R0 implementation details alone.
 
 Required order:
 
-1. define the neural-adaptation objective and what counts as a scientifically serious System-C comparator;
-2. distinguish current-event evidence from replay/retention evidence;
-3. freeze the adaptation evidence horizon and label-maturity eligibility;
-4. compare simple replay-based fine-tuning against reasonable continual-learning alternatives using training/development/design evidence only;
-5. freeze replay capacity, class handling, admission/eviction, sampling and RNG;
-6. freeze optimizer state policy, learning rate, epochs/update budget, batch size and stopping;
-7. freeze catastrophic-forgetting/retention diagnostics;
-8. define the neural adaptation transaction and publication/checkpoint hash semantics that the detector re-arm rule depends on;
-9. require the exact same neural transaction trajectory for matched C and D;
-10. only after that move to the matched operational/fusion threshold policy.
+1. define the immutable symbolic version/event state machine;
+2. separate candidate generation from candidate acceptance;
+3. define which shared neural checkpoint and which current-evidence rows candidate generation may use;
+4. create an independent, time-respecting symbolic validation evidence slice/pool;
+5. resolve the static R0 min-covered=100/sample-size problem for online validation without weakening gates after seeing C/D outcomes;
+6. freeze add/refine/merge/retain/demote/retire/reactivate semantics;
+7. freeze conflict resolution and abstention semantics across versions;
+8. freeze confidence update source/timing and whether confidence can change without structural rule change;
+9. define lineage IDs, parent/source IDs, version hashes and rejected-change records;
+10. define staleness tests for existing R0/Rt rules before permitting retirement/replacement;
+11. only after the operator is frozen, freeze D-drift versus D-periodic opportunity matching;
+12. then finish the confirmatory statistical and runtime/reproducibility freeze.
 
-The neural-adaptation design must be credible enough that D cannot appear useful merely because C is an intentionally weak adaptive baseline.
+No symbolic update may use the evaluator-known boundary, pending labels, future rows, or C/D outcome direction.
 
 ## Prohibited actions until later gate
 
@@ -153,6 +195,6 @@ A new chat in this Project can resume safely by:
 3. verify local HEAD equals `origin/stage5-cd-design-audit`;
 4. read this handoff, `C_D_ADVERSARIAL_DESIGN_AUDIT.md`, `C_D_STREAM_TIME_CONTRACT.md`, the control register, statistical plan, and methodology-ledger tail;
 5. verify draft PR #3 CI for the current exact branch head;
-6. continue with the detector/signal audit only.
+6. continue with the symbolic lifecycle / online-validation design packet only.
 
 Scientific decisions that matter must continue to be committed to the repository rather than existing only in conversational context.

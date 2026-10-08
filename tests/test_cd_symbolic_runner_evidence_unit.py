@@ -24,8 +24,10 @@ from concept_drift_ids.cd_symbolic_lifecycle import (
 )
 from concept_drift_ids.cd_symbolic_runner import (
     SharedSymbolicRow,
+    SymbolicArmTrajectory,
     run_drift_symbolic_arm,
     verify_shared_symbolic_rows,
+    verify_symbolic_arm_control_plane_isolation,
 )
 from concept_drift_ids.neural import BinaryMLP
 from concept_drift_ids.symbolic import Condition, Rule
@@ -165,9 +167,21 @@ def test_drift_arm_can_complete_staleness_without_candidate_generation() -> None
     )
     model = _toy_model()
 
+    shared_predictions = [
+        {
+            "row_id": row.row_id,
+            "origin_index": row.origin_index,
+            "maturity_index": row.maturity_index,
+            "checkpoint_sha256": row.neural_checkpoint_sha256,
+            "neural_probability": row.neural_probability,
+        }
+        for row in rows
+    ]
     trajectory = run_drift_symbolic_arm(
         seed=0,
         initial_state=initial,
+        shared_identity_sha256="shared-identity",
+        shared_predictions=shared_predictions,
         shared_events=shared_events,
         replay_transactions=replay_transactions,
         checkpoint_chain=checkpoint_chain,
@@ -397,3 +411,48 @@ def test_stage7_runtime_modules_have_no_primary_scenario_loader_surface() -> Non
         text = open(path, encoding="utf-8").read()
         for token in forbidden:
             assert token not in text
+
+
+
+def test_symbolic_arm_isolation_requires_one_shared_control_plane_identity() -> None:
+    state = migrate_r0_v2_rules(
+        seed=0,
+        rules=[_rule()],
+        neural_checkpoint_sha256="initial",
+    )
+    left = SymbolicArmTrajectory(
+        seed=0,
+        arm="c_frozen_symbolic",
+        operator_config_sha256="operator",
+        shared_identity_sha256="shared",
+        initial_state=state,
+        final_state=state,
+        maintenance=(),
+        publications=(),
+    )
+    right = SymbolicArmTrajectory(
+        seed=0,
+        arm="d_drift",
+        operator_config_sha256="operator",
+        shared_identity_sha256="shared",
+        initial_state=state,
+        final_state=state,
+        maintenance=(),
+        publications=(),
+    )
+    assert len(verify_symbolic_arm_control_plane_isolation([left, right])) == 64
+
+    divergent = SymbolicArmTrajectory(
+        seed=0,
+        arm="d_periodic",
+        operator_config_sha256="operator",
+        shared_identity_sha256="different",
+        initial_state=state,
+        final_state=state,
+        maintenance=(),
+        publications=(),
+    )
+    with pytest.raises(ValueError, match="control-plane identity"):
+        verify_symbolic_arm_control_plane_isolation(
+            [left, right, divergent]
+        )

@@ -119,3 +119,141 @@ Material external evidence:
 Consequence:
 
 The primary System-B evidence remains useful as a controlled proving-ground result, but Q1 claims require an explicit reliability/benchmark-robustness layer and external replication. No new literature finding justifies broadening the novelty claim.
+
+
+## 8 October 2026 — C/D information-time and delayed-label methodology refresh
+
+A targeted pre-implementation refresh examined whether immediate-label stream evaluation would meet the current methodological bar and whether delayed-label interpretable NIDS work alters the project's novelty boundary.
+
+Material items:
+
+- Joanna Komorniczak, Paweł Ksieniewicz, and Paweł Zyblewski, *Structuring the processing frameworks for data stream evaluation and application*, Pattern Recognition 172 (2026), 112516, DOI 10.1016/j.patcog.2025.112516. The paper explicitly treats label delay and processing-framework choice as determinants of stream-evaluation validity and criticizes unrestricted immediate access to labels for monitoring and adaptation.
+- G. Cassales, Heitor Murilo Gomes, C. Prazeres, Tatiane N. Rios, Albert Bifet, and R. Rios, *Concept drift detection in delayed and partially labeled data streams: An experimental survey*, Digital Signal Processing 182 (2026), 106325, DOI 10.1016/j.dsp.2026.106325. This confirms that detector behavior under delayed/partial labels is now an explicit evaluation problem rather than a peripheral implementation issue.
+- Sara Pederzoli et al., *NOCTOWL: Adaptive Tree-Based Model for Network Anomaly Detection Under Delayed and Sampled Label Availability*, IEEE Access 13 (2025), 197899-197911, DOI 10.1109/ACCESS.2025.3633419. NOCTOWL separates detection from delayed/selective updates and directly evaluates multiple supervision delays. This occupies broad claims around delayed-label adaptive/interpretable NIDS.
+
+Project consequence:
+
+- immediate ground-truth availability is not acceptable as an unstated primary assumption;
+- the primary C/D design now uses a prospectively frozen row-index verification latency because the frozen CICIDS2017 scenario lacks trustworthy timestamps;
+- the exact 5,000-row latency is **not** claimed to be empirically representative of SOC turnaround; it is a controlled design assumption with prespecified 0-row and 10,000-row sensitivities;
+- offline scoring labels are separated from adaptively available labels;
+- a supervised detector, if chosen, must consume stored prequential predictions only when their labels mature.
+
+Novelty consequence:
+
+Delayed-label adaptive NIDS and interpretable online NIDS are occupied territory. This refresh does not collapse the governing contribution, which remains the controlled flow-level question of whether an endogenous statistical drift event can gate a validated/versioned symbolic lifecycle whose incremental value is isolated from a matched adaptive neural control.
+
+
+## 8 October 2026 — primary drift-monitor selection refresh
+
+The detector freeze was reviewed against the original ADWIN method, recent delayed-label stream
+methodology, and the 2026 concept-drift-resilient NIDS survey.
+
+Material points:
+
+- Bifet & Gavaldà, *Learning from Time-Changing Data with Adaptive Windowing*, SIAM SDM 2007,
+  DOI 10.1137/1.9781611972771.42, explicitly presents ADWIN as an adaptive-window statistical
+  change detector and demonstrates monitoring a predictor's error rate as a model-revision signal.
+- Komarchesqui et al., *A Comprehensive Survey on Concept-Drift-Resilient Network Intrusion
+  Detection Systems*, IEEE Access 14 (2026), 69689-69718, reinforces that drift detection,
+  adaptation, benchmark construction and dynamic evaluation are distinct experimental design
+  stages in modern NIDS work.
+- Cassales et al., Digital Signal Processing 182 (2026), 106325, reinforces that supervised detector
+  behavior must be interpreted together with label delay/availability rather than under an implicit
+  immediate-label oracle.
+
+Project consequence:
+
+- primary trigger input is delayed neural-only prequential 0/1 error, not fused C/D error;
+- the primary detector is River 0.26.1 ADWIN at its exact locked defaults, with no adaptive held-out
+  hyperparameter search;
+- the fixed monitor decision thresholds are the already accepted seed-specific System-A
+  development thresholds and do not adapt;
+- because delayed labels after a neural update initially describe predictions made by the old
+  checkpoint, detector epochs are checkpoint-pure and stale old-checkpoint errors are quarantined
+  from the next epoch;
+- one ADWIN statistical detection is the confirmed event; no extra outcome-tuned persistence rule is
+  added;
+- Page-Hinkley on the same hard-error stream and ADWIN on delayed Brier loss are prespecified
+  robustness conditions.
+
+ADWIN is adopted as a transparent statistical gate, not claimed to be globally optimal. In the
+primary BENIGN-source-regime-dominant scenario, an ADWIN event is reported precisely as a
+statistical change in delayed neural error, not as proof of real drift in P(Y|X).
+
+
+## 8 October 2026 — shared neural adaptation / replay refresh
+
+A targeted continual-learning review was performed before freezing System C's neural adaptation
+protocol.
+
+Material evidence:
+
+- Ansam Khraisat and Gang Li, *Adaptive memory replay for network intrusion detection: Tackling data
+  drift and catastrophic forgetting*, Computer Networks 272 (2025), 111712,
+  DOI 10.1016/j.comnet.2025.111712. This directly supports memory replay as a practical NIDS
+  continual-learning strategy and motivates explicit retention rather than naive sequential
+  fine-tuning.
+- Nicholas Costagliola, Goktug Ekinci, Nathaniel D. Bastian, Lance Fiondella, and Gokhan Kul,
+  *Replay or Regret: Evaluating Continual Learning Methods for Robust Intrusion Detection*,
+  MILCOM 2025, DOI 10.1109/MILCOM64451.2025.11310341. Their comparative evaluation reports
+  replay as the strongest tested mechanism against catastrophic forgetting and documents cases where
+  model-repair strategies improve selected classes while degrading others.
+- O. Delgado, Hyunjae Kang, U. Lam, J. Seo, and Dan Dongseong Kim, *Continual learning for
+  adaptive IoT network intrusion detection via domain-incremental learning methods*, Applied Soft
+  Computing 203 (2026), 116022. Their multi-method evaluation across multiple NIDS datasets reports
+  materially stronger retention for replay-based strategies than naive and regularization-only
+  sequential updating.
+- Xinchen Zhang et al., *Continual Learning with Strategic Selection and Forgetting for Network
+  Intrusion Detection*, IEEE INFOCOM 2025, shows that memory selection/forgetting strategy itself can
+  materially alter adaptive behavior.
+
+Project consequence:
+
+- System C must use a genuine replay-based continual-learning response rather than token fine-tuning;
+- the primary method is intentionally simple fixed-budget experience replay rather than task-aware or
+  error-prioritized replay, because the latter would introduce extra treatment logic and
+  hyperparameters unrelated to the symbolic-lifecycle contribution;
+- current evidence and replay evidence each receive a fixed 10,000-row budget;
+- catastrophic forgetting is measured explicitly rather than assumed controlled;
+- a no-replay sequential fine-tuning ablation is prespecified to quantify replay's contribution.
+
+This literature occupies broad novelty claims around replay-based adaptive NIDS. Replay is a control
+mechanism here, not a claimed contribution.
+
+
+## 8 October 2026 — symbolic lifecycle / online validation refresh
+
+The symbolic-treatment freeze was checked against the closest adaptive/interpretable IDS territory.
+
+Material evidence:
+
+- Guang-Yu Qian, Jinyuan Li, Wei He, Wei Zhang, and You Cao, *An online intrusion detection
+  method for industrial control systems based on extended belief rule base*, International Journal
+  of Information Security 23 (2024), 2491-2514. O-EBRB explicitly incorporates/merges new
+  observations into an online-updatable belief-rule base. This confirms that online symbolic/rule-base
+  adaptation in IDS is established territory.
+- Xiao-Wei Gu, Gareth Howells, and Hai-Yue Yuan, *A soft prototype-based autonomous fuzzy
+  inference system for network intrusion detection*, Information Sciences 677 (2024), 120964.
+  SPAFIS learns interpretable fuzzy rules online/chunk-by-chunk and prunes redundant knowledge.
+- Mateus Komarchesqui et al., *A Comprehensive Survey on Concept-Drift-Resilient Network
+  Intrusion Detection Systems*, IEEE Access 14 (2026), 69689-69718, reinforces that drift
+  detection, adaptive response and dynamic evaluation must be treated as separate design stages.
+- The governing 2026 literature audit additionally identifies DNF-VDS, CAPTAIN, HED-ID and recent
+  drift-triggered symbolic re-mining in SOC alert triage as adjacent work that rules out broad
+  novelty claims around adaptive rules or drift-triggered symbolic refresh alone.
+
+Project consequence:
+
+- the contribution cannot be "rules update online" or "drift triggers a rule refresh";
+- the D treatment is therefore frozen as a versioned lifecycle with independent acceptance evidence,
+  incumbent-staleness measurement, lineage, rejected-change history, conflict/abstention semantics and
+  a matched adaptive-neural control;
+- candidate generation is separated from independent future validation to avoid optimistic
+  self-validation;
+- online rule acceptance uses uncertainty-aware Wilson lower bounds rather than transferring the
+  static R0 covered-count threshold mechanically;
+- wholesale unvalidated rule-base replacement is prohibited.
+
+The lifecycle design is intended as a controlled empirical treatment, not claimed to be a universally
+optimal stream-rule learner.

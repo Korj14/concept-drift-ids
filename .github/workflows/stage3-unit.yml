@@ -49,6 +49,15 @@ jobs:
               "SYSTEM_B_ROBUSTNESS_PLAN.md",
               "SYSTEM_B_R0_V2_CORRECTION_PLAN.md",
               "SYSTEM_B_V2_EVALUATION_PROTOCOL.md",
+              "C_D_ADVERSARIAL_DESIGN_AUDIT.md",
+              "C_D_STREAM_TIME_CONTRACT.md",
+              "C_D_DRIFT_MONITOR_PROTOCOL.md",
+              "C_D_NEURAL_ADAPTATION_PROTOCOL.md",
+              "C_D_FUSION_THRESHOLD_PROTOCOL.md",
+              "D_SYMBOLIC_LIFECYCLE_PROTOCOL.md",
+              "D_TRIGGER_ABLATION_PROTOCOL.md",
+              "C_D_FINAL_ANALYSIS_REPRODUCIBILITY_PROTOCOL.md",
+              "STAGE5_HANDOFF.md",
           ]
           missing = [path for path in required if not Path(path).is_file()]
           assert not missing, f"Missing governance artifacts: {missing}"
@@ -59,6 +68,33 @@ jobs:
           )
           doctrine = Path("RESEARCH_DOCTRINE.md").read_text(encoding="utf-8")
           assert gap in doctrine, "Repository doctrine is missing the governing gap."
+
+          sap = Path("STATISTICAL_ANALYSIS_PLAN.md").read_text(encoding="utf-8")
+          assert "**Version:** 1.0 — frozen prospective C/D analysis plan" in sap, (
+              "C/D statistical analysis plan is not frozen at v1.0."
+          )
+          assert "TBD BEFORE C/D" not in sap, (
+              "C/D statistical analysis plan contains unresolved confirmatory TBDs."
+          )
+          assert "TBD BEFORE longitudinal adaptive evaluation" not in sap, (
+              "C/D statistical analysis plan contains unresolved recovery TBDs."
+          )
+
+          controls = Path("EXPERIMENT_CONTROL_REGISTER.md").read_text(encoding="utf-8")
+          unresolved_status = [
+              line for line in controls.splitlines()
+              if line.startswith("|") and (
+                  "**TO FREEZE" in line
+                  or "VALUES TO FREEZE" in line
+                  or "HASH TO FREEZE" in line
+                  or "ARTIFACT TO FREEZE" in line
+                  or "MANIFEST TO FREEZE" in line
+              )
+          ]
+          assert not unresolved_status, (
+              "Control register contains unresolved freeze-state rows: "
+              + " || ".join(unresolved_status)
+          )
           PY
 
       - name: Install frozen environment

@@ -1473,3 +1473,638 @@ The alternate teacher removes training multiplicity under exact raw 77-feature-p
 Held-out alternate-B mean detection remains viable: MCC is approximately 0.762 pre-drift and 0.790 post-drift; F1 approximately 0.745 and 0.779. Its post-minus-pre MCC is approximately +0.0287 and F1 +0.0332. Symbolic behavior differs materially from accepted R0.v2: attack resolved coverage is approximately 0.897 pre and 0.907 post, while attack symbolic correctness is approximately 0.563 pre and 0.614 post. These differences are treated as assumption dependence, not as a basis to replace accepted System A or R0.v2.
 
 With this evidence frozen, the mandatory retrospective System-B robustness tranche is closed. No unresolved System-B implementation defect remains that requires reopening A, R0.v2, or corrected B before C/D design work. Remaining open controls belong to the prospective adaptive phase and must be frozen before any C/D held-out execution.
+
+
+### System-B milestone acceptance and C/D adversarial design gate — 8 October 2026
+
+System B was formally accepted into `main` through pull request #2 after the exact
+`stage4-system-b` closure head
+`317b8d957c3ac983598523215a1205b6869f8c17` passed PR-specific Research
+Contract run #156. The pull request was merged with a normal merge commit rather
+than a squash so the 94-commit System-B scientific history remains part of the
+audit trail. The resulting accepted `main` milestone is
+`4c13d71a111ce7b72b3ef26a01b2918592425aa1`.
+
+The next stage branch, `stage5-cd-design-audit`, was created from that exact
+accepted parent. No adaptive implementation code was introduced at branch
+creation.
+
+A prospective adversarial review was then frozen in
+`C_D_ADVERSARIAL_DESIGN_AUDIT.md`. Its purpose is to attempt to falsify the
+C-versus-D causal design before implementation rather than to confirm readiness.
+
+The audit identified treatment-contamination risks that must be eliminated
+prospectively. Most importantly:
+
+- D symbolic state must not affect the signal or state used to produce the
+  shared drift-event stream;
+- C/D fused outputs must not determine label acquisition, replay membership,
+  neural-update evidence, or symbolic evidence availability in the primary
+  causal comparison;
+- label maturity and prequential information timing must be explicit before a
+  detector or updater is selected;
+- adaptation windows must not use post-trigger future rows before their claimed
+  publication time;
+- matched C/D neural trajectories must be mechanically verifiable through
+  detector-event, replay-row, update-row, and checkpoint hashes rather than
+  asserted from common hyperparameters;
+- independent threshold adaptation from C/D fused scores is not admissible for
+  the primary contrast because it creates a treatment-dependent operating-point
+  trajectory;
+- D-drift and D-periodic must be opportunity/budget matched with only the
+  symbolic trigger schedule differing;
+- online symbolic gate/count semantics, confidence timing, and the complete
+  lifecycle state machine remain unresolved blockers.
+
+The audit therefore classifies the project as ready for **prospective C/D design
+freeze but not adaptive implementation**. This is not a defect in accepted A/B
+evidence and does not reopen System B.
+
+The preferred causal architecture emerging from the audit is a shared per-seed
+non-symbolic control plane: one treatment-independent detector/event stream,
+one replay/buffer trajectory, and one neural-checkpoint trajectory are consumed
+by both C and D. System C holds accepted R0.v2 frozen; System D alone receives
+the symbolic-evolution treatment. Any divergence in required non-symbolic state
+is an experimental abort condition.
+
+Current 2025-2026 literature was consulted prospectively only. Recent
+stream-learning work on delayed labels and processing-framework choice supports
+making label timing a first-class design variable, while recent continual-NIDS
+comparisons support replay as a serious candidate neural adaptation baseline.
+These observations motivate later design choices but do not freeze a detector,
+delay value, replay variant, or update hyperparameter.
+
+
+### C/D stream-time and information-availability contract frozen — 8 October 2026
+
+Before choosing the drift detector or implementing any adaptive component, the project froze
+`C_D_STREAM_TIME_CONTRACT.md`.
+
+This ordering is deliberate. A detector or updater that is selected before deciding when labels and
+observations legally exist can force hidden assumptions into the experiment. The timing contract was
+therefore treated as upstream of detector choice.
+
+The frozen scenario manifest was rechecked and confirms that the MachineLearningCSV scenario used
+here does not support true timestamp chronology. The adaptive experiment therefore uses row index as
+a logical observation clock and makes no wall-clock label-delay or production-throughput claim.
+
+Primary information-time decisions:
+
+- the adaptive stream is the uninterrupted ordered concatenation of pre_drift followed by post_drift;
+- no detector, label queue, replay/buffer, model, rule, threshold or RNG state is reset at the evaluator-known synthetic boundary;
+- the primary verification latency is a fixed 5,000 stream rows;
+- label `y_j` becomes adaptively visible only after the prediction at row `j+5000` is committed;
+- labels whose maturity falls beyond the end of the stream are not flushed into adaptive components;
+- the offline evaluator may use all labels after predictions are frozen, but this scoring channel is logically separated from adaptive label availability;
+- prediction always precedes label release, including the zero-delay sensitivity;
+- a supervised prequential drift statistic must use the prediction stored at the origin row, rather than rescoring that historical row under a later model;
+- updates may use only observations already arrived and labels already mature at their causal update clock;
+- any new adaptive state can affect the next logical prediction at earliest;
+- the primary logical stream is synchronous between predictions because no trustworthy event timestamps exist to model backlog during computation; update wall-clock cost is measured separately.
+
+The 5,000-row delay is an explicit controlled simulation assumption, not an estimate of SOC
+investigation latency. It reuses an already frozen stream granularity to avoid adding an
+outcome-sensitive scale while remaining logically independent of the reporting-window mechanism.
+Prespecified latency robustness conditions are `L=0` and `L=10,000`.
+
+The primary condition assumes complete eventual supervision subject to the fixed delay and terminal
+right-censoring. Partial/selective label acquisition is excluded from the primary causal contrast
+because it would add a second evidence-acquisition treatment; it may be studied later only as a
+separately frozen robustness condition.
+
+A targeted literature refresh was performed before freeze. Recent Pattern Recognition and Digital
+Signal Processing work confirms that processing framework, verification latency and partial label
+availability materially affect drift evaluation. NOCTOWL (IEEE Access 2025) further confirms that
+delayed/selective supervision is already an explicit NIDS operating constraint. These works motivate
+the methodological control but do not supply an empirically correct CICIDS2017 delay value.
+
+The information-time decisions were propagated into `EXPERIMENT_CONTROL_REGISTER.md` and
+`STATISTICAL_ANALYSIS_PLAN.md`. No detector family, detector hyperparameter, adaptation window,
+replay policy, neural update, threshold adaptation, or symbolic lifecycle decision was selected from
+this packet.
+
+The remote annotated tag `system-b-v2` was also verified through the GitHub compare interface to
+resolve to accepted `main` milestone
+`4c13d71a111ce7b72b3ef26a01b2918592425aa1` exactly.
+
+**Gate after this packet:** timing/label availability is frozen; adaptive implementation remains
+prohibited. The next packet must select the treatment-independent drift-monitor signal and detector
+under this timing contract.
+
+
+### Primary C/D drift-monitor protocol frozen after delayed-feedback audit — 8 October 2026
+
+The next prospective design packet selected the upstream detector only after the information-time
+contract had been frozen.
+
+The primary signal is seed-specific delayed neural-only prequential hard error:
+
+`e_j = 1[1[p_j >= tau_monitor] != y_j]`.
+
+The neural probability `p_j` is the immutable score stored when row `j` originally arrived.
+The label is used only after maturity under the already frozen 5,000-row verification latency.
+The monitor threshold is the accepted System-A development threshold for the corresponding seed and
+remains fixed for detector purposes even if later operational/fusion threshold policy differs.
+
+The exact primary thresholds are:
+
+- seed 0: 0.939024031162262
+- seed 1: 0.9333740472793579
+- seed 2: 0.9121250510215759
+- seed 3: 0.9789621233940125
+- seed 4: 0.954619288444519
+
+This creates a treatment-independent neural sentinel. C/D fused scores, symbolic coverage, rule
+confidence, conflict and abstention are explicitly forbidden upstream detector inputs.
+
+The primary detector is `river.drift.ADWIN` under the locked `river==0.26.1` dependency with
+the exact River defaults: delta=0.002, clock=32, max_buckets=5, min_window_length=5 and
+grace_period=10. No detector parameter is tuned against the adaptive pre/post stream. One
+`drift_detected=True` output constitutes one confirmed statistical drift event; no additional
+outcome-tuned multi-hit rule is used.
+
+A key delayed-feedback problem was identified during this design audit. If a neural update is
+published while labels are delayed by 5,000 rows, the next 5,000 mature errors initially refer to
+predictions made by the **old** checkpoint. Feeding those stale-model errors into a reset detector
+would mix checkpoint regimes and could generate repeated events caused by verification latency rather
+than by the current model/environment relationship.
+
+The protocol therefore freezes **checkpoint-pure detector epochs**. Each armed detector epoch accepts
+only errors whose stored predictions were generated by that epoch's neural checkpoint. A confirmed
+event closes the epoch and disarms the detector while the shared neural-response transaction is
+outstanding. After a new checkpoint is published, the detector remains without eligible supervised
+inputs until labels mature for predictions actually made by that new checkpoint. Old-checkpoint errors
+that mature in the meantime remain in provenance/evaluation records but are not fed into the new
+detector epoch.
+
+This produces an information-mandated refractory/blind interval rather than an arbitrary cooldown.
+
+An earlier provisional design thought was to set ADWIN's `grace_period` itself to 5,000. That
+choice was **rejected before freeze**. Once the delayed-feedback issue was identified, changing
+ADWIN's grace period would not directly solve model-version contamination and would add an arbitrary
+detector hyperparameter tied to a reused project scale. The primary therefore keeps River's exact
+grace_period=10 and handles delayed-feedback purity explicitly at the experiment-control layer.
+
+The detector starts fresh for each seed and is not preloaded with training/development errors. This
+avoids creating a development-to-pre detector transition. The synthetic boundary never initializes,
+resets, confirms or tunes the detector.
+
+The primary event is interpreted narrowly as a statistically significant change in the mean delayed
+neural-error stream. It is not proof that P(Y|X) changed. This terminology is especially important in
+the BENIGN-source-regime-dominant primary scenario.
+
+Prospective robustness conditions were frozen without selecting among them on held-out performance:
+
+1. River 0.26.1 Page-Hinkley defaults on the identical delayed hard-error signal and checkpoint-pure
+   timing;
+2. primary ADWIN defaults on delayed Brier loss, which removes dependence on the fixed hard-decision
+   threshold but is explicitly secondary because accepted neural probabilities are uncalibrated;
+3. the already frozen label-latency L=0 and L=10,000 timing conditions.
+
+Trigger-quality scoring is also frozen prospectively: pre-reference alarms, first post-boundary
+confirmation, end-to-end delay, latency-adjusted descriptive excess delay, repeated events, total
+event count, inter-event spacing, epoch input counts, blind duration and suppressed stale-error count.
+The evaluator-known boundary is used only after the event log is frozen.
+
+The detector decisions were propagated into `EXPERIMENT_CONTROL_REGISTER.md`,
+`STATISTICAL_ANALYSIS_PLAN.md` and `LITERATURE_WATCH.md`.
+
+**Gate after this packet:** primary drift monitor is frozen; adaptive implementation remains
+prohibited. The next packet is the shared neural adaptation/replay protocol.
+
+
+### Shared neural adaptation and replay protocol frozen — 8 October 2026
+
+The project froze `C_D_NEURAL_ADAPTATION_PROTOCOL.md` before any adaptive C/D held-out
+execution or adaptive implementation.
+
+The primary neural comparator is deliberately a serious but simple replay-based continual learner.
+The goal is to prevent System C from becoming a straw man without turning the paper into a neural
+continual-learning method search.
+
+A confirmed drift event opens one shared neural response transaction. The current-evidence budget is
+the most recent 10,000 mature labeled stream observations whose original prediction was produced by
+the parent checkpoint. If fewer than 10,000 are available at confirmation, the parent remains active
+and the detector remains disarmed until that fixed budget becomes available. The budget is not shrunk
+to obtain an earlier update. If the stream ends first, the response is right-censored and no terminal
+update is forced.
+
+Replay uses two treatment-independent memories:
+
+- immutable 10,000-row uniform training anchor, selection seed 20261008;
+- 10,000-row uniform reservoir over adaptively mature stream rows, seed 20261009.
+
+Each update uses 5,000 anchor rows plus 5,000 eligible online-reservoir rows. Current-window row IDs
+are excluded from the online replay sample for that transaction. Replay sampling uses seed
+`20261010 + event_id`.
+
+The primary update dataset is therefore exactly 20,000 rows: 10,000 current + 10,000 replay.
+
+The accepted binary loss objective is retained with fixed
+`BCEWithLogitsLoss(pos_weight=4.138247558496975)`. The positive weight is not recomputed after
+drift because doing so would add a second prevalence-dependent adaptation mechanism.
+
+The neural update is:
+
+- all accepted MLP parameters trainable;
+- fresh Adam optimizer for every event;
+- learning rate 1e-4;
+- weight decay 1e-5;
+- batch size 1024;
+- exactly five epochs;
+- no scheduler;
+- no early stopping;
+- no performance-based checkpoint publication gate;
+- CPU and deterministic repository controls;
+- shuffle seed `20261011 + 1000*seed + event_id`.
+
+The 1e-4 learning rate is prospectively fixed at one tenth of the original System-A rate as a
+conservative fine-tuning step. The smaller batch size is used because the fixed 20,000-row adaptation
+dataset would otherwise receive very few optimizer steps under the original 4096-row batch.
+
+A technically valid but performance-degrading update remains part of the evidence. It is not
+discarded because it fails to improve a probe or held-out trajectory.
+
+Critically, C and D do not separately train "identical" neural models. The shared control plane
+executes the neural update once and creates one versioned child checkpoint. Both C and D literally
+reference that same checkpoint hash. Each child records parent checkpoint hash, event/evidence
+identities, update configuration, RNG identity and child SHA-256.
+
+This converts neural-side causal matching from a configuration claim into artifact identity.
+
+Catastrophic forgetting is measured explicitly:
+
+- the entire frozen development partition is a historical retention probe after each child
+  checkpoint, but it can never influence training, stopping or publication;
+- the frozen pre-drift partition may be rescored per checkpoint only offline after the adaptive
+  trajectory is fixed, as a retrospective retention diagnostic;
+- retention delta and best-to-current forgetting are reported within seed.
+
+A secondary no-replay ablation uses the identical current window and update hyperparameters but omits
+replay. It is not a model-selection competitor for the primary trajectory.
+
+The replay decision was informed prospectively by 2025-2026 NIDS continual-learning literature,
+including Khraisat & Li (Computer Networks 2025), Costagliola et al. (MILCOM 2025), Delgado et al.
+(Applied Soft Computing 2026), and Zhang et al. (INFOCOM 2025). This literature supports replay as a
+credible retention mechanism but also shows that replay composition can materially affect behavior.
+For that reason the primary uses transparent uniform dual memory rather than task-aware/error-based
+selection.
+
+The neural controls were propagated into `EXPERIMENT_CONTROL_REGISTER.md`,
+`STATISTICAL_ANALYSIS_PLAN.md`, and `LITERATURE_WATCH.md`.
+
+**Gate after this packet:** the shared detector and shared neural response are prospectively frozen.
+Adaptive implementation remains prohibited. The next packet must freeze the matched C/D
+operational/fusion threshold policy before symbolic lifecycle design.
+
+
+### C/D fusion and fixed operating-point policy frozen — 8 October 2026
+
+The project next froze `C_D_FUSION_THRESHOLD_PROTOCOL.md`.
+
+The accepted R0.v2 fusion rule remains the primary C/D operating contract:
+
+- lambda = 0.50 on resolved symbolic coverage;
+- neural fallback on uncovered or unresolved conflict;
+- seed-specific accepted R0.v2 fused thresholds remain fixed through all later neural checkpoints
+  and all D symbolic versions.
+
+The primary thresholds are:
+
+- seed 0: 0.692427396774292
+- seed 1: 0.9354645609855652
+- seed 2: 0.8299936652183533
+- seed 3: 0.9747405052185059
+- seed 4: 0.9527904391288757
+
+No per-arm, per-event or per-window threshold recalibration is allowed in the primary C-vs-D
+contrast.
+
+This is a causal-isolation choice rather than a claim that the original threshold will remain
+deployment-optimal forever. If C and D independently recalibrated from their own fused scores,
+symbolic evolution would alter both rule state and future operating point. If a common threshold were
+learned from D fused scores, D treatment information would contaminate C. The primary therefore
+accepts a potentially stale operating point and reports threshold-free ROC-AUC/AP alongside
+thresholded metrics.
+
+The accepted R0.v2 development grid is reused prospectively for fusion-authority sensitivities:
+
+- lambda=.70 with its already frozen per-seed dev-grid thresholds;
+- lambda=.90 with its already frozen per-seed dev-grid thresholds.
+
+These are robustness conditions and cannot replace lambda=.50 after adaptive outcomes are observed.
+
+A lambda=1.00 condition is frozen as a causal negative control. Symbolic predictive authority is zero
+there. Because C and D share the exact same neural checkpoint chain, their matched fused scores and
+thresholded predictions must be identical at lambda=1.00. Any predictive difference is an
+implementation defect. Symbolic explanation traces may still differ, but cannot affect the decision.
+
+The detector monitor threshold remains a separate object from the fused operational threshold and is
+not changed by this policy.
+
+The threshold controls were propagated into `EXPERIMENT_CONTROL_REGISTER.md` and
+`STATISTICAL_ANALYSIS_PLAN.md`.
+
+**Gate after this packet:** stream timing, detector, neural replay adaptation, and fusion/operating
+point are all prospectively frozen. Adaptive implementation remains prohibited. The next packet is
+the D symbolic lifecycle/operator and online validation protocol.
+
+
+### D symbolic lifecycle and independent online validation frozen — 8 October 2026
+
+The project froze `D_SYMBOLIC_LIFECYCLE_PROTOCOL.md` before any adaptive symbolic implementation or
+C/D held-out execution.
+
+The main methodological decision is that candidate generation and candidate acceptance are separate
+causal stages.
+
+For primary D-drift, candidate structures are generated from the same fixed 10,000-row mature
+current-evidence window used by the associated shared neural update, but candidate acceptance is
+forbidden on those rows. The updated child checkpoint must remain deployed long enough for a
+different chronological 10,000-row validation block to be predicted by that child and for those
+labels to mature.
+
+If the child checkpoint is superseded before that validation completes, the symbolic transaction
+closes as `superseded_before_validation`; generated candidates are preserved for audit but no
+partial rule update is published. This prevents a rule base from being validated against a neural
+checkpoint that is no longer the active shared predictor.
+
+Candidate generation preserves the R0 extraction family but is versioned for the online evidence
+scale:
+
+- DeepExplainer on raw attack logit;
+- class-balanced background up to 128 rows/class;
+- class-balanced attribution sample up to 1,024 rows/class;
+- at least 128 rows/class required for new candidate generation;
+- top-12 feature selection under the same normalized SHAP scoring family;
+- weighted CART surrogate of the updated child neural decision at the frozen System-A neural
+  threshold;
+- max_depth=4;
+- min_samples_leaf=100 on the fixed 10,000-row generation window;
+- equal-total neural predicted-class weights;
+- candidate consequent = fitted weighted CART leaf argmax.
+
+The weighted leaf consequent is explicitly frozen because System-B history demonstrated that
+unweighted path-row majority is a real implementation defect, not an interchangeable interpretation.
+
+The static R0 `covered>=100` gate was not transferred mechanically. The online validation gate is
+sample-size aware:
+
+- support >= .001;
+- covered >= 25;
+- point class precision >= .80;
+- one-sided 95% Wilson lower bound for class precision >= .80;
+- point neural fidelity >= .90;
+- one-sided 95% Wilson lower bound for fidelity >= .90;
+- 100-replicate stratified bootstrap full-gate persistence >= .90;
+- complexity <= 4.
+
+The one-sided Wilson z value is 1.6448536269514722. The covered minimum of 25 is directly tied to the
+fidelity requirement: below 25 observations, even a perfect observed fidelity cannot establish a .90
+one-sided 95% Wilson lower bound.
+
+Existing D rules are evaluated on the same independent validation block **before** candidate
+integration. Their immutable pre-resolution state is logged as valid, quality_failed or
+evidence_insufficient. The lifecycle then operates as follows:
+
+- active + pass -> retained active;
+- active + first completed failure -> demoted/inactive;
+- demoted + pass -> reactivated;
+- demoted + second consecutive completed failure -> retired;
+- retired + later full-gate pass -> may reactivate under the same lineage after current
+  redundancy/conflict checks.
+
+This makes retirement reversible under recurring regimes while preventing unsupported rules from
+retaining predictive authority indefinitely.
+
+Confidence is refreshed only on completed independent maintenance validation and equals
+`min(class_precision, neural_fidelity)`, preserving R0 confidence semantics. There is no per-row
+confidence update, decay or pending-label use. System C's accepted R0.v2 confidence is permanently
+frozen.
+
+Same-class lifecycle relations reuse previously accepted overlap scales:
+
+- overlap >= .95 -> deterministic merge/consolidation;
+- overlap in [.50,.95) -> possible refinement only if the candidate Pareto-dominates the incumbent
+  or resolves a documented current stale-rule failure;
+- overlap < .50 -> genuinely new addition.
+
+No synthetic antecedent union/intersection is created during merge; the stronger independently
+validated rule is retained and losing redundant revisions are logged as merged.
+
+Cross-class overlap >= .50 preserves accepted Pareto/conflict semantics. A dominated candidate is
+rejected, a dominated incumbent is demoted, and unresolved opposite-consequent overlap remains
+auditable with runtime symbolic abstention/neural fallback.
+
+Every maintenance attempt produces a write-once event artifact. A new rule-base version is published
+only when inference-relevant symbolic state changes. Rejected candidates, no-ops, right-censored
+transactions and superseded transactions remain first-class evidence.
+
+The future implementation must extend the current static Rule schema with rule-revision identity,
+semantic identity, parent revision/lineage links, failure streak, valid-from/valid-to clocks,
+generation and validation evidence IDs, child neural checkpoint identity and rule-base parent/hash
+chain. Initial R0.v2 semantics are migrated into the expanded schema without alteration.
+
+A symbolic "recovery" claim is now contractually restricted to a documented chain:
+earlier valid -> later stale/demoted -> accepted refinement/reactivation/replacement ->
+post-publication explanation improvement. A newly added rule with no stale predecessor is not
+described as recovery.
+
+The lifecycle decisions were propagated into `EXPERIMENT_CONTROL_REGISTER.md`,
+`STATISTICAL_ANALYSIS_PLAN.md`, and `LITERATURE_WATCH.md`.
+
+**Gate after this packet:** the D symbolic evolution operator and online evidence gates are frozen.
+Adaptive implementation remains prohibited. The next packet is the D-drift versus D-periodic
+trigger-ablation schedule/opportunity budget.
+
+
+### D-drift versus D-periodic trigger ablation frozen — 8 October 2026
+
+The project froze `D_TRIGGER_ABLATION_PROTOCOL.md` after the symbolic lifecycle operator had been
+frozen.
+
+The purpose is to test whether the **trigger policy** adds value, not merely whether rule maintenance
+can help.
+
+D-drift and D-periodic therefore share:
+
+- accepted seed-matched R0.v2 start state;
+- exact shared neural checkpoint trajectory;
+- symbolic candidate-generation algorithm;
+- independent 10,000-row validation contract;
+- uncertainty gates;
+- lifecycle transitions;
+- conflict/abstention rules;
+- fusion/threshold policy;
+- symbolic RNG namespace by seed/opportunity.
+
+Only the symbolic maintenance opportunity timing differs.
+
+A common maximum symbolic opportunity budget of four slots per seed is frozen for both trigger arms.
+Every triggered/scheduled opportunity consumes a slot regardless of whether it produces a rule-base
+publication, a validated no-op, insufficient evidence, checkpoint supersession, right-censoring or a
+pending-transaction skip. There is no retry beyond the four-slot budget.
+
+D-drift consumes its first four symbolic slots from the first four confirmed primary detector events.
+Later drift events may continue to drive the already-frozen shared neural trajectory, but no fifth
+D-drift symbolic maintenance opportunity is permitted.
+
+D-periodic does not consult the drift detector for scheduling. With total primary stream length
+N=138,530, the fixed target clocks are:
+
+- 27,706
+- 55,412
+- 83,118
+- 110,824
+
+These equal floor(i*N/5), i=1..4.
+
+The schedule was derived from the frozen stream length and the symbolic evidence footprint:
+10,000 retrospective generation rows + 10,000 future validation rows + 5,000-row label delay =
+a nominal 25,000-row maintenance footprint. Four interior fifth-spaced opportunities produce
+approximately 27,706-row spacing. A five-opportunity six-segment schedule would produce only
+approximately 23,088-row spacing and systematically overlap that nominal footprint.
+
+This derivation did not use the evaluator-known synthetic boundary at 69,260; none of the periodic
+target clocks equals the boundary.
+
+At a periodic target clock, ordinary row prediction, label maturity and any shared detector/neural
+control-plane action at that clock complete first. The periodic opportunity opens last and snapshots
+the neural checkpoint effective for the next logical prediction. Its generation evidence is the most
+recent 10,000 mature stream rows available at the target clock, evaluated using that current shared
+checkpoint. Candidate acceptance then uses the same future checkpoint-pure 10,000-row validation
+contract as D-drift.
+
+If the checkpoint is superseded during validation, the periodic transaction aborts without partial
+publication and the next periodic clock is not moved. At most one symbolic transaction may be
+outstanding per trigger arm/seed. A later periodic target that arrives while a prior periodic
+transaction remains pending is logged as `pending_transaction_skip` and still consumes its slot.
+
+The analysis now distinguishes symbolic opportunity, completed validation, publication, no-op and
+censored/aborted transaction. These counts may not be conflated. Trigger quality will be evaluated
+using both recovery/effectiveness and maintenance efficiency/cost.
+
+**Gate after this packet:** the symbolic lifecycle and mandatory drift-vs-periodic trigger ablation
+are prospectively frozen. Adaptive implementation remains prohibited. The next packet is the final
+statistical/runtime/reproducibility freeze and fail-closed implementation contract.
+
+
+### Final C/D statistical, runtime, reproducibility, and held-out-access freeze — 8 October 2026
+
+The project froze `C_D_FINAL_ANALYSIS_REPRODUCIBILITY_PROTOCOL.md` and promoted
+`STATISTICAL_ANALYSIS_PLAN.md` to version 1.0 before any adaptive C/D held-out execution.
+
+This packet deliberately resolves the remaining inferential and execution degrees of freedom rather
+than leaving them to implementation time.
+
+The primary confirmatory family contains exactly three seed-paired whole-post-regime endpoints:
+
+1. D-drift minus C post-regime MCC;
+2. D-drift minus C post-regime macro correct symbolic coverage (MCSC);
+3. D-drift minus D-periodic post-regime MCSC.
+
+For class c, correct symbolic coverage is the proportion of true class-c rows receiving a resolved
+correct symbolic prediction. Uncovered rows, unresolved conflict/abstention, and wrong symbolic
+predictions contribute zero. MCSC is the unweighted mean of benign and attack correct symbolic
+coverage. Component coverage/correctness/conflict metrics remain mandatory so the composite cannot
+hide class-specific trade-offs.
+
+The full frozen 69,270-row post partition is the confirmatory domain. No rows are removed because an
+update had not yet occurred. This makes detector delay, evidence waiting, no-op maintenance,
+right-censoring and late publication part of the realized treatment effect rather than post-hoc
+exclusions.
+
+For each confirmatory endpoint, the primary effect estimate is the arithmetic mean of the five
+matched seed differences. The primary interval is the 95% Student-t interval over the five paired
+differences with df=4. This interval is explicitly restricted to stochastic-seed variability
+conditional on the one fixed scenario and is not presented as deployment-population uncertainty.
+
+Because n=5 cannot support meaningful normality diagnostics, the plan mandates all five raw paired
+effects, median, SD, min/max, positive/zero/negative sign counts and the leave-one-seed-out mean-effect
+range alongside the interval. Bootstrap intervals are not primary.
+
+A one-sided exact sign test is frozen as secondary calibration for each of the three positive-benefit
+contrasts. Zero differences are removed from its denominator and the effective n is reported.
+Holm-Bonferroni controls the three-test family at FWER .05. The plan explicitly rejects p-value
+crossing as the sole success criterion because five matched seeds share the same underlying stream
+and produce a coarse attainable p-value grid.
+
+No confirmatory window-level mixed model/GEE is used in the primary scenario. Reporting windows are
+longitudinal mechanism units, not extra replicates.
+
+Secondary recovery uses a frozen rule: the pre-reference baseline is the row-count-weighted mean of
+the final three pre-drift reporting windows. A higher-is-better metric recovers only at the first post
+window at or above that baseline whose immediately following post window is also at or above it;
+lower-is-better metrics reverse the inequality. Otherwise recovery is right-censored. Symbolic
+"recovery" additionally requires the lifecycle evidence chain already frozen in the symbolic
+protocol.
+
+Scientific no-update outcomes are not missing data. No detector event, no symbolic publication,
+validated no-op, budget exhaustion, checkpoint supersession and right-censored symbolic validation
+remain part of the realized trajectory. A technical/protocol failure can be rerun only with preserved
+failed evidence, a documented invalidating defect/fault and a new run identity. The five-seed
+confirmatory family is not silently reduced to n=4.
+
+The robustness set is now explicit: L=0/L=10,000; Page-Hinkley; ADWIN-Brier; no-replay; lambda
+.70/.90/1.0; 2,500/10,000-row longitudinal window sensitivities; and a static-style symbolic
+support/count gate without Wilson bounds. Primary results cannot be replaced by a favorable
+sensitivity.
+
+Primary runtime is frozen to CPU with Python 3.11.9 and the requirements lock. Before numerical
+library initialization, PYTHONHASHSEED=0 and OMP/MKL/OpenBLAS/NumExpr thread counts are set to one.
+PyTorch intra/inter-op thread counts are one, deterministic algorithms are requested and DataLoader
+workers remain zero. `threadpoolctl.threadpool_info()` is recorded and a detected numerical pool
+violating the single-thread contract blocks primary execution.
+
+Write-once evidence families are now frozen for run manifests, shared control-plane events,
+checkpoint lineage, arm prediction tables, symbolic maintenance events, rule revisions/versions and
+metrics/evaluation evidence.
+
+Ten fail-closed verifier families are prospectively required:
+
+- shared C/D control-plane artifact identity;
+- information timing;
+- checkpoint purity;
+- fusion/threshold identity;
+- exact lambda=1 predictive equality;
+- symbolic generation/validation separation;
+- trigger-arm operator identity and exact periodic clocks;
+- symbolic lifecycle integrity;
+- no synthetic-boundary contamination;
+- write-once/hash integrity.
+
+The implementation test matrix must cover these controls using toy/generated fixtures and permitted
+training/development evidence before primary pre/post adaptive execution.
+
+The implementation sequence is also frozen:
+
+1. accept this design milestone into main and annotate `cd-design-freeze-v1`;
+2. `stage6-cd-control-plane` implements shared timing/detector/replay/neural/checkpoint/evidence
+   infrastructure without primary pre/post adaptive execution;
+3. `stage7-cd-symbolic-lifecycle` implements symbolic lifecycle, periodic trigger arm, evaluators,
+   analysis builders and remaining verifiers, still without primary pre/post adaptive execution;
+4. after acceptance/tagging as `cd-implementation-ready-v1`, create
+   `stage8-cd-primary-evaluation`.
+
+The held-out access gate requires SAP v1.0, no material C/D control-register TBD, local and CI tests
+green on the exact implementation-ready head, all five System-A checkpoint bytes/hash verification,
+scenario/preprocessing verification, causal-verifier tests, a committed primary run/config manifest,
+clean worktree and no unresolved outcome-sensitive parameter.
+
+Primary held-out execution itself is two-phase. First, generate and freeze one shared detector/neural
+control-plane trajectory per seed. Only after those artifacts are hash-frozen do C, D-drift and
+D-periodic consume them. This makes matched neural adaptation an immutable artifact identity and
+prevents any symbolic arm from feeding back into drift events, replay or checkpoint timing.
+
+After any adaptive held-out output has been inspected, poor performance, sparse events, harmful
+forgetting or trigger direction cannot justify retuning. Realized implementation defects are handled
+by preserved failed evidence and versioned correction; design limitations become sensitivities or
+future work.
+
+The Research Contract workflow was strengthened prospectively to require all Stage-5 C/D protocol
+artifacts, SAP v1.0, absence of unresolved C/D analysis TBD markers and absence of unresolved
+control-register freeze-state rows.
+
+**Gate after this packet:** the prospective C/D design is complete. Adaptive implementation may
+begin only after this design branch is accepted into main and tagged `cd-design-freeze-v1`.
+Adaptive held-out execution remains prohibited until the later `cd-implementation-ready-v1` gate.

@@ -82,6 +82,7 @@ class PendingSymbolicTransaction:
     opportunity_clock: int
     neural_checkpoint_sha256: str
     checkpoint_publication_effective_index: int
+    validation_start_index: int
     generation_row_ids: tuple[str, ...]
     generation_evidence_id: str
     candidates: tuple[CandidateRule, ...]
@@ -176,6 +177,7 @@ def open_symbolic_transaction(
     generation_row_ids: Sequence[str],
     generation_evidence_id: str,
     candidates: Sequence[CandidateRule],
+    validation_start_index: int | None = None,
     operator_config: SymbolicOperatorConfig = SymbolicOperatorConfig(),
 ) -> PendingSymbolicTransaction:
     if not 1 <= opportunity.opportunity_id <= PRIMARY_SYMBOLIC_OPPORTUNITY_BUDGET:
@@ -193,6 +195,11 @@ def open_symbolic_transaction(
         neural_checkpoint_sha256=str(neural_checkpoint_sha256),
         checkpoint_publication_effective_index=int(
             checkpoint_publication_effective_index
+        ),
+        validation_start_index=int(
+            checkpoint_publication_effective_index
+            if validation_start_index is None
+            else validation_start_index
         ),
         generation_row_ids=tuple(str(item) for item in generation_row_ids),
         generation_evidence_id=str(generation_evidence_id),
@@ -222,10 +229,7 @@ def collect_independent_validation_block(
     ):
         if record.row_id in generation:
             continue
-        if (
-            record.origin_index
-            < transaction.checkpoint_publication_effective_index
-        ):
+        if record.origin_index < transaction.validation_start_index:
             continue
         if (
             record.neural_checkpoint_sha256

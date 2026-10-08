@@ -764,6 +764,7 @@ def execute_phase_c_seed(seed: int) -> dict[str, Any]:
                 ],
                 "prediction_trace": {
                     "path": trace_path.name,
+                    "row_count": len(y),
                     **trace_identity,
                 },
             }
@@ -879,6 +880,12 @@ def verify_phase_c_seed(seed: int) -> dict[str, Any]:
     if manifest["adaptive_components_received_boundary"] is not False:
         raise ValueError("Boundary-contamination flag is not false.")
 
+    phase_b_root = _phase_b_dir(seed)
+    phase_b_seed_manifest = _read_verified_json(
+        phase_b_root / "phase_b_manifest.json"
+    )
+    expected_shared_identity = phase_a["shared_identity_sha256"]
+
     for arm in ARM_NAMES:
         path = output_dir / f"{arm}_evaluation.json"
         summary = _read_verified_json(path)
@@ -887,6 +894,36 @@ def verify_phase_c_seed(seed: int) -> dict[str, Any]:
             raise ValueError("Arm evaluation summary hash mismatch.")
         if stored_summary != manifest["arm_summary_sha256"][arm]:
             raise ValueError("Phase-C arm summary identity mismatch.")
+        if int(summary["seed"]) != seed or summary["arm"] != arm:
+            raise ValueError("Phase-C arm summary identity fields changed.")
+        if summary["primary_config_manifest_sha256"] != config[
+            "manifest_sha256"
+        ]:
+            raise ValueError("Phase-C arm summary references wrong config.")
+        if summary["shared_identity_sha256"] != expected_shared_identity:
+            raise ValueError(
+                "Phase-C arm summary is not bound to verified Phase A."
+            )
+        phase_b_descriptor = phase_b_seed_manifest["arms"].get(arm)
+        if phase_b_descriptor is None:
+            raise ValueError("Verified Phase-B manifest lacks arm descriptor.")
+        if (
+            summary["phase_b_arm_manifest_sha256"]
+            != phase_b_descriptor["manifest_sha256"]
+        ):
+            raise ValueError(
+                "Phase-C arm summary is not bound to verified Phase B."
+            )
+        phase_b_arm_manifest = _read_verified_json(
+            phase_b_root / str(phase_b_descriptor["path"])
+        )
+        if (
+            summary["maintenance_summary"]
+            != phase_b_arm_manifest["maintenance_summary"]
+        ):
+            raise ValueError(
+                "Phase-C maintenance summary diverges from Phase B."
+            )
         trace = summary["prediction_trace"]
         trace_path = output_dir / trace["path"]
         if sha256_file(trace_path) != trace["sha256"]:
@@ -904,6 +941,14 @@ def verify_phase_c_seed(seed: int) -> dict[str, Any]:
         ):
             raise ValueError(
                 "Phase-C prediction trace content identity mismatch."
+            )
+        with gzip.open(trace_path, "rt", encoding="utf-8") as file:
+            row_count = sum(1 for line in file if line.strip())
+        if row_count != int(trace["row_count"]):
+            raise ValueError("Phase-C prediction trace row count mismatch.")
+        if row_count != int(config["scenario"]["stream_rows"]):
+            raise ValueError(
+                "Phase-C prediction trace differs from frozen stream length."
             )
 
     return {

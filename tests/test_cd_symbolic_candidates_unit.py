@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+import json
+from pathlib import Path
+
 import numpy as np
 import pytest
 
@@ -176,3 +179,79 @@ def test_candidate_conditions_are_canonical_and_receive_raw_thresholds() -> None
             assert condition.raw_threshold == pytest.approx(
                 condition.threshold * scale + mean
             )
+
+
+
+def test_r0_v2_loader_accepts_windows_crlf_materialization(
+    tmp_path: Path,
+) -> None:
+    project_root = Path(__file__).resolve().parents[1]
+    manifest_source = (
+        project_root / "data" / "manifests" / "system_b_v2.json"
+    )
+    manifest = json.loads(manifest_source.read_text(encoding="utf-8"))
+
+    manifest_target = (
+        tmp_path / "data" / "manifests" / "system_b_v2.json"
+    )
+    manifest_target.parent.mkdir(parents=True, exist_ok=True)
+    manifest_target.write_text(
+        manifest_source.read_text(encoding="utf-8"),
+        encoding="utf-8",
+        newline="\n",
+    )
+
+    seed = 0
+    rule_source = (
+        project_root / manifest["rule_artifacts"][str(seed)]["path"]
+    )
+    rule_target = (
+        tmp_path / manifest["rule_artifacts"][str(seed)]["path"]
+    )
+    rule_target.parent.mkdir(parents=True, exist_ok=True)
+    lf_text = rule_source.read_text(encoding="utf-8")
+    rule_target.write_bytes(
+        lf_text.replace("\r\n", "\n").replace("\r", "\n")
+        .replace("\n", "\r\n")
+        .encode("utf-8")
+    )
+
+    rules = load_accepted_r0_v2_rules(seed, project_root=tmp_path)
+    assert len(rules) == EXPECTED_ACTIVE_COUNTS[seed]
+
+
+def test_r0_v2_loader_still_rejects_semantic_or_text_mutation(
+    tmp_path: Path,
+) -> None:
+    project_root = Path(__file__).resolve().parents[1]
+    manifest_source = (
+        project_root / "data" / "manifests" / "system_b_v2.json"
+    )
+    manifest = json.loads(manifest_source.read_text(encoding="utf-8"))
+
+    manifest_target = (
+        tmp_path / "data" / "manifests" / "system_b_v2.json"
+    )
+    manifest_target.parent.mkdir(parents=True, exist_ok=True)
+    manifest_target.write_bytes(manifest_source.read_bytes())
+
+    seed = 0
+    rule_source = (
+        project_root / manifest["rule_artifacts"][str(seed)]["path"]
+    )
+    rule_target = (
+        tmp_path / manifest["rule_artifacts"][str(seed)]["path"]
+    )
+    rule_target.parent.mkdir(parents=True, exist_ok=True)
+    mutated = rule_source.read_text(encoding="utf-8").replace(
+        '"confidence": 1',
+        '"confidence": 0.999',
+        1,
+    )
+    rule_target.write_text(mutated, encoding="utf-8", newline="\n")
+
+    with pytest.raises(
+        ValueError,
+        match="normalized rule artifact hash mismatch",
+    ):
+        load_accepted_r0_v2_rules(seed, project_root=tmp_path)

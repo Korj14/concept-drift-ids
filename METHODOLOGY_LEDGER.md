@@ -1756,3 +1756,55 @@ The neural controls were propagated into `EXPERIMENT_CONTROL_REGISTER.md`,
 **Gate after this packet:** the shared detector and shared neural response are prospectively frozen.
 Adaptive implementation remains prohibited. The next packet must freeze the matched C/D
 operational/fusion threshold policy before symbolic lifecycle design.
+
+
+### C/D fusion and fixed operating-point policy frozen — 8 October 2026
+
+The project next froze `C_D_FUSION_THRESHOLD_PROTOCOL.md`.
+
+The accepted R0.v2 fusion rule remains the primary C/D operating contract:
+
+- lambda = 0.50 on resolved symbolic coverage;
+- neural fallback on uncovered or unresolved conflict;
+- seed-specific accepted R0.v2 fused thresholds remain fixed through all later neural checkpoints
+  and all D symbolic versions.
+
+The primary thresholds are:
+
+- seed 0: 0.692427396774292
+- seed 1: 0.9354645609855652
+- seed 2: 0.8299936652183533
+- seed 3: 0.9747405052185059
+- seed 4: 0.9527904391288757
+
+No per-arm, per-event or per-window threshold recalibration is allowed in the primary C-vs-D
+contrast.
+
+This is a causal-isolation choice rather than a claim that the original threshold will remain
+deployment-optimal forever. If C and D independently recalibrated from their own fused scores,
+symbolic evolution would alter both rule state and future operating point. If a common threshold were
+learned from D fused scores, D treatment information would contaminate C. The primary therefore
+accepts a potentially stale operating point and reports threshold-free ROC-AUC/AP alongside
+thresholded metrics.
+
+The accepted R0.v2 development grid is reused prospectively for fusion-authority sensitivities:
+
+- lambda=.70 with its already frozen per-seed dev-grid thresholds;
+- lambda=.90 with its already frozen per-seed dev-grid thresholds.
+
+These are robustness conditions and cannot replace lambda=.50 after adaptive outcomes are observed.
+
+A lambda=1.00 condition is frozen as a causal negative control. Symbolic predictive authority is zero
+there. Because C and D share the exact same neural checkpoint chain, their matched fused scores and
+thresholded predictions must be identical at lambda=1.00. Any predictive difference is an
+implementation defect. Symbolic explanation traces may still differ, but cannot affect the decision.
+
+The detector monitor threshold remains a separate object from the fused operational threshold and is
+not changed by this policy.
+
+The threshold controls were propagated into `EXPERIMENT_CONTROL_REGISTER.md` and
+`STATISTICAL_ANALYSIS_PLAN.md`.
+
+**Gate after this packet:** stream timing, detector, neural replay adaptation, and fusion/operating
+point are all prospectively frozen. Adaptive implementation remains prohibited. The next packet is
+the D symbolic lifecycle/operator and online validation protocol.

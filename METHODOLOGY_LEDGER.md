@@ -1671,3 +1671,88 @@ The detector decisions were propagated into `EXPERIMENT_CONTROL_REGISTER.md`,
 
 **Gate after this packet:** primary drift monitor is frozen; adaptive implementation remains
 prohibited. The next packet is the shared neural adaptation/replay protocol.
+
+
+### Shared neural adaptation and replay protocol frozen — 8 October 2026
+
+The project froze `C_D_NEURAL_ADAPTATION_PROTOCOL.md` before any adaptive C/D held-out
+execution or adaptive implementation.
+
+The primary neural comparator is deliberately a serious but simple replay-based continual learner.
+The goal is to prevent System C from becoming a straw man without turning the paper into a neural
+continual-learning method search.
+
+A confirmed drift event opens one shared neural response transaction. The current-evidence budget is
+the most recent 10,000 mature labeled stream observations whose original prediction was produced by
+the parent checkpoint. If fewer than 10,000 are available at confirmation, the parent remains active
+and the detector remains disarmed until that fixed budget becomes available. The budget is not shrunk
+to obtain an earlier update. If the stream ends first, the response is right-censored and no terminal
+update is forced.
+
+Replay uses two treatment-independent memories:
+
+- immutable 10,000-row uniform training anchor, selection seed 20261008;
+- 10,000-row uniform reservoir over adaptively mature stream rows, seed 20261009.
+
+Each update uses 5,000 anchor rows plus 5,000 eligible online-reservoir rows. Current-window row IDs
+are excluded from the online replay sample for that transaction. Replay sampling uses seed
+`20261010 + event_id`.
+
+The primary update dataset is therefore exactly 20,000 rows: 10,000 current + 10,000 replay.
+
+The accepted binary loss objective is retained with fixed
+`BCEWithLogitsLoss(pos_weight=4.138247558496975)`. The positive weight is not recomputed after
+drift because doing so would add a second prevalence-dependent adaptation mechanism.
+
+The neural update is:
+
+- all accepted MLP parameters trainable;
+- fresh Adam optimizer for every event;
+- learning rate 1e-4;
+- weight decay 1e-5;
+- batch size 1024;
+- exactly five epochs;
+- no scheduler;
+- no early stopping;
+- no performance-based checkpoint publication gate;
+- CPU and deterministic repository controls;
+- shuffle seed `20261011 + 1000*seed + event_id`.
+
+The 1e-4 learning rate is prospectively fixed at one tenth of the original System-A rate as a
+conservative fine-tuning step. The smaller batch size is used because the fixed 20,000-row adaptation
+dataset would otherwise receive very few optimizer steps under the original 4096-row batch.
+
+A technically valid but performance-degrading update remains part of the evidence. It is not
+discarded because it fails to improve a probe or held-out trajectory.
+
+Critically, C and D do not separately train "identical" neural models. The shared control plane
+executes the neural update once and creates one versioned child checkpoint. Both C and D literally
+reference that same checkpoint hash. Each child records parent checkpoint hash, event/evidence
+identities, update configuration, RNG identity and child SHA-256.
+
+This converts neural-side causal matching from a configuration claim into artifact identity.
+
+Catastrophic forgetting is measured explicitly:
+
+- the entire frozen development partition is a historical retention probe after each child
+  checkpoint, but it can never influence training, stopping or publication;
+- the frozen pre-drift partition may be rescored per checkpoint only offline after the adaptive
+  trajectory is fixed, as a retrospective retention diagnostic;
+- retention delta and best-to-current forgetting are reported within seed.
+
+A secondary no-replay ablation uses the identical current window and update hyperparameters but omits
+replay. It is not a model-selection competitor for the primary trajectory.
+
+The replay decision was informed prospectively by 2025-2026 NIDS continual-learning literature,
+including Khraisat & Li (Computer Networks 2025), Costagliola et al. (MILCOM 2025), Delgado et al.
+(Applied Soft Computing 2026), and Zhang et al. (INFOCOM 2025). This literature supports replay as a
+credible retention mechanism but also shows that replay composition can materially affect behavior.
+For that reason the primary uses transparent uniform dual memory rather than task-aware/error-based
+selection.
+
+The neural controls were propagated into `EXPERIMENT_CONTROL_REGISTER.md`,
+`STATISTICAL_ANALYSIS_PLAN.md`, and `LITERATURE_WATCH.md`.
+
+**Gate after this packet:** the shared detector and shared neural response are prospectively frozen.
+Adaptive implementation remains prohibited. The next packet must freeze the matched C/D
+operational/fusion threshold policy before symbolic lifecycle design.

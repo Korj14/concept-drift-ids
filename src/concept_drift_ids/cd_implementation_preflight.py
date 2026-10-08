@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import platform
+from dataclasses import asdict
 from pathlib import Path
 from typing import Any
 
@@ -227,7 +228,7 @@ def verify_implementation_ready(
         "system_b_v2_active_rule_counts": r0_counts,
         "primary_control_plane_config_sha256": canonical_sha256(
             {
-                "config": ControlPlaneConfig().__dict__,
+                "config": asdict(ControlPlaneConfig()),
                 "thresholds": SYSTEM_A_MONITOR_THRESHOLDS,
             }
         ),

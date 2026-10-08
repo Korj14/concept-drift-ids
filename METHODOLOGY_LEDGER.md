@@ -2284,3 +2284,41 @@ must run `python run.py cd-preflight` successfully before Stage 8 run-manifest p
 
 Primary adaptive pre/post execution remains prohibited until the Stage-8 run/config manifest is
 committed on a clean, CI-green implementation-ready parent.
+
+
+### Post-Stage-7 R0.v2 Windows text-hash portability correction — 8 October 2026
+
+The first local execution of `python run.py cd-preflight` after the accepted Stage-7 merge and
+historical tag `cd-implementation-ready-v1` failed before any primary adaptive pre/post access with
+`ValueError: R0.v2 raw rule artifact hash mismatch.`
+
+The failure was diagnosed as a cross-platform text-materialization defect, not an R0.v2 scientific
+artifact change. The accepted System-B-v2 manifest and all five repository rule files were rechecked.
+For every seed, the repository LF bytes exactly matched the frozen manifest SHA-256. Re-encoding the
+same text with Windows CRLF produced a different raw SHA-256. The prior `.gitattributes` did not
+pin these rule JSON paths, so a Windows checkout with Git text conversion could fail the raw-byte
+check despite identical parsed JSON and an unchanged canonical artifact hash.
+
+A versioned correction branch, `stage7-r0-v2-portability-fix`, was created from accepted Stage-7
+main `a5fb8e5a00262ce59c3e4029821d0990bd9b933a`.
+
+The correction does not rewrite any R0.v2 artifact. Instead:
+
+- the loader compares the frozen repository-LF manifest hash to `sha256_normalized_text(path)`;
+- the existing independent canonical JSON artifact-hash verification remains mandatory;
+- `.gitattributes` pins the R0.v2 rule JSONs and System-B-v2 manifest to LF for future checkouts;
+- regression tests construct a CRLF copy of an accepted rule artifact and require successful loading;
+- a separate mutation regression requires changed content to remain rejected;
+- `STAGE7_R0_V2_PORTABILITY_CORRECTION.md` records the diagnosis and correction.
+
+The historical annotated tag `cd-implementation-ready-v1` remains immutable and continues to point
+to the preflight-failing accepted Stage-7 merge. It is not moved or deleted. That tag must not be used
+as the Stage-8 execution parent.
+
+After this correction is accepted, exact-head CI passes, and local `python run.py cd-preflight`
+succeeds, the corrected implementation-ready state must receive a new annotated tag
+`cd-implementation-ready-v1.1`. Stage 8 must branch from the corrected tag/commit.
+
+No detector, neural adaptation, replay, symbolic rule, lifecycle threshold, fusion parameter,
+statistical endpoint, or treatment definition changed. Primary adaptive pre/post execution remains
+locked and untouched.

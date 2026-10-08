@@ -1808,3 +1808,111 @@ The threshold controls were propagated into `EXPERIMENT_CONTROL_REGISTER.md` and
 **Gate after this packet:** stream timing, detector, neural replay adaptation, and fusion/operating
 point are all prospectively frozen. Adaptive implementation remains prohibited. The next packet is
 the D symbolic lifecycle/operator and online validation protocol.
+
+
+### D symbolic lifecycle and independent online validation frozen — 8 October 2026
+
+The project froze `D_SYMBOLIC_LIFECYCLE_PROTOCOL.md` before any adaptive symbolic implementation or
+C/D held-out execution.
+
+The main methodological decision is that candidate generation and candidate acceptance are separate
+causal stages.
+
+For primary D-drift, candidate structures are generated from the same fixed 10,000-row mature
+current-evidence window used by the associated shared neural update, but candidate acceptance is
+forbidden on those rows. The updated child checkpoint must remain deployed long enough for a
+different chronological 10,000-row validation block to be predicted by that child and for those
+labels to mature.
+
+If the child checkpoint is superseded before that validation completes, the symbolic transaction
+closes as `superseded_before_validation`; generated candidates are preserved for audit but no
+partial rule update is published. This prevents a rule base from being validated against a neural
+checkpoint that is no longer the active shared predictor.
+
+Candidate generation preserves the R0 extraction family but is versioned for the online evidence
+scale:
+
+- DeepExplainer on raw attack logit;
+- class-balanced background up to 128 rows/class;
+- class-balanced attribution sample up to 1,024 rows/class;
+- at least 128 rows/class required for new candidate generation;
+- top-12 feature selection under the same normalized SHAP scoring family;
+- weighted CART surrogate of the updated child neural decision at the frozen System-A neural
+  threshold;
+- max_depth=4;
+- min_samples_leaf=100 on the fixed 10,000-row generation window;
+- equal-total neural predicted-class weights;
+- candidate consequent = fitted weighted CART leaf argmax.
+
+The weighted leaf consequent is explicitly frozen because System-B history demonstrated that
+unweighted path-row majority is a real implementation defect, not an interchangeable interpretation.
+
+The static R0 `covered>=100` gate was not transferred mechanically. The online validation gate is
+sample-size aware:
+
+- support >= .001;
+- covered >= 25;
+- point class precision >= .80;
+- one-sided 95% Wilson lower bound for class precision >= .80;
+- point neural fidelity >= .90;
+- one-sided 95% Wilson lower bound for fidelity >= .90;
+- 100-replicate stratified bootstrap full-gate persistence >= .90;
+- complexity <= 4.
+
+The one-sided Wilson z value is 1.6448536269514722. The covered minimum of 25 is directly tied to the
+fidelity requirement: below 25 observations, even a perfect observed fidelity cannot establish a .90
+one-sided 95% Wilson lower bound.
+
+Existing D rules are evaluated on the same independent validation block **before** candidate
+integration. Their immutable pre-resolution state is logged as valid, quality_failed or
+evidence_insufficient. The lifecycle then operates as follows:
+
+- active + pass -> retained active;
+- active + first completed failure -> demoted/inactive;
+- demoted + pass -> reactivated;
+- demoted + second consecutive completed failure -> retired;
+- retired + later full-gate pass -> may reactivate under the same lineage after current
+  redundancy/conflict checks.
+
+This makes retirement reversible under recurring regimes while preventing unsupported rules from
+retaining predictive authority indefinitely.
+
+Confidence is refreshed only on completed independent maintenance validation and equals
+`min(class_precision, neural_fidelity)`, preserving R0 confidence semantics. There is no per-row
+confidence update, decay or pending-label use. System C's accepted R0.v2 confidence is permanently
+frozen.
+
+Same-class lifecycle relations reuse previously accepted overlap scales:
+
+- overlap >= .95 -> deterministic merge/consolidation;
+- overlap in [.50,.95) -> possible refinement only if the candidate Pareto-dominates the incumbent
+  or resolves a documented current stale-rule failure;
+- overlap < .50 -> genuinely new addition.
+
+No synthetic antecedent union/intersection is created during merge; the stronger independently
+validated rule is retained and losing redundant revisions are logged as merged.
+
+Cross-class overlap >= .50 preserves accepted Pareto/conflict semantics. A dominated candidate is
+rejected, a dominated incumbent is demoted, and unresolved opposite-consequent overlap remains
+auditable with runtime symbolic abstention/neural fallback.
+
+Every maintenance attempt produces a write-once event artifact. A new rule-base version is published
+only when inference-relevant symbolic state changes. Rejected candidates, no-ops, right-censored
+transactions and superseded transactions remain first-class evidence.
+
+The future implementation must extend the current static Rule schema with rule-revision identity,
+semantic identity, parent revision/lineage links, failure streak, valid-from/valid-to clocks,
+generation and validation evidence IDs, child neural checkpoint identity and rule-base parent/hash
+chain. Initial R0.v2 semantics are migrated into the expanded schema without alteration.
+
+A symbolic "recovery" claim is now contractually restricted to a documented chain:
+earlier valid -> later stale/demoted -> accepted refinement/reactivation/replacement ->
+post-publication explanation improvement. A newly added rule with no stale predecessor is not
+described as recovery.
+
+The lifecycle decisions were propagated into `EXPERIMENT_CONTROL_REGISTER.md`,
+`STATISTICAL_ANALYSIS_PLAN.md`, and `LITERATURE_WATCH.md`.
+
+**Gate after this packet:** the D symbolic evolution operator and online evidence gates are frozen.
+Adaptive implementation remains prohibited. The next packet is the D-drift versus D-periodic
+trigger-ablation schedule/opportunity budget.

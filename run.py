@@ -21,7 +21,17 @@ def main() -> None:
     )
     parser.add_argument(
         "command",
-        choices=("stage3a-preprocess", "system-a", "system-b", "cd-preflight"),
+        choices=(
+            "stage3a-preprocess",
+            "system-a",
+            "system-b",
+            "cd-preflight",
+            "cd-primary-prepare",
+            "cd-primary-phase-a",
+            "cd-primary-phase-b",
+            "cd-primary-phase-c",
+            "cd-primary-export",
+        ),
         help="Project command to execute.",
     )
     args, remainder = parser.parse_known_args()
@@ -47,10 +57,41 @@ def main() -> None:
         run_system_b()
         return
 
-    from concept_drift_ids.cd_implementation_preflight import (
-        main as run_cd_preflight,
-    )
-    run_cd_preflight()
+    if args.command == "cd-preflight":
+        if remainder:
+            parser.error("cd-preflight takes no additional arguments.")
+        from concept_drift_ids.cd_implementation_preflight import (
+            main as run_cd_preflight,
+        )
+        run_cd_preflight()
+        return
+
+    if args.command == "cd-primary-prepare":
+        if remainder:
+            parser.error("cd-primary-prepare takes no additional arguments.")
+        from concept_drift_ids.cd_primary_config import (
+            main as run_cd_primary_prepare,
+        )
+        run_cd_primary_prepare()
+        return
+
+    if args.command == "cd-primary-phase-a":
+        from concept_drift_ids.cd_primary_phase_a import main as run_phase_a
+        run_phase_a()
+        return
+
+    if args.command == "cd-primary-phase-b":
+        from concept_drift_ids.cd_primary_phase_b import main as run_phase_b
+        run_phase_b()
+        return
+
+    if args.command == "cd-primary-phase-c":
+        from concept_drift_ids.cd_primary_phase_c import main as run_phase_c
+        run_phase_c()
+        return
+
+    from concept_drift_ids.cd_primary_export import main as run_primary_export
+    run_primary_export()
 
 
 if __name__ == "__main__":

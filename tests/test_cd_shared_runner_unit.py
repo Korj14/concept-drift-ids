@@ -288,3 +288,16 @@ def test_shared_trajectory_verifier_rejects_maturity_tampering(
     )
     with pytest.raises(ValueError, match="maturity"):
         verify_shared_trajectory(tampered, label_latency=1)
+
+
+
+def test_shared_runner_has_no_primary_scenario_loader_surface() -> None:
+    import concept_drift_ids.cd_shared_runner as module
+
+    source = module.__file__
+    assert source is not None
+    text = open(source, encoding="utf-8").read()
+    assert "scenario_loader" not in text
+    assert "load_partition" not in text
+    assert "pre_drift" not in text
+    assert "post_drift" not in text

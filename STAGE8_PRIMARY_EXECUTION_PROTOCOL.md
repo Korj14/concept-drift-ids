@@ -211,3 +211,37 @@ After the first successful Phase-A command reads the primary adaptive stream:
 - the original frozen config remains preserved.
 
 Primary robustness conditions remain prespecified and may not replace the primary trajectory based on favorable results.
+
+
+## 12. Final pre-access integrity hardening
+
+The following controls were added before primary run-config generation and before any adaptive
+held-out access:
+
+- The dependency lock is bound by its normalized UTF-8 text SHA-256 rather than platform-specific
+  checkout bytes. `requirements-lock.txt` is pinned to LF for future checkouts.
+- `cd-primary-prepare` verifies every installed distribution named in the exact lock and freezes the
+  resulting `name -> version` map and its canonical hash. Phase execution re-verifies the same
+  installed distribution map.
+- GitHub Research Contract checkout uses full history/tags so corrected implementation-ready ancestry
+  can be verified in config-head CI.
+- Once `cd_primary_run_config_v1.json` is committed, primary execution requires `HEAD` to equal
+  exactly the commit that last committed that config file. A later commit, even one that does not
+  alter scientific source, invalidates the execution gate until a new versioned config is frozen.
+- On GitHub pull-request merge refs, the exact-config-head test is explicitly skipped when GitHub is
+  testing a synthetic merge SHA; the branch push run at the exact config commit is the binding
+  execution CI gate.
+- Phase-B verification now checks arm-manifest file identities, symbolic initial/final state
+  identities, strictly increasing publication clocks, contiguous inference-version increments, and
+  parent version/hash lineage for every published symbolic state.
+- Each Phase-C seed manifest explicitly binds to its exact Phase-A run manifest and Phase-B seed
+  manifest. Compact export re-verifies Phases A, B and C plus the five-seed aggregate before copying
+  any compact evidence.
+- The lambda=1 negative control now requires each arm's fused scores to equal its shared neural scores
+  exactly, in addition to cross-arm predictive equality.
+- The frozen run config includes the Research Contract workflow and Git execution policies in its
+  scientific source identity.
+
+These are fail-closed reproducibility and causal-integrity checks. They do not modify any frozen
+scientific parameter, treatment, endpoint, threshold, update budget, trigger schedule or inference
+rule.

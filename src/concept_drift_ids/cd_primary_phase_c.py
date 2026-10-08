@@ -381,9 +381,9 @@ def _recovery_summary(
             post,
             metric_key=metric,
             higher_is_better=higher,
-            stream_end_index=len(
-                windows["pre"]
-            ) + len(windows["post"]),
+            stream_end_index=EXPECTED_PRE_ROWS + sum(
+                int(item["row_count"]) for item in windows["post"]
+            ),
         )
         out[metric] = {"available": True, **result}
     return out
@@ -837,6 +837,20 @@ def verify_phase_c_seed(seed: int) -> dict[str, Any]:
         trace_path = output_dir / trace["path"]
         if sha256_file(trace_path) != trace["sha256"]:
             raise ValueError("Phase-C prediction trace file hash mismatch.")
+        content_digest = hashlib.sha256()
+        with gzip.open(trace_path, "rb") as file:
+            while True:
+                chunk = file.read(1024 * 1024)
+                if not chunk:
+                    break
+                content_digest.update(chunk)
+        if (
+            content_digest.hexdigest()
+            != trace["canonical_jsonl_sha256"]
+        ):
+            raise ValueError(
+                "Phase-C prediction trace content identity mismatch."
+            )
 
     return {
         "status": "phase_c_seed_verified",

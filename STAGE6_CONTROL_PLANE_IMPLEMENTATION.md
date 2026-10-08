@@ -1,6 +1,6 @@
 # Stage 6 — Shared C/D Control-Plane Implementation
 
-**Status:** IMPLEMENTATION IN PROGRESS — PRIMARY ADAPTIVE PRE/POST EXECUTION PROHIBITED  
+**Status:** IMPLEMENTATION COMPLETE — PENDING EXACT-HEAD CI AND MILESTONE ACCEPTANCE; PRIMARY ADAPTIVE PRE/POST EXECUTION PROHIBITED  
 **Branch:** `stage6-cd-control-plane`  
 **Accepted parent:** `cd-design-freeze-v1` / `6f677a2115a1f8d9cbe8e2a3f46d877a01d29f27`  
 **Date:** 8 October 2026

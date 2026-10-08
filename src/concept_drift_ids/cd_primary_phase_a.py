@@ -107,64 +107,66 @@ def execute_phase_a_seed(seed: int) -> dict[str, Any]:
         git_commit=_git_output("rev-parse", "HEAD"),
         config=ControlPlaneConfig(),
     )
-    trajectory = runner.run(bundle.stream_rows)
-    verify_shared_trajectory(
-        trajectory,
-        label_latency=ControlPlaneConfig().label_latency,
-    )
+    try:
+        trajectory = runner.run(bundle.stream_rows)
+        verify_shared_trajectory(
+            trajectory,
+            label_latency=ControlPlaneConfig().label_latency,
+        )
 
-    files = freeze_shared_trajectory(seed_dir, trajectory)
-    files["input_identity"] = {
-        "path": input_identity_path.name,
-        "sha256": input_identity_sha256,
-    }
-    files.update(_child_checkpoint_descriptors(seed_dir))
+        files = freeze_shared_trajectory(seed_dir, trajectory)
+        files["input_identity"] = {
+            "path": input_identity_path.name,
+            "sha256": input_identity_sha256,
+        }
+        files.update(_child_checkpoint_descriptors(seed_dir))
 
-    manifest = build_run_manifest(
-        run_id=f"{PRIMARY_RUN_ID}-phase-a-seed-{seed}",
-        seed=seed,
-        git_commit=_git_output("rev-parse", "HEAD"),
-        protocol_hashes=config["protocol_hashes"],
-        runtime=runtime,
-        scenario_identity={
-            "primary_config_manifest_sha256": config["manifest_sha256"],
-            "scientific_source_tree_sha256": config[
-                "scientific_source_tree_sha256"
-            ],
-            "scenario": config["scenario"],
-            "input_identity": bundle.audit_identity,
-            "adaptive_runner_received_boundary_metadata": False,
-        },
-        initial_checkpoint_sha256=bundle.initial_checkpoint_sha256,
-        preprocessing_sha256=bundle.preprocessing_state_hash,
-        files=files,
-        status="complete_unscored_shared_trajectory",
-    )
-    run_manifest_path = seed_dir / "run_manifest.json"
-    write_json_new(run_manifest_path, manifest)
-    verify_manifest_files(seed_dir, manifest)
-    verify_phase_a_seed(seed)
+        manifest = build_run_manifest(
+            run_id=f"{PRIMARY_RUN_ID}-phase-a-seed-{seed}",
+            seed=seed,
+            git_commit=_git_output("rev-parse", "HEAD"),
+            protocol_hashes=config["protocol_hashes"],
+            runtime=runtime,
+            scenario_identity={
+                "primary_config_manifest_sha256": config["manifest_sha256"],
+                "scientific_source_tree_sha256": config[
+                    "scientific_source_tree_sha256"
+                ],
+                "scenario": config["scenario"],
+                "input_identity": bundle.audit_identity,
+                "adaptive_runner_received_boundary_metadata": False,
+            },
+            initial_checkpoint_sha256=bundle.initial_checkpoint_sha256,
+            preprocessing_sha256=bundle.preprocessing_state_hash,
+            files=files,
+            status="complete_unscored_shared_trajectory",
+        )
+        run_manifest_path = seed_dir / "run_manifest.json"
+        write_json_new(run_manifest_path, manifest)
+        verify_manifest_files(seed_dir, manifest)
+        verify_phase_a_seed(seed)
+    except Exception as exc:
+        failure_path = seed_dir / "failure.json"
+        if not failure_path.exists():
+            write_json_new(
+                failure_path,
+                {
+                    "seed": seed,
+                    "exception_type": type(exc).__name__,
+                    "message": str(exc),
+                    "primary_boundary_scored": False,
+                    "symbolic_arms_executed": False,
+                },
+            )
+        raise
 
     return {
         "status": "phase_a_seed_complete_unscored",
         "seed": seed,
-        "output_dir": seed_dir.as_posix(),
         "run_manifest_sha256": manifest["manifest_sha256"],
         "shared_identity_sha256": trajectory.shared_identity[
             "identity_sha256"
         ],
-        "checkpoint_count": len(trajectory.checkpoint_chain),
-        "drift_event_count": sum(
-            int(
-                event.get("event_type") == "drift_event"
-                and event.get("status") == "confirmed"
-            )
-            for event in trajectory.events
-        ),
-        "pending_labels": trajectory.pending_labels,
-        "pending_neural_transaction": (
-            trajectory.pending_neural_transaction is not None
-        ),
         "primary_boundary_scored": False,
         "symbolic_arms_executed": False,
     }
@@ -226,7 +228,6 @@ def verify_phase_a_seed(seed: int) -> dict[str, Any]:
         "run_manifest_sha256": manifest["manifest_sha256"],
         "shared_identity_sha256": expected_identity["identity_sha256"],
         "prediction_rows": len(predictions),
-        "checkpoint_count": len(checkpoints),
         "primary_boundary_scored": False,
         "symbolic_arms_executed": False,
     }

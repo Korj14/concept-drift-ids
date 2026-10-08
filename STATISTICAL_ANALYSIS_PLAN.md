@@ -459,6 +459,47 @@ detector-disarmed logical duration. Compute time is not converted into productio
 the scenario lacks trustworthy arrival timestamps.
 
 
+### 15.4 Frozen C/D fusion and operating-point contract — 8 October 2026
+
+`C_D_FUSION_THRESHOLD_PROTOCOL.md` freezes the primary decision contract before symbolic
+lifecycle implementation.
+
+Primary C/D fusion remains the accepted R0.v2 rule:
+
+- neural weight lambda = 0.50 on resolved symbolic coverage;
+- uncovered/conflict cases fall back to the neural probability;
+- seed-specific accepted R0.v2 fused thresholds remain fixed for the full adaptive trajectory.
+
+The primary thresholds are:
+
+- seed 0: 0.692427396774292
+- seed 1: 0.9354645609855652
+- seed 2: 0.8299936652183533
+- seed 3: 0.9747405052185059
+- seed 4: 0.9527904391288757
+
+There is no per-event, per-window or per-arm threshold recalibration in the primary causal contrast.
+
+This means thresholded metrics intentionally reflect the consequences of neural/symbolic score drift
+under a fixed operating-point contract. Threshold-free ROC-AUC and average precision are reported
+alongside them so ranking behavior remains visible.
+
+Secondary fusion-authority sensitivities use the already accepted R0.v2 development-grid
+lambda/threshold pairs at lambda=.70 and lambda=.90. They cannot replace lambda=.50 based on
+adaptive held-out direction.
+
+A lambda=1.00 neural-only negative control is also frozen. Under this condition symbolic predictive
+authority is zero. Because C and D share the exact same neural checkpoint trajectory, matched C/D
+fused score arrays and thresholded predictions must be identical. Any predictive C-vs-D difference at
+lambda=1.00 is classified as an implementation defect.
+
+Symbolic explanation traces may still differ under lambda=1.00 and may be used descriptively, but
+they cannot alter the predictive decision.
+
+No post-hoc per-window oracle threshold is permitted in confirmatory evidence. Any future oracle
+threshold envelope must be labeled exploratory and cannot alter the frozen primary decision stream.
+
+
 ## 16. Corrected System-B v2 evidence status
 
 The R0.v2 evaluation is a protocol-defect correction conducted after historical R0.v1 held-out outcomes were known. It is therefore not treated as a new untouched confirmatory experiment.

@@ -9,6 +9,7 @@ import torch
 
 from concept_drift_ids.cd_control_plane import (
     ONLINE_RESERVOIR_SEED,
+    PRIMARY_ANCHOR_CAPACITY,
     PRIMARY_CURRENT_WINDOW,
     PRIMARY_LABEL_LATENCY,
     PRIMARY_ONLINE_RESERVOIR_CAPACITY,
@@ -19,6 +20,7 @@ from concept_drift_ids.cd_control_plane import (
     NeuralUpdateConfig,
     ReservoirItem,
     SharedErrorDriftMonitor,
+    SYSTEM_A_MONITOR_THRESHOLDS,
     UniformReservoir,
     adapt_neural_checkpoint,
     canonical_sha256,
@@ -661,3 +663,21 @@ def verify_shared_trajectory(
             raise ValueError("Final checkpoint file identity mismatch.")
         if final["child_state_sha256"] != trajectory.final_state_sha256:
             raise ValueError("Final checkpoint state identity mismatch.")
+
+
+def verify_primary_control_plane_configuration(
+    *,
+    seed: int,
+    monitor_threshold: float,
+    anchor_row_count: int,
+    config: ControlPlaneConfig,
+) -> None:
+    if seed not in SYSTEM_A_MONITOR_THRESHOLDS:
+        raise ValueError(f"Unsupported frozen seed: {seed}")
+    expected = SYSTEM_A_MONITOR_THRESHOLDS[seed]
+    if float(monitor_threshold) != float(expected):
+        raise ValueError("Monitor threshold differs from the frozen seed threshold.")
+    if config != ControlPlaneConfig():
+        raise ValueError("Control-plane configuration differs from frozen defaults.")
+    if int(anchor_row_count) != PRIMARY_ANCHOR_CAPACITY:
+        raise ValueError("Training anchor row count differs from frozen capacity.")

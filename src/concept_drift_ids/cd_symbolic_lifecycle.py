@@ -664,7 +664,6 @@ def apply_lifecycle_maintenance(
         for revision in state.revisions
     }
     latest = state.latest_by_semantic()
-    current_active_ids = set(state.active_revision_ids)
     current_active = {
         revision.semantic_rule_id: revision
         for revision in state.active_revisions()
@@ -879,7 +878,7 @@ def apply_lifecycle_maintenance(
             parent_lineage_ids=(),
         )
 
-        same_class: list[tuple[float, RuleRevision]] = []
+        active_same_class: list[tuple[float, RuleRevision]] = []
         for active in active_latest().values():
             if active.consequent != candidate.consequent:
                 continue
@@ -896,11 +895,34 @@ def apply_lifecycle_maintenance(
                     "overlap_coefficient"
                 ]
             )
-            same_class.append((overlap, active))
+            active_same_class.append((overlap, active))
+
+        stale_same_class: list[tuple[float, RuleRevision]] = []
+        for semantic_id, before in current_active.items():
+            if before.consequent != candidate.consequent:
+                continue
+            after = new_latest.get(semantic_id)
+            if after is None or after.lifecycle_state == "active":
+                continue
+            stale_mask = masks.get(semantic_id)
+            if stale_mask is None:
+                stale_mask = activation_mask(
+                    X_validation,
+                    feature_names=feature_names,
+                    conditions=after.conditions,
+                )
+                masks[semantic_id] = stale_mask
+            overlap = float(
+                overlap_statistics(candidate_mask, stale_mask)[
+                    "overlap_coefficient"
+                ]
+            )
+            if overlap >= refinement_overlap:
+                stale_same_class.append((overlap, after))
 
         redundant = [
             (overlap, active)
-            for overlap, active in same_class
+            for overlap, active in active_same_class
             if overlap >= same_class_redundancy
         ]
         if redundant:
@@ -945,9 +967,10 @@ def apply_lifecycle_maintenance(
         else:
             refinements = [
                 (overlap, active)
-                for overlap, active in same_class
+                for overlap, active in active_same_class
                 if refinement_overlap <= overlap < same_class_redundancy
             ]
+            refinements.extend(stale_same_class)
             if refinements:
                 overlap, incumbent = sorted(
                     refinements,
@@ -956,16 +979,7 @@ def apply_lifecycle_maintenance(
                         pair[1].semantic_rule_id,
                     ),
                 )[0]
-                stale = (
-                    evidence_by_semantic.get(
-                        incumbent.semantic_rule_id,
-                        RuleEvidence(
-                            0.0, 0, 0.0, 0.0, 0.0, 0.0, 0.0,
-                            incumbent.complexity, False, "quality_failed"
-                        ),
-                    ).staleness_status
-                    != "valid"
-                )
+                stale = incumbent.lifecycle_state != "active"
                 if not (
                     _pareto_revision_dominates(prototype, incumbent)
                     or stale
@@ -1079,36 +1093,6 @@ def apply_lifecycle_maintenance(
                 elif _pareto_revision_dominates(right, left):
                     winner, loser = right, left
                 else:
-                    left_relation = {
-                        "type": "unresolved_cross_class_conflict",
-                        "other": right.semantic_rule_id,
-                        **overlap,
-                    }
-                    right_relation = {
-                        "type": "unresolved_cross_class_conflict",
-                        "other": left.semantic_rule_id,
-                        **overlap,
-                    }
-                    updated_left = replace(
-                        left,
-                        relations=tuple((*left.relations, left_relation)),
-                    )
-                    updated_right = replace(
-                        right,
-                        relations=tuple((*right.relations, right_relation)),
-                    )
-                    new_latest[left.semantic_rule_id] = updated_left
-                    new_latest[right.semantic_rule_id] = updated_right
-                    history_by_id[left.rule_revision_id] = updated_left
-                    history_by_id[right.rule_revision_id] = updated_right
-                    decisions.append(
-                        {
-                            "type": "unresolved_cross_class_conflict",
-                            "left": left.semantic_rule_id,
-                            "right": right.semantic_rule_id,
-                            **overlap,
-                        }
-                    )
                     continue
                 updated_loser = replace(
                     loser,
@@ -1131,6 +1115,93 @@ def apply_lifecycle_maintenance(
                 break
             if changed:
                 break
+
+    final_active = sorted(
+        (
+            revision
+            for revision in new_latest.values()
+            if revision.lifecycle_state == "active"
+        ),
+        key=lambda item: item.semantic_rule_id,
+    )
+
+    # Rebuild unresolved cross-class relations from the surviving active set.
+    # This avoids stale/duplicate relation accumulation across maintenance events.
+    for revision in final_active:
+        cleared = replace(revision, relations=())
+        new_latest[revision.semantic_rule_id] = cleared
+        history_by_id[revision.rule_revision_id] = cleared
+
+    final_active = sorted(
+        (
+            revision
+            for revision in new_latest.values()
+            if revision.lifecycle_state == "active"
+        ),
+        key=lambda item: item.semantic_rule_id,
+    )
+    relation_map: dict[str, list[dict[str, Any]]] = {
+        revision.semantic_rule_id: [] for revision in final_active
+    }
+    for index, left in enumerate(final_active):
+        for right in final_active[index + 1 :]:
+            if left.consequent == right.consequent:
+                continue
+            left_mask = masks.get(left.semantic_rule_id)
+            if left_mask is None:
+                left_mask = activation_mask(
+                    X_validation,
+                    feature_names=feature_names,
+                    conditions=left.conditions,
+                )
+                masks[left.semantic_rule_id] = left_mask
+            right_mask = masks.get(right.semantic_rule_id)
+            if right_mask is None:
+                right_mask = activation_mask(
+                    X_validation,
+                    feature_names=feature_names,
+                    conditions=right.conditions,
+                )
+                masks[right.semantic_rule_id] = right_mask
+            overlap = overlap_statistics(left_mask, right_mask)
+            if float(overlap["overlap_coefficient"]) < cross_class_overlap:
+                continue
+            relation_map[left.semantic_rule_id].append(
+                {
+                    "type": "unresolved_cross_class_conflict",
+                    "other": right.semantic_rule_id,
+                    **overlap,
+                }
+            )
+            relation_map[right.semantic_rule_id].append(
+                {
+                    "type": "unresolved_cross_class_conflict",
+                    "other": left.semantic_rule_id,
+                    **overlap,
+                }
+            )
+            decisions.append(
+                {
+                    "type": "unresolved_cross_class_conflict",
+                    "left": left.semantic_rule_id,
+                    "right": right.semantic_rule_id,
+                    **overlap,
+                }
+            )
+
+    for revision in final_active:
+        relations = tuple(
+            sorted(
+                relation_map[revision.semantic_rule_id],
+                key=lambda item: (
+                    str(item["type"]),
+                    str(item["other"]),
+                ),
+            )
+        )
+        updated = replace(revision, relations=relations)
+        new_latest[revision.semantic_rule_id] = updated
+        history_by_id[revision.rule_revision_id] = updated
 
     final_active = sorted(
         (

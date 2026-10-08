@@ -8,7 +8,7 @@ from concept_drift_ids.cd_symbolic_lifecycle import (
     RuleBaseState,
     migrate_r0_v2_rules,
 )
-from concept_drift_ids.scenario_manifest import sha256_file
+from concept_drift_ids.scenario_manifest import sha256_normalized_text
 from concept_drift_ids.symbolic import (
     Condition,
     Rule,
@@ -89,9 +89,14 @@ def load_accepted_r0_v2_rules(
     path = project_root / str(entry["path"])
     if not path.is_file():
         raise FileNotFoundError(f"Missing accepted R0.v2 rule artifact: {path}")
-    actual_file_hash = sha256_file(path)
-    if actual_file_hash != entry["sha256"]:
-        raise ValueError("R0.v2 raw rule artifact hash mismatch.")
+    # The accepted manifest hash was generated from repository-canonical LF
+    # UTF-8 text. Git may materialize text files with CRLF on Windows unless
+    # an explicit EOL attribute is present. Normalize text line endings before
+    # comparing that accepted LF identity; the canonical JSON artifact hash
+    # below remains an independent semantic-integrity check.
+    actual_text_hash = sha256_normalized_text(path)
+    if actual_text_hash != entry["sha256"]:
+        raise ValueError("R0.v2 normalized rule artifact hash mismatch.")
 
     payload = json.loads(path.read_text(encoding="utf-8"))
     stored_artifact_hash = payload.get("artifact_sha256")

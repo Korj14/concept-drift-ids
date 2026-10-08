@@ -860,6 +860,30 @@ def verify_phase_c_seed(seed: int) -> dict[str, Any]:
     }
 
 
+def verify_primary_aggregate() -> dict[str, Any]:
+    config = verify_primary_run_config_for_execution()
+    path = _phase_c_root() / "confirmatory_analysis.json"
+    payload = _read_verified_json(path)
+    stored = payload.pop("manifest_sha256", None)
+    if stored != canonical_sha256(payload):
+        raise ValueError("Confirmatory aggregate manifest hash mismatch.")
+    if payload["primary_config_manifest_sha256"] != config["manifest_sha256"]:
+        raise ValueError("Confirmatory aggregate references wrong config.")
+    if payload["lambda_one_predictive_equality_all_seeds"] is not True:
+        raise ValueError("Confirmatory aggregate failed lambda=1 control.")
+    expected = {
+        str(seed): verify_phase_c_seed(seed)["phase_c_manifest_sha256"]
+        for seed in PRIMARY_SEEDS
+    }
+    if payload["seed_manifest_sha256"] != expected:
+        raise ValueError("Confirmatory aggregate seed identities changed.")
+    return {
+        "status": "primary_confirmatory_aggregate_verified",
+        "manifest_sha256": stored,
+        "seed_count": len(PRIMARY_SEEDS),
+    }
+
+
 def build_primary_aggregate() -> dict[str, Any]:
     config = verify_primary_run_config_for_execution()
     configure_torch_primary_runtime()

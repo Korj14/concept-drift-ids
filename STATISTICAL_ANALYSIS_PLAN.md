@@ -500,6 +500,63 @@ No post-hoc per-window oracle threshold is permitted in confirmatory evidence. A
 threshold envelope must be labeled exploratory and cannot alter the frozen primary decision stream.
 
 
+### 15.5 Frozen D symbolic-lifecycle analysis contract — 8 October 2026
+
+`D_SYMBOLIC_LIFECYCLE_PROTOCOL.md` freezes the rule-evolution treatment before adaptive held-out
+execution.
+
+Candidate generation and acceptance are statistically separated:
+
+- candidate structures are mined from the 10,000-row neural current-evidence window associated with
+  the shared child checkpoint;
+- predictive authority cannot change until a **different**, chronological 10,000-row
+  child-checkpoint-pure validation block has arrived and its labels have matured;
+- if the child checkpoint is superseded before that validation block completes, the symbolic
+  transaction is censored as `superseded_before_validation` and no partial rule publication is
+  allowed.
+
+The online acceptance gate is prospectively sample-size-aware rather than reusing the static
+`covered>=100` count mechanically. It requires:
+
+- support >= .001;
+- covered >= 25;
+- class precision point estimate >= .80 and one-sided 95% Wilson lower bound >= .80;
+- neural fidelity point estimate >= .90 and one-sided 95% Wilson lower bound >= .90;
+- 100-replicate stratified full-gate persistence >= .90;
+- complexity <= 4.
+
+The one-sided Wilson z value is 1.6448536269514722. The covered-count minimum of 25 is tied to the
+fidelity requirement: below 25 covered observations even perfect observed fidelity cannot establish a
+one-sided 95% lower bound of .90.
+
+Existing active rules are evaluated on the same independent validation block before candidate
+integration. Their pre-resolution staleness state is preserved. Lifecycle transitions are
+longitudinal dependent observations, not independent inferential replicates.
+
+For lifecycle reporting preserve at minimum, per maintenance opportunity and seed:
+
+- active rule count before/after;
+- valid / quality-failed / evidence-insufficient incumbent counts;
+- candidate count;
+- rejected candidate count by reason;
+- retained, new-addition, refined, merged, demoted, retired and reactivated counts;
+- unresolved cross-class conflicts;
+- symbolic abstention rate after publication;
+- confidence-change magnitudes;
+- rule-base version identity and parent identity;
+- validation waiting rows and symbolic compute cost.
+
+Rule confidence is refreshed only from completed independent symbolic-validation evidence and is
+constant between symbolic publications. System C's R0.v2 confidence is frozen.
+
+A claim of symbolic "recovery" requires a documented longitudinal chain:
+valid -> stale/demoted -> accepted refinement/reactivation/replacement -> post-publication
+improvement. A new rule addition without a stale predecessor is not labeled recovery.
+
+Right-censored or superseded symbolic transactions remain part of the adaptation evidence and cannot
+be silently removed from update-rate/cost reporting.
+
+
 ## 16. Corrected System-B v2 evidence status
 
 The R0.v2 evaluation is a protocol-defect correction conducted after historical R0.v1 held-out outcomes were known. It is therefore not treated as a new untouched confirmatory experiment.

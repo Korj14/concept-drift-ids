@@ -27,7 +27,10 @@ from concept_drift_ids.cd_implementation_preflight import (
     PROJECT_ROOT,
     verify_implementation_ready,
 )
-from concept_drift_ids.cd_runtime import PRIMARY_THREAD_ENV
+from concept_drift_ids.cd_runtime import (
+    PRIMARY_THREAD_ENV,
+    verify_locked_distributions,
+)
 from concept_drift_ids.cd_shared_runner import ControlPlaneConfig
 from concept_drift_ids.cd_symbolic_arms import (
     PRIMARY_PERIODIC_CLOCKS,
@@ -215,10 +218,13 @@ def _requirements_identity(
     normalized = sha256_normalized_text(path)
     if normalized != EXPECTED_REQUIREMENTS_NORMALIZED_SHA256:
         raise ValueError("Frozen dependency lock normalized-text hash changed.")
+    installed = verify_locked_distributions(lock_path=path)
     return {
         "path": "requirements-lock.txt",
         "binding_normalized_text_sha256": normalized,
         "freeze_checkout_raw_sha256": sha256_file(path),
+        "installed_distributions": installed,
+        "installed_distributions_sha256": canonical_sha256(installed),
     }
 
 
@@ -514,6 +520,15 @@ def verify_primary_run_config_for_execution(
         != requirements["binding_normalized_text_sha256"]
     ):
         raise ValueError("Frozen dependency lock changed after config freeze.")
+    if (
+        frozen_requirements.get("installed_distributions")
+        != requirements["installed_distributions"]
+        or frozen_requirements.get("installed_distributions_sha256")
+        != requirements["installed_distributions_sha256"]
+    ):
+        raise ValueError(
+            "Installed dependency environment changed after config freeze."
+        )
     return config
 
 

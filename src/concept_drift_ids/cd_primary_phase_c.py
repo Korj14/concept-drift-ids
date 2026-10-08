@@ -593,9 +593,12 @@ def execute_phase_c_seed(seed: int) -> dict[str, Any]:
     configure_torch_primary_runtime()
 
     # Evaluation is allowed only after every adaptive trajectory is frozen.
-    for other in PRIMARY_SEEDS:
-        verify_phase_a_seed(other)
-        verify_phase_b_seed(other)
+    phase_a_verified = {
+        other: verify_phase_a_seed(other) for other in PRIMARY_SEEDS
+    }
+    phase_b_verified = {
+        other: verify_phase_b_seed(other) for other in PRIMARY_SEEDS
+    }
 
     output_dir = _phase_c_dir(seed)
     if output_dir.exists():
@@ -788,6 +791,12 @@ def execute_phase_c_seed(seed: int) -> dict[str, Any]:
             "seed": seed,
             "status": "complete_offline_evaluation",
             "primary_config_manifest_sha256": config["manifest_sha256"],
+            "phase_a_run_manifest_sha256": phase_a_verified[seed][
+                "run_manifest_sha256"
+            ],
+            "phase_b_seed_manifest_sha256": phase_b_verified[seed][
+                "phase_b_manifest_sha256"
+            ],
             "arm_summary_sha256": {
                 arm: summary["summary_sha256"]
                 for arm, summary in arm_summaries.items()
@@ -846,6 +855,18 @@ def verify_phase_c_seed(seed: int) -> dict[str, Any]:
         "manifest_sha256"
     ]:
         raise ValueError("Phase-C seed references wrong primary config.")
+    phase_a = verify_phase_a_seed(seed)
+    phase_b = verify_phase_b_seed(seed)
+    if (
+        manifest["phase_a_run_manifest_sha256"]
+        != phase_a["run_manifest_sha256"]
+    ):
+        raise ValueError("Phase-C seed Phase-A identity mismatch.")
+    if (
+        manifest["phase_b_seed_manifest_sha256"]
+        != phase_b["phase_b_manifest_sha256"]
+    ):
+        raise ValueError("Phase-C seed Phase-B identity mismatch.")
     if manifest["lambda_one_predictive_equality"] is not True:
         raise ValueError("Phase-C lambda=1 negative control failed.")
     if manifest["adaptive_components_received_boundary"] is not False:

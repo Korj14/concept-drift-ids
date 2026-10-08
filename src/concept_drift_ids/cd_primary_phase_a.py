@@ -76,38 +76,50 @@ def execute_phase_a_seed(seed: int) -> dict[str, Any]:
         raise FileExistsError(
             f"Refusing to reuse existing primary seed output: {seed_dir}"
         )
-
-    # Import only after the tracked/clean frozen-config gate has passed.
-    from concept_drift_ids.cd_primary_adapter import build_primary_input_bundle
-
-    bundle = build_primary_input_bundle(seed)
-    verify_primary_control_plane_configuration(
-        seed=seed,
-        monitor_threshold=bundle.monitor_threshold,
-        anchor_row_count=len(bundle.anchor_rows),
-        config=ControlPlaneConfig(),
-    )
-
     seed_dir.mkdir(parents=True, exist_ok=False)
-    input_identity_path = seed_dir / "input_identity.json"
-    input_identity_sha256 = write_json_new(
-        input_identity_path,
-        bundle.audit_identity,
+    write_json_new(
+        seed_dir / "attempt.json",
+        {
+            "run_id": f"{PRIMARY_RUN_ID}-phase-a-seed-{seed}",
+            "seed": seed,
+            "git_commit": _git_output("rev-parse", "HEAD"),
+            "primary_config_manifest_sha256": config["manifest_sha256"],
+            "primary_boundary_scored": False,
+            "symbolic_arms_executed": False,
+        },
     )
 
-    checkpoint_dir = seed_dir / "checkpoints"
-    runner = SharedControlPlaneRunner(
-        seed=seed,
-        initial_model=bundle.model,
-        initial_checkpoint_sha256=bundle.initial_checkpoint_sha256,
-        monitor_threshold=bundle.monitor_threshold,
-        anchor_rows=bundle.anchor_rows,
-        checkpoint_dir=checkpoint_dir,
-        run_id=f"{PRIMARY_RUN_ID}-phase-a-seed-{seed}",
-        git_commit=_git_output("rev-parse", "HEAD"),
-        config=ControlPlaneConfig(),
-    )
     try:
+        # Import only after the tracked/clean frozen-config gate has passed.
+        from concept_drift_ids.cd_primary_adapter import (
+            build_primary_input_bundle,
+        )
+
+        bundle = build_primary_input_bundle(seed)
+        verify_primary_control_plane_configuration(
+            seed=seed,
+            monitor_threshold=bundle.monitor_threshold,
+            anchor_row_count=len(bundle.anchor_rows),
+            config=ControlPlaneConfig(),
+        )
+
+        input_identity_path = seed_dir / "input_identity.json"
+        input_identity_sha256 = write_json_new(
+            input_identity_path,
+            bundle.audit_identity,
+        )
+        checkpoint_dir = seed_dir / "checkpoints"
+        runner = SharedControlPlaneRunner(
+            seed=seed,
+            initial_model=bundle.model,
+            initial_checkpoint_sha256=bundle.initial_checkpoint_sha256,
+            monitor_threshold=bundle.monitor_threshold,
+            anchor_rows=bundle.anchor_rows,
+            checkpoint_dir=checkpoint_dir,
+            run_id=f"{PRIMARY_RUN_ID}-phase-a-seed-{seed}",
+            git_commit=_git_output("rev-parse", "HEAD"),
+            config=ControlPlaneConfig(),
+        )
         trajectory = runner.run(bundle.stream_rows)
         verify_shared_trajectory(
             trajectory,

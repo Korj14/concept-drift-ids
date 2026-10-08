@@ -27,6 +27,7 @@ from concept_drift_ids.cd_control_plane import (
     select_replay_ids,
     state_dict_sha256,
     write_checkpoint_new,
+    write_json_new,
 )
 from concept_drift_ids.cd_evidence import (
     build_checkpoint_record,
@@ -34,6 +35,7 @@ from concept_drift_ids.cd_evidence import (
     build_shared_identity,
     records_sha256,
     verify_checkpoint_chain,
+    write_jsonl_new,
 )
 from concept_drift_ids.neural import BinaryMLP
 
@@ -527,3 +529,58 @@ class SharedControlPlaneRunner:
                 dict(pending) if pending is not None else None
             ),
         )
+
+
+
+def freeze_shared_trajectory(
+    output_dir: Path,
+    trajectory: SharedTrajectory,
+) -> dict[str, dict[str, str]]:
+    """Freeze one shared trajectory as non-overwriting compact evidence."""
+    output_dir = Path(output_dir)
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    payloads: dict[str, Sequence[Mapping[str, Any]]] = {
+        "predictions": trajectory.predictions,
+        "label_schedule": trajectory.label_schedule,
+        "detector_observations": trajectory.detector_observations,
+        "events": trajectory.events,
+        "replay_transactions": trajectory.replay_transactions,
+        "checkpoint_chain": trajectory.checkpoint_chain,
+    }
+    files: dict[str, dict[str, str]] = {}
+    for name, records in payloads.items():
+        path = output_dir / f"{name}.jsonl"
+        digest = write_jsonl_new(
+            path,
+            list(records),
+            validate=(name == "events"),
+        )
+        files[name] = {
+            "path": path.name,
+            "sha256": digest,
+        }
+
+    identity_path = output_dir / "shared_identity.json"
+    digest = write_json_new(
+        identity_path,
+        {
+            "schema_version": 1,
+            "seed": trajectory.seed,
+            "config_sha256": trajectory.config_sha256,
+            "shared_identity": dict(trajectory.shared_identity),
+            "final_checkpoint_sha256": trajectory.final_checkpoint_sha256,
+            "final_state_sha256": trajectory.final_state_sha256,
+            "pending_labels": trajectory.pending_labels,
+            "pending_neural_transaction": (
+                dict(trajectory.pending_neural_transaction)
+                if trajectory.pending_neural_transaction is not None
+                else None
+            ),
+        },
+    )
+    files["shared_identity"] = {
+        "path": identity_path.name,
+        "sha256": digest,
+    }
+    return files

@@ -452,6 +452,10 @@ def run_drift_symbolic_arm(
     raw_affine: Mapping[str, tuple[float, float]] | None = None,
     operator_config: SymbolicOperatorConfig = SymbolicOperatorConfig(),
 ) -> SymbolicArmTrajectory:
+    if initial_state.seed != seed:
+        raise ValueError("Initial symbolic state seed mismatch.")
+    if initial_state.seed != seed:
+        raise ValueError("Initial symbolic state seed mismatch.")
     if not shared_identity_sha256:
         raise ValueError("Shared control-plane identity is required.")
     verify_shared_symbolic_rows(rows, shared_predictions)
@@ -671,6 +675,10 @@ def frozen_c_arm(
     shared_identity_sha256: str,
     operator_config: SymbolicOperatorConfig = SymbolicOperatorConfig(),
 ) -> SymbolicArmTrajectory:
+    if initial_state.seed != seed:
+        raise ValueError("Initial symbolic state seed mismatch.")
+    if not shared_identity_sha256:
+        raise ValueError("Shared control-plane identity is required.")
     return SymbolicArmTrajectory(
         seed=seed,
         arm="c_frozen_symbolic",
@@ -688,6 +696,17 @@ def verify_symbolic_arm_control_plane_isolation(
 ) -> str:
     if not trajectories:
         raise ValueError("At least one symbolic trajectory is required.")
+    seeds = {trajectory.seed for trajectory in trajectories}
+    if len(seeds) != 1:
+        raise ValueError("Matched symbolic arms use different seeds.")
+    initial_hashes = {
+        trajectory.initial_state.canonical_sha256
+        for trajectory in trajectories
+    }
+    if len(initial_hashes) != 1:
+        raise ValueError(
+            "Matched symbolic arms do not share one R0.v2 starting state."
+        )
     shared_hashes = {
         trajectory.shared_identity_sha256
         for trajectory in trajectories

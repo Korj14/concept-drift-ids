@@ -9,6 +9,7 @@ from concept_drift_ids.cd_analysis import (
     holm_bonferroni,
     paired_effect_summary,
     recovery_time,
+    summarize_symbolic_maintenance,
 )
 from concept_drift_ids.cd_symbolic_arms import (
     PRIMARY_PERIODIC_CLOCKS,
@@ -365,3 +366,69 @@ def test_periodic_validation_starts_after_maintenance_clock_not_old_checkpoint_b
     )
     assert result.status == "complete"
     assert result.row_ids == ("future-1", "future-2")
+
+
+
+def test_symbolic_maintenance_summary_separates_attempts_from_publications() -> None:
+    from types import SimpleNamespace
+
+    records = [
+        SimpleNamespace(
+            symbolic_publication_effective_index=100,
+            validation_row_ids=("a", "b"),
+            status="published",
+            shap_seconds=1.0,
+            surrogate_seconds=0.5,
+            lifecycle_seconds=0.25,
+            candidate_count=3,
+            validation_wait_rows=20,
+            lifecycle=SimpleNamespace(
+                lifecycle=SimpleNamespace(
+                    decisions=(
+                        {"type": "new_addition"},
+                        {"type": "demoted"},
+                    )
+                )
+            ),
+        ),
+        SimpleNamespace(
+            symbolic_publication_effective_index=None,
+            validation_row_ids=("c", "d"),
+            status="no_rule_base_change",
+            shap_seconds=0.5,
+            surrogate_seconds=0.25,
+            lifecycle_seconds=0.10,
+            candidate_count=1,
+            validation_wait_rows=30,
+            lifecycle=SimpleNamespace(
+                lifecycle=SimpleNamespace(
+                    decisions=({"type": "retained"},)
+                )
+            ),
+        ),
+        SimpleNamespace(
+            symbolic_publication_effective_index=None,
+            validation_row_ids=(),
+            status="superseded_before_validation",
+            shap_seconds=0.0,
+            surrogate_seconds=0.0,
+            lifecycle_seconds=0.0,
+            candidate_count=0,
+            validation_wait_rows=None,
+            lifecycle=None,
+        ),
+    ]
+    summary = summarize_symbolic_maintenance(records)
+    assert summary["opportunity_count"] == 3
+    assert summary["completed_validation_count"] == 2
+    assert summary["publication_count"] == 1
+    assert summary["no_op_count"] == 1
+    assert summary["censored_or_blocked_count"] == 1
+    assert summary["publication_per_opportunity"] == pytest.approx(1 / 3)
+    assert summary["compute_seconds_per_publication"] == pytest.approx(2.6)
+    assert summary["mean_validation_wait_rows"] == pytest.approx(25.0)
+    assert summary["lifecycle_decision_counts"] == {
+        "demoted": 1,
+        "new_addition": 1,
+        "retained": 1,
+    }

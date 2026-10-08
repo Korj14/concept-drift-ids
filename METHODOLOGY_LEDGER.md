@@ -2463,3 +2463,43 @@ zero rows from the boundary.
 
 This is a prospective reporting-alignment correction only. No primary adaptive run config has yet
 been generated and no primary adaptive pre/post row has been processed.
+
+
+### Final Stage-8 cross-phase evidence rebinding before primary access — 9 October 2026
+
+After Research Contract #468 passed on Stage-8 head
+`c99cf2c6fcfb4cd7f75c2d427b3b891083d99cd0`, a final manual adversarial verifier audit was
+performed before run-config generation and before any primary adaptive held-out access.
+
+The audit found no treatment contamination in the Phase-A adapter/control-plane path, but identified
+one provenance-verification gap. Phase-B verification proved that its three symbolic arms agreed with
+one another on a shared-control-plane identity, yet it did not independently re-bind that identity to
+the currently verified Phase-A seed artifact. Phase-C seed verification was bound to Phase-A/Phase-B
+seed manifests, but its individual arm summaries were not independently re-bound to the exact
+Phase-A shared identity and Phase-B arm-manifest identity.
+
+This was classified as a pre-access integrity-hardening issue rather than a scientific-design
+change.
+
+The correction now requires Phase-B verification to re-verify all five Phase-A seeds, reproduce the
+full all-seed Phase-A identity map, bind every arm and trajectory to the verified Phase-A seed
+identity, and verify the frozen symbolic-operator identity.
+
+Phase-C verification now binds every arm summary back to the verified Phase-A shared identity and its
+exact Phase-B arm manifest, checks that the copied maintenance summary equals the frozen Phase-B
+summary, and verifies each compressed prediction trace's row count against the frozen stream length
+in addition to its compressed-file and canonical uncompressed-content hashes.
+
+Repository-only adversarial tests now create:
+
+- an internally self-consistent Phase-B artifact carrying a forged shared identity; and
+- a Phase-C arm summary detached from the verified Phase-A identity.
+
+Both must fail closed.
+
+No primary run config existed at this point. No primary pre/post adaptive partition had been executed
+or scored. No detector, neural update, replay rule, symbolic operator, trigger clock, threshold,
+fusion setting, endpoint, or inferential unit changed.
+
+A new exact-terminal-head Research Contract pass is mandatory after this hardening before
+`cd-primary-prepare` may be run.

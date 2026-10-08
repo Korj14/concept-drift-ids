@@ -336,6 +336,33 @@ If symbolic validation requires delayed ground-truth labels, recovery time and u
 This timing rule must be frozen together with the adaptive protocol before untouched C/D outcomes.
 
 
+### 15.1 Frozen primary information-time contract — 8 October 2026
+
+`C_D_STREAM_TIME_CONTRACT.md` prospectively freezes the following timing rules before detector/updater selection:
+
+- the adaptive stream is the uninterrupted ordered `pre_drift -> post_drift` sequence with no state reset at the known synthetic boundary;
+- logical time is row index because the frozen scenario does not support true timestamp chronology;
+- primary verification latency is fixed at `L=5,000` rows;
+- a label for origin row `j` becomes adaptively visible only after the prediction at `j+L` has been committed;
+- prediction precedes label release even in the `L=0` oracle-latency sensitivity;
+- supervised prequential detector evidence must use the prediction stored when the origin row was first processed, not a later rescore under an adapted model;
+- updates may use only arrived rows and labels mature by the update clock;
+- a new state can affect prediction no earlier than the next logical row;
+- pending labels are not flushed at the synthetic boundary or at end of stream;
+- the offline evaluator may use all true labels only after prediction records are frozen and may not feed them back into adaptation.
+
+Prespecified latency robustness conditions are `L=0` and `L=10,000`. They do not create additional independent replicates.
+
+For timing-dependent outcomes:
+
+- drift-detection delay is measured to the confirmed event's causal availability clock, not retrospectively to the origin time of delayed evidence;
+- adaptation/recovery cannot be credited before the updated state is published;
+- predictions are assigned to longitudinal reporting windows by their origin-row index;
+- right-censored terminal labels remain unavailable to adaptive components even though the offline scorer can evaluate their frozen predictions.
+
+The 5,000-row latency is a controlled simulation assumption, not an estimate of real SOC label turnaround. The primary scenario remains unsuitable for real-time throughput/backlog claims because trustworthy event timestamps are absent.
+
+
 ## 16. Corrected System-B v2 evidence status
 
 The R0.v2 evaluation is a protocol-defect correction conducted after historical R0.v1 held-out outcomes were known. It is therefore not treated as a new untouched confirmatory experiment.

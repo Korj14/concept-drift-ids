@@ -228,7 +228,7 @@ def verify_implementation_ready(
         "system_a_manifest_sha256": system_a["manifest_sha256"],
         "system_a_checkpoint_sha256": dict(EXPECTED_SYSTEM_A_CHECKPOINT_SHA256),
         "system_b_v2_manifest_sha256": r0_manifest["manifest_sha256"],
-        "system_b_v2_text_hash_policy": "normalized_text_to_repository_lf_identity",
+        "system_b_v2_text_hash_policy": "utf8_eol_normalized_to_repository_lf_identity",
         "system_b_v2_active_rule_counts": r0_counts,
         "primary_control_plane_config_sha256": canonical_sha256(
             {

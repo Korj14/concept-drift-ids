@@ -2443,3 +2443,23 @@ fusion weights/thresholds, confirmatory endpoints or inferential unit.
 
 **Held-out status remains unchanged:** the primary run config has not yet been generated and no
 primary adaptive pre/post execution has occurred.
+
+
+### Stage 8 recovery reporting alignment before primary access — 9 October 2026
+
+A final comparison of the Phase-C recovery output against the frozen analysis protocol found a
+reporting-scale mismatch before any primary access. The generic recovery helper correctly identifies
+the first two-window-persistent recovery at an absolute stream clock, while the protocol additionally
+requires recovery time to be reported in logical rows from the controlled boundary.
+
+Phase C now preserves the absolute `recovery_clock` for audit and adds
+`recovery_rows_from_boundary = recovery_clock - boundary_index`. For right-censored trajectories,
+the same transformation yields the censored duration from boundary to stream end. The weighted
+three-window pre baseline, inequality direction, two-consecutive-window persistence requirement and
+right-censoring rule are unchanged.
+
+A repository-only regression test requires a recovery beginning at the first post window to report
+zero rows from the boundary.
+
+This is a prospective reporting-alignment correction only. No primary adaptive run config has yet
+been generated and no primary adaptive pre/post row has been processed.

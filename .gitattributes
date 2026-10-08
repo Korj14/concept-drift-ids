@@ -6,3 +6,9 @@ results/frozen/system_a_v1/*.json text eol=lf
 # The post-freeze count supplement is repository-canonical LF.
 results/frozen/system_a_v1_supplement_v1/*.csv text eol=lf
 results/frozen/system_a_v1_supplement_v1/*.json text eol=lf
+
+# R0.v2 rule JSONs are frozen as repository-canonical LF text.
+# Runtime verification is also EOL-normalized so historical Windows
+# autocrlf checkouts remain portable without changing the frozen artifact.
+data/rules/system_b_r0_v2/*.json text eol=lf
+data/manifests/system_b_v2.json text eol=lf

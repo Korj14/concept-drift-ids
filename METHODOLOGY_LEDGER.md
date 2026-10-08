@@ -2108,3 +2108,49 @@ control-register freeze-state rows.
 **Gate after this packet:** the prospective C/D design is complete. Adaptive implementation may
 begin only after this design branch is accepted into main and tagged `cd-design-freeze-v1`.
 Adaptive held-out execution remains prohibited until the later `cd-implementation-ready-v1` gate.
+
+
+### Stage 6 shared control-plane implementation tranche opened — 8 October 2026
+
+Stage 6 was created from accepted design-freeze milestone
+`cd-design-freeze-v1` / `6f677a2115a1f8d9cbe8e2a3f46d877a01d29f27`.
+
+No primary adaptive pre/post stream execution was authorized or performed in this tranche.
+
+The first implementation tranche added dataset-agnostic modules:
+
+- `cd_control_plane.py`: delayed-label queue, uniform mature-history reservoir,
+  fixed current/replay selection, checkpoint-pure ADWIN wrapper, deterministic neural
+  adaptation, state hashing, write-once checkpoint/JSON helpers, and causal verifiers;
+- `cd_evidence.py`: event envelopes, JSONL evidence, checkpoint lineage,
+  shared identity, run-manifest and file-hash verification;
+- `cd_runtime.py`: frozen environment/thread/determinism checks;
+- `cd_shared_runner.py`: shared trajectory state machine consuming only caller-supplied
+  ordered rows and a frozen anchor.
+
+The shared runner deliberately contains no scenario loader and no primary pre/post execution command.
+
+Its label-access surface was tightened during implementation: after prediction-time insertion into
+the delayed-label queue, the ordinary stream feature store retains features only. Stream labels used
+by replay/update logic are obtained from mature-label records rather than from the caller's
+arrival-time row object.
+
+The toy/generated test suite now exercises prediction-before-label-release, terminal censoring,
+deterministic reservoir/replay selection, current/replay disjointness, checkpoint-pure detector
+epochs, ADWIN configuration, information-time failures, shared-identity failures, synthetic-boundary
+field rejection, deterministic child-state reproduction, write-once artifacts, checkpoint
+lineage, manifest corruption detection, a full toy detector->neural-publication trajectory,
+self-verification/tamper rejection, frozen runtime variables, and a static scenario-loader firewall.
+
+Research Contract CI was extended to execute the Stage-6 tests and require
+`STAGE6_CONTROL_PLANE_IMPLEMENTATION.md`.
+
+Draft PR #4 was opened as the Stage-6 review/CI surface. It remains draft.
+
+This implementation does not change any frozen Stage-5 timing, detector, replay, optimizer,
+threshold, endpoint, or inferential choice. Small test-only `ControlPlaneConfig` overrides exist
+solely to keep toy unit tests fast; the primary defaults remain the frozen values.
+
+**Gate remains locked:** Stage 6 must pass exact-head CI and final implementation audit before
+acceptance into main. Primary adaptive pre/post execution remains prohibited through Stage 7 and
+until `cd-implementation-ready-v1`.

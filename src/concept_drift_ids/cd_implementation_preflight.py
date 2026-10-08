@@ -237,3 +237,13 @@ def verify_implementation_ready(
         ),
         "primary_pre_post_partitions_loaded": False,
     }
+
+
+
+def main() -> None:
+    result = verify_implementation_ready()
+    print(json.dumps(result, sort_keys=True, indent=2))
+
+
+if __name__ == "__main__":
+    main()

@@ -406,6 +406,59 @@ Prespecified robustness conditions are:
 None may replace the primary ADWIN hard-error condition because its held-out result is more favorable.
 
 
+### 15.3 Frozen shared neural-adaptation analysis contract — 8 October 2026
+
+`C_D_NEURAL_ADAPTATION_PROTOCOL.md` freezes the primary adaptive-neural comparator before C/D
+adaptive held-out execution.
+
+The primary neural response to a confirmed event is fixed-budget replay fine-tuning:
+
+- current evidence = the most recent 10,000 mature labeled observations whose original prediction
+  was produced by the parent checkpoint;
+- if fewer than 10,000 are available at confirmation, the response remains pending until the fixed
+  budget matures; the window is not opportunistically shrunk;
+- terminal shortfall is reported as a right-censored response rather than forcing a final update;
+- replay evidence = 10,000 rows per transaction from a dual memory: 5,000 immutable
+  training-anchor rows plus 5,000 eligible mature-history-reservoir rows, with current-window IDs
+  excluded;
+- update dataset = 20,000 rows total;
+- fixed original System-A positive class weight = 4.138247558496975;
+- Adam learning rate 1e-4, weight decay 1e-5, batch size 1024, exactly 5 epochs;
+- no adaptive early stopping, no learning-rate scheduler and no performance-based publication gate;
+- one child checkpoint is generated once in the shared control plane and referenced by both C and D.
+
+A technically valid but performance-degrading neural update remains part of the result. It is not
+discarded or rerun because its direction is inconvenient.
+
+Replay-memory admission is treatment-independent and not conditioned on attack class, neural error,
+symbolic state, detector proximity or known-boundary proximity.
+
+Catastrophic-forgetting analysis is prospectively separated from adaptation decisions:
+
+1. the full frozen development partition is rescored after each published checkpoint as a historical
+   retention probe; those scores cannot affect update stopping/publication;
+2. the frozen pre-drift stream partition may be retrospectively rescored per checkpoint only after
+   the adaptive trajectory is fixed, for offline forgetting analysis; those scores never feed any
+   adaptive component.
+
+For any larger-is-better retention metric M, report:
+
+- retention delta: M_k - M_0;
+- descriptive forgetting: max_{h<=k}(M_h) - M_k.
+
+Checkpoint/event observations are longitudinally dependent within seed and are not independent
+replicates.
+
+A no-replay fine-tuning ablation is prespecified using the identical current-evidence window and
+optimizer/update budget. It is secondary evidence about replay/forgetting and cannot replace the
+primary replay trajectory because its held-out result is favorable.
+
+Neural transaction cost reporting will include evidence-waiting rows, update-row counts,
+minibatch count, CPU training time, memory where feasible, checkpoint size/serialization and
+detector-disarmed logical duration. Compute time is not converted into production backlog because
+the scenario lacks trustworthy arrival timestamps.
+
+
 ## 16. Corrected System-B v2 evidence status
 
 The R0.v2 evaluation is a protocol-defect correction conducted after historical R0.v1 held-out outcomes were known. It is therefore not treated as a new untouched confirmatory experiment.

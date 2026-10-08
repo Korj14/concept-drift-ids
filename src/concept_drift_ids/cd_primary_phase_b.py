@@ -388,17 +388,69 @@ def load_frozen_arm_trajectory(
     )
     initial = rule_base_state_from_dict(initial_payload)
     final = rule_base_state_from_dict(final_payload)
+    if initial.seed != seed or final.seed != seed:
+        raise ValueError("Symbolic arm state seed mismatch.")
+    if manifest["seed"] != seed or manifest["arm"] != arm:
+        raise ValueError("Symbolic arm manifest identity mismatch.")
+    if (
+        manifest["initial_rule_base_version_id"]
+        != initial.rule_base_version_id
+        or manifest["initial_rule_base_sha256"]
+        != initial.canonical_sha256
+    ):
+        raise ValueError("Symbolic arm initial-state identity mismatch.")
+    if (
+        manifest["final_rule_base_version_id"]
+        != final.rule_base_version_id
+        or manifest["final_rule_base_sha256"]
+        != final.canonical_sha256
+        or manifest["final_history_sha256"] != final.history_sha256
+    ):
+        raise ValueError("Symbolic arm final-state identity mismatch.")
 
     publications: list[tuple[int, RuleBaseState]] = []
+    previous_state = initial
+    previous_effective = -1
     for item in manifest["publications"]:
         descriptor = manifest["files"][item["file_key"]]
         payload = _verify_json_payload(arm_dir / descriptor["path"])
         state = rule_base_state_from_dict(payload["state"])
-        if int(payload["effective_index"]) != int(item["effective_index"]):
+        effective_index = int(payload["effective_index"])
+        if effective_index != int(item["effective_index"]):
             raise ValueError("Symbolic publication effective-index mismatch.")
+        if effective_index <= previous_effective:
+            raise ValueError("Symbolic publication clocks are not increasing.")
+        if state.rule_base_version_id != item["rule_base_version_id"]:
+            raise ValueError("Symbolic publication version ID mismatch.")
         if state.canonical_sha256 != item["canonical_sha256"]:
             raise ValueError("Symbolic publication state hash mismatch.")
-        publications.append((int(item["effective_index"]), state))
+        if state.history_sha256 != item["history_sha256"]:
+            raise ValueError("Symbolic publication history hash mismatch.")
+        if state.parent_version_id != previous_state.rule_base_version_id:
+            raise ValueError("Symbolic publication parent version mismatch.")
+        if state.parent_version_sha256 != previous_state.canonical_sha256:
+            raise ValueError("Symbolic publication parent hash mismatch.")
+        if state.version_number != previous_state.version_number + 1:
+            raise ValueError("Symbolic publication version sequence mismatch.")
+        publications.append((effective_index, state))
+        previous_state = state
+        previous_effective = effective_index
+
+    if publications:
+        last_published = publications[-1][1]
+        if (
+            final.rule_base_version_id
+            != last_published.rule_base_version_id
+            or final.canonical_sha256
+            != last_published.canonical_sha256
+        ):
+            raise ValueError(
+                "Final inference state differs from last symbolic publication."
+            )
+    elif final.canonical_sha256 != initial.canonical_sha256:
+        raise ValueError(
+            "Final inference state changed without a symbolic publication."
+        )
 
     return SymbolicArmTrajectory(
         seed=seed,
@@ -432,6 +484,19 @@ def verify_phase_b_seed(seed: int) -> dict[str, Any]:
         "manifest_sha256"
     ]:
         raise ValueError("Phase-B references the wrong primary config.")
+
+    for arm in ARM_NAMES:
+        descriptor = manifest["arms"].get(arm)
+        if descriptor is None:
+            raise ValueError(f"Phase-B manifest lacks arm descriptor: {arm}")
+        arm_manifest_path = phase_b_dir / str(descriptor["path"])
+        if sha256_file(arm_manifest_path) != str(descriptor["sha256"]):
+            raise ValueError("Phase-B arm-manifest file hash mismatch.")
+        arm_manifest = _verify_json_payload(arm_manifest_path)
+        if arm_manifest.get("manifest_sha256") != descriptor[
+            "manifest_sha256"
+        ]:
+            raise ValueError("Phase-B arm-manifest identity mismatch.")
 
     trajectories = tuple(
         load_frozen_arm_trajectory(seed, arm) for arm in ARM_NAMES

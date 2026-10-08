@@ -85,7 +85,7 @@ def write_json_new(path: Path, payload: Mapping[str, Any]) -> str:
         raise FileExistsError(f"Refusing to overwrite existing artifact: {path}")
     path.parent.mkdir(parents=True, exist_ok=True)
     body = dict(payload)
-    body.setdefault("artifact_sha256", canonical_sha256(body))
+    body.setdefault("payload_sha256", canonical_sha256(body))
     path.write_text(
         json.dumps(body, sort_keys=True, indent=2, allow_nan=False) + "\n",
         encoding="utf-8",

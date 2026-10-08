@@ -119,3 +119,26 @@ Material external evidence:
 Consequence:
 
 The primary System-B evidence remains useful as a controlled proving-ground result, but Q1 claims require an explicit reliability/benchmark-robustness layer and external replication. No new literature finding justifies broadening the novelty claim.
+
+
+## 8 October 2026 — C/D information-time and delayed-label methodology refresh
+
+A targeted pre-implementation refresh examined whether immediate-label stream evaluation would meet the current methodological bar and whether delayed-label interpretable NIDS work alters the project's novelty boundary.
+
+Material items:
+
+- Joanna Komorniczak, Paweł Ksieniewicz, and Paweł Zyblewski, *Structuring the processing frameworks for data stream evaluation and application*, Pattern Recognition 172 (2026), 112516, DOI 10.1016/j.patcog.2025.112516. The paper explicitly treats label delay and processing-framework choice as determinants of stream-evaluation validity and criticizes unrestricted immediate access to labels for monitoring and adaptation.
+- G. Cassales, Heitor Murilo Gomes, C. Prazeres, Tatiane N. Rios, Albert Bifet, and R. Rios, *Concept drift detection in delayed and partially labeled data streams: An experimental survey*, Digital Signal Processing 182 (2026), 106325, DOI 10.1016/j.dsp.2026.106325. This confirms that detector behavior under delayed/partial labels is now an explicit evaluation problem rather than a peripheral implementation issue.
+- Sara Pederzoli et al., *NOCTOWL: Adaptive Tree-Based Model for Network Anomaly Detection Under Delayed and Sampled Label Availability*, IEEE Access 13 (2025), 197899-197911, DOI 10.1109/ACCESS.2025.3633419. NOCTOWL separates detection from delayed/selective updates and directly evaluates multiple supervision delays. This occupies broad claims around delayed-label adaptive/interpretable NIDS.
+
+Project consequence:
+
+- immediate ground-truth availability is not acceptable as an unstated primary assumption;
+- the primary C/D design now uses a prospectively frozen row-index verification latency because the frozen CICIDS2017 scenario lacks trustworthy timestamps;
+- the exact 5,000-row latency is **not** claimed to be empirically representative of SOC turnaround; it is a controlled design assumption with prespecified 0-row and 10,000-row sensitivities;
+- offline scoring labels are separated from adaptively available labels;
+- a supervised detector, if chosen, must consume stored prequential predictions only when their labels mature.
+
+Novelty consequence:
+
+Delayed-label adaptive NIDS and interpretable online NIDS are occupied territory. This refresh does not collapse the governing contribution, which remains the controlled flow-level question of whether an endogenous statistical drift event can gate a validated/versioned symbolic lifecycle whose incremental value is isolated from a matched adaptive neural control.

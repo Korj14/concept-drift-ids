@@ -137,6 +137,7 @@ class RuleBaseState:
     revisions: tuple[RuleRevision, ...]
     active_revision_ids: tuple[str, ...]
     canonical_sha256: str
+    history_sha256: str
 
     def latest_by_semantic(self) -> dict[str, RuleRevision]:
         latest: dict[str, RuleRevision] = {}
@@ -158,6 +159,7 @@ class RuleBaseState:
             "active_revision_ids": list(self.active_revision_ids),
             "revisions": [revision.to_dict() for revision in self.revisions],
             "canonical_sha256": self.canonical_sha256,
+            "history_sha256": self.history_sha256,
         }
 
 
@@ -180,6 +182,49 @@ def _condition_payload(conditions: Sequence[Condition]) -> list[dict[str, Any]]:
         }
         for condition in conditions
     ]
+
+
+def _active_payload_hash(
+    *,
+    seed: int,
+    rule_base_version_id: str,
+    active_revisions: Sequence[RuleRevision],
+) -> str:
+    payload = {
+        "seed": int(seed),
+        "rule_base_version_id": str(rule_base_version_id),
+        "active_rules": [
+            {
+                "semantic_rule_id": revision.semantic_rule_id,
+                "lineage_id": revision.lineage_id,
+                "antecedent": _condition_payload(revision.conditions),
+                "consequent": int(revision.consequent),
+                "confidence": float(revision.confidence),
+                "relations": list(revision.relations),
+            }
+            for revision in sorted(
+                active_revisions,
+                key=lambda item: item.semantic_rule_id,
+            )
+        ],
+    }
+    return canonical_sha256(payload)
+
+
+def _history_hash(revisions: Sequence[RuleRevision]) -> str:
+    return canonical_sha256(
+        [
+            revision.to_dict()
+            for revision in sorted(
+                revisions,
+                key=lambda item: (
+                    item.valid_from,
+                    item.semantic_rule_id,
+                    item.rule_revision_id,
+                ),
+            )
+        ]
+    )
 
 
 def semantic_rule_id(
@@ -444,15 +489,7 @@ def migrate_r0_v2_rules(
             )
         )
     version_id = f"d-s{seed}-r0v2"
-    payload = {
-        "seed": seed,
-        "rule_base_version_id": version_id,
-        "version_number": 0,
-        "parent_version_id": None,
-        "parent_version_sha256": None,
-        "active_revision_ids": [item.rule_revision_id for item in revisions],
-        "revisions": [item.to_dict() for item in revisions],
-    }
+    active = tuple(revisions)
     return RuleBaseState(
         seed=seed,
         rule_base_version_id=version_id,
@@ -461,7 +498,12 @@ def migrate_r0_v2_rules(
         parent_version_sha256=None,
         revisions=tuple(revisions),
         active_revision_ids=tuple(item.rule_revision_id for item in revisions),
-        canonical_sha256=canonical_sha256(payload),
+        canonical_sha256=_active_payload_hash(
+            seed=seed,
+            rule_base_version_id=version_id,
+            active_revisions=active,
+        ),
+        history_sha256=_history_hash(revisions),
     )
 
 
@@ -617,7 +659,10 @@ def apply_lifecycle_maintenance(
 
     target_version_number = state.version_number + 1
     target_version_id = f"d-s{state.seed}-v{target_version_number:04d}"
-    all_revisions = list(state.revisions)
+    history_by_id = {
+        revision.rule_revision_id: revision
+        for revision in state.revisions
+    }
     latest = state.latest_by_semantic()
     current_active_ids = set(state.active_revision_ids)
     current_active = {
@@ -706,8 +751,12 @@ def apply_lifecycle_maintenance(
             parent_lineage_ids=(revision.lineage_id,),
         )
         ordinal += 1
+        history_by_id[revision.rule_revision_id] = replace(
+            revision,
+            valid_to=publication_effective_index,
+        )
         new_latest[revision.semantic_rule_id] = next_revision
-        all_revisions.append(next_revision)
+        history_by_id[next_revision.rule_revision_id] = next_revision
         decisions.append(
             {
                 "type": transition,
@@ -796,8 +845,12 @@ def apply_lifecycle_maintenance(
                 parent_lineage_ids=(existing.lineage_id,),
             )
             ordinal += 1
+            history_by_id[existing.rule_revision_id] = replace(
+                existing,
+                valid_to=publication_effective_index,
+            )
             new_latest[semantic] = revision
-            all_revisions.append(revision)
+            history_by_id[revision.rule_revision_id] = revision
             masks[semantic] = candidate_mask
             decisions.append(
                 {
@@ -875,7 +928,7 @@ def apply_lifecycle_maintenance(
                 valid_to=publication_effective_index,
             )
             new_latest[incumbent.semantic_rule_id] = merged
-            all_revisions.append(merged)
+            history_by_id[incumbent.rule_revision_id] = merged
             prototype = replace(
                 prototype,
                 lifecycle_transition="merge_consolidation",
@@ -933,7 +986,7 @@ def apply_lifecycle_maintenance(
                     valid_to=publication_effective_index,
                 )
                 new_latest[incumbent.semantic_rule_id] = predecessor
-                all_revisions.append(predecessor)
+                history_by_id[incumbent.rule_revision_id] = predecessor
                 prototype = replace(
                     prototype,
                     lineage_id=incumbent.lineage_id,
@@ -965,7 +1018,7 @@ def apply_lifecycle_maintenance(
 
         ordinal += 1
         new_latest[semantic] = prototype
-        all_revisions.append(prototype)
+        history_by_id[prototype.rule_revision_id] = prototype
         masks[semantic] = candidate_mask
 
     changed = True
@@ -1000,12 +1053,14 @@ def apply_lifecycle_maintenance(
                         continue
                     winner = _same_class_winner(left, right)
                     loser = right if winner.semantic_rule_id == left.semantic_rule_id else left
-                    new_latest[loser.semantic_rule_id] = replace(
+                    updated_loser = replace(
                         loser,
                         lifecycle_state="merged",
                         lifecycle_transition="merge_consolidation",
                         valid_to=publication_effective_index,
                     )
+                    new_latest[loser.semantic_rule_id] = updated_loser
+                    history_by_id[loser.rule_revision_id] = updated_loser
                     decisions.append(
                         {
                             "type": "existing_same_class_consolidation",
@@ -1034,14 +1089,18 @@ def apply_lifecycle_maintenance(
                         "other": left.semantic_rule_id,
                         **overlap,
                     }
-                    new_latest[left.semantic_rule_id] = replace(
+                    updated_left = replace(
                         left,
                         relations=tuple((*left.relations, left_relation)),
                     )
-                    new_latest[right.semantic_rule_id] = replace(
+                    updated_right = replace(
                         right,
                         relations=tuple((*right.relations, right_relation)),
                     )
+                    new_latest[left.semantic_rule_id] = updated_left
+                    new_latest[right.semantic_rule_id] = updated_right
+                    history_by_id[left.rule_revision_id] = updated_left
+                    history_by_id[right.rule_revision_id] = updated_right
                     decisions.append(
                         {
                             "type": "unresolved_cross_class_conflict",
@@ -1051,13 +1110,15 @@ def apply_lifecycle_maintenance(
                         }
                     )
                     continue
-                new_latest[loser.semantic_rule_id] = replace(
+                updated_loser = replace(
                     loser,
                     lifecycle_state="demoted",
                     lifecycle_transition="cross_class_dominated",
                     failure_streak=max(1, loser.failure_streak),
                     valid_to=publication_effective_index,
                 )
+                new_latest[loser.semantic_rule_id] = updated_loser
+                history_by_id[loser.rule_revision_id] = updated_loser
                 decisions.append(
                     {
                         "type": "cross_class_dominated",
@@ -1080,45 +1141,54 @@ def apply_lifecycle_maintenance(
         key=lambda item: item.semantic_rule_id,
     )
 
-    previous_active = state.active_revisions()
-    previous_signature = canonical_sha256(
-        [
-            {
-                "semantic_rule_id": item.semantic_rule_id,
-                "confidence": item.confidence,
-                "relations": list(item.relations),
-            }
-            for item in sorted(
-                previous_active,
-                key=lambda rule: rule.semantic_rule_id,
+    previous_active_hash = _active_payload_hash(
+        seed=state.seed,
+        rule_base_version_id=state.rule_base_version_id,
+        active_revisions=state.active_revisions(),
+    )
+    proposed_active_hash = _active_payload_hash(
+        seed=state.seed,
+        rule_base_version_id=state.rule_base_version_id,
+        active_revisions=final_active,
+    )
+    published = previous_active_hash != proposed_active_hash
+
+    effective_version_id = (
+        target_version_id if published else state.rule_base_version_id
+    )
+    effective_version_number = (
+        target_version_number if published else state.version_number
+    )
+
+    created_ids = {
+        revision.rule_revision_id
+        for revision in new_latest.values()
+        if revision.rule_revision_id not in {
+            old.rule_revision_id for old in state.revisions
+        }
+    }
+    for revision_id in created_ids:
+        current = history_by_id[revision_id]
+        if current.rule_base_version_id != effective_version_id:
+            updated = replace(
+                current,
+                rule_base_version_id=effective_version_id,
             )
-        ]
-    )
-    next_signature = canonical_sha256(
-        [
-            {
-                "semantic_rule_id": item.semantic_rule_id,
-                "confidence": item.confidence,
-                "relations": list(item.relations),
-            }
-            for item in final_active
-        ]
-    )
-    published = previous_signature != next_signature
+            history_by_id[revision_id] = updated
+            if new_latest.get(updated.semantic_rule_id, None) is current:
+                new_latest[updated.semantic_rule_id] = updated
 
-    if not published:
-        return LifecycleResult(
-            state=state,
-            published=False,
-            maintenance_status="no_rule_base_change",
-            decisions=tuple(decisions),
-            staleness_snapshot=tuple(staleness),
-            candidate_evidence=tuple(candidate_evidence),
-        )
-
+    final_active = sorted(
+        (
+            revision
+            for revision in new_latest.values()
+            if revision.lifecycle_state == "active"
+        ),
+        key=lambda item: item.semantic_rule_id,
+    )
     normalized_revisions = tuple(
         sorted(
-            all_revisions,
+            history_by_id.values(),
             key=lambda item: (
                 item.valid_from,
                 item.semantic_rule_id,
@@ -1126,33 +1196,34 @@ def apply_lifecycle_maintenance(
             ),
         )
     )
-    payload = {
-        "seed": state.seed,
-        "rule_base_version_id": target_version_id,
-        "version_number": target_version_number,
-        "parent_version_id": state.rule_base_version_id,
-        "parent_version_sha256": state.canonical_sha256,
-        "active_revision_ids": [
-            item.rule_revision_id for item in final_active
-        ],
-        "revisions": [item.to_dict() for item in normalized_revisions],
-    }
+
     next_state = RuleBaseState(
         seed=state.seed,
-        rule_base_version_id=target_version_id,
-        version_number=target_version_number,
-        parent_version_id=state.rule_base_version_id,
-        parent_version_sha256=state.canonical_sha256,
+        rule_base_version_id=effective_version_id,
+        version_number=effective_version_number,
+        parent_version_id=(
+            state.rule_base_version_id if published else state.parent_version_id
+        ),
+        parent_version_sha256=(
+            state.canonical_sha256 if published else state.parent_version_sha256
+        ),
         revisions=normalized_revisions,
         active_revision_ids=tuple(
             item.rule_revision_id for item in final_active
         ),
-        canonical_sha256=canonical_sha256(payload),
+        canonical_sha256=_active_payload_hash(
+            seed=state.seed,
+            rule_base_version_id=effective_version_id,
+            active_revisions=final_active,
+        ),
+        history_sha256=_history_hash(normalized_revisions),
     )
     return LifecycleResult(
         state=next_state,
-        published=True,
-        maintenance_status="published",
+        published=published,
+        maintenance_status=(
+            "published" if published else "no_rule_base_change"
+        ),
         decisions=tuple(decisions),
         staleness_snapshot=tuple(staleness),
         candidate_evidence=tuple(candidate_evidence),
@@ -1185,14 +1256,13 @@ def verify_lifecycle_state(state: RuleBaseState) -> None:
         if revision.valid_from < 0:
             raise ValueError("Active rule has invalid valid-from clock.")
 
-    expected_payload = {
-        "seed": state.seed,
-        "rule_base_version_id": state.rule_base_version_id,
-        "version_number": state.version_number,
-        "parent_version_id": state.parent_version_id,
-        "parent_version_sha256": state.parent_version_sha256,
-        "active_revision_ids": list(state.active_revision_ids),
-        "revisions": [revision.to_dict() for revision in state.revisions],
-    }
-    if canonical_sha256(expected_payload) != state.canonical_sha256:
+    active = state.active_revisions()
+    expected_active_hash = _active_payload_hash(
+        seed=state.seed,
+        rule_base_version_id=state.rule_base_version_id,
+        active_revisions=active,
+    )
+    if expected_active_hash != state.canonical_sha256:
         raise ValueError("Rule-base canonical hash mismatch.")
+    if _history_hash(state.revisions) != state.history_sha256:
+        raise ValueError("Rule lifecycle-history hash mismatch.")

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+import time
 from typing import Any, Callable, Mapping, Sequence
 
 import numpy as np
@@ -61,6 +62,11 @@ class SymbolicMaintenanceRecord:
     result_rule_base_sha256: str
     history_sha256: str
     lifecycle: SymbolicTransactionResult | None
+    candidate_count: int = 0
+    shap_seconds: float = 0.0
+    surrogate_seconds: float = 0.0
+    lifecycle_seconds: float = 0.0
+    validation_wait_rows: int | None = None
 
 
 @dataclass(frozen=True)
@@ -227,7 +233,7 @@ def _generation_result(
     opportunity_id: int,
     raw_affine: Mapping[str, tuple[float, float]] | None,
     operator_config: SymbolicOperatorConfig,
-) -> tuple[tuple[Any, ...], str, str]:
+) -> tuple[tuple[Any, ...], str, str, Mapping[str, float]]:
     X, y = _generation_arrays(row_ids, lookup)
     if any(int(np.sum(y == value)) < 128 for value in (0, 1)):
         evidence_id = canonical_sha256(
@@ -239,7 +245,12 @@ def _generation_result(
                 "operator_config_sha256": operator_config.sha256(),
             }
         )
-        return (), evidence_id, "candidate_generation_insufficient_class_evidence"
+        return (
+            (),
+            evidence_id,
+            "candidate_generation_insufficient_class_evidence",
+            {"shap": 0.0, "surrogate": 0.0},
+        )
 
     probabilities = _predict_probabilities(model, X)
     result = generate_symbolic_candidates(
@@ -259,6 +270,7 @@ def _generation_result(
         tuple(result.candidates),
         result.generation_evidence_id,
         "candidate_generation_complete",
+        dict(result.timing_seconds),
     )
 
 
@@ -301,7 +313,12 @@ def _complete_one(
 ) -> tuple[RuleBaseState, SymbolicMaintenanceRecord, int]:
     parent = state
     model = model_resolver(checkpoint_sha256)
-    candidates, generation_evidence_id, generation_status = _generation_result(
+    (
+        candidates,
+        generation_evidence_id,
+        generation_status,
+        generation_timing,
+    ) = _generation_result(
         model=model,
         row_ids=generation_row_ids,
         lookup=lookup,
@@ -368,6 +385,7 @@ def _complete_one(
             "status": validation.status,
         }
     )
+    lifecycle_started = time.perf_counter_ns()
     completed = complete_symbolic_transaction(
         state,
         transaction,
@@ -385,6 +403,9 @@ def _complete_one(
         ),
         operator_config=operator_config,
     )
+    lifecycle_seconds = (
+        time.perf_counter_ns() - lifecycle_started
+    ) / 1_000_000_000.0
 
     next_state = (
         completed.lifecycle.state
@@ -428,6 +449,17 @@ def _complete_one(
         result_rule_base_sha256=next_state.canonical_sha256,
         history_sha256=next_state.history_sha256,
         lifecycle=completed,
+        candidate_count=len(candidates),
+        shap_seconds=float(generation_timing.get("shap", 0.0)),
+        surrogate_seconds=float(
+            generation_timing.get("surrogate", 0.0)
+        ),
+        lifecycle_seconds=float(lifecycle_seconds),
+        validation_wait_rows=(
+            int(completion_clock) - int(checkpoint_effective_index)
+            if completion_clock is not None
+            else None
+        ),
     )
     pending_until = (
         int(completion_clock)

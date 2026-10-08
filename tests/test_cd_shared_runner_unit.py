@@ -17,6 +17,7 @@ from concept_drift_ids.cd_shared_runner import (
     SharedControlPlaneRunner,
     StreamRow,
     freeze_shared_trajectory,
+    verify_primary_control_plane_configuration,
     verify_shared_trajectory,
 )
 from concept_drift_ids.neural import BinaryMLP
@@ -301,3 +302,26 @@ def test_shared_runner_has_no_primary_scenario_loader_surface() -> None:
     assert "load_partition" not in text
     assert "pre_drift" not in text
     assert "post_drift" not in text
+
+
+
+def test_primary_configuration_verifier_rejects_toy_overrides() -> None:
+    from concept_drift_ids.cd_control_plane import (
+        PRIMARY_ANCHOR_CAPACITY,
+        SYSTEM_A_MONITOR_THRESHOLDS,
+    )
+
+    verify_primary_control_plane_configuration(
+        seed=0,
+        monitor_threshold=SYSTEM_A_MONITOR_THRESHOLDS[0],
+        anchor_row_count=PRIMARY_ANCHOR_CAPACITY,
+        config=ControlPlaneConfig(),
+    )
+
+    with pytest.raises(ValueError, match="frozen defaults"):
+        verify_primary_control_plane_configuration(
+            seed=0,
+            monitor_threshold=SYSTEM_A_MONITOR_THRESHOLDS[0],
+            anchor_row_count=PRIMARY_ANCHOR_CAPACITY,
+            config=_config(),
+        )

@@ -108,6 +108,7 @@ def test_primary_config_build_is_no_data_and_freezes_complete_surface(
         "scripts/run_primary.ps1",
         ".gitattributes",
         ".gitignore",
+        ".github/workflows/stage3-unit.yml",
     ):
         assert required in payload["scientific_source_hashes"]
 
@@ -364,3 +365,12 @@ def test_exact_config_commit_gate_rejects_later_head(
         primary_config._require_exact_config_commit(
             project_root=tmp_path
         )
+
+
+
+def test_committed_primary_config_verifies_exact_head_when_present() -> None:
+    if not primary_config.PRIMARY_CONFIG_PATH.is_file():
+        pytest.skip("Primary run config has not been generated yet.")
+    config = primary_config.verify_primary_run_config_for_execution()
+    assert config["status"] == "frozen_before_primary_adaptive_access"
+    assert config["preparation"]["heldout_access_occurred"] is False

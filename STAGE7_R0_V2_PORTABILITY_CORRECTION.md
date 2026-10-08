@@ -41,14 +41,13 @@ The accepted canonical JSON artifact hash had not changed. The R0 rules themselv
 
 ## Correction
 
-The loader now compares the manifest's accepted repository-canonical LF hash against
-`sha256_normalized_text(path)`, which normalizes text line endings before hashing.
+The loader now compares the manifest's accepted repository-canonical LF hash against a dedicated UTF-8 verifier that normalizes only CRLF/CR line endings to LF before hashing.
 
 The independent canonical JSON artifact-hash verification remains unchanged and is still required.
 
 Therefore the corrected verification requires both:
 
-1. exact accepted textual content modulo platform EOL materialization; and
+1. exact accepted UTF-8 textual content modulo platform EOL materialization; and
 2. exact accepted canonical JSON semantic identity.
 
 No rule, confidence, consequent, antecedent, lifecycle state, fusion setting, threshold, dataset,

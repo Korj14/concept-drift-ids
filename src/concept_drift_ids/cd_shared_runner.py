@@ -179,7 +179,7 @@ class SharedControlPlaneRunner:
             seed=ONLINE_RESERVOIR_SEED,
         )
 
-        stream_by_id: dict[str, StreamRow] = {}
+        stream_features_by_id: dict[str, np.ndarray] = {}
         mature_history: list[MatureLabelRecord] = []
         predictions: list[dict[str, Any]] = []
         label_schedule: list[dict[str, Any]] = []
@@ -205,9 +205,13 @@ class SharedControlPlaneRunner:
         for logical_clock, row in enumerate(rows):
             if row.label not in (0, 1):
                 raise ValueError("Stream labels must be binary.")
-            stream_by_id[row.row_id] = row
+            stream_features_by_id[row.row_id] = np.asarray(
+                row.features, dtype=np.float32
+            ).copy()
 
-            probability = self._predict_one(active_model, row.features)
+            probability = self._predict_one(
+                active_model, stream_features_by_id[row.row_id]
+            )
             prediction = queue.commit_prediction(
                 row_id=row.row_id,
                 origin_index=logical_clock,
@@ -363,17 +367,19 @@ class SharedControlPlaneRunner:
                     return np.asarray(anchor.features, dtype=np.float32), int(
                         anchor.label
                     )
-                stream = stream_by_id[row_id]
+                features = stream_features_by_id[row_id]
                 record = next(
                     item for item in mature_history if item.row_id == row_id
                 )
-                return np.asarray(stream.features, dtype=np.float32), int(
+                return np.asarray(features, dtype=np.float32), int(
                     record.true_label
                 )
 
             current_X = np.stack(
                 [
-                    np.asarray(stream_by_id[record.row_id].features, dtype=np.float32)
+                    np.asarray(
+                        stream_features_by_id[record.row_id], dtype=np.float32
+                    )
                     for record in current
                 ]
             )

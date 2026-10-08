@@ -1,11 +1,11 @@
 # Statistical Analysis Plan
 
-**Version:** 0.1 — prospective framework  
+**Version:** 1.0 — frozen prospective C/D analysis plan  
 **Authority:** `MAIN - Concept_Drift_NIDS_Research_Gap_Doctrine.docx` and `Reconciled_Pre-Stage_3_and_Stage_3_Implementation_Plan.docx`.
 
-This plan prevents analysis choices from being selected after seeing the outcomes they are intended to judge. It is deliberately created before Systems B/C/D are evaluated. Items explicitly marked **TBD BEFORE C/D** are unresolved design decisions, not permission to decide them after untouched results are known.
+This plan prevents analysis choices from being selected after seeing the outcomes they are intended to judge. It was created prospectively and is now frozen for the primary C/D experiment before any adaptive C/D held-out execution.
 
-Untouched C/D confirmatory evaluation is prohibited until all confirmatory items in this document have been frozen and the version/hash has been recorded in the methodology ledger.
+Adaptive C/D held-out evaluation remains prohibited until the separately frozen implementation-ready gate is satisfied. Any later change to an outcome-sensitive analysis choice requires a new version, preserved prior plan, and explicit disclosure of whether adaptive held-out outcomes had already been inspected.
 
 ## 1. Research questions and confirmatory contrasts
 
@@ -86,7 +86,7 @@ Window-level observations are used to estimate prespecified trajectory quantitie
 - rule-activation/staleness trajectory;
 - update/churn trajectory.
 
-If window-level inferential modelling is used, its dependence structure must be explicitly represented through a prespecified blocked, clustered, mixed-effects, GEE, or equivalent longitudinal method. The exact method is **TBD BEFORE C/D** and must be frozen before untouched adaptive outcomes.
+There is no confirmatory window-level mixed-effects/GEE/clustered model in the primary scenario. Reporting windows remain longitudinal mechanism/descriptive units only. Confirmatory treatment effects are computed once per seed from the prespecified whole-post-regime endpoints. Any later longitudinal inferential model is exploratory unless separately versioned prospectively for a new scenario.
 
 ### Multiple scenarios/datasets
 
@@ -150,15 +150,17 @@ Accuracy alone is never a success criterion.
 
 ### Confirmatory endpoint set
 
-**TBD BEFORE C/D.**
+Exactly three endpoints form the primary confirmatory family.
 
-Before untouched C/D evaluation, select a small confirmatory set that directly represents:
+1. **E1 — post-regime MCC, D-drift minus C.** MCC is computed over all 69,270 frozen post-drift rows under the fixed primary fusion/threshold contract.
+2. **E2 — post-regime macro correct symbolic coverage (MCSC), D-drift minus C.** For class c, correct symbolic coverage is the proportion of true class-c rows receiving a resolved correct symbolic prediction; uncovered, conflict-abstained, and symbolically wrong rows contribute zero. MCSC is the unweighted mean across benign and attack classes.
+3. **E3 — post-regime MCSC, D-drift minus D-periodic.** This is the primary trigger-policy explanation-utility contrast.
 
-1. predictive/adaptation performance;
-2. longitudinal explanation validity;
-3. trigger/update efficiency.
+The whole post-regime domain is used without removing rows before adaptation/publication. This is an intention-to-treat-style adaptive trajectory estimand: detector delay, waiting, no-ops, censored maintenance, and late publication remain part of the treatment effect.
 
-All remaining metrics will be secondary or descriptive. The selection must be justified from the research questions and development/design evidence, not from C/D test outcomes.
+All component explanation metrics remain mandatory so MCSC cannot hide whether a change came from benign versus attack coverage/correctness or conflict/abstention.
+
+Trigger cost/efficiency quantities are mandatory secondary evidence rather than being hidden inside a confirmatory composite.
 
 ## 4. Effect definitions
 
@@ -174,7 +176,7 @@ For pre/post quantities:
 
 `drift delta = post - pre`
 
-For recovery trajectories, exact baseline and recovery definitions are **TBD BEFORE longitudinal adaptive evaluation** and must be tied to the frozen windowing policy.
+For secondary recovery trajectories, the pre-reference baseline is the row-count-weighted mean of the final three frozen pre-drift reporting windows for that system/seed. For a higher-is-better metric, recovery is the first post window at or above that baseline whose immediately following post window also remains at or above baseline; lower-is-better metrics reverse the inequality. The recovery clock is the first qualifying window start. Failure to achieve two-window persistence is right-censored at stream end. Symbolic-recovery language additionally requires the lifecycle evidence chain frozen in `D_SYMBOLIC_LIFECYCLE_PROTOCOL.md`.
 
 ## 5. Descriptive summaries
 
@@ -198,13 +200,15 @@ The current System-A summaries use t-based intervals across five frozen seeds. T
 
 For future matched C/D effects:
 
-- paired-effect intervals must be computed from paired differences, not from independently combined marginal intervals;
-- the exact primary interval method is **TBD BEFORE C/D**, chosen before outcomes are inspected;
-- small-n limitations must be stated explicitly;
+- paired-effect intervals are computed from the five paired seed differences, not from independently combined marginal intervals;
+- the primary effect estimate is the arithmetic mean paired difference;
+- the primary interval is the conventional 95% Student-t interval over the five paired differences with df=4;
+- the interval is interpreted only as stochastic-seed uncertainty conditional on the fixed scenario, not environmental/deployment-population uncertainty;
+- all five paired effects, their median, sample SD, min/max, positive/zero/negative sign count, and leave-one-seed-out mean-effect range are mandatory alongside the interval;
+- no normality pretest is used to choose a different interval with n=5;
+- no bootstrap interval is primary;
 - intervals for bounded metrics are not silently clipped in stored data;
 - presentation-layer clipping, if used, follows `VISUALIZATION_POLICY.md`.
-
-If bootstrap or permutation intervals/tests are selected, the resampling unit must respect the declared experimental unit and dependence structure.
 
 ## 7. Hypothesis tests and practical significance
 
@@ -216,21 +220,29 @@ The default principle is:
 - parametric paired procedure only when its assumptions are credible;
 - otherwise a prespecified paired non-parametric or randomization procedure.
 
-The exact confirmatory test(s), including treatment of ties and small sample sizes, are **TBD BEFORE C/D**.
+For each of the three confirmatory endpoints, use an exact one-sided sign test with benefit direction frozen as positive before outcomes:
 
-Because five paired seeds provide limited formal power, conclusions will not rely on crossing an arbitrary p-value threshold. Practical magnitude, interval uncertainty, consistency across seeds/scenarios, longitudinal behavior, robustness, and explanation/cost outcomes are part of the evidentiary judgment.
+- H0: P(paired effect > 0) <= 0.5;
+- H1: P(paired effect > 0) > 0.5;
+- zero paired differences are removed from the sign-test denominator;
+- report the effective nonzero-pair count and the raw positive/zero/negative sign pattern;
+- compute the exact binomial probability under p=.5.
+
+The sign-test p-value is secondary calibration rather than the project success criterion. It deliberately ignores magnitude; magnitude is carried by the paired estimate/interval.
+
+Because five paired seeds provide limited formal power and share one underlying stream, conclusions will not rely on crossing an arbitrary p-value threshold. Practical magnitude, interval uncertainty, consistency across seeds/scenarios, longitudinal behavior, robustness, and explanation/cost outcomes are part of the evidentiary judgment.
 
 ## 8. Multiplicity
 
 Multiplicity must be controlled transparently across confirmatory endpoint families and repeated scenario/dataset claims.
 
-**TBD BEFORE C/D:**
+The three primary confirmatory sign-test p-values form one family.
 
-- final confirmatory endpoint count;
-- correction procedure and family definition;
-- whether scenario-level replication is treated as confirmatory replication or exploratory robustness.
+Use Holm-Bonferroni step-down adjustment at familywise alpha=.05 and report both raw and adjusted p-values.
 
-Secondary/descriptive metrics will be labeled accordingly rather than presented as independent confirmatory discoveries.
+Secondary/descriptive p-values, if any, are labeled exploratory and are not mixed into the confirmatory family.
+
+Later scenarios/datasets are reported as separate replication families first rather than pooled as extra independent observations. Broad claims require directional/mechanistic consistency across those replications, not a pooled pseudo-replicate p-value.
 
 ## 9. Missing runs, failures, and exclusions
 
@@ -252,14 +264,20 @@ Poor performance, inconvenient direction, or wide uncertainty is never an exclus
 
 Sensitivity analyses test whether the main conclusion depends on reasonable design alternatives; they are not parameter searches for a more favorable result.
 
-At minimum, prespecify before untouched C/D:
+The prespecified robustness package is now frozen:
 
-- reasonable window-size/stride sensitivity;
-- drift-detector/persistence sensitivity;
-- rule-validation threshold sensitivity;
-- duplicate/conflict sensitivity where relevant;
-- alternative drift scenario(s);
-- second-dataset replication where scientifically defensible.
+- label latency L=0 and L=10,000;
+- Page-Hinkley on the same delayed hard-error signal;
+- ADWIN on delayed Brier loss;
+- no-replay neural fine-tuning;
+- lambda=.70 and lambda=.90 fusion-authority sensitivities;
+- lambda=1.00 neural-only causal negative control;
+- non-overlapping 2,500-row and 10,000-row reporting-window sensitivities for descriptive/recovery trajectories;
+- static-style symbolic gate sensitivity: support>=.001, covered>=100, point precision>=.80, point fidelity>=.90, bootstrap persistence>=.90, complexity<=4, with no Wilson lower-bound requirement.
+
+Existing System-B duplicate/multiplicity robustness remains contextual evidence rather than a C/D tuning device.
+
+Before broad publication claims, add at least one scenario with a more direct attack-pattern/conditional-label change opportunity and a defensible second flow-oriented dataset where semantics permit the higher-level causal protocol without artificial harmonization.
 
 Adaptive preprocessing, if studied, is a separately labeled matched treatment and not a sensitivity tweak to the primary experiment.
 
@@ -289,7 +307,7 @@ No figure transformation may alter the stored statistical result.
 
 ## 12. Analysis freeze gate
 
-Before the first untouched C/D outcome is inspected, this document must have no unresolved **TBD BEFORE C/D** item affecting confirmatory analysis.
+Before the first adaptive C/D held-out outcome is inspected, this version-1.0 plan must remain unchanged unless a new disclosed protocol version is created before access.
 
 At that gate:
 
@@ -639,3 +657,28 @@ The primary stored arithmetic remains unchanged. Do not truncate or winsorize in
 For visualization, a physical [0,1] metric axis is permitted. Any off-domain primary interval endpoint must be disclosed rather than silently replaced. A bounded bootstrap/transformed interval may be reported only as a clearly labeled secondary robustness/presentation interval unless a later untouched protocol prospectively makes it primary.
 
 The more important inferential limitation is unchanged: the five seeds share one scenario stream and therefore quantify stochastic optimization/symbolic-extraction variability conditional on that scenario, not population/environmental uncertainty.
+
+
+## 16. Final frozen execution and reproducibility contract — 8 October 2026
+
+`C_D_FINAL_ANALYSIS_REPRODUCIBILITY_PROTOCOL.md` is authoritative for the final pre-implementation gate.
+
+Key execution controls:
+
+- primary adaptive execution is CPU-only;
+- before numerical-library initialization set `PYTHONHASHSEED=0`, `OMP_NUM_THREADS=1`, `MKL_NUM_THREADS=1`, `OPENBLAS_NUM_THREADS=1`, and `NUMEXPR_NUM_THREADS=1`;
+- set PyTorch intra-op and inter-op threads to 1, request deterministic algorithms, and use DataLoader workers=0;
+- record `threadpoolctl.threadpool_info()` and fail a primary run when a detected BLAS/OpenMP numerical pool violates the one-thread contract;
+- use `time.perf_counter_ns()` for component wall-clock costs;
+- preserve write-once run manifests, shared control-plane events, checkpoint lineage, arm predictions, symbolic maintenance events, rule revisions/versions, and evaluation tables;
+- run fail-closed verifiers for shared C/D control-plane identity, information timing, checkpoint purity, fusion/threshold identity, lambda=1 equality, generation/validation separation, trigger-arm operator identity, lifecycle integrity, boundary non-contamination, and write-once/hash integrity.
+
+Implementation proceeds on dedicated branches without primary pre/post adaptive execution:
+
+1. `stage6-cd-control-plane`;
+2. `stage7-cd-symbolic-lifecycle`;
+3. after acceptance/tagging as `cd-implementation-ready-v1`, `stage8-cd-primary-evaluation`.
+
+At primary evaluation, first generate and freeze one shared control-plane trajectory per seed. C, D-drift and D-periodic then consume those immutable detector/neural artifacts. Symbolic arms cannot alter drift events, replay, neural updates or checkpoint timing.
+
+The complete held-out access checklist and post-access change doctrine are frozen in the final reproducibility protocol.

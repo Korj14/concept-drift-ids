@@ -385,7 +385,14 @@ def _recovery_summary(
                 int(item["row_count"]) for item in windows["post"]
             ),
         )
-        out[metric] = {"available": True, **result}
+        absolute_clock = int(result["recovery_clock"])
+        out[metric] = {
+            "available": True,
+            **result,
+            "recovery_rows_from_boundary": (
+                absolute_clock - EXPECTED_PRE_ROWS
+            ),
+        }
     return out
 
 

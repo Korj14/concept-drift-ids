@@ -335,6 +335,11 @@ def _complete_one(
         generation_row_ids=generation_row_ids,
         generation_evidence_id=generation_evidence_id,
         candidates=candidates,
+        validation_start_index=(
+            opportunity.logical_clock + 1
+            if opportunity.arm == "d_periodic"
+            else checkpoint_effective_index
+        ),
         operator_config=operator_config,
     )
     supersession = _next_checkpoint_effective_index(

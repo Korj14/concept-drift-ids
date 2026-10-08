@@ -461,6 +461,46 @@ def _require_exact_config_commit(
     return head
 
 
+def _require_config_only_freeze_commit(
+    config: Mapping[str, Any],
+    *,
+    project_root: Path = PROJECT_ROOT,
+) -> None:
+    prepared_from = str(
+        config["implementation_ready"]["prepared_from_git_commit"]
+    )
+    parent = _git_output(
+        "rev-parse",
+        "HEAD^",
+        project_root=project_root,
+    )
+    if parent != prepared_from:
+        raise RuntimeError(
+            "Primary config commit parent differs from the source head "
+            "recorded during no-data preparation."
+        )
+
+    changed = tuple(
+        line.strip()
+        for line in _git_output(
+            "diff-tree",
+            "--no-commit-id",
+            "--name-only",
+            "-r",
+            "HEAD",
+            project_root=project_root,
+        ).splitlines()
+        if line.strip()
+    )
+    expected = ("data/manifests/cd_primary_run_config_v1.json",)
+    if changed != expected:
+        raise RuntimeError(
+            "Primary config freeze commit must change exactly one file: "
+            "data/manifests/cd_primary_run_config_v1.json. "
+            f"Observed: {changed}"
+        )
+
+
 def verify_primary_run_config_for_execution(
     *,
     project_root: Path = PROJECT_ROOT,
@@ -473,6 +513,10 @@ def verify_primary_run_config_for_execution(
         / "data"
         / "manifests"
         / "cd_primary_run_config_v1.json"
+    )
+    _require_config_only_freeze_commit(
+        config,
+        project_root=project_root,
     )
     if config["run_id"] != PRIMARY_RUN_ID:
         raise ValueError("Unexpected primary run ID.")

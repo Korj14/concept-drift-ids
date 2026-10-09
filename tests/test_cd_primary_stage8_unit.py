@@ -484,7 +484,7 @@ def test_phase_b_verifier_rebinds_shared_identity_to_verified_phase_a(
     monkeypatch.setattr(
         phase_b,
         "verify_phase_a_seed",
-        lambda seed: {
+        lambda seed, config=None: {
             "shared_identity_sha256": f"shared-{seed}",
             "run_manifest_sha256": f"phase-a-{seed}",
         },
@@ -529,7 +529,7 @@ def test_phase_c_verifier_rebinds_arm_summary_to_verified_phase_a(
 
     monkeypatch.setattr(
         phase_c,
-        "verify_primary_run_config_for_execution",
+        "verify_primary_correction_for_execution",
         lambda: {
             "manifest_sha256": "config",
             "scenario": {"stream_rows": 2},
@@ -546,7 +546,9 @@ def test_phase_c_verifier_rebinds_arm_summary_to_verified_phase_a(
     monkeypatch.setattr(
         phase_c,
         "verify_phase_b_seed",
-        lambda seed: {"phase_b_manifest_sha256": "phase-b-manifest"},
+        lambda seed, config=None: {
+            "phase_b_manifest_sha256": "phase-b-manifest"
+        },
     )
     monkeypatch.setattr(
         phase_c,

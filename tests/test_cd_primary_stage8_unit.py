@@ -393,9 +393,50 @@ def test_committed_primary_config_verifies_exact_head_when_present() -> None:
             "config-head push run is the primary execution gate."
         )
 
+    if head != config_commit:
+        with pytest.raises(RuntimeError, match="exactly the commit"):
+            primary_config.verify_primary_run_config_for_execution()
+        return
+
     config = primary_config.verify_primary_run_config_for_execution()
     assert config["status"] == "frozen_before_primary_adaptive_access"
     assert config["preparation"]["heldout_access_occurred"] is False
+
+
+def test_correction_config_verifies_exact_head_when_present() -> None:
+    if not correction.CORRECTION_CONFIG_PATH.is_file():
+        pytest.skip("Phase-C v1.1 correction config has not been generated yet.")
+
+    head = primary_config._git_output("rev-parse", "HEAD")
+    config_commit = primary_config._git_output(
+        "log",
+        "-1",
+        "--format=%H",
+        "--",
+        "data/manifests/cd_primary_run_config_v1_1.json",
+    )
+    if (
+        os.environ.get("GITHUB_EVENT_NAME") == "pull_request"
+        and head != config_commit
+    ):
+        pytest.skip(
+            "PR workflow is testing a synthetic merge commit; the exact "
+            "v1.1 correction-config push run is the corrected Phase-C gate."
+        )
+    if head != config_commit:
+        with pytest.raises(RuntimeError, match="exactly the correction"):
+            correction.verify_primary_correction_for_execution()
+        return
+
+    config = correction.verify_primary_correction_for_execution()
+    assert config["run_id"] == correction.CORRECTION_RUN_ID
+    assert config["preparation"]["heldout_access_occurred"] is True
+    assert (
+        config["preparation"][
+            "successful_boundary_scoring_occurred_before_correction"
+        ]
+        is False
+    )
 
 
 

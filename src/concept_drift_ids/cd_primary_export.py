@@ -13,7 +13,11 @@ from concept_drift_ids.cd_primary_config import (
     PRIMARY_SEEDS,
     PROJECT_ROOT,
     require_clean_worktree,
-    verify_primary_run_config_for_execution,
+)
+from concept_drift_ids.cd_primary_correction import (
+    CORRECTED_PHASE_C_SUBDIR,
+    FAILED_PHASE_C_V1_DIR,
+    verify_primary_correction_for_execution,
 )
 from concept_drift_ids.cd_primary_phase_a import verify_phase_a_seed
 from concept_drift_ids.cd_primary_phase_b import verify_phase_b_seed
@@ -92,12 +96,19 @@ def _phase_c_compact_files(seed: int) -> tuple[Path, ...]:
     return tuple(files)
 
 
+def _failed_v1_compact_files() -> tuple[Path, ...]:
+    return (
+        FAILED_PHASE_C_V1_DIR / "attempt.json",
+        FAILED_PHASE_C_V1_DIR / "failure.json",
+    )
+
+
 def export_primary_compact_evidence() -> dict[str, Any]:
-    config = verify_primary_run_config_for_execution()
+    config = verify_primary_correction_for_execution()
     require_clean_worktree()
     for seed in PRIMARY_SEEDS:
-        verify_phase_a_seed(seed)
-        verify_phase_b_seed(seed)
+        verify_phase_a_seed(seed, config=config)
+        verify_phase_b_seed(seed, config=config)
         verify_phase_c_seed(seed)
 
     verify_primary_aggregate()
@@ -118,10 +129,19 @@ def export_primary_compact_evidence() -> dict[str, Any]:
             target = COMPACT_EXPORT_ROOT / relative
             descriptors.append(_copy_new(source, target))
 
+    for source in _failed_v1_compact_files():
+        target = (
+            COMPACT_EXPORT_ROOT
+            / "phase_c_failed_v1"
+            / "seed-0"
+            / source.name
+        )
+        descriptors.append(_copy_new(source, target))
+
     descriptors.append(
         _copy_new(
             confirmatory,
-            COMPACT_EXPORT_ROOT / "phase_c_offline_evaluation"
+            COMPACT_EXPORT_ROOT / CORRECTED_PHASE_C_SUBDIR
             / "confirmatory_analysis.json",
         )
     )
@@ -130,6 +150,10 @@ def export_primary_compact_evidence() -> dict[str, Any]:
         "schema_version": 1,
         "status": "complete_primary_compact_evidence_export",
         "primary_config_manifest_sha256": config["manifest_sha256"],
+        "parent_primary_config_manifest_sha256": config[
+            "upstream_artifact_config_manifest_sha256"
+        ],
+        "preserved_failed_phase_c_v1": True,
         "files": descriptors,
         "large_artifact_root": "artifacts/cd_primary_v1",
         "large_artifact_archive_required_for_publication": True,

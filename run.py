@@ -27,6 +27,7 @@ def main() -> None:
             "system-b",
             "cd-preflight",
             "cd-primary-prepare",
+            "cd-primary-correction-prepare",
             "cd-primary-phase-a",
             "cd-primary-phase-b",
             "cd-primary-phase-c",
@@ -73,6 +74,17 @@ def main() -> None:
             main as run_cd_primary_prepare,
         )
         run_cd_primary_prepare()
+        return
+
+    if args.command == "cd-primary-correction-prepare":
+        if remainder:
+            parser.error(
+                "cd-primary-correction-prepare takes no additional arguments."
+            )
+        from concept_drift_ids.cd_primary_correction import (
+            main as run_cd_primary_correction_prepare,
+        )
+        run_cd_primary_correction_prepare()
         return
 
     if args.command == "cd-primary-phase-a":

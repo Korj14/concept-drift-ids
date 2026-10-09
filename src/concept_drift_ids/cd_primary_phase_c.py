@@ -28,6 +28,7 @@ from concept_drift_ids.cd_control_plane import (
     canonical_sha256,
     write_json_new,
 )
+from concept_drift_ids.cd_evidence import read_jsonl
 from concept_drift_ids.cd_primary_adapter import (
     EXPECTED_PRE_ROWS,
     load_primary_stream,
@@ -35,7 +36,10 @@ from concept_drift_ids.cd_primary_adapter import (
 from concept_drift_ids.cd_primary_config import (
     PRIMARY_OUTPUT_ROOT,
     PRIMARY_SEEDS,
-    verify_primary_run_config_for_execution,
+)
+from concept_drift_ids.cd_primary_correction import (
+    CORRECTED_PHASE_C_SUBDIR,
+    verify_primary_correction_for_execution,
 )
 from concept_drift_ids.cd_primary_phase_a import verify_phase_a_seed
 from concept_drift_ids.cd_primary_phase_b import (
@@ -89,13 +93,13 @@ def _phase_b_dir(seed: int) -> Path:
 def _phase_c_dir(seed: int) -> Path:
     return (
         PRIMARY_OUTPUT_ROOT
-        / "phase_c_offline_evaluation"
+        / CORRECTED_PHASE_C_SUBDIR
         / f"seed-{seed}"
     )
 
 
 def _phase_c_root() -> Path:
-    return PRIMARY_OUTPUT_ROOT / "phase_c_offline_evaluation"
+    return PRIMARY_OUTPUT_ROOT / CORRECTED_PHASE_C_SUBDIR
 
 
 def _read_json(path: Path) -> dict[str, Any]:
@@ -596,15 +600,17 @@ def _arm_manifest(seed: int, arm: str) -> dict[str, Any]:
 def execute_phase_c_seed(seed: int) -> dict[str, Any]:
     if seed not in PRIMARY_SEEDS:
         raise ValueError(f"Unsupported primary seed: {seed}")
-    config = verify_primary_run_config_for_execution()
+    config = verify_primary_correction_for_execution()
     configure_torch_primary_runtime()
 
     # Evaluation is allowed only after every adaptive trajectory is frozen.
     phase_a_verified = {
-        other: verify_phase_a_seed(other) for other in PRIMARY_SEEDS
+        other: verify_phase_a_seed(other, config=config)
+        for other in PRIMARY_SEEDS
     }
     phase_b_verified = {
-        other: verify_phase_b_seed(other) for other in PRIMARY_SEEDS
+        other: verify_phase_b_seed(other, config=config)
+        for other in PRIMARY_SEEDS
     }
 
     output_dir = _phase_c_dir(seed)
@@ -849,7 +855,7 @@ def execute_phase_c_seed(seed: int) -> dict[str, Any]:
 def verify_phase_c_seed(seed: int) -> dict[str, Any]:
     if seed not in PRIMARY_SEEDS:
         raise ValueError(f"Unsupported primary seed: {seed}")
-    config = verify_primary_run_config_for_execution()
+    config = verify_primary_correction_for_execution()
     output_dir = _phase_c_dir(seed)
     manifest = _read_verified_json(
         output_dir / "phase_c_seed_manifest.json"
@@ -863,8 +869,8 @@ def verify_phase_c_seed(seed: int) -> dict[str, Any]:
         "manifest_sha256"
     ]:
         raise ValueError("Phase-C seed references wrong primary config.")
-    phase_a = verify_phase_a_seed(seed)
-    phase_b = verify_phase_b_seed(seed)
+    phase_a = verify_phase_a_seed(seed, config=config)
+    phase_b = verify_phase_b_seed(seed, config=config)
     if (
         manifest["phase_a_run_manifest_sha256"]
         != phase_a["run_manifest_sha256"]
@@ -960,7 +966,7 @@ def verify_phase_c_seed(seed: int) -> dict[str, Any]:
 
 
 def verify_primary_aggregate() -> dict[str, Any]:
-    config = verify_primary_run_config_for_execution()
+    config = verify_primary_correction_for_execution()
     path = _phase_c_root() / "confirmatory_analysis.json"
     payload = _read_verified_json(path)
     stored = payload.pop("manifest_sha256", None)
@@ -984,7 +990,7 @@ def verify_primary_aggregate() -> dict[str, Any]:
 
 
 def build_primary_aggregate() -> dict[str, Any]:
-    config = verify_primary_run_config_for_execution()
+    config = verify_primary_correction_for_execution()
     configure_torch_primary_runtime()
     seed_manifests = {
         seed: verify_phase_c_seed(seed) for seed in PRIMARY_SEEDS

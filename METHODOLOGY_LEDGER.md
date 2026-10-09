@@ -2521,3 +2521,61 @@ A regression test covers the valid case, a wrong-parent case and an extra-file c
 No primary run config existed when this control was added. No primary adaptive held-out row had been
 processed or scored. The control changes no scientific parameter or treatment; it closes a
 repository-governance degree of freedom at the first-access boundary.
+
+
+### Phase-C v1 execution defect and versioned v1.1 correction — 9 October 2026
+
+After all five primary Phase-A shared-control-plane trajectories and all five Phase-B symbolic
+trajectories completed and verified under frozen primary config
+`3e3f768b5aa32f469440bb334508f747bbf2f7f5b08d9570a7aef2dbb9cb0257`,
+the first Phase-C boundary-aware scoring command was attempted for seed 0.
+
+The command failed before the first Phase-A JSONL artifact could be read with:
+
+`NameError: name 'read_jsonl' is not defined`.
+
+The defect was traced to `cd_primary_phase_c.py` calling `read_jsonl` without importing it from
+`concept_drift_ids.cd_evidence`.
+
+The Phase-C function had created its write-once `attempt.json`, then failed at the first
+`read_jsonl(...predictions.jsonl)` call. The exception handler preserved `failure.json`.
+
+At that failure point no prediction array, true-label stream array, symbolic scoring, fused score,
+pre/post metric, MCSC, recovery output, trigger diagnostic, retention probe, compressed prediction
+trace, arm evaluation summary, or Phase-C seed manifest had been successfully produced.
+
+This is therefore classified as a technical execution defect discovered after held-out access in
+Phases A/B but before any successful Phase-C scoring result existed.
+
+A dedicated correction branch, `stage8-phase-c-v1-1-correction`, was created from the exact original
+primary config commit `bfa14b942e4a5b2fbfa8aa3c43728a7f1cd81645`.
+
+The original v1 config and failed Phase-C attempt remain immutable. Phase A and Phase B are not
+rerun.
+
+The v1.1 correction:
+
+- imports `read_jsonl` explicitly;
+- allows Phase-A/Phase-B verifiers to accept an explicit correction config whose
+  `upstream_artifact_config_manifest_sha256` points to the original v1 config;
+- re-verifies and freezes the exact five Phase-A run/shared identities and five Phase-B
+  manifest/isolation identities into the correction config;
+- requires the failed v1 seed-0 directory to contain exactly `attempt.json` and `failure.json`;
+- rejects correction preparation if any scored v1 Phase-C output exists;
+- requires exact equality between v1 and v1.1 for governing-source, scenario, System-A, R0.v2,
+  control-plane, symbolic-operator, fusion and analysis blocks;
+- freezes the corrected source/protocol/dependency identities;
+- forbids Phase-A/Phase-B re-execution under the correction;
+- writes corrected Phase-C evidence only under
+  `artifacts/cd_primary_v1/phase_c_offline_evaluation_v1_1/`;
+- includes the preserved failed v1 attempt/failure in the final compact evidence export.
+
+`STAGE8_PHASE_C_V1_1_CORRECTION.md` is the binding correction record.
+
+A new correction config,
+`data/manifests/cd_primary_run_config_v1_1.json`, must be generated locally only after correction
+source CI passes. Its commit must contain exactly that one file and pass exact-head CI before any
+corrected Phase-C execution.
+
+No detector, neural update, replay mechanism, symbolic lifecycle rule, trigger schedule, fusion
+threshold, endpoint, inferential unit, or robustness definition changed.

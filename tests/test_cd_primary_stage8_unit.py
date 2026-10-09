@@ -538,7 +538,7 @@ def test_phase_c_verifier_rebinds_arm_summary_to_verified_phase_a(
     monkeypatch.setattr(
         phase_c,
         "verify_phase_a_seed",
-        lambda seed: {
+        lambda seed, config=None: {
             "run_manifest_sha256": "phase-a-manifest",
             "shared_identity_sha256": "verified-shared",
         },

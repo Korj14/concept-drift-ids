@@ -19,3 +19,4 @@ results/frozen/cd_primary_v1/** text eol=lf
 
 # Frozen dependency lock is canonical UTF-8/LF text.
 requirements-lock.txt text eol=lf
+data/manifests/cd_primary_run_config_v1_1.json text eol=lf

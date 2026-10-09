@@ -115,6 +115,13 @@ def _failed_attempt_identity(
 
     if int(attempt["seed"]) != 0 or int(failure["seed"]) != 0:
         raise ValueError("Failed Phase-C v1 seed identity changed.")
+    if (
+        attempt["primary_config_manifest_sha256"]
+        != PARENT_PRIMARY_CONFIG_MANIFEST_SHA256
+    ):
+        raise ValueError(
+            "Failed Phase-C v1 attempt references the wrong primary config."
+        )
     if attempt["phase"] != "offline_boundary_aware_evaluation":
         raise ValueError("Unexpected failed Phase-C attempt phase.")
     if failure["phase"] != "offline_boundary_aware_evaluation":

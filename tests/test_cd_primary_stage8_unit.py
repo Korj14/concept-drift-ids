@@ -12,6 +12,7 @@ import pytest
 import torch
 
 import concept_drift_ids.cd_primary_config as primary_config
+import concept_drift_ids.cd_primary_correction as correction
 import concept_drift_ids.cd_primary_export as primary_export
 import concept_drift_ids.cd_primary_phase_a as phase_a
 import concept_drift_ids.cd_primary_phase_b as phase_b
@@ -688,3 +689,132 @@ def test_primary_config_freeze_commit_is_parent_bound_and_config_only(
             config,
             project_root=tmp_path,
         )
+
+
+
+def test_phase_c_read_jsonl_dependency_is_bound_at_module_import() -> None:
+    assert callable(phase_c.read_jsonl)
+
+
+def test_corrected_phase_c_output_tree_preserves_failed_v1_tree() -> None:
+    failed = correction.FAILED_PHASE_C_V1_DIR
+    corrected = (
+        primary_config.PRIMARY_OUTPUT_ROOT
+        / correction.CORRECTED_PHASE_C_SUBDIR
+        / "seed-0"
+    )
+    assert failed != corrected
+    assert failed.parent.name == "phase_c_offline_evaluation"
+    assert corrected.parent.name == "phase_c_offline_evaluation_v1_1"
+
+
+def test_failed_phase_c_identity_accepts_only_preserved_attempt_and_failure(
+    tmp_path: Path,
+) -> None:
+    root = (
+        tmp_path
+        / "artifacts"
+        / "cd_primary_v1"
+        / "phase_c_offline_evaluation"
+        / "seed-0"
+    )
+    root.mkdir(parents=True)
+    write_json_new(
+        root / "attempt.json",
+        {
+            "seed": 0,
+            "primary_config_manifest_sha256": (
+                correction.PARENT_PRIMARY_CONFIG_MANIFEST_SHA256
+            ),
+            "phase": "offline_boundary_aware_evaluation",
+            "adaptive_components_received_boundary": False,
+        },
+    )
+    write_json_new(
+        root / "failure.json",
+        {
+            "seed": 0,
+            "exception_type": "NameError",
+            "message": "name 'read_jsonl' is not defined",
+            "phase": "offline_boundary_aware_evaluation",
+            "adaptive_components_received_boundary": False,
+        },
+    )
+
+    identity = correction._failed_attempt_identity(project_root=tmp_path)
+    assert identity["successful_scoring_artifacts_present"] is False
+    assert identity["entries"] == ["attempt.json", "failure.json"]
+    assert identity["exception_type"] == "NameError"
+
+    (root / "c_frozen_symbolic_evaluation.json").write_text(
+        "{}",
+        encoding="utf-8",
+    )
+    with pytest.raises(ValueError, match="exactly the preserved"):
+        correction._failed_attempt_identity(project_root=tmp_path)
+
+
+def test_correction_rejects_any_frozen_scientific_block_change() -> None:
+    parent = {
+        key: {"identity": key}
+        for key in correction.FROZEN_SCIENTIFIC_BLOCKS
+    }
+    accepted = {key: dict(value) for key, value in parent.items()}
+    correction._verify_frozen_scientific_blocks(accepted, parent)
+
+    mutated = {key: dict(value) for key, value in parent.items()}
+    mutated["fusion"] = {"identity": "changed"}
+    with pytest.raises(ValueError, match="Scientific block changed"):
+        correction._verify_frozen_scientific_blocks(mutated, parent)
+
+
+def test_phase_a_verifier_uses_explicit_upstream_artifact_config(
+    monkeypatch,
+    tmp_path: Path,
+) -> None:
+    # The explicit-config path must not consult the current execution-config
+    # gate. The remaining artifact reads are intentionally stopped early.
+    monkeypatch.setattr(
+        phase_a,
+        "verify_primary_run_config_for_execution",
+        lambda: (_ for _ in ()).throw(
+            AssertionError("current execution config must not be consulted")
+        ),
+    )
+    monkeypatch.setattr(phase_a, "_seed_dir", lambda seed: tmp_path)
+    config = {
+        "manifest_sha256": "correction",
+        "upstream_artifact_config_manifest_sha256": "parent",
+        "scenario": {"stream_rows": 138530},
+    }
+    manifest = {
+        "seed": 0,
+        "status": "complete_unscored_shared_trajectory",
+        "manifest_sha256": "not-used-before-file-check",
+        "scenario_identity": {
+            "primary_config_manifest_sha256": "parent",
+            "adaptive_runner_received_boundary_metadata": False,
+        },
+    }
+    (tmp_path / "run_manifest.json").write_text(
+        json.dumps(manifest),
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(phase_a, "_verify_run_manifest_hash", lambda _: None)
+    monkeypatch.setattr(
+        phase_a,
+        "verify_manifest_files",
+        lambda *args, **kwargs: (_ for _ in ()).throw(
+            RuntimeError("explicit-config-path-reached")
+        ),
+    )
+    with pytest.raises(RuntimeError, match="explicit-config-path-reached"):
+        phase_a.verify_phase_a_seed(0, config=config)
+
+
+def test_root_runner_exposes_versioned_phase_c_correction_prepare() -> None:
+    text = (primary_config.PROJECT_ROOT / "run.py").read_text(
+        encoding="utf-8"
+    )
+    assert '"cd-primary-correction-prepare"' in text
+    assert "run_cd_primary_correction_prepare" in text

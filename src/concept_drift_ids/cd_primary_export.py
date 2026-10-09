@@ -15,6 +15,7 @@ from concept_drift_ids.cd_primary_config import (
     require_clean_worktree,
 )
 from concept_drift_ids.cd_primary_correction import (
+    CORRECTED_PHASE_C_SUBDIR,
     FAILED_PHASE_C_V1_DIR,
     verify_primary_correction_for_execution,
 )
@@ -106,8 +107,8 @@ def export_primary_compact_evidence() -> dict[str, Any]:
     config = verify_primary_correction_for_execution()
     require_clean_worktree()
     for seed in PRIMARY_SEEDS:
-        verify_phase_a_seed(seed)
-        verify_phase_b_seed(seed)
+        verify_phase_a_seed(seed, config=config)
+        verify_phase_b_seed(seed, config=config)
         verify_phase_c_seed(seed)
 
     verify_primary_aggregate()
@@ -140,7 +141,7 @@ def export_primary_compact_evidence() -> dict[str, Any]:
     descriptors.append(
         _copy_new(
             confirmatory,
-            COMPACT_EXPORT_ROOT / "phase_c_offline_evaluation"
+            COMPACT_EXPORT_ROOT / CORRECTED_PHASE_C_SUBDIR
             / "confirmatory_analysis.json",
         )
     )

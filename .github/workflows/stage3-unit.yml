@@ -65,6 +65,7 @@ jobs:
               "STAGE7_SYMBOLIC_IMPLEMENTATION.md",
               "STAGE7_HANDOFF.md",
               "STAGE8_PRIMARY_EXECUTION_PROTOCOL.md",
+              "STAGE8_PHASE_C_V1_1_CORRECTION.md",
           ]
           missing = [path for path in required if not Path(path).is_file()]
           assert not missing, f"Missing governance artifacts: {missing}"

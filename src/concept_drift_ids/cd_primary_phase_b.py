@@ -468,12 +468,24 @@ def load_frozen_arm_trajectory(
     )
 
 
-def verify_phase_b_seed(seed: int) -> dict[str, Any]:
+def verify_phase_b_seed(
+    seed: int,
+    *,
+    config: Mapping[str, Any] | None = None,
+) -> dict[str, Any]:
     if seed not in PRIMARY_SEEDS:
         raise ValueError(f"Unsupported primary seed: {seed}")
-    config = verify_primary_run_config_for_execution()
+    if config is None:
+        config = verify_primary_run_config_for_execution()
+    expected_artifact_config_sha256 = str(
+        config.get(
+            "upstream_artifact_config_manifest_sha256",
+            config["manifest_sha256"],
+        )
+    )
     phase_a_verified = {
-        other: verify_phase_a_seed(other) for other in PRIMARY_SEEDS
+        other: verify_phase_a_seed(other, config=config)
+        for other in PRIMARY_SEEDS
     }
     expected_shared_identity = phase_a_verified[seed][
         "shared_identity_sha256"
@@ -490,9 +502,10 @@ def verify_phase_b_seed(seed: int) -> dict[str, Any]:
         raise ValueError("Phase-B manifest canonical hash mismatch.")
     if int(manifest["seed"]) != seed:
         raise ValueError("Phase-B seed mismatch.")
-    if manifest["primary_config_manifest_sha256"] != config[
-        "manifest_sha256"
-    ]:
+    if (
+        manifest["primary_config_manifest_sha256"]
+        != expected_artifact_config_sha256
+    ):
         raise ValueError("Phase-B references the wrong primary config.")
     if manifest["shared_identity_sha256"] != expected_shared_identity:
         raise ValueError(

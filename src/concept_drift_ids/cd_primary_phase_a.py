@@ -184,10 +184,21 @@ def execute_phase_a_seed(seed: int) -> dict[str, Any]:
     }
 
 
-def verify_phase_a_seed(seed: int) -> dict[str, Any]:
+def verify_phase_a_seed(
+    seed: int,
+    *,
+    config: Mapping[str, Any] | None = None,
+) -> dict[str, Any]:
     if seed not in PRIMARY_SEEDS:
         raise ValueError(f"Unsupported primary seed: {seed}")
-    config = verify_primary_run_config_for_execution()
+    if config is None:
+        config = verify_primary_run_config_for_execution()
+    expected_artifact_config_sha256 = str(
+        config.get(
+            "upstream_artifact_config_manifest_sha256",
+            config["manifest_sha256"],
+        )
+    )
     seed_dir = _seed_dir(seed)
     manifest_path = seed_dir / "run_manifest.json"
     if not manifest_path.is_file():
@@ -200,7 +211,7 @@ def verify_phase_a_seed(seed: int) -> dict[str, Any]:
         raise ValueError("Phase-A run status is not complete/unscored.")
     if (
         manifest["scenario_identity"]["primary_config_manifest_sha256"]
-        != config["manifest_sha256"]
+        != expected_artifact_config_sha256
     ):
         raise ValueError("Phase-A run references the wrong primary config.")
     if manifest["scenario_identity"].get(

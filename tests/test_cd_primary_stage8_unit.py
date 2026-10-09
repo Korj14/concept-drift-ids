@@ -789,6 +789,30 @@ def test_failed_phase_c_identity_accepts_only_preserved_attempt_and_failure(
     assert identity["entries"] == ["attempt.json", "failure.json"]
     assert identity["exception_type"] == "NameError"
 
+    attempt_path = root / "attempt.json"
+    attempt_payload = json.loads(attempt_path.read_text(encoding="utf-8"))
+    attempt_payload["primary_config_manifest_sha256"] = "wrong-config"
+    attempt_path.write_text(
+        json.dumps(attempt_payload),
+        encoding="utf-8",
+        newline="\n",
+    )
+    with pytest.raises(ValueError, match="wrong primary config"):
+        correction._failed_attempt_identity(project_root=tmp_path)
+
+    attempt_path.unlink()
+    write_json_new(
+        attempt_path,
+        {
+            "seed": 0,
+            "primary_config_manifest_sha256": (
+                correction.PARENT_PRIMARY_CONFIG_MANIFEST_SHA256
+            ),
+            "phase": "offline_boundary_aware_evaluation",
+            "adaptive_components_received_boundary": False,
+        },
+    )
+
     (root / "c_frozen_symbolic_evaluation.json").write_text(
         "{}",
         encoding="utf-8",

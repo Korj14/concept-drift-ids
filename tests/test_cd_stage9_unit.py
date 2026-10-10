@@ -107,6 +107,16 @@ def test_page_hinkley_freeze_matches_locked_river_defaults() -> None:
         assert key in signature.parameters
         assert signature.parameters[key].default == expected
 
+def test_runtime_inventory_freezes_deterministic_torch_state() -> None:
+    runtime = config._runtime_inventory()
+    assert runtime["torch_cuda_available"] is False
+    assert runtime["torch_deterministic_algorithms"] is True
+    assert runtime["torch_num_threads"] == 1
+    assert runtime["torch_num_interop_threads"] == 1
+    assert runtime["configured_runtime"]["torch_deterministic_algorithms"] is True
+    assert runtime["configured_runtime"]["torch_num_threads"] == 1
+    assert runtime["configured_runtime"]["torch_num_interop_threads"] == 1
+
 def test_runtime_difference_forces_matched_baseline() -> None:
     current = {
         "platform": "Linux-x",

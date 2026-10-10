@@ -725,13 +725,13 @@ def test_stage8_offline_eval_is_bound_to_compact_manifest(
     export_path = eval_path.relative_to(root).as_posix()
     manifest = {
         "schema_version": 1,
-        "files": {
-            "x": {
+        "files": [
+            {
                 "export_path": export_path,
                 "source_path": "artifacts/source.json",
                 "sha256": sha256_file(eval_path),
             }
-        },
+        ],
     }
     manifest["manifest_sha256"] = config.canonical_sha256(manifest)
     manifest_path = compact_root / "compact_export_manifest.json"
@@ -771,13 +771,13 @@ def test_stage8_offline_eval_rejects_raw_hash_mismatch(
 
     manifest = {
         "schema_version": 1,
-        "files": {
-            "x": {
+        "files": [
+            {
                 "export_path": eval_path.relative_to(root).as_posix(),
                 "source_path": "artifacts/source.json",
                 "sha256": "0" * 64,
             }
-        },
+        ],
     }
     manifest["manifest_sha256"] = config.canonical_sha256(manifest)
     write_json_new(compact_root / "compact_export_manifest.json", manifest)
@@ -999,3 +999,55 @@ def test_artifact_identity_context_binds_required_protocol_identities() -> None:
     assert context["condition_spec_sha256"] == config.canonical_sha256(
         condition_spec
     )
+
+
+def test_governing_stage8_compact_manifest_uses_descriptor_list() -> None:
+    manifest = offline._stage8_compact_manifest()
+    assert isinstance(manifest["files"], list)
+    assert manifest["files"]
+    assert all(isinstance(item, dict) for item in manifest["files"])
+    assert all("export_path" in item and "sha256" in item for item in manifest["files"])
+
+
+def test_stage8_offline_eval_rejects_mapping_shaped_files(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    from concept_drift_ids.cd_control_plane import write_json_new
+    from concept_drift_ids.scenario_manifest import sha256_file
+
+    root = tmp_path
+    compact_root = root / "results" / "frozen" / "cd_primary_v1"
+    eval_path = (
+        compact_root
+        / "phase_c_offline_evaluation_v1_1"
+        / "seed-0"
+        / "d_drift_evaluation.json"
+    )
+    eval_path.parent.mkdir(parents=True, exist_ok=True)
+    evaluation = {"seed": 0, "arm": "d_drift"}
+    evaluation["summary_sha256"] = config.canonical_sha256(evaluation)
+    write_json_new(eval_path, evaluation)
+
+    manifest = {
+        "schema_version": 1,
+        "files": {
+            "x": {
+                "export_path": eval_path.relative_to(root).as_posix(),
+                "source_path": "artifacts/source.json",
+                "sha256": sha256_file(eval_path),
+            }
+        },
+    }
+    manifest["manifest_sha256"] = config.canonical_sha256(manifest)
+    write_json_new(compact_root / "compact_export_manifest.json", manifest)
+
+    monkeypatch.setattr(offline, "PROJECT_ROOT", root)
+    monkeypatch.setattr(offline, "STAGE8_COMPACT_ROOT", compact_root)
+    monkeypatch.setattr(
+        offline,
+        "STAGE8_COMPACT_EXPORT_MANIFEST_SHA256",
+        manifest["manifest_sha256"],
+    )
+    with pytest.raises(ValueError, match="files must be a list"):
+        offline._stage8_eval_payload(0, "d_drift")

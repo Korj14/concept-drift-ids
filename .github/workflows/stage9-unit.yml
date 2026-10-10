@@ -48,7 +48,9 @@ jobs:
             "src/concept_drift_ids/cd_stage9_export.py",
             "tests/test_cd_stage9_unit.py",
             "run_stage9.py",
-            "scripts/run_stage9.ps1"
+            "scripts/run_stage9.ps1",
+            "data/manifests/.gitattributes",
+            "results/frozen/.gitattributes"
           )
           foreach ($path in $required) {
             if (-not (Test-Path $path)) { throw "Missing Stage-9 artifact: $path" }

@@ -622,6 +622,57 @@ def freeze_stage9_shared_trajectory(
 
 
 
+def _verify_prediction_before_label_event_order(
+    events: Sequence[Mapping[str, Any]],
+) -> None:
+    prediction_position: dict[int, int] = {}
+    label_position: dict[int, int] = {}
+    detector_position: dict[int, int] = {}
+
+    for position, event in enumerate(events):
+        event_type = str(event["event_type"])
+        origin = event.get("origin_index")
+        if origin is None:
+            continue
+        origin_index = int(origin)
+
+        if event_type == "prediction":
+            if origin_index in prediction_position:
+                raise ValueError("Duplicate prediction event for one origin row.")
+            prediction_position[origin_index] = position
+            continue
+
+        if event_type == "label_release":
+            if origin_index not in prediction_position:
+                raise ValueError("Label release occurred before prediction event.")
+            if prediction_position[origin_index] >= position:
+                raise ValueError("Prediction-before-label event ordering violated.")
+            label_position[origin_index] = position
+            continue
+
+        if event_type == "detector_observation":
+            if origin_index not in label_position:
+                raise ValueError(
+                    "Detector observation occurred before mature-label release."
+                )
+            if label_position[origin_index] >= position:
+                raise ValueError(
+                    "Label-release-before-detector ordering violated."
+                )
+            detector_position[origin_index] = position
+            continue
+
+        if event_type == "drift_event":
+            if origin_index not in detector_position:
+                raise ValueError(
+                    "Drift event occurred without a preceding detector observation."
+                )
+            if detector_position[origin_index] >= position:
+                raise ValueError(
+                    "Detector-observation-before-drift ordering violated."
+                )
+
+
 def verify_stage9_shared_trajectory(
     trajectory: SharedTrajectory,
     *,
@@ -655,6 +706,8 @@ def verify_stage9_shared_trajectory(
             observation["origin_index"]
         ):
             raise ValueError("Detector observation maturity precedes origin.")
+
+    _verify_prediction_before_label_event_order(trajectory.events)
 
     for event in trajectory.events:
         if event["event_type"] in {"label_release", "detector_observation"}:

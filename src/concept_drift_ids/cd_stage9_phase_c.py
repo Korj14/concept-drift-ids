@@ -25,6 +25,7 @@ from concept_drift_ids.cd_runtime import configure_torch_primary_runtime
 from concept_drift_ids.cd_stage9_config import (
     PRIMARY_SEEDS,
     STAGE9_OUTPUT_ROOT,
+    artifact_identity_context,
     verify_stage9_config_for_execution,
 )
 from concept_drift_ids.cd_stage9_offline import _verified_trace as verified_stage8_trace
@@ -173,6 +174,9 @@ def execute_stage9_phase_c_seed(condition: str, seed: int) -> dict[str, Any]:
             "stage9_config_manifest_sha256": config["manifest_sha256"],
             "phase": "offline_boundary_aware_evaluation",
             "adaptive_components_received_boundary": False,
+            "identity_context": artifact_identity_context(
+                config, condition=condition, seed=seed
+            ),
         },
     )
 
@@ -320,6 +324,9 @@ def execute_stage9_phase_c_seed(condition: str, seed: int) -> dict[str, Any]:
                 "primary_windows": windows,
                 "primary_recovery": recovery,
                 "maintenance_summary": arm_manifest["maintenance_summary"],
+                "identity_context": artifact_identity_context(
+                    config, condition=condition, seed=seed
+                ),
                 "prediction_trace": {
                     "path": trace_path.name,
                     "row_count": len(y),
@@ -363,6 +370,9 @@ def execute_stage9_phase_c_seed(condition: str, seed: int) -> dict[str, Any]:
             "trigger_diagnostics": trigger,
             "boundary_index": EXPECTED_PRE_ROWS,
             "adaptive_components_received_boundary": False,
+            "identity_context": artifact_identity_context(
+                config, condition=condition, seed=seed
+            ),
         }
         seed_manifest["manifest_sha256"] = canonical_sha256(seed_manifest)
         write_json_new(output_dir / "phase_c_seed_manifest.json", seed_manifest)
@@ -386,6 +396,9 @@ def execute_stage9_phase_c_seed(condition: str, seed: int) -> dict[str, Any]:
                     "message": str(exc),
                     "phase": "offline_boundary_aware_evaluation",
                     "adaptive_components_received_boundary": False,
+                    "identity_context": artifact_identity_context(
+                        config, condition=condition, seed=seed
+                    ),
                 },
             )
         raise
@@ -411,6 +424,11 @@ def verify_stage9_phase_c_seed(
         raise ValueError("Stage-9 Phase-C seed/condition mismatch.")
     if manifest["stage9_config_manifest_sha256"] != config["manifest_sha256"]:
         raise ValueError("Stage-9 Phase-C references wrong config.")
+    expected_identity_context = artifact_identity_context(
+        config, condition=condition, seed=seed
+    )
+    if manifest["identity_context"] != expected_identity_context:
+        raise ValueError("Stage-9 Phase-C explicit identity context changed.")
 
     phase_a = _verify_phase_a_source(condition, seed, config)
     phase_b = verify_stage9_phase_b_seed(condition, seed, config=config)
@@ -436,6 +454,8 @@ def verify_stage9_phase_c_seed(
             raise ValueError("Stage-9 arm summary manifest binding mismatch.")
         if summary["shared_identity_sha256"] != expected_shared:
             raise ValueError("Stage-9 scored arm detached from shared Phase A.")
+        if summary["identity_context"] != expected_identity_context:
+            raise ValueError("Stage-9 scored-arm identity context changed.")
         descriptor = phase_b_manifest["arms"][arm]
         if summary["phase_b_arm_manifest_sha256"] != descriptor["manifest_sha256"]:
             raise ValueError("Stage-9 scored arm detached from Phase B.")

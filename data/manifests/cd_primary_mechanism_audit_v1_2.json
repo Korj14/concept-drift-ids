@@ -1,0 +1,61 @@
+{
+  "analysis_classification": "exploratory_descriptive_post_primary_no_new_pvalue_family",
+  "boundary_index": 69260,
+  "correction_protocol_path": "STAGE8_SYMBOLIC_MECHANISM_AUDIT_V1_2_CORRECTION.md",
+  "correction_protocol_sha256": "e91fe897f01acbb41c76ed3507e3dae8b7705f7ddbcc58b2bdb00b9ca78cdfb1",
+  "domains": [
+    "pre",
+    "post"
+  ],
+  "historical_v1": {
+    "config_manifest_sha256": "b5ea68cebdbbe5c316544bcc187f2b771babbdf01b1c4dcb3373763f0e72fd87",
+    "output_files": [],
+    "output_present": false
+  },
+  "historical_v1_1": {
+    "config_manifest_sha256": "de33a7b09b26adefe1b5b574b958930e7f83a756aba9956ac243396a01690946",
+    "output_files": [],
+    "output_root_exists": true
+  },
+  "lambda_one_decision_key": "decision_lambda_1_0",
+  "lambda_one_score_key": "fused_probability_lambda_1_0",
+  "manifest_sha256": "e7d1ffe85a9d8442435c279bee79103f23a468b3fdf52f6f92f427e4f6131e7d",
+  "mechanisms": [
+    "withdrawal",
+    "addition",
+    "retained_authority"
+  ],
+  "parent_compact_export_manifest_sha256": "409b516d75cbc5e71d3633019008432ea6088d1d923b4e4a95570263528ed523",
+  "parent_confirmatory_aggregate_sha256": "1be77ce4be9f3faad021a3f3bfd636488e5de6aa1b2a6e7c596e48feb41bb54d",
+  "parent_evidence_commit": "c2ded83b8195b9321e715626c1f305f9627936e8",
+  "payload_sha256": "249c8d042cb1c529ffb477efdf0c65c4cec6f84eedd46fa8b763a36d31507b04",
+  "primary_decision_key": "decision_lambda_0_5",
+  "prior_v1_1_execution_attempt": {
+    "accepted_seed_result_written": false,
+    "failure_exception": "KeyError: 'manifest_sha256'",
+    "failure_location": "analyze_seed.phase_b_arm_manifest_sha256",
+    "row_level_traces_accessed": true,
+    "scientific_scope_change": false
+  },
+  "protocol_path": "STAGE8_SYMBOLIC_VALUE_MECHANISM_AUDIT_PROTOCOL.md",
+  "protocol_sha256": "ca9417b1a3e18ac809f40588baf51b1acfd0792937de374b1e792d526878abb8",
+  "row_level_mechanism_trace_accessed_during_v1_2_preparation": false,
+  "runner_sha256": "d319c951123bcfaac93d08c9d3c7230aada1ec8a895e7e9a3f557db19590265d",
+  "schema_version": 3,
+  "seeds": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "source_commit": "b51a2238aeb3dcbbd677e6669d9cadbf2bd4a6e5",
+  "source_sha256": "1c53cb8cd6490f2df29f5e2b9f4f5d5b15cbb94fef344300abf5022a35683f12",
+  "status": "frozen_post_primary_mechanism_v1_2_correction",
+  "stream_rows": 138530,
+  "target_arms": [
+    "d_drift",
+    "d_periodic"
+  ],
+  "tests_sha256": "73d6d58728f08c31cc93df78411050818a622c84ea324b58ce78cce1a5aecd1c"
+}

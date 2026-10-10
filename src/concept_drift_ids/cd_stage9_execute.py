@@ -11,6 +11,7 @@ from concept_drift_ids.cd_stage9_config import (
     OFFLINE_CONDITIONS,
     PRIMARY_SEEDS,
     STAGE9_OUTPUT_ROOT,
+    global_artifact_identity_context,
     verify_stage9_config_for_execution,
 )
 from concept_drift_ids.cd_stage9_offline import (
@@ -104,6 +105,7 @@ def build_execution_plan(config: Mapping[str, Any]) -> dict[str, Any]:
         "schema_version": 1,
         "status": "frozen_stage9_execution_plan",
         "stage9_config_manifest_sha256": config["manifest_sha256"],
+        "identity_context": global_artifact_identity_context(config),
         "condition_order": {
             "offline": list(OFFLINE_CONDITIONS),
             "symbolic_gate": list(GATE_CONDITIONS),

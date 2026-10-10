@@ -31,8 +31,14 @@ PARENT_CONFIRMATORY_AGGREGATE_SHA256 = (
     "1be77ce4be9f3faad021a3f3bfd636488e5de6aa1b2a6e7c596e48feb41bb54d"
 )
 PROTOCOL_PATH = "STAGE8_SYMBOLIC_VALUE_MECHANISM_AUDIT_PROTOCOL.md"
-CONFIG_PATH = (
+HISTORICAL_V1_CONFIG_PATH = (
     PROJECT_ROOT / "data" / "manifests" / "cd_primary_mechanism_audit_v1.json"
+)
+HISTORICAL_V1_CONFIG_MANIFEST_SHA256 = (
+    "b5ea68cebdbbe5c316544bcc187f2b771babbdf01b1c4dcb3373763f0e72fd87"
+)
+CONFIG_PATH = (
+    PROJECT_ROOT / "data" / "manifests" / "cd_primary_mechanism_audit_v1_1.json"
 )
 COMPACT_ROOT = PROJECT_ROOT / "results" / "frozen" / "cd_primary_v1"
 HEAVY_PHASE_C_ROOT = (
@@ -41,7 +47,10 @@ HEAVY_PHASE_C_ROOT = (
     / "cd_primary_v1"
     / "phase_c_offline_evaluation_v1_1"
 )
-OUTPUT_ROOT = PROJECT_ROOT / "results" / "frozen" / "cd_primary_mechanism_v1"
+HISTORICAL_V1_OUTPUT_ROOT = (
+    PROJECT_ROOT / "results" / "frozen" / "cd_primary_mechanism_v1"
+)
+OUTPUT_ROOT = PROJECT_ROOT / "results" / "frozen" / "cd_primary_mechanism_v1_1"
 BOUNDARY_INDEX = 69_260
 STREAM_ROWS = 138_530
 SEEDS = (0, 1, 2, 3, 4)
@@ -90,10 +99,38 @@ def _verify_parent_compact_evidence() -> dict[str, Any]:
 
 
 
+def _historical_v1_identity() -> dict[str, Any]:
+    payload = _read_verified_json(HISTORICAL_V1_CONFIG_PATH)
+    stored_manifest = payload.pop("manifest_sha256", None)
+    if stored_manifest != canonical_sha256(payload):
+        raise ValueError("Historical mechanism v1 config canonical hash mismatch.")
+    if stored_manifest != HISTORICAL_V1_CONFIG_MANIFEST_SHA256:
+        raise ValueError("Unexpected historical mechanism v1 config identity.")
+    files: list[dict[str, str]] = []
+    if HISTORICAL_V1_OUTPUT_ROOT.exists():
+        for path in sorted(
+            item
+            for item in HISTORICAL_V1_OUTPUT_ROOT.rglob("*")
+            if item.is_file()
+        ):
+            files.append(
+                {
+                    "path": path.relative_to(PROJECT_ROOT).as_posix(),
+                    "sha256": sha256_file(path),
+                }
+            )
+    return {
+        "config_manifest_sha256": stored_manifest,
+        "output_present": bool(files),
+        "output_files": files,
+    }
+
+
 def build_mechanism_config() -> dict[str, Any]:
     """Freeze the post-primary mechanism audit without reading row-level traces."""
     require_clean_worktree(project_root=PROJECT_ROOT)
     parent = _verify_parent_compact_evidence()
+    historical_v1 = _historical_v1_identity()
     source_commit = _git_output("rev-parse", "HEAD", project_root=PROJECT_ROOT)
     protocol_file = PROJECT_ROOT / PROTOCOL_PATH
     source_file = PROJECT_ROOT / "src" / "concept_drift_ids" / "cd_primary_mechanism.py"
@@ -104,8 +141,9 @@ def build_mechanism_config() -> dict[str, Any]:
             raise FileNotFoundError(f"Missing mechanism-audit source: {path}")
 
     payload = {
-        "schema_version": 1,
-        "status": "frozen_post_primary_before_row_level_mechanism_trace_access",
+        "schema_version": 2,
+        "status": "frozen_post_primary_mechanism_v1_1_correction",
+        "historical_v1": historical_v1,
         "source_commit": source_commit,
         "parent_evidence_commit": PARENT_EVIDENCE_COMMIT,
         "parent_compact_export_manifest_sha256": parent[
@@ -128,7 +166,7 @@ def build_mechanism_config() -> dict[str, Any]:
         "primary_decision_key": PRIMARY_DECISION_KEY,
         "lambda_one_decision_key": LAMBDA_ONE_DECISION_KEY,
         "lambda_one_score_key": LAMBDA_ONE_SCORE_KEY,
-        "row_level_mechanism_trace_accessed_during_preparation": False,
+        "row_level_mechanism_trace_accessed_during_v1_1_preparation": False,
         "analysis_classification": (
             "exploratory_descriptive_post_primary_no_new_pvalue_family"
         ),
@@ -260,8 +298,11 @@ def verify_mechanism_config_for_execution(
         raise ValueError("Mechanism audit boundary changed.")
     if int(config["stream_rows"]) != STREAM_ROWS:
         raise ValueError("Mechanism audit stream length changed.")
-    if config["row_level_mechanism_trace_accessed_during_preparation"] is not False:
-        raise ValueError("Mechanism config claims row-level access during preparation.")
+    if config["row_level_mechanism_trace_accessed_during_v1_1_preparation"] is not False:
+        raise ValueError("Mechanism v1.1 config claims row-level access during preparation.")
+    historical = _historical_v1_identity()
+    if config["historical_v1"] != historical:
+        raise ValueError("Historical mechanism v1 identity/output presence changed.")
     expected_files = {
         "protocol_sha256": PROJECT_ROOT / PROTOCOL_PATH,
         "source_sha256": (
@@ -1069,11 +1110,11 @@ def main() -> None:
     if args.prepare_config:
         payload = write_mechanism_config()
         result = {
-            "status": "symbolic_value_mechanism_config_written",
+            "status": "symbolic_value_mechanism_v1_1_config_written",
             "path": CONFIG_PATH.relative_to(PROJECT_ROOT).as_posix(),
             "manifest_sha256": payload["manifest_sha256"],
             "source_commit": payload["source_commit"],
-            "row_level_mechanism_trace_accessed_during_preparation": False,
+            "row_level_mechanism_trace_accessed_during_v1_1_preparation": False,
             "next_gate": (
                 "commit only the mechanism-audit config and require exact-head CI"
             ),

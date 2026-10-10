@@ -241,6 +241,10 @@ def verify_stage9_phase_a_seed(
         raise ValueError("Stage-9 Phase-A condition spec changed.")
     if scenario["adaptive_runner_received_boundary_metadata"] is not False:
         raise ValueError("Stage-9 boundary-contamination invariant failed.")
+    if scenario["artifact_identity_context"] != artifact_identity_context(
+        config, condition=condition, seed=seed
+    ):
+        raise ValueError("Stage-9 Phase-A explicit identity context changed.")
 
     verify_manifest_files(seed_dir, manifest)
     events = read_jsonl(seed_dir / "events.jsonl")

@@ -97,7 +97,6 @@ def test_stage9_adaptive_modules_do_not_consume_boundary_constant() -> None:
     for module in (control, phase_a, symbolic):
         source = inspect.getsource(module)
         assert "PRIMARY_BOUNDARY_INDEX" not in source
-        assert '"boundary_index"' not in source
     assert "boundary" not in inspect.signature(
         control.Stage9SharedControlPlaneRunner.__init__
     ).parameters
@@ -105,6 +104,41 @@ def test_stage9_adaptive_modules_do_not_consume_boundary_constant() -> None:
         control.Stage9SharedControlPlaneRunner.run
     ).parameters
 
+
+
+def test_stage9_verifier_rejects_boundary_metadata_in_adaptive_event(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(control, "verify_shared_trajectory", lambda *a, **k: None)
+    trajectory = SharedTrajectory(
+        seed=0,
+        config_sha256="cfg",
+        predictions=(),
+        label_schedule=(),
+        detector_observations=(),
+        events=(
+            {
+                "event_type": "prediction",
+                "payload": {
+                    "stage9_condition_id": "A_LATENCY_0",
+                    "boundary_index": 69_260,
+                },
+            },
+        ),
+        replay_transactions=(),
+        checkpoint_chain=(),
+        shared_identity={},
+        final_checkpoint_sha256="cp",
+        final_state_sha256="state",
+        pending_labels=0,
+        pending_neural_transaction=None,
+    )
+    with pytest.raises(ValueError, match="Boundary metadata"):
+        control.verify_stage9_shared_trajectory(
+            trajectory,
+            config=control.Stage9ControlPlaneConfig(label_latency=0),
+            condition_id="A_LATENCY_0",
+        )
 
 def test_stage9_output_roots_are_separate_from_stage8() -> None:
     normalized = config.STAGE9_OUTPUT_ROOT.as_posix()

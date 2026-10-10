@@ -319,6 +319,10 @@ def verify_offline_condition(condition: str, seed: int) -> dict[str, Any]:
         raise ValueError("Stage-9 offline result identity mismatch.")
     if payload["stage9_config_manifest_sha256"] != config["manifest_sha256"]:
         raise ValueError("Stage-9 offline result references wrong config.")
+    if payload["identity_context"] != artifact_identity_context(
+        config, condition=condition, seed=seed
+    ):
+        raise ValueError("Stage-9 offline explicit identity context changed.")
     if payload["adaptive_state_rerun"] is not False or payload["threshold_refit"] is not False:
         raise ValueError("Stage-9 offline condition changed adaptive state/threshold.")
     return {

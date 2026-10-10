@@ -603,7 +603,7 @@ def _require_exact_config_commit(
     return head
 
 
-def verify_stage9_config_for_execution(
+def verify_stage9_config_repository_contract(
     *,
     project_root: Path = PROJECT_ROOT,
     require_clean: bool = True,
@@ -653,10 +653,12 @@ def verify_stage9_config_for_execution(
     if _source_tree_sha256(current_hashes) != config["scientific_source_tree_sha256"]:
         raise ValueError("Stage-9 scientific source tree identity changed.")
 
-    runtime = _current_runtime()
-    material = _material_runtime_identity(runtime)
-    if material != config["runtime"]["comparison"]["stage9_material_identity"]:
-        raise RuntimeError("Active Stage-9 runtime differs from frozen config.")
+    recomputed_runtime_comparison = _runtime_comparison(
+        config["runtime"]["stage8"],
+        config["runtime"]["stage9"],
+    )
+    if recomputed_runtime_comparison != config["runtime"]["comparison"]:
+        raise ValueError("Frozen Stage-9 runtime comparison is internally inconsistent.")
 
     if config["preparation"] != {
         "primary_partitions_loaded": False,
@@ -669,17 +671,42 @@ def verify_stage9_config_for_execution(
     return config
 
 
+def verify_stage9_config_for_execution(
+    *,
+    project_root: Path = PROJECT_ROOT,
+    require_clean: bool = True,
+) -> dict[str, Any]:
+    config = verify_stage9_config_repository_contract(
+        project_root=project_root,
+        require_clean=require_clean,
+    )
+    runtime = _current_runtime()
+    material = _material_runtime_identity(runtime)
+    if material != config["runtime"]["comparison"]["stage9_material_identity"]:
+        raise RuntimeError("Active Stage-9 runtime differs from frozen config.")
+    return config
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Prepare or verify the Stage-9 robustness config.")
     parser.add_argument("--verify", action="store_true")
+    parser.add_argument("--repository-contract", action="store_true")
     args = parser.parse_args()
 
-    if args.verify:
-        payload = verify_stage9_config_for_execution()
+    if args.verify or args.repository_contract:
+        payload = (
+            verify_stage9_config_repository_contract()
+            if args.repository_contract
+            else verify_stage9_config_for_execution()
+        )
         print(
             json.dumps(
                 {
-                    "status": "stage9_config_verified_for_execution",
+                    "status": (
+                        "stage9_config_verified_repository_contract"
+                        if args.repository_contract
+                        else "stage9_config_verified_for_execution"
+                    ),
                     "manifest_sha256": payload["manifest_sha256"],
                     "source_commit": payload["source_commit"],
                     "matched_stage9_baseline_required": payload["runtime"]["comparison"][

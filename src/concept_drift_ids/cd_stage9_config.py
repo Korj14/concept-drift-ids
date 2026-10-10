@@ -192,6 +192,11 @@ CONDITIONS: dict[str, dict[str, Any]] = {
 }
 
 SCIENTIFIC_SOURCE_PATHS = (
+    ".gitattributes",
+    ".gitignore",
+    ".github/workflows/stage3-unit.yml",
+    "requirements-lock.txt",
+    "tests/test_cd_stage9_unit.py",
     "STAGE9_PRESPECIFIED_ROBUSTNESS_PROTOCOL.md",
     "STAGE9_IMPLEMENTATION_FREEZE.md",
     "src/concept_drift_ids/cd_stage9_config.py",

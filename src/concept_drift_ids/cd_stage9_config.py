@@ -102,6 +102,8 @@ STAGE9_SOURCE_PATHS = (
     "run_stage9.py",
     "scripts/run_stage9.ps1",
     ".github/workflows/stage9-unit.yml",
+    "data/manifests/.gitattributes",
+    "results/frozen/.gitattributes",
 )
 
 
@@ -451,9 +453,26 @@ def _require_config_only_freeze(config: Mapping[str, Any]) -> None:
         raise ValueError("Stage-9 config freeze commit must contain only the config.")
 
 
-def verify_stage9_config_for_execution() -> dict[str, Any]:
-    if _git_output("status", "--porcelain"):
-        raise RuntimeError("Stage-9 execution requires a clean worktree.")
+def verify_stage9_config_for_execution(
+    *,
+    allow_untracked_compact_output: bool = False,
+) -> dict[str, Any]:
+    status = _git_output("status", "--porcelain")
+    if status:
+        lines = [line for line in status.splitlines() if line.strip()]
+        allowed = (
+            allow_untracked_compact_output
+            and lines
+            and all(
+                line.startswith("?? results/frozen/cd_robustness_v1/")
+                for line in lines
+            )
+        )
+        if not allowed:
+            raise RuntimeError(
+                "Stage-9 execution requires a clean worktree; compact verification "
+                "may allow only untracked Stage-9 compact output."
+            )
     config = load_stage9_config()
     head = _git_output("rev-parse", "HEAD")
     if head != _git_output(

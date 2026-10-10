@@ -295,12 +295,7 @@ def verify_stage9_phase_a_seed(
         "run_manifest_sha256": manifest["manifest_sha256"],
         "shared_identity_sha256": identity["shared_identity"]["identity_sha256"],
         "prediction_rows": len(predictions),
-        "drift_event_count": sum(
-            1
-            for event in events
-            if event["event_type"] == "drift_event"
-            and event["status"] == "confirmed"
-        ),
+        "outcome_metrics_exposed": False,
     }
 
 

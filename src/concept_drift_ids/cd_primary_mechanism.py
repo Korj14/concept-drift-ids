@@ -588,6 +588,8 @@ def _stratum_summary(
             "target_error_count": 0,
             "rescue_count": 0,
             "harm_count": 0,
+            "same_correct_count": 0,
+            "same_wrong_count": 0,
             "net_corrected_decisions": 0,
             "c_confusion": {"tp": 0, "tn": 0, "fp": 0, "fn": 0},
             "target_confusion": {"tp": 0, "tn": 0, "fp": 0, "fn": 0},
@@ -603,6 +605,10 @@ def _stratum_summary(
     t_correct = t_s == y_s
     rescues = int(np.sum((~c_correct) & t_correct))
     harms = int(np.sum(c_correct & (~t_correct)))
+    same_correct = int(np.sum(c_correct & t_correct))
+    same_wrong = int(np.sum((~c_correct) & (~t_correct)))
+    if rescues + harms + same_correct + same_wrong != rows:
+        raise AssertionError("Stratum correctness partition is not exhaustive.")
     return {
         "row_count": rows,
         "row_fraction": rows / len(y),
@@ -612,6 +618,8 @@ def _stratum_summary(
         "target_error_count": int(np.sum(~t_correct)),
         "rescue_count": rescues,
         "harm_count": harms,
+        "same_correct_count": same_correct,
+        "same_wrong_count": same_wrong,
         "net_corrected_decisions": rescues - harms,
         "c_confusion": _confusion(y_s, c_s),
         "target_confusion": _confusion(y_s, t_s),

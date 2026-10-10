@@ -1188,9 +1188,7 @@ def test_historical_v1_failure_identity_requires_exact_preserved_remnants(
 
     plan = {
         "schema_version": 1,
-        "stage9_config_manifest_sha256": (
-            config.HISTORICAL_STAGE9_V1_CONFIG_MANIFEST_SHA256
-        ),
+        "stage9_config_manifest_sha256": historical_config["manifest_sha256"],
         "steps": [],
     }
     plan["plan_sha256"] = config.canonical_sha256(plan)
@@ -1201,9 +1199,7 @@ def test_historical_v1_failure_identity_requires_exact_preserved_remnants(
         {
             "condition_id": "lambda_0_7",
             "seed": 0,
-            "stage9_config_manifest_sha256": (
-                config.HISTORICAL_STAGE9_V1_CONFIG_MANIFEST_SHA256
-            ),
+            "stage9_config_manifest_sha256": historical_config["manifest_sha256"],
         },
     )
     write_json_new(

@@ -282,6 +282,9 @@ def test_config_preparation_declares_no_stage9_outcome_access(
     monkeypatch.setattr(config, "_require_clean_for_preparation", lambda: None)
     monkeypatch.setattr(config, "_require_stage8_closure_ancestor", lambda: None)
     monkeypatch.setattr(
+        config, "_require_historical_v1_freeze_ancestor", lambda: None
+    )
+    monkeypatch.setattr(
         config, "_require_no_stage9_outputs_before_preparation", lambda: None
     )
     monkeypatch.setattr(
@@ -1091,6 +1094,9 @@ def test_v1_1_config_records_historical_failure_without_scope_change(
     monkeypatch.setattr(config, "_require_clean_for_preparation", lambda: None)
     monkeypatch.setattr(config, "_require_stage8_closure_ancestor", lambda: None)
     monkeypatch.setattr(
+        config, "_require_historical_v1_freeze_ancestor", lambda: None
+    )
+    monkeypatch.setattr(
         config, "_require_no_stage9_outputs_before_preparation", lambda: None
     )
     monkeypatch.setattr(
@@ -1253,3 +1259,14 @@ def test_historical_v1_failure_identity_requires_exact_preserved_remnants(
     )
     with pytest.raises(ValueError, match="file set changed|accepted result"):
         config._historical_v1_execution_identity()
+
+
+def test_stage9_v1_1_preparation_requires_failed_v1_freeze_ancestor(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    class Result:
+        returncode = 1
+
+    monkeypatch.setattr(config, "_git", lambda *args, **kwargs: Result())
+    with pytest.raises(ValueError, match="failed v1 config-freeze"):
+        config._require_historical_v1_freeze_ancestor()

@@ -139,7 +139,9 @@ def test_mechanism_config_preparation_does_not_read_heavy_traces(
             ),
         },
     )
-    monkeypatch.setattr(mechanism, "require_clean_worktree", lambda **kwargs: None)
+    monkeypatch.setattr(
+        mechanism, "_require_clean_for_v1_1_preparation", lambda: None
+    )
     monkeypatch.setattr(
         mechanism,
         "_git_output",
@@ -201,7 +203,9 @@ def test_mechanism_config_contains_frozen_decomposition_identity(
             ),
         },
     )
-    monkeypatch.setattr(mechanism, "require_clean_worktree", lambda **kwargs: None)
+    monkeypatch.setattr(
+        mechanism, "_require_clean_for_v1_1_preparation", lambda: None
+    )
     monkeypatch.setattr(
         mechanism,
         "_git_output",
@@ -304,3 +308,29 @@ def test_v1_1_uses_new_config_and_output_identities() -> None:
     assert mechanism.OUTPUT_ROOT.name == "cd_primary_mechanism_v1_1"
     assert mechanism.CONFIG_PATH != mechanism.HISTORICAL_V1_CONFIG_PATH
     assert mechanism.OUTPUT_ROOT != mechanism.HISTORICAL_V1_OUTPUT_ROOT
+
+
+
+def test_v1_1_preparation_allows_only_historical_v1_untracked_output(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(
+        mechanism,
+        "_git_output",
+        lambda *args, **kwargs: (
+            "?? results/frozen/cd_primary_mechanism_v1/seed-0.json\n"
+            "?? results/frozen/cd_primary_mechanism_v1/audit_manifest.json"
+        ),
+    )
+    mechanism._require_clean_for_v1_1_preparation()
+
+    monkeypatch.setattr(
+        mechanism,
+        "_git_output",
+        lambda *args, **kwargs: (
+            "?? results/frozen/cd_primary_mechanism_v1/seed-0.json\n"
+            " M src/concept_drift_ids/cd_primary_mechanism.py"
+        ),
+    )
+    with pytest.raises(RuntimeError, match="Disallowed status"):
+        mechanism._require_clean_for_v1_1_preparation()

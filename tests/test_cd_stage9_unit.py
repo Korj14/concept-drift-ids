@@ -1216,6 +1216,7 @@ def test_historical_v1_failure_identity_requires_exact_preserved_remnants(
         },
     )
 
+    monkeypatch.setattr(config, "PROJECT_ROOT", tmp_path)
     monkeypatch.setattr(
         config, "HISTORICAL_STAGE9_V1_CONFIG_PATH", config_path
     )

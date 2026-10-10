@@ -31,6 +31,7 @@ PARENT_CONFIRMATORY_AGGREGATE_SHA256 = (
     "1be77ce4be9f3faad021a3f3bfd636488e5de6aa1b2a6e7c596e48feb41bb54d"
 )
 PROTOCOL_PATH = "STAGE8_SYMBOLIC_VALUE_MECHANISM_AUDIT_PROTOCOL.md"
+CORRECTION_PROTOCOL_PATH = "STAGE8_SYMBOLIC_MECHANISM_AUDIT_V1_1_CORRECTION.md"
 HISTORICAL_V1_CONFIG_PATH = (
     PROJECT_ROOT / "data" / "manifests" / "cd_primary_mechanism_audit_v1.json"
 )
@@ -133,10 +134,11 @@ def build_mechanism_config() -> dict[str, Any]:
     historical_v1 = _historical_v1_identity()
     source_commit = _git_output("rev-parse", "HEAD", project_root=PROJECT_ROOT)
     protocol_file = PROJECT_ROOT / PROTOCOL_PATH
+    correction_file = PROJECT_ROOT / CORRECTION_PROTOCOL_PATH
     source_file = PROJECT_ROOT / "src" / "concept_drift_ids" / "cd_primary_mechanism.py"
     runner_file = PROJECT_ROOT / "run.py"
     tests_file = PROJECT_ROOT / "tests" / "test_cd_primary_mechanism_unit.py"
-    for path in (protocol_file, source_file, runner_file, tests_file):
+    for path in (protocol_file, correction_file, source_file, runner_file, tests_file):
         if not path.is_file():
             raise FileNotFoundError(f"Missing mechanism-audit source: {path}")
 
@@ -154,6 +156,8 @@ def build_mechanism_config() -> dict[str, Any]:
         ],
         "protocol_path": PROTOCOL_PATH,
         "protocol_sha256": sha256_file(protocol_file),
+        "correction_protocol_path": CORRECTION_PROTOCOL_PATH,
+        "correction_protocol_sha256": sha256_file(correction_file),
         "source_sha256": sha256_file(source_file),
         "runner_sha256": sha256_file(runner_file),
         "tests_sha256": sha256_file(tests_file),
@@ -303,8 +307,15 @@ def verify_mechanism_config_for_execution(
     historical = _historical_v1_identity()
     if config["historical_v1"] != historical:
         raise ValueError("Historical mechanism v1 identity/output presence changed.")
+    if int(config["schema_version"]) != 2:
+        raise ValueError("Unexpected mechanism v1.1 config schema version.")
+    if config["status"] != "frozen_post_primary_mechanism_v1_1_correction":
+        raise ValueError("Unexpected mechanism v1.1 config status.")
+    if config["correction_protocol_path"] != CORRECTION_PROTOCOL_PATH:
+        raise ValueError("Mechanism v1.1 correction protocol path changed.")
     expected_files = {
         "protocol_sha256": PROJECT_ROOT / PROTOCOL_PATH,
+        "correction_protocol_sha256": PROJECT_ROOT / CORRECTION_PROTOCOL_PATH,
         "source_sha256": (
             PROJECT_ROOT / "src" / "concept_drift_ids" / "cd_primary_mechanism.py"
         ),

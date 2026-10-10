@@ -53,6 +53,12 @@ The existing lifecycle implementation is used with `min_precision_lcb=0.0` and
 `min_fidelity_lcb=0.0`. Wilson values may still be computed as diagnostics, but they do not enter
 accept/reject decisions in this Stage-9 condition.
 
+In each bootstrap replicate, the implementation re-evaluates every data-dependent gate term:
+support, covered count, point class precision and point neural fidelity. Complexity is deterministic
+for a candidate and therefore is not re-estimated inside each bootstrap resample; it is enforced by
+the final point gate before publication. Consequently an over-complex candidate cannot publish even
+if its data-dependent bootstrap persistence is high.
+
 C, D-drift and D-periodic use the identical static-gate operator configuration.
 
 ### Group A — adaptive robustness

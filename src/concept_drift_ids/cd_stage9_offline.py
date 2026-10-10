@@ -95,10 +95,16 @@ def _stage8_eval_payload(seed: int, arm: str) -> dict[str, Any]:
     path = _compact_eval_path(seed, arm)
     manifest = _stage8_compact_manifest()
     relative = path.relative_to(PROJECT_ROOT).as_posix()
+    descriptors = manifest.get("files")
+    if not isinstance(descriptors, list):
+        raise ValueError(
+            "Stage-8 compact export manifest files must be a list."
+        )
     matches = [
         descriptor
-        for descriptor in manifest["files"].values()
-        if descriptor.get("export_path") == relative
+        for descriptor in descriptors
+        if isinstance(descriptor, Mapping)
+        and descriptor.get("export_path") == relative
     ]
     if len(matches) != 1:
         raise ValueError(

@@ -14,6 +14,7 @@ from concept_drift_ids import cd_stage9_export as export
 from concept_drift_ids.cd_control_plane import MatureLabelRecord
 from concept_drift_ids.cd_stage9_monitor import Stage9DriftMonitor
 from concept_drift_ids.cd_stage9_phase_a import control_plane_for_condition
+import concept_drift_ids.cd_stage9_shared_runner as stage9_runner
 from concept_drift_ids.cd_stage9_shared_runner import Stage9ControlPlaneConfig
 
 
@@ -583,3 +584,40 @@ def test_every_stage9_condition_is_bound_to_primary_contract_and_declares_change
     for name, spec in flattened.items():
         assert spec["base_primary_contract_sha256"] == "primary-contract"
         assert spec["changed_factors"] == expected_changes[name]
+
+
+def test_prediction_before_label_event_order_accepts_same_clock_causal_order() -> None:
+    events = [
+        {"event_type": "prediction", "origin_index": 0, "logical_clock": 0},
+        {"event_type": "label_release", "origin_index": 0, "logical_clock": 0},
+        {
+            "event_type": "detector_observation",
+            "origin_index": 0,
+            "logical_clock": 0,
+        },
+        {"event_type": "drift_event", "origin_index": 0, "logical_clock": 0},
+    ]
+    stage9_runner._verify_prediction_before_label_event_order(events)
+
+
+def test_prediction_before_label_event_order_rejects_label_first() -> None:
+    events = [
+        {"event_type": "label_release", "origin_index": 0, "logical_clock": 0},
+        {"event_type": "prediction", "origin_index": 0, "logical_clock": 0},
+    ]
+    with pytest.raises(ValueError, match="before prediction"):
+        stage9_runner._verify_prediction_before_label_event_order(events)
+
+
+def test_prediction_before_label_event_order_rejects_detector_before_label() -> None:
+    events = [
+        {"event_type": "prediction", "origin_index": 0, "logical_clock": 0},
+        {
+            "event_type": "detector_observation",
+            "origin_index": 0,
+            "logical_clock": 0,
+        },
+        {"event_type": "label_release", "origin_index": 0, "logical_clock": 0},
+    ]
+    with pytest.raises(ValueError, match="before mature-label"):
+        stage9_runner._verify_prediction_before_label_event_order(events)

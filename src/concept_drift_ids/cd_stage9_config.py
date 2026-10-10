@@ -127,6 +127,9 @@ def _read_json(path: Path) -> dict[str, Any]:
 
 def _canonical_manifest(path: Path) -> tuple[dict[str, Any], str]:
     payload = _read_json(path)
+    stored_payload = payload.pop("payload_sha256", None)
+    if stored_payload is not None and stored_payload != canonical_sha256(payload):
+        raise ValueError(f"Payload hash mismatch: {path}")
     stored = payload.pop("manifest_sha256", None)
     if stored != canonical_sha256(payload):
         raise ValueError(f"Canonical manifest hash mismatch: {path}")

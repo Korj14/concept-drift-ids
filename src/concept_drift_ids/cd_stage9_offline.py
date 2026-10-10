@@ -17,6 +17,7 @@ from concept_drift_ids.cd_primary_phase_c import (
     _safe_binary_metrics,
     _safe_explanation,
 )
+from concept_drift_ids.cd_implementation_preflight import PROJECT_ROOT
 from concept_drift_ids.cd_stage9_config import (
     OFFLINE_CONDITIONS,
     PRIMARY_SEEDS,
@@ -29,7 +30,7 @@ from concept_drift_ids.symbolic import reporting_windows
 
 
 PRIMARY_HEAVY_PHASE_C = (
-    STAGE8_COMPACT_ROOT.parent.parent
+    PROJECT_ROOT
     / "artifacts"
     / "cd_primary_v1"
     / "phase_c_offline_evaluation_v1_1"

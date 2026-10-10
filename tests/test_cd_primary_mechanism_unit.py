@@ -334,3 +334,49 @@ def test_v1_1_preparation_allows_only_historical_v1_untracked_output(
     )
     with pytest.raises(RuntimeError, match="Disallowed status"):
         mechanism._require_clean_for_v1_1_preparation()
+
+
+def test_phase_b_arm_manifest_verification_preserves_manifest_identity(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    seed = 0
+    arm = "d_drift"
+    root = tmp_path / "results" / "frozen" / "cd_primary_v1"
+    arm_dir = (
+        root
+        / "phase_b_symbolic_arms"
+        / f"seed-{seed}"
+        / arm
+    )
+    arm_dir.mkdir(parents=True, exist_ok=True)
+
+    core = {
+        "schema_version": 1,
+        "seed": seed,
+        "arm": arm,
+        "initial_rule_base_version_id": "d-s0-r0v2",
+        "final_rule_base_version_id": "d-s0-v0001",
+        "publications": [],
+    }
+    payload = dict(core)
+    payload["manifest_sha256"] = mechanism.canonical_sha256(core)
+    path = arm_dir / "arm_manifest.json"
+    path.write_text(
+        mechanism.json.dumps(payload, sort_keys=True, indent=2) + "\n",
+        encoding="utf-8",
+    )
+
+    monkeypatch.setattr(mechanism, "COMPACT_ROOT", root)
+    loaded = mechanism._phase_b_arm_manifest(seed, arm)
+
+    assert loaded["manifest_sha256"] == payload["manifest_sha256"]
+    assert loaded["initial_rule_base_version_id"] == "d-s0-r0v2"
+    assert loaded["final_rule_base_version_id"] == "d-s0-v0001"
+
+
+def test_v1_2_uses_new_config_and_output_identities() -> None:
+    assert mechanism.CONFIG_PATH.name == "cd_primary_mechanism_audit_v1_2.json"
+    assert mechanism.OUTPUT_ROOT.name == "cd_primary_mechanism_v1_2"
+    assert mechanism.CONFIG_PATH != mechanism.HISTORICAL_V1_1_CONFIG_PATH
+    assert mechanism.OUTPUT_ROOT != mechanism.HISTORICAL_V1_1_OUTPUT_ROOT

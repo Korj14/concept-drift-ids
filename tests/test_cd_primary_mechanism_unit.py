@@ -13,7 +13,7 @@ from concept_drift_ids.cd_implementation_preflight import PROJECT_ROOT
 def test_authority_state_partition() -> None:
     assert mechanism._authority_state(True, False) == "withdrawal"
     assert mechanism._authority_state(False, True) == "addition"
-    assert mechanism._authority_state(True, True) == "revision"
+    assert mechanism._authority_state(True, True) == "retained_authority"
     assert mechanism._authority_state(False, False) == "neither_authoritative"
 
 
@@ -26,10 +26,10 @@ def test_mcc_shapley_efficiency_and_endpoints() -> None:
             "neither_authoritative",
             "withdrawal",
             "addition",
-            "revision",
+            "retained_authority",
             "withdrawal",
             "addition",
-            "revision",
+            "retained_authority",
             "neither_authoritative",
         ],
         dtype=object,
@@ -58,7 +58,7 @@ def test_stratum_rescue_harm_accounting() -> None:
     c = np.asarray([1, 0, 0, 1], dtype=np.int8)
     t = np.asarray([0, 1, 1, 1], dtype=np.int8)
     state = np.asarray(
-        ["withdrawal", "withdrawal", "withdrawal", "revision"],
+        ["withdrawal", "withdrawal", "withdrawal", "retained_authority"],
         dtype=object,
     )
     zeros = np.zeros(4, dtype=bool)

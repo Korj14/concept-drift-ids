@@ -5,7 +5,12 @@ import json
 from pathlib import Path
 from typing import Any, Mapping
 
-from concept_drift_ids.cd_control_plane import write_json_new
+import numpy as np
+
+from concept_drift_ids.cd_control_plane import (
+    SYSTEM_A_MONITOR_THRESHOLDS,
+    write_json_new,
+)
 from concept_drift_ids.cd_evidence import (
     build_run_manifest,
     read_jsonl,
@@ -13,7 +18,10 @@ from concept_drift_ids.cd_evidence import (
     verify_checkpoint_chain,
     verify_manifest_files,
 )
-from concept_drift_ids.cd_primary_adapter import build_primary_input_bundle
+from concept_drift_ids.cd_primary_adapter import (
+    build_primary_input_bundle,
+    load_primary_stream,
+)
 from concept_drift_ids.cd_runtime import configure_torch_primary_runtime
 from concept_drift_ids.cd_shared_runner import freeze_shared_trajectory
 from concept_drift_ids.cd_stage9_config import (
@@ -28,6 +36,7 @@ from concept_drift_ids.cd_stage9_control_plane import (
     Stage9SharedControlPlaneRunner,
     verify_stage9_shared_trajectory,
 )
+from concept_drift_ids.frozen_preprocessing import load_frozen_preprocessing
 from concept_drift_ids.scenario_manifest import sha256_file
 
 
@@ -287,6 +296,54 @@ def verify_stage9_phase_a_seed(
     )
     if len(predictions) != int(config["scenario"]["stream_rows"]):
         raise ValueError("Stage-9 Phase-A prediction row count mismatch.")
+
+    # Independently recompute every admitted detector signal from the
+    # prediction that was actually made and the frozen stream truth.
+    preprocessing = load_frozen_preprocessing()
+    stream_rows = load_primary_stream(preprocessing=preprocessing)
+    if len(stream_rows) != len(predictions):
+        raise ValueError("Stage-9 verifier stream/prediction count mismatch.")
+    by_origin = {
+        int(item["origin_index"]): item
+        for item in detector
+    }
+    if len(by_origin) != len(detector):
+        raise ValueError("Duplicate Stage-9 detector observation origin index.")
+    threshold = float(SYSTEM_A_MONITOR_THRESHOLDS[seed])
+    for origin, observation in by_origin.items():
+        if not 0 <= origin < len(predictions):
+            raise ValueError("Stage-9 detector observation origin is out of range.")
+        prediction = predictions[origin]
+        stream = stream_rows[origin]
+        if prediction["row_id"] != stream.row_id:
+            raise ValueError("Stage-9 prediction/stream row identity mismatch.")
+        if observation["row_id"] != stream.row_id:
+            raise ValueError("Stage-9 detector/stream row identity mismatch.")
+        if observation["prediction_checkpoint_sha256"] != prediction[
+            "checkpoint_sha256"
+        ]:
+            raise ValueError("Stage-9 detector references wrong prediction checkpoint.")
+        if not observation["admitted"]:
+            if observation["signal"] is not None or observation["hard_error"] is not None:
+                raise ValueError("Non-admitted Stage-9 observation exposes label signal.")
+            continue
+        probability = float(prediction["neural_probability"])
+        true_label = int(stream.label)
+        expected_hard = int(int(probability >= threshold) != true_label)
+        if int(observation["hard_error"]) != expected_hard:
+            raise ValueError("Stage-9 detector hard-error signal recomputation failed.")
+        expected_signal = (
+            (probability - true_label) ** 2
+            if cp_config.detector_kind == "adwin_brier"
+            else float(expected_hard)
+        )
+        if not np.isclose(
+            float(observation["signal"]),
+            float(expected_signal),
+            rtol=0.0,
+            atol=1e-15,
+        ):
+            raise ValueError("Stage-9 detector signal recomputation failed.")
 
     return {
         "status": "stage9_phase_a_seed_verified_unscored",

@@ -886,3 +886,31 @@ def test_export_source_requires_execution_plan_identity() -> None:
     assert "_load_verified_plan(config)" in source
     assert '"execution_plan_sha256"' in source
     assert '"execution_plan"' in source
+
+
+def test_offline_failure_preserves_attempt_and_failure_evidence(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    out = tmp_path / "offline"
+    monkeypatch.setattr(
+        offline,
+        "verify_stage9_config_for_execution",
+        lambda: {
+            "manifest_sha256": "cfg",
+            "stage8_parent": {"evidence": "parent"},
+        },
+    )
+    monkeypatch.setattr(offline, "_output_dir", lambda condition, seed: out)
+    monkeypatch.setattr(
+        offline,
+        "_stage8_eval_payload",
+        lambda seed, arm: (_ for _ in ()).throw(
+            RuntimeError("synthetic offline failure")
+        ),
+    )
+    with pytest.raises(RuntimeError, match="synthetic offline failure"):
+        offline.execute_offline_condition("lambda_0_7", 0)
+    assert (out / "attempt.json").is_file()
+    assert (out / "failure.json").is_file()
+    assert not (out / "result.json").exists()

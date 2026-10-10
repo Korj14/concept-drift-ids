@@ -140,7 +140,7 @@ def test_mechanism_config_preparation_does_not_read_heavy_traces(
         },
     )
     monkeypatch.setattr(
-        mechanism, "_require_clean_for_v1_1_preparation", lambda: None
+        mechanism, "_require_clean_for_v1_2_preparation", lambda: None
     )
     monkeypatch.setattr(
         mechanism,
@@ -216,7 +216,7 @@ def test_mechanism_config_contains_frozen_decomposition_identity(
         },
     )
     monkeypatch.setattr(
-        mechanism, "_require_clean_for_v1_1_preparation", lambda: None
+        mechanism, "_require_clean_for_v1_2_preparation", lambda: None
     )
     monkeypatch.setattr(
         mechanism,

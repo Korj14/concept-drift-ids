@@ -32,6 +32,7 @@ def main() -> None:
             "cd-primary-phase-b",
             "cd-primary-phase-c",
             "cd-primary-export",
+            "cd-primary-mechanism-audit",
         ),
         help="Project command to execute.",
     )
@@ -100,6 +101,13 @@ def main() -> None:
     if args.command == "cd-primary-phase-c":
         from concept_drift_ids.cd_primary_phase_c import main as run_phase_c
         run_phase_c()
+        return
+
+    if args.command == "cd-primary-mechanism-audit":
+        from concept_drift_ids.cd_primary_mechanism import (
+            main as run_primary_mechanism_audit,
+        )
+        run_primary_mechanism_audit()
         return
 
     from concept_drift_ids.cd_primary_export import main as run_primary_export

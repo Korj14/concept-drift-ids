@@ -420,6 +420,22 @@ def build_stage9_config(*, project_root: Path = PROJECT_ROOT) -> dict[str, Any]:
     source_hashes = _source_hashes(project_root=project_root)
     primary_runtime = _primary_runtime()
     stage9_runtime = _current_runtime()
+
+    frozen_requirements = primary["requirements"]
+    current_lock_identity = sha256_normalized_text(
+        project_root / "requirements-lock.txt"
+    )
+    if current_lock_identity != frozen_requirements[
+        "binding_normalized_text_sha256"
+    ]:
+        raise RuntimeError("Stage-9 requirements lock differs from frozen Stage 8.")
+    if stage9_runtime["locked_distributions_sha256"] != frozen_requirements[
+        "installed_distributions_sha256"
+    ]:
+        raise RuntimeError(
+            "Stage-9 installed distribution identity differs from frozen Stage 8."
+        )
+
     runtime_comparison = _runtime_comparison(primary_runtime, stage9_runtime)
 
     payload: dict[str, Any] = {
@@ -462,6 +478,7 @@ def build_stage9_config(*, project_root: Path = PROJECT_ROOT) -> dict[str, Any]:
             "fusion": primary["fusion"],
             "system_a": primary["system_a"],
             "r0_v2": primary["r0_v2"],
+            "requirements": primary["requirements"],
         },
         "conditions": _condition_payload(runtime_comparison),
         "detectors": {
@@ -646,9 +663,15 @@ def verify_stage9_config_repository_contract(
         "fusion": primary["fusion"],
         "system_a": primary["system_a"],
         "r0_v2": primary["r0_v2"],
+        "requirements": primary["requirements"],
     }
     if config["parent_primary_reference"] != expected_primary_reference:
         raise ValueError("Stage-9 parent primary control identities changed.")
+
+    if sha256_normalized_text(
+        project_root / "requirements-lock.txt"
+    ) != primary["requirements"]["binding_normalized_text_sha256"]:
+        raise ValueError("Stage-9 frozen dependency lock identity changed.")
 
     if tuple(config["seeds"]) != PRIMARY_SEEDS:
         raise ValueError("Stage-9 seed set changed.")

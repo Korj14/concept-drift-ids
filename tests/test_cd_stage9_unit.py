@@ -273,6 +273,10 @@ def test_config_preparation_declares_no_stage9_outcome_access(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     monkeypatch.setattr(config, "_require_clean_for_preparation", lambda: None)
+    monkeypatch.setattr(config, "_require_stage8_closure_ancestor", lambda: None)
+    monkeypatch.setattr(
+        config, "_require_no_stage9_outputs_before_preparation", lambda: None
+    )
     monkeypatch.setattr(
         config,
         "_verify_stage8_parent",
@@ -437,3 +441,27 @@ def test_reused_stage8_computational_sources_are_historically_bound() -> None:
     assert set(config.REUSED_STAGE8_SOURCE_PATHS).issubset(frozen)
     observed = config._verify_reused_stage8_source_tree(corrected)
     assert set(observed) == set(config.REUSED_STAGE8_SOURCE_PATHS)
+
+
+def test_stage9_preparation_requires_stage8_closure_ancestor(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    class Result:
+        returncode = 1
+
+    monkeypatch.setattr(config, "_git", lambda *args, **kwargs: Result())
+    with pytest.raises(ValueError, match="Stage-8 closure"):
+        config._require_stage8_closure_ancestor()
+
+
+def test_stage9_preparation_refuses_preexisting_output_roots(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    heavy = tmp_path / "heavy"
+    compact = tmp_path / "compact"
+    heavy.mkdir()
+    monkeypatch.setattr(config, "STAGE9_OUTPUT_ROOT", heavy)
+    monkeypatch.setattr(config, "STAGE9_COMPACT_ROOT", compact)
+    with pytest.raises(RuntimeError, match="pre-existing robustness output"):
+        config._require_no_stage9_outputs_before_preparation()

@@ -27,6 +27,7 @@ from concept_drift_ids.cd_stage9_offline import (
     verify_offline_condition,
 )
 from concept_drift_ids.cd_stage9_phase_a import adaptive_condition_ids
+from concept_drift_ids.cd_stage9_phase_b import _phase_a_dir, _phase_b_dir
 from concept_drift_ids.cd_stage9_phase_c import (
     _phase_c_dir,
     verify_stage9_phase_c_seed,
@@ -498,7 +499,60 @@ def export_stage9() -> dict[str, Any]:
                     / name
                 )
                 copied[name] = _copy_json_new(source, dest)
-            condition_files[str(seed)] = copied
+
+            phase_a_root = _phase_a_dir(condition, seed)
+            phase_b_root = _phase_b_dir(condition, seed)
+            provenance: dict[str, Any] = {
+                "phase_a": {},
+                "phase_b": {},
+            }
+            for name in (
+                "run_manifest.json",
+                "input_identity.json",
+                "shared_identity.json",
+            ):
+                source = phase_a_root / name
+                dest = (
+                    STAGE9_COMPACT_ROOT
+                    / "provenance"
+                    / condition
+                    / f"seed-{seed}"
+                    / "phase_a"
+                    / name
+                )
+                provenance["phase_a"][name] = _copy_json_new(source, dest)
+
+            source = phase_b_root / "phase_b_manifest.json"
+            dest = (
+                STAGE9_COMPACT_ROOT
+                / "provenance"
+                / condition
+                / f"seed-{seed}"
+                / "phase_b"
+                / "phase_b_manifest.json"
+            )
+            provenance["phase_b"]["phase_b_manifest.json"] = _copy_json_new(
+                source, dest
+            )
+            for arm in ARM_NAMES:
+                source = phase_b_root / arm / "arm_manifest.json"
+                dest = (
+                    STAGE9_COMPACT_ROOT
+                    / "provenance"
+                    / condition
+                    / f"seed-{seed}"
+                    / "phase_b"
+                    / arm
+                    / "arm_manifest.json"
+                )
+                provenance["phase_b"][f"{arm}/arm_manifest.json"] = (
+                    _copy_json_new(source, dest)
+                )
+
+            condition_files[str(seed)] = {
+                "phase_c": copied,
+                "provenance": provenance,
+            }
         files[f"scored:{condition}"] = condition_files
 
     if bool(config["matched_baseline_required"]):

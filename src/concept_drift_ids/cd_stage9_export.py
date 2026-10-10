@@ -186,7 +186,12 @@ def export_stage9() -> dict[str, Any]:
             arm: [_stage9_metrics(condition, seed, arm) for seed in PRIMARY_SEEDS]
             for arm in ARM_NAMES
         }
-        if baseline_condition is not None and condition != baseline_condition:
+        use_matched_baseline = (
+            baseline_condition is not None
+            and condition != baseline_condition
+            and condition not in GATE_CONDITIONS
+        )
+        if use_matched_baseline:
             reference = {
                 arm: [
                     _stage9_metrics(baseline_condition, seed, arm)
@@ -194,20 +199,18 @@ def export_stage9() -> dict[str, Any]:
                 ]
                 for arm in ARM_NAMES
             }
+            reference_id = baseline_condition
         else:
             reference = {
                 arm: [_stage8_reference(seed, arm) for seed in PRIMARY_SEEDS]
                 for arm in ARM_NAMES
             }
+            reference_id = "stage8_primary"
 
         condition_payload: dict[str, Any] = {
             "arms": {},
             "within_condition_primary_contrasts": {},
-            "reference": (
-                baseline_condition
-                if baseline_condition is not None and condition != baseline_condition
-                else "stage8_primary"
-            ),
+            "reference": reference_id,
         }
         for arm in ARM_NAMES:
             condition_payload["arms"][arm] = {

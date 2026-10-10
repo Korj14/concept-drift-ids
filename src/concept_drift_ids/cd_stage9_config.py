@@ -87,6 +87,31 @@ STATIC_GATE_CONFIG = {
     "use_wilson_lcb": False,
 }
 
+REUSED_STAGE8_SOURCE_PATHS = (
+    "src/concept_drift_ids/neural.py",
+    "src/concept_drift_ids/frozen_preprocessing.py",
+    "src/concept_drift_ids/scenario_loader.py",
+    "src/concept_drift_ids/system_a.py",
+    "src/concept_drift_ids/cd_control_plane.py",
+    "src/concept_drift_ids/cd_evidence.py",
+    "src/concept_drift_ids/cd_runtime.py",
+    "src/concept_drift_ids/cd_shared_runner.py",
+    "src/concept_drift_ids/cd_symbolic_lifecycle.py",
+    "src/concept_drift_ids/cd_symbolic_candidates.py",
+    "src/concept_drift_ids/cd_symbolic_arms.py",
+    "src/concept_drift_ids/cd_symbolic_runner.py",
+    "src/concept_drift_ids/cd_symbolic_evidence.py",
+    "src/concept_drift_ids/cd_symbolic_evaluation.py",
+    "src/concept_drift_ids/cd_analysis.py",
+    "src/concept_drift_ids/cd_r0_lifecycle.py",
+    "src/concept_drift_ids/cd_implementation_preflight.py",
+    "src/concept_drift_ids/cd_primary_config.py",
+    "src/concept_drift_ids/cd_primary_adapter.py",
+    "src/concept_drift_ids/cd_primary_phase_a.py",
+    "src/concept_drift_ids/cd_primary_phase_b.py",
+    "src/concept_drift_ids/cd_primary_phase_c.py",
+)
+
 STAGE9_SOURCE_PATHS = (
     "STAGE9_PRESPECIFIED_ROBUSTNESS_PROTOCOL.md",
     "STAGE9_IMPLEMENTATION.md",
@@ -104,6 +129,9 @@ STAGE9_SOURCE_PATHS = (
     ".github/workflows/stage9-unit.yml",
     "data/manifests/.gitattributes",
     "results/frozen/.gitattributes",
+    "src/concept_drift_ids/scenario_manifest.py",
+    "src/concept_drift_ids/symbolic.py",
+    *REUSED_STAGE8_SOURCE_PATHS,
 )
 
 
@@ -245,7 +273,12 @@ def _verify_reused_stage8_source_tree(
 ) -> dict[str, str]:
     expected = dict(corrected_config["scientific_source_hashes"])
     current: dict[str, str] = {}
-    for relative, expected_hash in expected.items():
+    for relative in REUSED_STAGE8_SOURCE_PATHS:
+        if relative not in expected:
+            raise ValueError(
+                f"Reused Stage-8 source lacks frozen identity: {relative}"
+            )
+        expected_hash = expected[relative]
         path = PROJECT_ROOT / relative
         if not path.is_file():
             raise FileNotFoundError(

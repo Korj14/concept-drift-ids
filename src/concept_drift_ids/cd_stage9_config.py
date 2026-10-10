@@ -94,6 +94,9 @@ STAGE9_SOURCE_PATHS = (
     "src/concept_drift_ids/cd_stage9_phase_c.py",
     "src/concept_drift_ids/cd_stage9_export.py",
     "tests/test_cd_stage9_unit.py",
+    "run_stage9.py",
+    "scripts/run_stage9.ps1",
+    ".github/workflows/stage9-unit.yml",
 )
 
 

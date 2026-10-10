@@ -21,6 +21,7 @@ from concept_drift_ids.cd_stage9_config import (
     STAGE9_OUTPUT_ROOT,
     verify_stage9_config_for_execution,
 )
+from concept_drift_ids.cd_stage9_execute import PLAN_PATH, _load_verified_plan
 from concept_drift_ids.cd_stage9_offline import (
     _output_dir as offline_output_dir,
     _stage8_eval_payload,
@@ -414,6 +415,9 @@ def verify_stage9_compact_export() -> dict[str, Any]:
         raise ValueError("Stage-9 compact export references wrong frozen config.")
     if manifest["stage8_parent"] != config["stage8_parent"]:
         raise ValueError("Stage-9 compact export Stage-8 parent changed.")
+    plan = _load_verified_plan(config)
+    if manifest["execution_plan_sha256"] != plan["plan_sha256"]:
+        raise ValueError("Stage-9 compact export execution-plan identity changed.")
 
     expected_scored = list(adaptive_condition_ids(config) + tuple(GATE_CONDITIONS))
     if manifest["conditions"]["offline"] != list(OFFLINE_CONDITIONS):
@@ -432,6 +436,8 @@ def verify_stage9_compact_export() -> dict[str, Any]:
         raise ValueError("Stage-9 aggregate references wrong frozen config.")
     if aggregate["stage8_parent"] != config["stage8_parent"]:
         raise ValueError("Stage-9 aggregate Stage-8 parent changed.")
+    if aggregate["execution_plan_sha256"] != plan["plan_sha256"]:
+        raise ValueError("Stage-9 aggregate execution-plan identity changed.")
 
     expected_conditions = set(OFFLINE_CONDITIONS) | set(expected_scored)
     if set(aggregate["conditions"]) != expected_conditions:
@@ -452,6 +458,7 @@ def export_stage9() -> dict[str, Any]:
             f"Refusing to reuse Stage-9 compact evidence root: {STAGE9_COMPACT_ROOT}"
         )
 
+    plan = _load_verified_plan(config)
     adaptive = adaptive_condition_ids(config)
     scored_conditions = adaptive + tuple(GATE_CONDITIONS)
 
@@ -465,6 +472,10 @@ def export_stage9() -> dict[str, Any]:
 
     STAGE9_COMPACT_ROOT.mkdir(parents=True, exist_ok=False)
     files: dict[str, Any] = {}
+    files["execution_plan"] = _copy_json_new(
+        PLAN_PATH,
+        STAGE9_COMPACT_ROOT / "execution_plan.json",
+    )
 
     for condition in OFFLINE_CONDITIONS:
         condition_files: dict[str, Any] = {}
@@ -565,6 +576,7 @@ def export_stage9() -> dict[str, Any]:
         "status": "stage9_robustness_aggregate_complete",
         "stage9_config_manifest_sha256": config["manifest_sha256"],
         "stage8_parent": config["stage8_parent"],
+        "execution_plan_sha256": plan["plan_sha256"],
         "reference_policy": {
             "offline_conditions": "frozen_stage8_primary",
             "static_symbolic_gate": "frozen_stage8_primary",
@@ -676,6 +688,7 @@ def export_stage9() -> dict[str, Any]:
         "status": "stage9_compact_export_complete",
         "stage9_config_manifest_sha256": config["manifest_sha256"],
         "stage8_parent": config["stage8_parent"],
+        "execution_plan_sha256": plan["plan_sha256"],
         "conditions": {
             "offline": list(OFFLINE_CONDITIONS),
             "scored": list(scored_conditions),

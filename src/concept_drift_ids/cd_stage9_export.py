@@ -68,6 +68,11 @@ def _numeric_summary(values: Sequence[float]) -> dict[str, Any]:
     }
 
 
+def _optional_numeric_summary(values: Sequence[float]) -> dict[str, Any] | None:
+    vals = [float(v) for v in values if float(v) == float(v)]
+    return _numeric_summary(vals) if vals else None
+
+
 def _stage8_reference(seed: int, arm: str) -> dict[str, float]:
     path = (
         STAGE8_COMPACT_ROOT
@@ -320,14 +325,13 @@ def export_stage9() -> dict[str, Any]:
         condition_payload["trigger_diagnostics"] = _trigger_summary(condition)
         condition_payload["maintenance"] = {
             arm: {
-                metric: _numeric_summary(
+                metric: _optional_numeric_summary(
                     [
                         row[metric]
                         for row in [
                             _maintenance_metrics(condition, seed, arm)
                             for seed in PRIMARY_SEEDS
                         ]
-                        if row[metric] == row[metric]
                     ]
                 )
                 for metric in (

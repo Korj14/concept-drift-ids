@@ -307,6 +307,8 @@ def export_stage9_compact_evidence() -> dict[str, Any]:
         "parent_stage8": config["parent_stage8"],
         "required_conditions": list(conditions),
         "seed_count": len(PRIMARY_SEEDS),
+        "heavy_artifact_root": "artifacts/cd_robustness_v1",
+        "large_artifact_archive_required_for_publication": True,
         "row_level_prediction_traces_exported": False,
         "neural_checkpoint_binaries_exported": False,
         "files": dict(sorted(files.items())),

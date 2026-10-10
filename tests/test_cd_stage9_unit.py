@@ -431,7 +431,7 @@ def test_execution_worktree_allowance_is_compact_output_only(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     calls: dict[tuple[str, ...], str] = {
-        ("status", "--porcelain"): "?? results/frozen/cd_robustness_v1/aggregate.json",
+        ("status", "--porcelain"): "?? results/frozen/cd_robustness_v1_1/aggregate.json",
     }
 
     def fake_git_output(*args: str) -> str:
@@ -451,7 +451,7 @@ def test_execution_worktree_allowance_is_compact_output_only(
         )
 
     calls[("status", "--porcelain")] = (
-        "?? results/frozen/cd_robustness_v1/aggregate.json\n"
+        "?? results/frozen/cd_robustness_v1_1/aggregate.json\n"
         "?? unrelated.txt"
     )
     with pytest.raises(RuntimeError, match="clean worktree"):

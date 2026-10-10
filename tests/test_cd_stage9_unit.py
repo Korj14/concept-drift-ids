@@ -70,7 +70,7 @@ def test_actual_stage8_parent_bundle_verifies() -> None:
     )
 
 def test_condition_family_is_exactly_prespecified() -> None:
-    specs = config._condition_specs(baseline_required=True)
+    specs = config._condition_specs(baseline_required=True, primary_contract_sha256="primary-contract")
     assert set(specs["offline"]) == {
         "lambda_0_7",
         "lambda_0_9",
@@ -203,7 +203,7 @@ def test_no_replay_config_requires_zero_replay_budgets() -> None:
 
 def test_no_replay_condition_changes_only_replay_budget() -> None:
     frozen = {
-        "conditions": config._condition_specs(baseline_required=True),
+        "conditions": config._condition_specs(baseline_required=True, primary_contract_sha256="primary-contract"),
         "matched_baseline_required": True,
     }
     baseline = control_plane_for_condition("matched_primary_baseline", frozen)
@@ -220,7 +220,7 @@ def test_no_replay_condition_changes_only_replay_budget() -> None:
 
 def test_latency_variants_change_only_latency() -> None:
     frozen = {
-        "conditions": config._condition_specs(baseline_required=True),
+        "conditions": config._condition_specs(baseline_required=True, primary_contract_sha256="primary-contract"),
         "matched_baseline_required": True,
     }
     baseline = control_plane_for_condition("matched_primary_baseline", frozen)
@@ -553,3 +553,33 @@ def test_frozen_primary_contract_is_bound_to_corrected_stage8_config(
     )
     assert frozen["contract"] == source
     assert frozen["contract_sha256"] == config.canonical_sha256(source)
+
+
+def test_every_stage9_condition_is_bound_to_primary_contract_and_declares_changes() -> None:
+    specs = config._condition_specs(
+        baseline_required=True,
+        primary_contract_sha256="primary-contract",
+    )
+    expected_changes = {
+        "matched_primary_baseline": [],
+        "latency_0": ["label_latency"],
+        "latency_10000": ["label_latency"],
+        "page_hinkley_hard_error": ["detector_family"],
+        "adwin_brier": ["detector_signal"],
+        "no_replay": ["replay_training_rows"],
+        "lambda_0_7": ["fusion_neural_weight"],
+        "lambda_0_9": ["fusion_neural_weight"],
+        "lambda_1_0": ["fusion_neural_weight"],
+        "window_2500": ["reporting_window_rows"],
+        "window_10000": ["reporting_window_rows"],
+        "static_symbolic_gate": ["symbolic_acceptance_gate"],
+    }
+    flattened = {
+        **specs["adaptive"],
+        **specs["offline"],
+        **specs["symbolic_gate"],
+    }
+    assert set(flattened) == set(expected_changes)
+    for name, spec in flattened.items():
+        assert spec["base_primary_contract_sha256"] == "primary-contract"
+        assert spec["changed_factors"] == expected_changes[name]

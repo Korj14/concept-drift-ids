@@ -30,6 +30,7 @@ STAGE9_SCHEMA_VERSION = 1
 STAGE9_RUN_ID = "cd-robustness-v1"
 STAGE9_PROTOCOL_PATH = "STAGE9_PRESPECIFIED_ROBUSTNESS_PROTOCOL.md"
 STAGE8_PARENT_EVIDENCE_COMMIT = "c2ded83b8195b9321e715626c1f305f9627936e8"
+STAGE8_CLOSURE_COMMIT = "f8a424389056a048a6ad6be0b744bf6d12b69df2"
 STAGE8_COMPACT_EXPORT_MANIFEST_SHA256 = (
     "409b516d75cbc5e71d3633019008432ea6088d1d923b4e4a95570263528ed523"
 )
@@ -185,6 +186,33 @@ def _require_clean_for_preparation() -> None:
     status = _git_output("status", "--porcelain")
     if status:
         raise RuntimeError("Stage-9 preparation requires a clean worktree.")
+
+
+def _require_stage8_closure_ancestor() -> None:
+    result = _git(
+        "merge-base",
+        "--is-ancestor",
+        STAGE8_CLOSURE_COMMIT,
+        "HEAD",
+        check=False,
+    )
+    if result.returncode != 0:
+        raise ValueError(
+            "Stage-9 source HEAD does not descend from the accepted Stage-8 closure."
+        )
+
+
+def _require_no_stage9_outputs_before_preparation() -> None:
+    occupied = [
+        path
+        for path in (STAGE9_OUTPUT_ROOT, STAGE9_COMPACT_ROOT)
+        if path.exists()
+    ]
+    if occupied:
+        raise RuntimeError(
+            "Stage-9 preparation requires no pre-existing robustness output roots: "
+            + ", ".join(str(path) for path in occupied)
+        )
 
 
 def _requirements_identity() -> dict[str, Any]:
@@ -416,6 +444,8 @@ def _condition_specs(*, baseline_required: bool) -> dict[str, Any]:
 
 def build_stage9_config() -> dict[str, Any]:
     _require_clean_for_preparation()
+    _require_stage8_closure_ancestor()
+    _require_no_stage9_outputs_before_preparation()
     parent = _verify_stage8_parent()
     requirements = _requirements_identity()
     runtime = _runtime_inventory()
@@ -433,6 +463,7 @@ def build_stage9_config() -> dict[str, Any]:
         "prepared_from_git_commit": source_commit,
         "stage8_parent": {
             "evidence_commit": STAGE8_PARENT_EVIDENCE_COMMIT,
+            "closure_commit": STAGE8_CLOSURE_COMMIT,
             **parent,
         },
         "protocol": {
@@ -545,7 +576,11 @@ def verify_stage9_config_for_execution(
     _require_config_only_freeze(config)
     if config["stage9_outcomes_accessed_during_preparation"] is not False:
         raise ValueError("Stage-9 preparation outcome-access invariant failed.")
-    if config["stage8_parent"] != {"evidence_commit": STAGE8_PARENT_EVIDENCE_COMMIT, **_verify_stage8_parent()}:
+    if config["stage8_parent"] != {
+        "evidence_commit": STAGE8_PARENT_EVIDENCE_COMMIT,
+        "closure_commit": STAGE8_CLOSURE_COMMIT,
+        **_verify_stage8_parent(),
+    }:
         raise ValueError("Stage-8 parent evidence changed.")
     current_hashes = _text_hashes(STAGE9_SOURCE_PATHS)
     if current_hashes != config["scientific_source_hashes"]:

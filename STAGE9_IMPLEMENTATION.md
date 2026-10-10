@@ -209,6 +209,14 @@ Compact verified evidence is exported only after full verification to:
 
 `results/frozen/cd_robustness_v1/`
 
+The export self-verifies every compact file and the aggregate/manifest identities before reporting
+success. A separate `export --verify-only` path re-verifies the frozen compact package. During that
+verification the worktree gate permits only untracked files beneath the Stage-9 compact root; any
+other modified or untracked path aborts.
+
+Stage-9-only nested Git attributes pin the run config and compact evidence tree to LF without
+modifying the frozen root Stage-8 `.gitattributes`.
+
 Existing condition/seed output directories are never reused.
 
 A failed execution preserves its partial write-once directory. It is not deleted and rerun merely

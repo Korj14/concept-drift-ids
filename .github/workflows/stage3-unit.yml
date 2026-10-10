@@ -127,6 +127,9 @@ jobs:
       - name: Run Stage 8 repository-only tests
         run: python -m pytest -q tests/test_cd_primary_stage8_unit.py tests/test_cd_primary_mechanism_unit.py
 
+      - name: Compile Stage 9 modules
+        run: python -m py_compile stage9.py src/concept_drift_ids/cd_stage9_config.py src/concept_drift_ids/cd_stage9_control_plane.py src/concept_drift_ids/cd_stage9_phase_a.py src/concept_drift_ids/cd_stage9_symbolic.py src/concept_drift_ids/cd_stage9_evaluation.py src/concept_drift_ids/cd_stage9_export.py
+
       - name: Run Stage 9 repository-only tests
         run: PYTHONPATH=src python -m pytest -q tests/test_cd_stage9_unit.py
 

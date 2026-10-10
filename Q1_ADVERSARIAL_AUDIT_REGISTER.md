@@ -467,3 +467,51 @@ At every new phase:
 - never add a new test after outcome access and describe it as prospectively confirmatory.
 
 This register remains active until submission.
+
+
+## 9. Post-Stage-8 mechanism-audit update — 10 October 2026
+
+The previously required explicit symbolic-mechanism decomposition versus neural-only authority
+withdrawal has now been completed and frozen under mechanism-audit v1.2.
+
+**Evidence identity:**
+
+- archive commit: `90e574fd3cee278fd4514609c24dfe58d5c6d944`;
+- config manifest: `e7d1ffe85a9d8442435c279bee79103f23a468b3fdf52f6f92f427e4f6131e7d`;
+- audit manifest: `c8edd1228942371d55b13e196c3050a9fa64d51c9e36069dc218c0dc03c89b66`;
+- aggregate: `6c35c026c52fa7bee93cd31bffa459b2bf605efe950f9645e6bea48f86a99acd`.
+
+### Mechanism criticism: resolved for the fixed Stage-8 scenario, not for generalization
+
+The D-drift post-reference MCC gain over C is predominantly allocated to withdrawal of symbolic
+authority: mean Shapley contribution +0.057321 of the +0.059752 total mean effect. Addition contributes
++0.002431 and retained-authority contributes exactly zero in all five seeds.
+
+This resolves the main Stage-8 causal ambiguity in a narrowing direction:
+
+- **supported:** the validated lifecycle mitigates stale symbolic interference mainly by withdrawing
+  authority and falling back to the shared adaptive-neural path;
+- **weak secondary support:** newly established symbolic authority contributes a small positive effect,
+  mainly by correcting benign false positives;
+- **not supported:** revised/retained symbolic authority is the main predictive mechanism;
+- **not supported:** evolved symbolic rules broadly outperform neural-only prediction.
+
+Matched D-periodic is also withdrawal-dominant. Therefore the audit does not establish that ADWIN
+drift-gating is the uniquely valuable component.
+
+### Trigger-timing criticism: remains active
+
+Seven of eight successful D-drift publications occurred before the designated controlled boundary.
+The only post-reference D-drift publication has no positive version-level net-correction signal over
+its later segment.
+
+The primary result must therefore continue to be framed as the downstream effect of an endogenous
+detector-gated lifecycle over the whole stream, not as a clean post-boundary repair response.
+
+### Q1-readiness consequence
+
+The mechanism-decomposition requirement from Section 7 is now satisfied for the fixed primary
+scenario, but Q1 submission readiness remains **not achieved**. Stage-9 prespecified robustness,
+explanation-construct triangulation, direct conditional-label/attack-pattern replication, independent
+second-dataset replication, CICIDS-quality sensitivity, fresh novelty audit, and independent
+software/reproducibility audit remain required.

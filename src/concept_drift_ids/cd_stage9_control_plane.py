@@ -705,17 +705,48 @@ def verify_stage9_shared_trajectory(
             raise ValueError("Replay transaction detector identity mismatch.")
         if transaction["replay_mode"] != config.replay_mode:
             raise ValueError("Replay transaction replay-mode mismatch.")
-        current = set(transaction["current_row_ids"])
-        replay = set(transaction["replay_row_ids"])
+        current_ids = list(transaction["current_row_ids"])
+        replay_ids = list(transaction["replay_row_ids"])
+        if len(set(current_ids)) != len(current_ids):
+            raise ValueError("Duplicate current-evidence row ID.")
+        if len(set(replay_ids)) != len(replay_ids):
+            raise ValueError("Duplicate replay row ID.")
+        current = set(current_ids)
+        replay = set(replay_ids)
         if current.intersection(replay):
             raise ValueError("Replay/current evidence overlap.")
-        if len(transaction["current_row_ids"]) != PRIMARY_CURRENT_WINDOW:
+        if len(current_ids) != PRIMARY_CURRENT_WINDOW:
             raise ValueError("Stage-9 current mature window changed.")
+        if transaction["current_row_ids_sha256"] != row_ids_sha256(current_ids):
+            raise ValueError("Current-evidence row identity hash mismatch.")
+        if transaction["replay_row_ids_sha256"] != row_ids_sha256(replay_ids):
+            raise ValueError("Replay row identity hash mismatch.")
         if config.replay_mode == "none":
-            if transaction["replay_row_ids"]:
+            if replay_ids:
                 raise ValueError("No-replay transaction contains replay rows.")
-        elif len(transaction["replay_row_ids"]) != 10_000:
+        elif len(replay_ids) != 10_000:
             raise ValueError("Primary replay budget changed.")
+
+        evidence = {
+            "condition_id": transaction["condition_id"],
+            "detector_kind": transaction["detector_kind"],
+            "replay_mode": transaction["replay_mode"],
+            "event_id": int(transaction["event_id"]),
+            "confirmation_clock": int(transaction["confirmation_clock"]),
+            "action_clock": int(transaction["action_clock"]),
+            "parent_checkpoint_sha256": transaction["parent_checkpoint_sha256"],
+            "current_row_ids": current_ids,
+            "current_row_ids_sha256": transaction["current_row_ids_sha256"],
+            "replay_row_ids": replay_ids,
+            "replay_row_ids_sha256": transaction["replay_row_ids_sha256"],
+            "reservoir_identity_sha256": transaction["reservoir_identity_sha256"],
+        }
+        if transaction["evidence_sha256"] != canonical_sha256(evidence):
+            raise ValueError("Replay transaction evidence hash mismatch.")
+        if int(transaction["publication_effective_index"]) != int(
+            transaction["action_clock"]
+        ) + 1:
+            raise ValueError("Stage-9 replay transaction publication clock mismatch.")
 
     for event in trajectory.events:
         payload = event.get("payload") or {}

@@ -231,6 +231,109 @@ def _require_no_stage9_outputs_before_preparation() -> None:
         )
 
 
+def _historical_v1_execution_identity() -> dict[str, Any]:
+    historical_config, historical_manifest_sha = _canonical_manifest(
+        HISTORICAL_STAGE9_V1_CONFIG_PATH
+    )
+    if historical_manifest_sha != HISTORICAL_STAGE9_V1_CONFIG_MANIFEST_SHA256:
+        raise ValueError("Unexpected historical Stage-9 v1 config identity.")
+
+    config_commit = _git_output(
+        "log",
+        "-n",
+        "1",
+        "--format=%H",
+        "--",
+        HISTORICAL_STAGE9_V1_CONFIG_PATH.relative_to(PROJECT_ROOT).as_posix(),
+    )
+    if config_commit != HISTORICAL_STAGE9_V1_FREEZE_COMMIT:
+        raise ValueError("Historical Stage-9 v1 config freeze commit changed.")
+
+    if HISTORICAL_STAGE9_V1_COMPACT_ROOT.exists():
+        raise RuntimeError(
+            "Historical Stage-9 v1 compact root exists unexpectedly; "
+            "failure classification must be revisited."
+        )
+    if not HISTORICAL_STAGE9_V1_OUTPUT_ROOT.is_dir():
+        raise FileNotFoundError(
+            "Historical Stage-9 v1 failed output root is missing."
+        )
+
+    relative_files = sorted(
+        path.relative_to(HISTORICAL_STAGE9_V1_OUTPUT_ROOT).as_posix()
+        for path in HISTORICAL_STAGE9_V1_OUTPUT_ROOT.rglob("*")
+        if path.is_file()
+    )
+    expected_files = [
+        "execution_plan.json",
+        "offline/lambda_0_7/seed-0/attempt.json",
+        "offline/lambda_0_7/seed-0/failure.json",
+    ]
+    if relative_files != expected_files:
+        raise ValueError(
+            "Historical Stage-9 v1 failed output file set changed: "
+            f"{relative_files}"
+        )
+    if any(path.endswith("result.json") for path in relative_files):
+        raise ValueError(
+            "Historical Stage-9 v1 contains an accepted result; "
+            "correction classification is invalid."
+        )
+
+    attempt_path = (
+        HISTORICAL_STAGE9_V1_OUTPUT_ROOT
+        / "offline"
+        / "lambda_0_7"
+        / "seed-0"
+        / "attempt.json"
+    )
+    failure_path = attempt_path.with_name("failure.json")
+    attempt = _read_json(attempt_path)
+    failure = _read_json(failure_path)
+
+    if attempt.get("condition_id") != "lambda_0_7" or int(attempt.get("seed", -1)) != 0:
+        raise ValueError("Historical Stage-9 v1 attempt identity changed.")
+    if (
+        attempt.get("stage9_config_manifest_sha256")
+        != HISTORICAL_STAGE9_V1_CONFIG_MANIFEST_SHA256
+    ):
+        raise ValueError("Historical Stage-9 v1 attempt references wrong config.")
+    if failure.get("condition_id") != "lambda_0_7" or int(failure.get("seed", -1)) != 0:
+        raise ValueError("Historical Stage-9 v1 failure identity changed.")
+    if failure.get("exception_type") != "AttributeError":
+        raise ValueError("Historical Stage-9 v1 failure exception type changed.")
+    if failure.get("message") != "'list' object has no attribute 'values'":
+        raise ValueError("Historical Stage-9 v1 failure message changed.")
+
+    output_files = {
+        relative: sha256_file(HISTORICAL_STAGE9_V1_OUTPUT_ROOT / relative)
+        for relative in relative_files
+    }
+    return {
+        "config_freeze_commit": HISTORICAL_STAGE9_V1_FREEZE_COMMIT,
+        "config_manifest_sha256": HISTORICAL_STAGE9_V1_CONFIG_MANIFEST_SHA256,
+        "config_prepared_from_git_commit": historical_config[
+            "prepared_from_git_commit"
+        ],
+        "output_root": "artifacts/cd_robustness_v1",
+        "output_files": output_files,
+        "accepted_result_json_present": False,
+        "compact_root_present": False,
+        "first_failed_step": {
+            "group": "offline",
+            "condition_id": "lambda_0_7",
+            "seed": 0,
+            "phase": "offline",
+        },
+        "failure_exception": "AttributeError: 'list' object has no attribute 'values'",
+        "failure_location": "cd_stage9_offline._stage8_eval_payload.manifest_files_values",
+        "stage8_compact_manifest_accessed": True,
+        "stage8_arm_evaluation_payload_consumed": False,
+        "stage9_robustness_outcome_accessed": False,
+        "scientific_scope_change": False,
+    }
+
+
 def _requirements_identity() -> dict[str, Any]:
     path = PROJECT_ROOT / "requirements-lock.txt"
     normalized = sha256_normalized_text(path)

@@ -85,6 +85,7 @@ STATIC_GATE_CONFIG = {
 
 STAGE9_SOURCE_PATHS = (
     "STAGE9_PRESPECIFIED_ROBUSTNESS_PROTOCOL.md",
+    "STAGE9_IMPLEMENTATION.md",
     "src/concept_drift_ids/cd_stage9_config.py",
     "src/concept_drift_ids/cd_stage9_monitor.py",
     "src/concept_drift_ids/cd_stage9_shared_runner.py",

@@ -581,7 +581,10 @@ def test_every_stage9_condition_is_bound_to_primary_contract_and_declares_change
         "matched_primary_baseline": [],
         "latency_0": ["label_latency"],
         "latency_10000": ["label_latency"],
-        "page_hinkley_hard_error": ["detector_family"],
+        "page_hinkley_hard_error": [
+            "detector_family",
+            "detector_family_specific_parameters",
+        ],
         "adwin_brier": ["detector_signal"],
         "no_replay": ["replay_training_rows"],
         "lambda_0_7": [

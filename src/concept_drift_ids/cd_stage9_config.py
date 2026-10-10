@@ -188,6 +188,16 @@ def _canonical_manifest(path: Path) -> tuple[dict[str, Any], str]:
     return payload, str(stored)
 
 
+def _read_writer_hashed_json(path: Path) -> dict[str, Any]:
+    payload = _read_json(path)
+    stored = payload.pop("payload_sha256", None)
+    if stored is None:
+        raise ValueError(f"Missing writer payload hash: {path}")
+    if stored != canonical_sha256(payload):
+        raise ValueError(f"Writer payload hash mismatch: {path}")
+    return payload
+
+
 def _text_hashes(paths: Sequence[str]) -> dict[str, str]:
     out: dict[str, str] = {}
     for relative in paths:
@@ -288,8 +298,20 @@ def _historical_v1_execution_identity() -> dict[str, Any]:
         / "attempt.json"
     )
     failure_path = attempt_path.with_name("failure.json")
-    attempt = _read_json(attempt_path)
-    failure = _read_json(failure_path)
+    attempt = _read_writer_hashed_json(attempt_path)
+    failure = _read_writer_hashed_json(failure_path)
+    plan_path = HISTORICAL_STAGE9_V1_OUTPUT_ROOT / "execution_plan.json"
+    plan = _read_writer_hashed_json(plan_path)
+    stored_plan = plan.get("plan_sha256")
+    plan_core = dict(plan)
+    plan_core.pop("plan_sha256", None)
+    if stored_plan != canonical_sha256(plan_core):
+        raise ValueError("Historical Stage-9 v1 execution-plan hash changed.")
+    if (
+        plan.get("stage9_config_manifest_sha256")
+        != HISTORICAL_STAGE9_V1_CONFIG_MANIFEST_SHA256
+    ):
+        raise ValueError("Historical Stage-9 v1 execution plan references wrong config.")
 
     if attempt.get("condition_id") != "lambda_0_7" or int(attempt.get("seed", -1)) != 0:
         raise ValueError("Historical Stage-9 v1 attempt identity changed.")

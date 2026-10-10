@@ -1023,6 +1023,21 @@ def build_stage9_condition_aggregate(condition_id: str) -> dict[str, Any]:
         "qualitative_stage8_relation": _qualitative_stage8_relation(
             effect_summaries
         ),
+        "runtime_interpretation": {
+            "stage8_material_runtime_match": bool(
+                config["runtime"]["comparison"]["materially_identical"]
+            ),
+            "isolated_static_gate_effect_claim_permitted": (
+                bool(config["runtime"]["comparison"]["materially_identical"])
+                if condition_id == "G_STATIC_GATE"
+                else None
+            ),
+            "adaptive_cross_runtime_baseline_required": bool(
+                config["runtime"]["comparison"][
+                    "matched_stage9_baseline_required"
+                ]
+            ),
+        },
     }
 
     if condition_id.startswith("O_WINDOW"):

@@ -16,7 +16,11 @@ from concept_drift_ids.cd_primary_config import (
     EXPECTED_REQUIREMENTS_NORMALIZED_SHA256,
     PRIMARY_SEEDS,
 )
-from concept_drift_ids.cd_runtime import PRIMARY_THREAD_ENV, verify_locked_distributions
+from concept_drift_ids.cd_runtime import (
+    PRIMARY_THREAD_ENV,
+    configure_torch_primary_runtime,
+    verify_locked_distributions,
+)
 from concept_drift_ids.cd_shared_runner import ControlPlaneConfig
 from concept_drift_ids.cd_symbolic_arms import SymbolicOperatorConfig
 from concept_drift_ids.scenario_manifest import sha256_normalized_text
@@ -168,6 +172,7 @@ def _requirements_identity() -> dict[str, Any]:
 
 
 def _runtime_inventory() -> dict[str, Any]:
+    configured = configure_torch_primary_runtime()
     thread_env = {key: __import__("os").environ.get(key) for key in PRIMARY_THREAD_ENV}
     missing = [key for key, value in thread_env.items() if value != PRIMARY_THREAD_ENV[key]]
     if missing:
@@ -185,6 +190,18 @@ def _runtime_inventory() -> dict[str, Any]:
         "torch_version": torch.__version__,
         "torch_cuda_available": bool(torch.cuda.is_available()),
         "thread_environment": thread_env,
+        "torch_deterministic_algorithms": bool(
+            torch.are_deterministic_algorithms_enabled()
+        ),
+        "torch_num_threads": int(torch.get_num_threads()),
+        "torch_num_interop_threads": int(torch.get_num_interop_threads()),
+        "configured_runtime": {
+            "torch_deterministic_algorithms": configured[
+                "torch_deterministic_algorithms"
+            ],
+            "torch_num_threads": configured["torch_num_threads"],
+            "torch_num_interop_threads": configured["torch_num_interop_threads"],
+        },
     }
 
 

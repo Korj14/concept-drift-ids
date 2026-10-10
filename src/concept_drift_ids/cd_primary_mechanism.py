@@ -127,9 +127,25 @@ def _historical_v1_identity() -> dict[str, Any]:
     }
 
 
+def _require_clean_for_v1_1_preparation() -> None:
+    status = _git_output("status", "--porcelain", project_root=PROJECT_ROOT)
+    allowed_prefix = "?? results/frozen/cd_primary_mechanism_v1/"
+    disallowed = [
+        line
+        for line in status.splitlines()
+        if line.strip() and not line.startswith(allowed_prefix)
+    ]
+    if disallowed:
+        raise RuntimeError(
+            "Mechanism v1.1 preparation requires a clean worktree except "
+            "for preserved untracked historical-v1 mechanism output. "
+            f"Disallowed status: {disallowed}"
+        )
+
+
 def build_mechanism_config() -> dict[str, Any]:
     """Freeze the post-primary mechanism audit without reading row-level traces."""
-    require_clean_worktree(project_root=PROJECT_ROOT)
+    _require_clean_for_v1_1_preparation()
     parent = _verify_parent_compact_evidence()
     historical_v1 = _historical_v1_identity()
     source_commit = _git_output("rev-parse", "HEAD", project_root=PROJECT_ROOT)

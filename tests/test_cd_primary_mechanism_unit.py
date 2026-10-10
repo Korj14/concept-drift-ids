@@ -167,9 +167,21 @@ def test_mechanism_config_preparation_does_not_read_heavy_traces(
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_bytes(data)
 
+    monkeypatch.setattr(
+        mechanism,
+        "_historical_v1_1_identity",
+        lambda: {
+            "config_manifest_sha256": (
+                mechanism.HISTORICAL_V1_1_CONFIG_MANIFEST_SHA256
+            ),
+            "output_root_exists": False,
+            "output_files": [],
+        },
+    )
+
     payload = mechanism.build_mechanism_config()
     assert payload["source_commit"] == "source-commit"
-    assert payload["row_level_mechanism_trace_accessed_during_v1_1_preparation"] is False
+    assert payload["row_level_mechanism_trace_accessed_during_v1_2_preparation"] is False
     assert payload["analysis_classification"].startswith(
         "exploratory_descriptive_post_primary"
     )
@@ -222,6 +234,18 @@ def test_mechanism_config_contains_frozen_decomposition_identity(
         path = tmp_path / relative
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_bytes(data)
+
+    monkeypatch.setattr(
+        mechanism,
+        "_historical_v1_1_identity",
+        lambda: {
+            "config_manifest_sha256": (
+                mechanism.HISTORICAL_V1_1_CONFIG_MANIFEST_SHA256
+            ),
+            "output_root_exists": False,
+            "output_files": [],
+        },
+    )
 
     payload = mechanism.build_mechanism_config()
     assert tuple(payload["mechanisms"]) == mechanism.MECHANISMS
@@ -303,15 +327,18 @@ def test_historical_v1_config_identity_is_immutable() -> None:
     )
 
 
-def test_v1_1_uses_new_config_and_output_identities() -> None:
-    assert mechanism.CONFIG_PATH.name == "cd_primary_mechanism_audit_v1_1.json"
-    assert mechanism.OUTPUT_ROOT.name == "cd_primary_mechanism_v1_1"
-    assert mechanism.CONFIG_PATH != mechanism.HISTORICAL_V1_CONFIG_PATH
-    assert mechanism.OUTPUT_ROOT != mechanism.HISTORICAL_V1_OUTPUT_ROOT
+def test_v1_1_identities_remain_bound_as_historical_inputs() -> None:
+    assert (
+        mechanism.HISTORICAL_V1_1_CONFIG_PATH.name
+        == "cd_primary_mechanism_audit_v1_1.json"
+    )
+    assert mechanism.HISTORICAL_V1_1_OUTPUT_ROOT.name == "cd_primary_mechanism_v1_1"
+    assert mechanism.HISTORICAL_V1_1_CONFIG_PATH != mechanism.HISTORICAL_V1_CONFIG_PATH
+    assert mechanism.HISTORICAL_V1_1_OUTPUT_ROOT != mechanism.HISTORICAL_V1_OUTPUT_ROOT
 
 
 
-def test_v1_1_preparation_allows_only_historical_v1_untracked_output(
+def test_v1_2_preparation_allows_only_historical_mechanism_output(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     monkeypatch.setattr(
@@ -319,21 +346,21 @@ def test_v1_1_preparation_allows_only_historical_v1_untracked_output(
         "_git_output",
         lambda *args, **kwargs: (
             "?? results/frozen/cd_primary_mechanism_v1/seed-0.json\n"
-            "?? results/frozen/cd_primary_mechanism_v1/audit_manifest.json"
+            "?? results/frozen/cd_primary_mechanism_v1_1/failure.json"
         ),
     )
-    mechanism._require_clean_for_v1_1_preparation()
+    mechanism._require_clean_for_v1_2_preparation()
 
     monkeypatch.setattr(
         mechanism,
         "_git_output",
         lambda *args, **kwargs: (
-            "?? results/frozen/cd_primary_mechanism_v1/seed-0.json\n"
+            "?? results/frozen/cd_primary_mechanism_v1_1/failure.json\n"
             " M src/concept_drift_ids/cd_primary_mechanism.py"
         ),
     )
     with pytest.raises(RuntimeError, match="Disallowed status"):
-        mechanism._require_clean_for_v1_1_preparation()
+        mechanism._require_clean_for_v1_2_preparation()
 
 
 def test_phase_b_arm_manifest_verification_preserves_manifest_identity(

@@ -567,7 +567,10 @@ def _condition_specs(
                 "detector_config": dict(PAGE_HINKLEY_CONFIG),
                 "replay_enabled": True,
             },
-            changed_factors=("detector_family",),
+            changed_factors=(
+                "detector_family",
+                "detector_family_specific_parameters",
+            ),
         ),
         "adwin_brier": bind(
             {

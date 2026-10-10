@@ -236,8 +236,25 @@ def _verify_stage8_parent() -> dict[str, Any]:
     )
     if compact_hash != STAGE8_COMPACT_EXPORT_MANIFEST_SHA256:
         raise ValueError("Stage-8 compact evidence identity changed.")
-    if compact["parent_evidence_commit"] != STAGE8_PARENT_EVIDENCE_COMMIT:
-        raise ValueError("Stage-8 compact evidence parent changed.")
+    if (
+        compact["primary_config_manifest_sha256"]
+        != STAGE8_CORRECTED_CONFIG_MANIFEST_SHA256
+    ):
+        raise ValueError("Stage-8 compact evidence corrected-config binding changed.")
+    if (
+        compact["parent_primary_config_manifest_sha256"]
+        != STAGE8_UPSTREAM_ARTIFACT_CONFIG_MANIFEST_SHA256
+    ):
+        raise ValueError("Stage-8 compact evidence upstream-config binding changed.")
+    ancestor = _git(
+        "merge-base",
+        "--is-ancestor",
+        STAGE8_PARENT_EVIDENCE_COMMIT,
+        "HEAD",
+        check=False,
+    )
+    if ancestor.returncode != 0:
+        raise ValueError("Current Stage-9 source does not descend from Stage-8 evidence.")
 
     confirmatory, confirmatory_hash = _canonical_manifest(
         STAGE8_COMPACT_ROOT
@@ -246,6 +263,11 @@ def _verify_stage8_parent() -> dict[str, Any]:
     )
     if confirmatory_hash != STAGE8_CONFIRMATORY_AGGREGATE_SHA256:
         raise ValueError("Stage-8 confirmatory aggregate identity changed.")
+    if (
+        confirmatory["primary_config_manifest_sha256"]
+        != STAGE8_CORRECTED_CONFIG_MANIFEST_SHA256
+    ):
+        raise ValueError("Stage-8 confirmatory corrected-config binding changed.")
 
     return {
         "corrected_config_manifest_sha256": corrected_hash,

@@ -605,16 +605,43 @@ def _condition_specs(
     return {
         "offline": {
             "lambda_0_7": bind(
-                {"neural_weight": 0.70, "source": "frozen_stage8_trace"},
-                changed_factors=("fusion_neural_weight",),
+                {
+                    "neural_weight": 0.70,
+                    "source": "frozen_stage8_trace",
+                    "threshold_source": (
+                        "frozen_stage8_seed_specific_threshold_for_weight"
+                    ),
+                },
+                changed_factors=(
+                    "fusion_neural_weight",
+                    "frozen_seed_specific_fusion_threshold",
+                ),
             ),
             "lambda_0_9": bind(
-                {"neural_weight": 0.90, "source": "frozen_stage8_trace"},
-                changed_factors=("fusion_neural_weight",),
+                {
+                    "neural_weight": 0.90,
+                    "source": "frozen_stage8_trace",
+                    "threshold_source": (
+                        "frozen_stage8_seed_specific_threshold_for_weight"
+                    ),
+                },
+                changed_factors=(
+                    "fusion_neural_weight",
+                    "frozen_seed_specific_fusion_threshold",
+                ),
             ),
             "lambda_1_0": bind(
-                {"neural_weight": 1.00, "source": "frozen_stage8_trace"},
-                changed_factors=("fusion_neural_weight",),
+                {
+                    "neural_weight": 1.00,
+                    "source": "frozen_stage8_trace",
+                    "threshold_source": (
+                        "frozen_stage8_seed_specific_threshold_for_weight"
+                    ),
+                },
+                changed_factors=(
+                    "fusion_neural_weight",
+                    "frozen_seed_specific_fusion_threshold",
+                ),
             ),
             "window_2500": bind(
                 {

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import argparse
 import json
 import shutil
 from pathlib import Path
@@ -348,6 +349,74 @@ def _copy_json_new(source: Path, destination: Path) -> dict[str, str]:
     }
 
 
+
+def _verify_json_file_hashes(path: Path) -> dict[str, Any]:
+    payload = _read_json(path)
+    stored_payload = payload.pop("payload_sha256", None)
+    if stored_payload is not None and stored_payload != canonical_sha256(payload):
+        raise ValueError(f"Stage-9 compact writer payload hash mismatch: {path}")
+    return payload
+
+
+def _verify_file_descriptors(node: Any) -> None:
+    if isinstance(node, dict):
+        if set(("path", "sha256")).issubset(node):
+            path = STAGE9_COMPACT_ROOT / str(node["path"])
+            if not path.is_file():
+                raise FileNotFoundError(f"Missing Stage-9 compact file: {path}")
+            if sha256_file(path) != str(node["sha256"]):
+                raise ValueError(f"Stage-9 compact raw file hash mismatch: {path}")
+            return
+        for value in node.values():
+            _verify_file_descriptors(value)
+
+
+def verify_stage9_compact_export() -> dict[str, Any]:
+    config = verify_stage9_config_for_execution(
+        allow_untracked_compact_output=True
+    )
+    manifest_path = STAGE9_COMPACT_ROOT / "compact_export_manifest.json"
+    if not manifest_path.is_file():
+        raise FileNotFoundError("Stage-9 compact export manifest is absent.")
+    manifest = _verify_json_file_hashes(manifest_path)
+    stored_manifest = manifest.pop("manifest_sha256", None)
+    if stored_manifest != canonical_sha256(manifest):
+        raise ValueError("Stage-9 compact export manifest canonical hash mismatch.")
+    if manifest["stage9_config_manifest_sha256"] != config["manifest_sha256"]:
+        raise ValueError("Stage-9 compact export references wrong frozen config.")
+    if manifest["stage8_parent"] != config["stage8_parent"]:
+        raise ValueError("Stage-9 compact export Stage-8 parent changed.")
+
+    expected_scored = list(adaptive_condition_ids(config) + tuple(GATE_CONDITIONS))
+    if manifest["conditions"]["offline"] != list(OFFLINE_CONDITIONS):
+        raise ValueError("Stage-9 compact offline condition set changed.")
+    if manifest["conditions"]["scored"] != expected_scored:
+        raise ValueError("Stage-9 compact scored condition set changed.")
+
+    _verify_file_descriptors(manifest["files"])
+
+    aggregate_path = STAGE9_COMPACT_ROOT / "aggregate.json"
+    aggregate = _verify_json_file_hashes(aggregate_path)
+    stored_aggregate = aggregate.pop("aggregate_sha256", None)
+    if stored_aggregate != canonical_sha256(aggregate):
+        raise ValueError("Stage-9 aggregate canonical hash mismatch.")
+    if aggregate["stage9_config_manifest_sha256"] != config["manifest_sha256"]:
+        raise ValueError("Stage-9 aggregate references wrong frozen config.")
+    if aggregate["stage8_parent"] != config["stage8_parent"]:
+        raise ValueError("Stage-9 aggregate Stage-8 parent changed.")
+
+    expected_conditions = set(OFFLINE_CONDITIONS) | set(expected_scored)
+    if set(aggregate["conditions"]) != expected_conditions:
+        raise ValueError("Stage-9 aggregate condition coverage is incomplete.")
+
+    return {
+        "status": "stage9_compact_export_verified",
+        "manifest_sha256": stored_manifest,
+        "aggregate_sha256": stored_aggregate,
+        "condition_count": len(expected_conditions),
+        "seed_count_per_condition": len(PRIMARY_SEEDS),
+    }
+
 def export_stage9() -> dict[str, Any]:
     config = verify_stage9_config_for_execution()
     if STAGE9_COMPACT_ROOT.exists():
@@ -520,10 +589,12 @@ def export_stage9() -> dict[str, Any]:
     }
     manifest["manifest_sha256"] = canonical_sha256(manifest)
     write_json_new(STAGE9_COMPACT_ROOT / "compact_export_manifest.json", manifest)
+    verified = verify_stage9_compact_export()
     return {
         "status": manifest["status"],
-        "manifest_sha256": manifest["manifest_sha256"],
-        "aggregate_sha256": aggregate["aggregate_sha256"],
+        "manifest_sha256": verified["manifest_sha256"],
+        "aggregate_sha256": verified["aggregate_sha256"],
+        "verified": True,
     }
 
 
@@ -539,7 +610,15 @@ def _copy_json_payload_new(path: Path, payload: Mapping[str, Any]) -> dict[str, 
 
 
 def main() -> None:
-    print(json.dumps(export_stage9(), sort_keys=True, indent=2))
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--verify-only", action="store_true")
+    args = parser.parse_args()
+    result = (
+        verify_stage9_compact_export()
+        if args.verify_only
+        else export_stage9()
+    )
+    print(json.dumps(result, sort_keys=True, indent=2))
 
 
 if __name__ == "__main__":

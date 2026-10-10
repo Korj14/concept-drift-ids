@@ -37,6 +37,7 @@ from concept_drift_ids.cd_stage9_config import (
     STAGE9_OUTPUT_ROOT,
     STAGE9_RUN_ID,
     _git_output,
+    artifact_identity_context,
     verify_stage9_config_for_execution,
 )
 from concept_drift_ids.cd_stage9_phase_a import verify_stage9_phase_a_seed
@@ -267,6 +268,8 @@ def _freeze_arm(
     condition: str,
     arm_dir: Path,
     trajectory: SymbolicArmTrajectory,
+    *,
+    identity_context: Mapping[str, Any],
 ) -> dict[str, Any]:
     if arm_dir.exists():
         raise FileExistsError(f"Refusing to overwrite symbolic arm: {arm_dir}")
@@ -359,6 +362,7 @@ def _freeze_arm(
             trajectory.maintenance
         ),
         "files": files,
+        "identity_context": dict(identity_context),
     }
     manifest["manifest_sha256"] = canonical_sha256(manifest)
     manifest_path = arm_dir / "arm_manifest.json"
@@ -559,6 +563,9 @@ def verify_stage9_phase_b_seed(
         for other in PRIMARY_SEEDS
     }
     expected_shared_identity = phase_a_verified[seed]["shared_identity_sha256"]
+    expected_identity_context = artifact_identity_context(
+        config, condition=condition, seed=seed
+    )
     expected_all_phase_a = {
         str(other): phase_a_verified[other]["shared_identity_sha256"]
         for other in PRIMARY_SEEDS
@@ -576,6 +583,8 @@ def verify_stage9_phase_b_seed(
         raise ValueError("Stage-9 Phase-B references wrong config.")
     if manifest["shared_identity_sha256"] != expected_shared_identity:
         raise ValueError("Stage-9 Phase-B shared identity does not match Phase A.")
+    if manifest["identity_context"] != expected_identity_context:
+        raise ValueError("Stage-9 Phase-B explicit identity context changed.")
     if manifest["all_phase_a_shared_identity_sha256"] != expected_all_phase_a:
         raise ValueError("Stage-9 Phase-B all-seed Phase-A map changed.")
 
@@ -595,6 +604,8 @@ def verify_stage9_phase_b_seed(
             raise ValueError("Stage-9 arm-manifest identity mismatch.")
         if arm_manifest["shared_identity_sha256"] != expected_shared_identity:
             raise ValueError("Stage-9 symbolic arm detached from shared trajectory.")
+        if arm_manifest["identity_context"] != expected_identity_context:
+            raise ValueError("Stage-9 symbolic-arm identity context changed.")
         if arm_manifest["operator_config_sha256"] != operator_sha:
             raise ValueError("Stage-9 arm operator identity changed.")
 
@@ -652,6 +663,9 @@ def execute_stage9_phase_b_seed(condition: str, seed: int) -> dict[str, Any]:
             "shared_identity_sha256": identity["identity_sha256"],
             "operator_config_sha256": operator.sha256(),
             "boundary_scored": False,
+            "identity_context": artifact_identity_context(
+                config, condition=condition, seed=seed
+            ),
         },
     )
 
@@ -725,11 +739,15 @@ def execute_stage9_phase_b_seed(condition: str, seed: int) -> dict[str, Any]:
         trajectories = (c_arm, d_drift, d_periodic)
         isolation = verify_symbolic_arm_control_plane_isolation(trajectories)
 
+        identity_context = artifact_identity_context(
+            config, condition=condition, seed=seed
+        )
         arm_files = {
             trajectory.arm: _freeze_arm(
                 condition,
                 output_dir / trajectory.arm,
                 trajectory,
+                identity_context=identity_context,
             )
             for trajectory in trajectories
         }
@@ -750,6 +768,7 @@ def execute_stage9_phase_b_seed(condition: str, seed: int) -> dict[str, Any]:
             "arm_isolation_sha256": isolation,
             "arms": arm_files,
             "boundary_scored": False,
+            "identity_context": identity_context,
         }
         manifest["manifest_sha256"] = canonical_sha256(manifest)
         write_json_new(output_dir / "phase_b_manifest.json", manifest)
@@ -764,6 +783,9 @@ def execute_stage9_phase_b_seed(condition: str, seed: int) -> dict[str, Any]:
                     "exception_type": type(exc).__name__,
                     "message": str(exc),
                     "boundary_scored": False,
+                    "identity_context": artifact_identity_context(
+                        config, condition=condition, seed=seed
+                    ),
                 },
             )
         raise

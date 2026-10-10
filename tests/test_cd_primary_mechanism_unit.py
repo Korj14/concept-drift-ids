@@ -77,7 +77,16 @@ def test_stratum_rescue_harm_accounting() -> None:
     assert summary["row_count"] == 3
     assert summary["rescue_count"] == 2
     assert summary["harm_count"] == 1
+    assert summary["same_correct_count"] == 0
+    assert summary["same_wrong_count"] == 0
     assert summary["net_corrected_decisions"] == 1
+    assert (
+        summary["rescue_count"]
+        + summary["harm_count"]
+        + summary["same_correct_count"]
+        + summary["same_wrong_count"]
+        == summary["row_count"]
+    )
 
 
 def test_mechanism_config_is_absent_or_uses_frozen_identity() -> None:

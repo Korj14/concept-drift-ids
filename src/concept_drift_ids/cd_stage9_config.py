@@ -18,7 +18,10 @@ from concept_drift_ids.cd_runtime import (
 )
 from concept_drift_ids.cd_symbolic_arms import SymbolicOperatorConfig
 from concept_drift_ids.cd_symbolic_lifecycle import OnlineRuleGate
-from concept_drift_ids.scenario_manifest import sha256_file
+from concept_drift_ids.scenario_manifest import (
+    sha256_file,
+    sha256_normalized_text,
+)
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
@@ -311,7 +314,7 @@ def _source_hashes(*, project_root: Path = PROJECT_ROOT) -> dict[str, str]:
         path = project_root / relative
         if not path.is_file():
             raise FileNotFoundError(f"Missing Stage-9 scientific source: {relative}")
-        out[relative] = sha256_file(path)
+        out[relative] = sha256_normalized_text(path)
     return out
 
 
@@ -508,11 +511,15 @@ def build_stage9_config(*, project_root: Path = PROJECT_ROOT) -> dict[str, Any]:
         },
         "protocol": {
             "path": STAGE9_PROTOCOL_PATH,
-            "sha256": sha256_file(project_root / STAGE9_PROTOCOL_PATH),
+            "sha256": sha256_normalized_text(project_root / STAGE9_PROTOCOL_PATH),
+            "hash_semantics": "utf8_text_crlf_lf_normalized",
         },
         "implementation_freeze": {
             "path": STAGE9_IMPLEMENTATION_FREEZE_PATH,
-            "sha256": sha256_file(project_root / STAGE9_IMPLEMENTATION_FREEZE_PATH),
+            "sha256": sha256_normalized_text(
+                project_root / STAGE9_IMPLEMENTATION_FREEZE_PATH
+            ),
+            "hash_semantics": "utf8_text_crlf_lf_normalized",
         },
         "scientific_source_hashes": source_hashes,
         "scientific_source_tree_sha256": _source_tree_sha256(source_hashes),

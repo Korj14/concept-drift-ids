@@ -71,6 +71,7 @@ jobs:
               "STAGE9_PRESPECIFIED_ROBUSTNESS_PROTOCOL.md",
               "STAGE8_SYMBOLIC_VALUE_MECHANISM_AUDIT_PROTOCOL.md",
               "STAGE8_SYMBOLIC_MECHANISM_AUDIT_V1_1_CORRECTION.md",
+              "STAGE8_SYMBOLIC_MECHANISM_AUDIT_INTERPRETATION.md",
           ]
           missing = [path for path in required if not Path(path).is_file()]
           assert not missing, f"Missing governance artifacts: {missing}"

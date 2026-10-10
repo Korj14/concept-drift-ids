@@ -2579,3 +2579,72 @@ corrected Phase-C execution.
 
 No detector, neural update, replay mechanism, symbolic lifecycle rule, trigger schedule, fusion
 threshold, endpoint, inferential unit, or robustness definition changed.
+
+
+### Stage-8 symbolic mechanism audit v1.1 failure, v1.2 correction, and frozen interpretation — 10 October 2026
+
+After the Stage-8 primary evidence and post-primary mechanism protocol were frozen, mechanism-audit
+config v1.1 was prepared without row-level mechanism-trace access and committed at
+`533063c72e8e11afb3530e05aa56dcb7c1a3f7a6`.
+
+The first v1.1 execution attempt accessed the already-frozen Phase-C row traces and then failed before
+any accepted seed result was written with:
+
+`KeyError: 'manifest_sha256'`
+
+The cause was local to the exploratory mechanism reader: `_phase_b_arm_manifest()` verified the
+embedded Phase-B arm-manifest identity and removed that field with `pop()`, while downstream
+`analyze_seed()` attempted to persist the verified identity.
+
+The failed v1.1 output root existed but contained no files. The failure and trace-access state were
+preserved rather than deleted or disguised as a pre-access correction.
+
+A versioned v1.2 implementation correction was accepted at
+`b51a2238aeb3dcbbd677e6669d9cadbf2bd4a6e5`. It changed no Stage-8 primary prediction, treatment,
+endpoint, threshold, detector event, symbolic trajectory, confirmatory statistic, mechanism stratum,
+seed, comparator, or reporting domain. It retained the already-verified Phase-B manifest identity and
+added regression coverage for the exact failure.
+
+The v1.2 mechanism config was frozen in the sole-path commit
+`325604265c9ef5478e897d76adc9b45ad20eb929`, with manifest
+`e7d1ffe85a9d8442435c279bee79103f23a468b3fdf52f6f92f427e4f6131e7d`.
+Exact-head Research Contract runs #574 and #575 passed before v1.2 execution.
+
+The v1.2 audit then executed once and `--verify-only` independently regenerated all five seed
+results from the frozen heavy traces with identical identities:
+
+- aggregate: `6c35c026c52fa7bee93cd31bffa459b2bf605efe950f9645e6bea48f86a99acd`;
+- audit manifest: `c8edd1228942371d55b13e196c3050a9fa64d51c9e36069dc218c0dc03c89b66`.
+
+The seven compact mechanism evidence files were archived at
+`90e574fd3cee278fd4514609c24dfe58d5c6d944`. An explicit LF Git attribute protects the
+mechanism-config/evidence raw file hashes across checkouts.
+
+The exploratory post-reference D-drift-versus-C mechanism result is withdrawal-dominant:
+
+- mean total MCC difference: +0.059752;
+- mean withdrawal Shapley MCC contribution: +0.057321;
+- mean addition contribution: +0.002431;
+- retained-authority contribution: exactly 0 in all five seeds;
+- mean withdrawal row fraction: 0.157895;
+- mean addition row fraction: 0.013720;
+- mean retained-authority row fraction: 0.799423;
+- mean net corrected decisions: +346.8 withdrawal, +15.8 addition, 0 retained authority.
+
+Across all five D-drift post traces, withdrawal contains 1,997 rescues and 263 harms. The rescues are
+missed-attack corrections; the harms are benign false positives. Addition contains 79 rescues and no
+harms, primarily correcting benign false positives.
+
+Seven of eight D-drift publications were effective before the designated controlled boundary. The
+only post-reference D-drift publication, seed-0 `v0003`, has -1 net corrected decision over its
+later version segment, while the preceding pre-reference-published `v0002` has +280 over its
+post-reference segment. This does not support a simple boundary -> detector -> post-boundary symbolic
+repair narrative.
+
+Matched D-periodic is also withdrawal-dominant, so the mechanism evidence supports symbolic-lifecycle
+mitigation of stale authority but does not establish ADWIN trigger-specific superiority.
+
+The binding post-primary interpretation is recorded in
+`STAGE8_SYMBOLIC_MECHANISM_AUDIT_INTERPRETATION.md`.
+
+Stage 9 remains prospectively frozen and is not modified in response to this result.

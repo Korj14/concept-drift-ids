@@ -53,6 +53,21 @@ def test_stage8_parent_two_level_config_identity_is_bound() -> None:
     )
 
 
+def test_actual_stage8_parent_bundle_verifies() -> None:
+    parent = config._verify_stage8_parent()
+    assert (
+        parent["corrected_config_manifest_sha256"]
+        == config.STAGE8_CORRECTED_CONFIG_MANIFEST_SHA256
+    )
+    assert (
+        parent["compact_export_manifest_sha256"]
+        == config.STAGE8_COMPACT_EXPORT_MANIFEST_SHA256
+    )
+    assert (
+        parent["confirmatory_aggregate_sha256"]
+        == config.STAGE8_CONFIRMATORY_AGGREGATE_SHA256
+    )
+
 def test_condition_family_is_exactly_prespecified() -> None:
     specs = config._condition_specs(baseline_required=True)
     assert set(specs["offline"]) == {

@@ -343,6 +343,10 @@ def build_stage9_config() -> dict[str, Any]:
         "seeds": list(PRIMARY_SEEDS),
         "scenario": {
             "scenario_id": "cicids2017_sudden_benign_v1",
+            "stream_rows": 138530,
+            "boundary_index": 69260,
+            "pre_reference_rows": 69260,
+            "post_reference_rows": 69270,
             "boundary_role": "offline_scoring_and_diagnostics_only",
             "boundary_visibility_to_adaptive_runner": False,
             "random_reshuffle_allowed": False,

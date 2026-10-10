@@ -54,6 +54,11 @@ jobs:
             if (-not (Test-Path $path)) { throw "Missing Stage-9 artifact: $path" }
           }
 
+      - name: Compile Stage 9 source
+        shell: pwsh
+        run: |
+          python -m compileall -q src/concept_drift_ids run_stage9.py
+
       - name: Run Stage 9 repository-only tests
         shell: pwsh
         run: |

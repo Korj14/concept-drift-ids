@@ -17,6 +17,7 @@ from concept_drift_ids.cd_stage9_config import (
 )
 from concept_drift_ids.cd_stage9_evaluation import (
     OFFLINE_CONDITIONS,
+    _paired_effect_summary,
     verify_stage9_condition_aggregate,
     verify_stage9_evaluation_seed,
 )
@@ -162,14 +163,78 @@ def _master_summary(
     config: Mapping[str, Any],
     conditions: tuple[str, ...],
 ) -> dict[str, Any]:
+    full_aggregates: dict[str, dict[str, Any]] = {}
     aggregates: dict[str, Any] = {}
     for condition_id in conditions:
         aggregate = _load_writer_json(_evaluation_root(condition_id) / "aggregate.json")
+        full_aggregates[condition_id] = aggregate
         aggregates[condition_id] = {
             "aggregate_sha256": aggregate["aggregate_sha256"],
             "effects": aggregate["effects"],
+            "qualitative_stage8_relation": aggregate[
+                "qualitative_stage8_relation"
+            ],
             "inference": aggregate["inference"],
         }
+
+    baseline_required = bool(
+        config["runtime"]["comparison"]["matched_stage9_baseline_required"]
+    )
+    matched_baseline: dict[str, Any] = {
+        "required": baseline_required,
+        "comparison_scope": (
+            "adaptive_variant_minus_matched_stage9_baseline_on_seed_level_effects"
+            if baseline_required
+            else "not_required_same_material_runtime"
+        ),
+        "stage8_primary_replaced": False,
+        "variants": {},
+    }
+    if baseline_required:
+        if "A_BASELINE" not in full_aggregates:
+            raise ValueError(
+                "Cross-runtime Stage 9 requires an aggregated A_BASELINE."
+            )
+        baseline = full_aggregates["A_BASELINE"]
+        for condition_id in (
+            "A_LATENCY_0",
+            "A_LATENCY_10000",
+            "A_PAGE_HINKLEY",
+            "A_ADWIN_BRIER",
+            "A_NO_REPLAY",
+        ):
+            if condition_id not in full_aggregates:
+                raise ValueError(
+                    f"Missing adaptive variant required for baseline comparison: {condition_id}"
+                )
+            variant = full_aggregates[condition_id]
+            endpoint_deltas: dict[str, Any] = {}
+            for endpoint in baseline["effects"]:
+                baseline_values = [
+                    float(value)
+                    for value in baseline["effects"][endpoint]["values"]
+                ]
+                variant_values = [
+                    float(value)
+                    for value in variant["effects"][endpoint]["values"]
+                ]
+                if len(baseline_values) != len(variant_values):
+                    raise ValueError("Matched Stage-9 baseline seed count mismatch.")
+                deltas = [
+                    value - reference
+                    for value, reference in zip(
+                        variant_values,
+                        baseline_values,
+                    )
+                ]
+                endpoint_deltas[endpoint] = _paired_effect_summary(deltas)
+            matched_baseline["variants"][condition_id] = {
+                "endpoint_effect_delta_vs_A_BASELINE": endpoint_deltas,
+                "interpretation": (
+                    "paired robustness delta within the Stage-9 runtime; "
+                    "does not replace the frozen Stage-8 primary"
+                ),
+            }
 
     return {
         "schema_version": 1,
@@ -179,9 +244,11 @@ def _master_summary(
         "runtime_comparison": config["runtime"]["comparison"],
         "required_conditions": list(conditions),
         "conditions": aggregates,
+        "matched_stage9_baseline_comparison": matched_baseline,
         "interpretation_rule": (
             "condition_by_condition_robustness; no pooling as independent replicates; "
-            "Stage-8 primary remains authoritative"
+            "when runtime differs, adaptive variants are interpreted primarily against "
+            "A_BASELINE; Stage-8 primary remains authoritative"
         ),
     }
 

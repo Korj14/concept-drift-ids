@@ -621,3 +621,15 @@ def test_prediction_before_label_event_order_rejects_detector_before_label() -> 
     ]
     with pytest.raises(ValueError, match="before mature-label"):
         stage9_runner._verify_prediction_before_label_event_order(events)
+
+
+def test_static_gate_primary_config_reuse_requires_corrected_identity(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(
+        phase_b,
+        "load_primary_run_config",
+        lambda path: {"manifest_sha256": "wrong"},
+    )
+    with pytest.raises(ValueError, match="wrong corrected Stage-8 config"):
+        phase_b._load_primary_corrected_config()

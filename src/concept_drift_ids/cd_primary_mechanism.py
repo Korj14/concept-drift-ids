@@ -165,8 +165,27 @@ def load_mechanism_config() -> dict[str, Any]:
     return payload
 
 
-def verify_mechanism_config_for_execution() -> dict[str, Any]:
-    require_clean_worktree(project_root=PROJECT_ROOT)
+def _require_no_tracked_worktree_changes() -> None:
+    status = _git_output(
+        "status",
+        "--porcelain",
+        "--untracked-files=no",
+        project_root=PROJECT_ROOT,
+    )
+    if status:
+        raise RuntimeError(
+            "Mechanism audit refuses tracked worktree/index changes."
+        )
+
+
+def verify_mechanism_config_for_execution(
+    *,
+    require_fully_clean: bool = True,
+) -> dict[str, Any]:
+    if require_fully_clean:
+        require_clean_worktree(project_root=PROJECT_ROOT)
+    else:
+        _require_no_tracked_worktree_changes()
     config = load_mechanism_config()
     relative = CONFIG_PATH.relative_to(PROJECT_ROOT).as_posix()
 
@@ -933,7 +952,7 @@ def execute_mechanism_audit() -> dict[str, Any]:
 
 
 def verify_mechanism_audit() -> dict[str, Any]:
-    config = verify_mechanism_config_for_execution()
+    config = verify_mechanism_config_for_execution(require_fully_clean=False)
     _verify_parent_compact_evidence()
     manifest_path = OUTPUT_ROOT / "audit_manifest.json"
     if not manifest_path.is_file():

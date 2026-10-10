@@ -10,6 +10,7 @@ from concept_drift_ids import cd_stage9_config as config
 from concept_drift_ids import cd_stage9_offline as offline
 from concept_drift_ids import cd_stage9_phase_b as phase_b
 from concept_drift_ids import cd_stage9_phase_c as phase_c
+from concept_drift_ids import cd_stage9_export as export
 from concept_drift_ids.cd_control_plane import MatureLabelRecord
 from concept_drift_ids.cd_stage9_monitor import Stage9DriftMonitor
 from concept_drift_ids.cd_stage9_phase_a import control_plane_for_condition
@@ -336,3 +337,56 @@ def test_config_freeze_requires_exact_parent_and_only_config(
     responses[("show", "-s", "--format=%P", "freeze-head")] = "wrong-parent"
     with pytest.raises(ValueError, match="parent"):
         config._require_config_only_freeze({"prepared_from_git_commit": "source-head"})
+
+
+def test_offline_lambda_aggregate_reports_all_seed_contrasts(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    values = {
+        "c_frozen_symbolic": 0.70,
+        "d_drift": 0.80,
+        "d_periodic": 0.79,
+    }
+
+    def fake_condition(condition: str, seed: int, arm: str) -> dict[str, float]:
+        base = values[arm] + 0.001 * seed
+        return {
+            "mcc": base,
+            "f1": base,
+            "fpr": 1.0 - base,
+            "mcsc": 0.5,
+            "resolved_coverage": 0.8,
+        }
+
+    def fake_reference(seed: int, arm: str) -> dict[str, float]:
+        row = fake_condition("lambda_0_7", seed, arm)
+        return {**row, "mcc": row["mcc"] - 0.01}
+
+    monkeypatch.setattr(export, "_offline_lambda_metrics", fake_condition)
+    monkeypatch.setattr(export, "_stage8_reference", fake_reference)
+    payload = export._offline_condition_aggregate("lambda_0_7")
+
+    assert payload["type"] == "fusion_authority_sensitivity"
+    assert payload["adaptive_state_rerun"] is False
+    assert payload["threshold_refit"] is False
+    effect = payload["within_condition_primary_contrasts"]["d_drift_minus_c"]["mcc"]
+    assert effect["values"] == pytest.approx([0.10] * 5)
+    assert len(payload["arms"]["d_drift"]["mcc"]["values"]) == 5
+
+
+def test_window_aggregate_does_not_redefine_whole_post_endpoint(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(
+        export,
+        "_recovery_metric_summary",
+        lambda condition, arm, metric: {
+            "per_seed": [{"seed": seed} for seed in range(5)],
+            "right_censored_count": 0,
+        },
+    )
+    payload = export._offline_condition_aggregate("window_2500")
+    assert payload["type"] == "reporting_window_sensitivity"
+    assert payload["reporting_window_rows"] == 2500
+    assert payload["whole_post_endpoints_changed"] is False
+    assert set(payload["recovery"]) == set(phase_b.ARM_NAMES)

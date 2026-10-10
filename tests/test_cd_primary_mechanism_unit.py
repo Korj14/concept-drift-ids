@@ -118,6 +118,17 @@ def test_mechanism_config_preparation_does_not_read_heavy_traces(
     monkeypatch.setattr(mechanism, "CONFIG_PATH", tmp_path / "config.json")
     monkeypatch.setattr(
         mechanism,
+        "_historical_v1_identity",
+        lambda: {
+            "config_manifest_sha256": (
+                mechanism.HISTORICAL_V1_CONFIG_MANIFEST_SHA256
+            ),
+            "output_present": False,
+            "output_files": [],
+        },
+    )
+    monkeypatch.setattr(
+        mechanism,
         "_verify_parent_compact_evidence",
         lambda: {
             "compact_export_manifest_sha256": (
@@ -155,7 +166,7 @@ def test_mechanism_config_preparation_does_not_read_heavy_traces(
 
     payload = mechanism.build_mechanism_config()
     assert payload["source_commit"] == "source-commit"
-    assert payload["row_level_mechanism_trace_accessed_during_preparation"] is False
+    assert payload["row_level_mechanism_trace_accessed_during_v1_1_preparation"] is False
     assert payload["analysis_classification"].startswith(
         "exploratory_descriptive_post_primary"
     )
@@ -166,6 +177,17 @@ def test_mechanism_config_contains_frozen_decomposition_identity(
     tmp_path: Path,
 ) -> None:
     monkeypatch.setattr(mechanism, "PROJECT_ROOT", tmp_path)
+    monkeypatch.setattr(
+        mechanism,
+        "_historical_v1_identity",
+        lambda: {
+            "config_manifest_sha256": (
+                mechanism.HISTORICAL_V1_CONFIG_MANIFEST_SHA256
+            ),
+            "output_present": False,
+            "output_files": [],
+        },
+    )
     monkeypatch.setattr(
         mechanism,
         "_verify_parent_compact_evidence",
@@ -258,3 +280,25 @@ def test_preexecution_config_verifier_requires_fully_clean_gate(
     with pytest.raises(RuntimeError, match="stop"):
         mechanism.verify_mechanism_config_for_execution()
     assert calls == {"full": 1, "tracked": 0}
+
+
+
+def test_historical_v1_config_identity_is_immutable() -> None:
+    payload = mechanism._read_verified_json(
+        mechanism.HISTORICAL_V1_CONFIG_PATH
+    )
+    stored = payload.pop("manifest_sha256")
+    assert stored == mechanism.HISTORICAL_V1_CONFIG_MANIFEST_SHA256
+    assert mechanism.canonical_sha256(payload) == stored
+    assert tuple(payload["mechanisms"]) == (
+        "withdrawal",
+        "addition",
+        "revision",
+    )
+
+
+def test_v1_1_uses_new_config_and_output_identities() -> None:
+    assert mechanism.CONFIG_PATH.name == "cd_primary_mechanism_audit_v1_1.json"
+    assert mechanism.OUTPUT_ROOT.name == "cd_primary_mechanism_v1_1"
+    assert mechanism.CONFIG_PATH != mechanism.HISTORICAL_V1_CONFIG_PATH
+    assert mechanism.OUTPUT_ROOT != mechanism.HISTORICAL_V1_OUTPUT_ROOT

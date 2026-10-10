@@ -252,3 +252,127 @@ Those remain separate evidence obligations.
 The Stage-8 mechanism interpretation is not used to tune Stage 9. In particular, Stage 9 is not
 modified to force more symbolic addition or retained-authority contribution. The prespecified
 conditions are executed whether they strengthen, weaken or reverse the Stage-8 interpretation.
+
+
+## 11. Pre-access hardening for Q1 defensibility
+
+Before any Stage-9 robustness outcome is accessed, the implementation additionally enforces the
+following controls.
+
+### Frozen primary treatment contract
+
+The Stage-9 config stores a canonical hash of the corrected Stage-8 treatment contract covering:
+
+- scenario identity and row/boundary definitions;
+- System-A checkpoint/threshold identities;
+- accepted R0.v2 identity;
+- primary control-plane parameters and RNG namespaces;
+- primary symbolic-operator configuration;
+- fusion weights/threshold table and no-post-hoc-recalibration rule;
+- primary analysis contract.
+
+Every Stage-9 condition stores:
+
+- the same frozen primary-contract hash;
+- its explicit `changed_factors` list.
+
+Any difference not declared in that list is therefore reviewable as a contract violation rather than
+an implicit code-default difference.
+
+### Five-seed runtime reference
+
+Stage-9 preparation reads the frozen Stage-8 Phase-A runtime manifest for all five primary seeds and
+requires one common sanitized runtime fingerprint. The fingerprint includes platform/processor,
+Python/Torch identities, deterministic-algorithm state, Torch thread counts, required thread
+environment and the locked-distribution identity.
+
+If the current Stage-9 runtime fingerprint differs from the common Stage-8 fingerprint, the matched
+Stage-9 primary baseline is automatically included. The baseline cannot be removed after config
+freeze.
+
+### Preparation and no-outcome-access gate
+
+Preparation requires:
+
+- a clean worktree;
+- ancestry from the accepted Stage-8 closure commit;
+- absence of both Stage-9 heavy and compact output roots;
+- exact Stage-8 evidence/config/source identities;
+- exact Stage-9 source/test/runner/workflow identities.
+
+The config records `stage9_outcomes_accessed_during_preparation=false`. The absence of Stage-9 output
+roots makes that claim mechanically checkable rather than declarative only.
+
+### Prediction-before-label trace invariant
+
+The Stage-9 trajectory verifier checks event order directly. For every origin row:
+
+1. prediction must appear first;
+2. label release may appear only after that prediction;
+3. detector observation may appear only after label release;
+4. a drift event may appear only after the corresponding detector observation.
+
+This remains true for L=0 even though prediction and label maturity share the same logical clock.
+
+### Deterministic full-matrix execution plan
+
+The preferred scientific execution path is `run_stage9.py execute-all`.
+
+Before the first Stage-9 result is produced, it writes a canonical execution plan derived only from
+the frozen config. The plan fixes:
+
+- condition order;
+- seed order;
+- phase order;
+- every required condition/seed/phase step;
+- prohibition on outcome-dependent early stopping;
+- abort-and-preserve behavior for technical failures.
+
+A resumed execution may verify and skip a previously complete step. It must abort on an existing
+partial or failed write-once step rather than delete, overwrite or silently rerun it.
+
+`execute-all --verify-only` is non-mutating and requires the plan to already exist.
+
+Final compact export requires the same verified pre-outcome execution-plan identity, so a manually
+selected subset of conditions cannot produce the final Stage-9 evidence package.
+
+### Offline Stage-8 input binding
+
+Group-O lambda/window sensitivities bind each reused Stage-8 compact evaluation file to the exact raw
+SHA-256 descriptor in the frozen Stage-8 compact export manifest and also verify the file's internal
+canonical scientific hash.
+
+Window sensitivities additionally verify the original heavy trace raw and canonical JSONL identities
+against the frozen Stage-8 descriptor before recomputing reporting windows.
+
+### Compact causal provenance
+
+For each scored Stage-9 condition/seed, compact export includes the small provenance artifacts needed
+to audit causal isolation without the heavy workspace:
+
+- Phase-A run manifest;
+- Phase-A input identity;
+- Phase-A shared identity;
+- Phase-B seed manifest;
+- each C/D arm manifest;
+- Phase-C seed manifest and arm evaluations.
+
+Large prediction traces, checkpoints and maintenance JSONL remain in the heavy artifact archive.
+
+### Statistical and reference policy
+
+Stage-9 aggregation reports every frozen condition and all five seeds. It computes no new p-values and
+does not create a replacement confirmatory family.
+
+The aggregate records an explicit reference policy:
+
+- offline sensitivities -> frozen Stage-8 primary;
+- static symbolic-gate sensitivity -> frozen Stage-8 primary;
+- matched Stage-9 baseline -> frozen Stage-8 primary;
+- adaptive variants -> matched Stage-9 baseline when runtime mismatch requires it, otherwise frozen
+  Stage-8 primary.
+
+Any t-based 95% interval emitted by the robustness summary is labeled descriptive stochastic-seed
+dispersion conditional on the fixed scenario, not environmental/deployment-population inference.
+
+No robustness condition may be omitted, promoted or suppressed according to outcome direction.

@@ -11,6 +11,7 @@ from concept_drift_ids import cd_stage9_offline as offline
 from concept_drift_ids import cd_stage9_phase_b as phase_b
 from concept_drift_ids import cd_stage9_phase_c as phase_c
 from concept_drift_ids import cd_stage9_export as export
+from concept_drift_ids import cd_stage9_execute as execute
 from concept_drift_ids.cd_control_plane import MatureLabelRecord
 from concept_drift_ids.cd_stage9_monitor import Stage9DriftMonitor
 from concept_drift_ids.cd_stage9_phase_a import control_plane_for_condition
@@ -776,3 +777,90 @@ def test_stage8_offline_eval_rejects_raw_hash_mismatch(
     )
     with pytest.raises(ValueError, match="raw hash"):
         offline._stage8_eval_payload(0, "d_drift")
+
+
+def test_stage9_execution_plan_covers_full_frozen_matrix() -> None:
+    plan = execute.build_execution_plan({"matched_baseline_required": True})
+    assert len(plan["steps"]) == 125
+    assert plan["condition_order"]["offline"] == list(config.OFFLINE_CONDITIONS)
+    assert plan["condition_order"]["symbolic_gate"] == list(config.GATE_CONDITIONS)
+    assert plan["condition_order"]["adaptive"][0] == config.MATCHED_BASELINE_CONDITION
+    assert plan["seed_order"] == list(config.PRIMARY_SEEDS)
+    assert plan["outcome_dependent_early_stopping_forbidden"] is True
+    assert "do_not_delete_or_rerun" in plan["technical_failure_policy"]
+    assert plan["plan_sha256"] == config.canonical_sha256(
+        {key: value for key, value in plan.items() if key != "plan_sha256"}
+    )
+
+
+def test_stage9_execution_plan_without_runtime_baseline_has_110_steps() -> None:
+    plan = execute.build_execution_plan({"matched_baseline_required": False})
+    assert len(plan["steps"]) == 110
+    assert config.MATCHED_BASELINE_CONDITION not in plan["condition_order"]["adaptive"]
+
+
+def test_execute_all_refuses_existing_partial_write_once_step(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    root = tmp_path / "partial"
+    root.mkdir()
+    step = {
+        "group": "adaptive",
+        "condition_id": "latency_0",
+        "phase": "phase_a",
+        "seed": 0,
+    }
+    monkeypatch.setattr(
+        execute,
+        "_step_state",
+        lambda step: (
+            root,
+            root / "run_manifest.json",
+            root / "failure.json",
+        ),
+    )
+    monkeypatch.setattr(
+        execute,
+        "_actions",
+        lambda step: (
+            lambda condition, seed: {"should": "not execute"},
+            lambda condition, seed: {"should": "not verify"},
+        ),
+    )
+    with pytest.raises(RuntimeError, match="incomplete write-once"):
+        execute._run_or_verify_step(step, verify_only=False)
+
+
+def test_execute_all_verifies_and_skips_completed_step(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    root = tmp_path / "complete"
+    root.mkdir()
+    completion = root / "result.json"
+    completion.write_text("{}", encoding="utf-8")
+    step = {
+        "group": "offline",
+        "condition_id": "lambda_0_7",
+        "phase": "offline",
+        "seed": 0,
+    }
+    monkeypatch.setattr(
+        execute,
+        "_step_state",
+        lambda step: (root, completion, root / "failure.json"),
+    )
+    monkeypatch.setattr(
+        execute,
+        "_actions",
+        lambda step: (
+            lambda condition, seed: (_ for _ in ()).throw(
+                AssertionError("completed step must not execute")
+            ),
+            lambda condition, seed: {"verified": True},
+        ),
+    )
+    result = execute._run_or_verify_step(step, verify_only=False)
+    assert result["action"] == "verified_existing_complete"
+    assert result["result"] == {"verified": True}

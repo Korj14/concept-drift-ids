@@ -429,3 +429,11 @@ def test_stage9_portability_attributes_are_scoped() -> None:
     ).read_text(encoding="utf-8")
     assert "cd_stage9_run_config_v1.json text eol=lf" in config_attr
     assert "cd_robustness_v1/** text eol=lf" in compact_attr
+
+
+def test_reused_stage8_computational_sources_are_historically_bound() -> None:
+    corrected, _ = config._canonical_manifest(config.STAGE8_CORRECTED_CONFIG_PATH)
+    frozen = corrected["scientific_source_hashes"]
+    assert set(config.REUSED_STAGE8_SOURCE_PATHS).issubset(frozen)
+    observed = config._verify_reused_stage8_source_tree(corrected)
+    assert set(observed) == set(config.REUSED_STAGE8_SOURCE_PATHS)

@@ -21,6 +21,7 @@ from concept_drift_ids.cd_implementation_preflight import PROJECT_ROOT
 from concept_drift_ids.cd_stage9_config import (
     OFFLINE_CONDITIONS,
     PRIMARY_SEEDS,
+    STAGE8_COMPACT_EXPORT_MANIFEST_SHA256,
     STAGE8_COMPACT_ROOT,
     STAGE9_OUTPUT_ROOT,
     verify_stage9_config_for_execution,
@@ -58,16 +59,58 @@ def _output_dir(condition: str, seed: int) -> Path:
     return STAGE9_OUTPUT_ROOT / "offline" / condition / f"seed-{seed}"
 
 
-def _read_verified_json(path: Path) -> dict[str, Any]:
+def _read_verified_json(
+    path: Path,
+    *,
+    inner_hash_key: str | None = None,
+) -> dict[str, Any]:
     payload = json.loads(path.read_text(encoding="utf-8"))
     payload_sha = payload.pop("payload_sha256", None)
     if payload_sha is not None and payload_sha != canonical_sha256(payload):
         raise ValueError(f"JSON payload hash mismatch: {path}")
+    if inner_hash_key is not None:
+        stored = payload.get(inner_hash_key)
+        core = dict(payload)
+        core.pop(inner_hash_key, None)
+        if stored != canonical_sha256(core):
+            raise ValueError(f"{inner_hash_key} mismatch: {path}")
     return payload
 
 
+def _stage8_compact_manifest() -> dict[str, Any]:
+    path = STAGE8_COMPACT_ROOT / "compact_export_manifest.json"
+    payload = _read_verified_json(path)
+    stored = payload.get("manifest_sha256")
+    core = dict(payload)
+    core.pop("manifest_sha256", None)
+    if stored != canonical_sha256(core):
+        raise ValueError("Stage-8 compact export manifest canonical hash mismatch.")
+    if stored != STAGE8_COMPACT_EXPORT_MANIFEST_SHA256:
+        raise ValueError("Unexpected Stage-8 compact export manifest identity.")
+    return payload
+
+
+def _stage8_eval_payload(seed: int, arm: str) -> dict[str, Any]:
+    path = _compact_eval_path(seed, arm)
+    manifest = _stage8_compact_manifest()
+    relative = path.relative_to(PROJECT_ROOT).as_posix()
+    matches = [
+        descriptor
+        for descriptor in manifest["files"].values()
+        if descriptor.get("export_path") == relative
+    ]
+    if len(matches) != 1:
+        raise ValueError(
+            f"Stage-8 compact manifest does not uniquely bind evaluation: {relative}"
+        )
+    descriptor = matches[0]
+    if sha256_file(path) != str(descriptor["sha256"]):
+        raise ValueError("Stage-8 compact evaluation raw hash mismatch.")
+    return _read_verified_json(path, inner_hash_key="summary_sha256")
+
+
 def _verified_trace(seed: int, arm: str) -> list[dict[str, Any]]:
-    summary = _read_verified_json(_compact_eval_path(seed, arm))
+    summary = _stage8_eval_payload(seed, arm)
     trace = summary["prediction_trace"]
     path = _heavy_trace_path(seed, arm)
     if not path.is_file():
@@ -182,7 +225,7 @@ def execute_offline_condition(condition: str, seed: int) -> dict[str, Any]:
 
     results: dict[str, Any] = {}
     for arm in ARM_NAMES:
-        compact = _read_verified_json(_compact_eval_path(seed, arm))
+        compact = _stage8_eval_payload(seed, arm)
         if condition.startswith("lambda_"):
             weight = {
                 "lambda_0_7": "0.7",

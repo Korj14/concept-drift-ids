@@ -25,6 +25,10 @@ inputs and are not overwritten.
 - `O_WINDOW_2500`: 2,500-row reporting-window sensitivity from immutable Stage-8 traces;
 - `O_WINDOW_10000`: 10,000-row reporting-window sensitivity from immutable Stage-8 traces.
 
+Both window sensitivities inherit the primary reporting helper's 1,000-row minimum-remainder merge
+rule and the frozen recovery definition (weighted three-window pre baseline, two consecutive qualifying
+post windows, right censoring when unrecovered).
+
 No threshold is refit and no adaptive state is rerun in Group O.
 
 ### Group G — symbolic-gate sensitivity

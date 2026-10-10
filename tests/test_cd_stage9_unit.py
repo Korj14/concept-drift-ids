@@ -1157,3 +1157,99 @@ def test_v1_1_config_records_historical_failure_without_scope_change(
     assert payload["correction_scope"]["treatment_change"] is False
     assert payload["correction_scope"]["endpoint_change"] is False
     assert payload["run_id"] == "cd-robustness-v1_1"
+
+
+def test_historical_v1_failure_identity_requires_exact_preserved_remnants(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    from concept_drift_ids.cd_control_plane import write_json_new
+
+    config_path = tmp_path / "data" / "manifests" / "cd_stage9_run_config_v1.json"
+    config_path.parent.mkdir(parents=True, exist_ok=True)
+    historical_config = {
+        "schema_version": 1,
+        "prepared_from_git_commit": "implementation-head",
+    }
+    historical_config["manifest_sha256"] = config.canonical_sha256(
+        historical_config
+    )
+    write_json_new(config_path, historical_config)
+
+    output_root = tmp_path / "artifacts" / "cd_robustness_v1"
+    step_root = output_root / "offline" / "lambda_0_7" / "seed-0"
+    step_root.mkdir(parents=True, exist_ok=True)
+
+    plan = {
+        "schema_version": 1,
+        "stage9_config_manifest_sha256": (
+            config.HISTORICAL_STAGE9_V1_CONFIG_MANIFEST_SHA256
+        ),
+        "steps": [],
+    }
+    plan["plan_sha256"] = config.canonical_sha256(plan)
+    write_json_new(output_root / "execution_plan.json", plan)
+
+    write_json_new(
+        step_root / "attempt.json",
+        {
+            "condition_id": "lambda_0_7",
+            "seed": 0,
+            "stage9_config_manifest_sha256": (
+                config.HISTORICAL_STAGE9_V1_CONFIG_MANIFEST_SHA256
+            ),
+        },
+    )
+    write_json_new(
+        step_root / "failure.json",
+        {
+            "condition_id": "lambda_0_7",
+            "seed": 0,
+            "exception_type": "AttributeError",
+            "message": "'list' object has no attribute 'values'",
+        },
+    )
+
+    monkeypatch.setattr(
+        config, "HISTORICAL_STAGE9_V1_CONFIG_PATH", config_path
+    )
+    monkeypatch.setattr(
+        config, "HISTORICAL_STAGE9_V1_OUTPUT_ROOT", output_root
+    )
+    monkeypatch.setattr(
+        config,
+        "HISTORICAL_STAGE9_V1_COMPACT_ROOT",
+        tmp_path / "results" / "frozen" / "cd_robustness_v1",
+    )
+    monkeypatch.setattr(
+        config,
+        "HISTORICAL_STAGE9_V1_CONFIG_MANIFEST_SHA256",
+        historical_config["manifest_sha256"],
+    )
+    monkeypatch.setattr(
+        config,
+        "HISTORICAL_STAGE9_V1_FREEZE_COMMIT",
+        "freeze-head",
+    )
+    monkeypatch.setattr(
+        config,
+        "_git_output",
+        lambda *args: "freeze-head",
+    )
+
+    identity = config._historical_v1_execution_identity()
+    assert identity["accepted_result_json_present"] is False
+    assert identity["stage9_robustness_outcome_accessed"] is False
+    assert identity["scientific_scope_change"] is False
+    assert set(identity["output_files"]) == {
+        "execution_plan.json",
+        "offline/lambda_0_7/seed-0/attempt.json",
+        "offline/lambda_0_7/seed-0/failure.json",
+    }
+
+    write_json_new(
+        step_root / "result.json",
+        {"status": "unexpected_result"},
+    )
+    with pytest.raises(ValueError, match="file set changed|accepted result"):
+        config._historical_v1_execution_identity()

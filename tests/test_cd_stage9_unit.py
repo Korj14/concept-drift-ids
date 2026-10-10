@@ -286,6 +286,17 @@ def test_config_preparation_declares_no_stage9_outcome_access(
     )
     monkeypatch.setattr(
         config,
+        "_historical_v1_execution_identity",
+        lambda: {
+            "config_freeze_commit": config.HISTORICAL_STAGE9_V1_FREEZE_COMMIT,
+            "config_manifest_sha256": config.HISTORICAL_STAGE9_V1_CONFIG_MANIFEST_SHA256,
+            "accepted_result_json_present": False,
+            "stage9_robustness_outcome_accessed": False,
+            "scientific_scope_change": False,
+        },
+    )
+    monkeypatch.setattr(
+        config,
         "_verify_stage8_parent",
         lambda: {
             "corrected_config_manifest_sha256": "a",
@@ -457,7 +468,9 @@ def test_stage9_portability_attributes_are_scoped() -> None:
         config.PROJECT_ROOT / "results" / "frozen" / ".gitattributes"
     ).read_text(encoding="utf-8")
     assert "cd_stage9_run_config_v1.json text eol=lf" in config_attr
+    assert "cd_stage9_run_config_v1_1.json text eol=lf" in config_attr
     assert "cd_robustness_v1/** text eol=lf" in compact_attr
+    assert "cd_robustness_v1_1/** text eol=lf" in compact_attr
 
 
 def test_reused_stage8_computational_sources_are_historically_bound() -> None:
@@ -1051,3 +1064,96 @@ def test_stage8_offline_eval_rejects_mapping_shaped_files(
     )
     with pytest.raises(ValueError, match="files must be a list"):
         offline._stage8_eval_payload(0, "d_drift")
+
+
+def test_stage9_v1_1_uses_new_write_once_identities() -> None:
+    assert config.STAGE9_SCHEMA_VERSION == 2
+    assert config.STAGE9_RUN_ID == "cd-robustness-v1_1"
+    assert config.STAGE9_CONFIG_PATH.name == "cd_stage9_run_config_v1_1.json"
+    assert config.STAGE9_OUTPUT_ROOT.name == "cd_robustness_v1_1"
+    assert config.STAGE9_COMPACT_ROOT.name == "cd_robustness_v1_1"
+    assert config.HISTORICAL_STAGE9_V1_CONFIG_PATH.name == (
+        "cd_stage9_run_config_v1.json"
+    )
+    assert config.HISTORICAL_STAGE9_V1_OUTPUT_ROOT.name == "cd_robustness_v1"
+
+
+def test_v1_1_config_records_historical_failure_without_scope_change(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    historical = {
+        "config_freeze_commit": config.HISTORICAL_STAGE9_V1_FREEZE_COMMIT,
+        "config_manifest_sha256": config.HISTORICAL_STAGE9_V1_CONFIG_MANIFEST_SHA256,
+        "accepted_result_json_present": False,
+        "stage9_robustness_outcome_accessed": False,
+        "scientific_scope_change": False,
+    }
+    monkeypatch.setattr(config, "_require_clean_for_preparation", lambda: None)
+    monkeypatch.setattr(config, "_require_stage8_closure_ancestor", lambda: None)
+    monkeypatch.setattr(
+        config, "_require_no_stage9_outputs_before_preparation", lambda: None
+    )
+    monkeypatch.setattr(
+        config, "_historical_v1_execution_identity", lambda: historical
+    )
+    monkeypatch.setattr(
+        config,
+        "_verify_stage8_parent",
+        lambda: {
+            "corrected_config_manifest_sha256": "a",
+            "compact_export_manifest_sha256": "b",
+            "confirmatory_aggregate_sha256": "c",
+        },
+    )
+    monkeypatch.setattr(
+        config,
+        "_requirements_identity",
+        lambda: {"installed_distributions_sha256": "req"},
+    )
+    runtime = {
+        "platform": "x",
+        "processor": "p",
+        "python_version": "3.11.9",
+        "python_implementation": "CPython",
+        "torch_version": "t",
+        "torch_deterministic_algorithms": True,
+        "torch_num_threads": 1,
+        "torch_num_interop_threads": 1,
+        "thread_environment": dict(config.PRIMARY_THREAD_ENV),
+    }
+    fingerprint = config._runtime_fingerprint(
+        runtime, locked_distributions_sha256="req"
+    )
+    monkeypatch.setattr(config, "_runtime_inventory", lambda: dict(runtime))
+    monkeypatch.setattr(
+        config,
+        "_primary_runtime_reference",
+        lambda: {
+            "seed_fingerprints": {
+                str(seed): dict(fingerprint) for seed in config.PRIMARY_SEEDS
+            },
+            "common_fingerprint": dict(fingerprint),
+            "common_fingerprint_sha256": config.canonical_sha256(fingerprint),
+        },
+    )
+    monkeypatch.setattr(
+        config,
+        "_stage8_frozen_primary_contract",
+        lambda: {
+            "source_config_manifest_sha256": "primary-config",
+            "contract": {"primary": "contract"},
+            "contract_sha256": "primary-contract",
+        },
+    )
+    monkeypatch.setattr(
+        config,
+        "_text_hashes",
+        lambda paths: {path: f"hash:{path}" for path in paths},
+    )
+    monkeypatch.setattr(config, "_git_output", lambda *args: "source-head")
+    payload = config.build_stage9_config()
+    assert payload["historical_v1_execution"] == historical
+    assert payload["correction_scope"]["scientific_scope_change"] is False
+    assert payload["correction_scope"]["treatment_change"] is False
+    assert payload["correction_scope"]["endpoint_change"] is False
+    assert payload["run_id"] == "cd-robustness-v1_1"

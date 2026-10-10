@@ -89,6 +89,64 @@ def _verify_parent_compact_evidence() -> dict[str, Any]:
     }
 
 
+
+def build_mechanism_config() -> dict[str, Any]:
+    """Freeze the post-primary mechanism audit without reading row-level traces."""
+    require_clean_worktree(project_root=PROJECT_ROOT)
+    parent = _verify_parent_compact_evidence()
+    source_commit = _git_output("rev-parse", "HEAD", project_root=PROJECT_ROOT)
+    protocol_file = PROJECT_ROOT / PROTOCOL_PATH
+    source_file = PROJECT_ROOT / "src" / "concept_drift_ids" / "cd_primary_mechanism.py"
+    runner_file = PROJECT_ROOT / "run.py"
+    tests_file = PROJECT_ROOT / "tests" / "test_cd_primary_mechanism_unit.py"
+    for path in (protocol_file, source_file, runner_file, tests_file):
+        if not path.is_file():
+            raise FileNotFoundError(f"Missing mechanism-audit source: {path}")
+
+    payload = {
+        "schema_version": 1,
+        "status": "frozen_post_primary_before_row_level_mechanism_trace_access",
+        "source_commit": source_commit,
+        "parent_evidence_commit": PARENT_EVIDENCE_COMMIT,
+        "parent_compact_export_manifest_sha256": parent[
+            "compact_export_manifest_sha256"
+        ],
+        "parent_confirmatory_aggregate_sha256": parent[
+            "confirmatory_aggregate_sha256"
+        ],
+        "protocol_path": PROTOCOL_PATH,
+        "protocol_sha256": sha256_file(protocol_file),
+        "source_sha256": sha256_file(source_file),
+        "runner_sha256": sha256_file(runner_file),
+        "tests_sha256": sha256_file(tests_file),
+        "seeds": list(SEEDS),
+        "target_arms": list(TARGET_ARMS),
+        "mechanisms": list(MECHANISMS),
+        "domains": list(DOMAINS),
+        "boundary_index": BOUNDARY_INDEX,
+        "stream_rows": STREAM_ROWS,
+        "primary_decision_key": PRIMARY_DECISION_KEY,
+        "lambda_one_decision_key": LAMBDA_ONE_DECISION_KEY,
+        "lambda_one_score_key": LAMBDA_ONE_SCORE_KEY,
+        "row_level_mechanism_trace_accessed_during_preparation": False,
+        "analysis_classification": (
+            "exploratory_descriptive_post_primary_no_new_pvalue_family"
+        ),
+    }
+    payload["manifest_sha256"] = canonical_sha256(payload)
+    return payload
+
+
+def write_mechanism_config() -> dict[str, Any]:
+    if CONFIG_PATH.exists():
+        raise FileExistsError(
+            f"Refusing to overwrite mechanism-audit config: {CONFIG_PATH}"
+        )
+    payload = build_mechanism_config()
+    write_json_new(CONFIG_PATH, payload)
+    return payload
+
+
 def load_mechanism_config() -> dict[str, Any]:
     if not CONFIG_PATH.is_file():
         raise FileNotFoundError(
@@ -177,6 +235,25 @@ def verify_mechanism_config_for_execution() -> dict[str, Any]:
         raise ValueError("Mechanism audit target-arm set changed.")
     if tuple(config["mechanisms"]) != MECHANISMS:
         raise ValueError("Mechanism audit mechanism set changed.")
+    if tuple(config["domains"]) != DOMAINS:
+        raise ValueError("Mechanism audit domain set changed.")
+    if int(config["boundary_index"]) != BOUNDARY_INDEX:
+        raise ValueError("Mechanism audit boundary changed.")
+    if int(config["stream_rows"]) != STREAM_ROWS:
+        raise ValueError("Mechanism audit stream length changed.")
+    if config["row_level_mechanism_trace_accessed_during_preparation"] is not False:
+        raise ValueError("Mechanism config claims row-level access during preparation.")
+    expected_files = {
+        "protocol_sha256": PROJECT_ROOT / PROTOCOL_PATH,
+        "source_sha256": (
+            PROJECT_ROOT / "src" / "concept_drift_ids" / "cd_primary_mechanism.py"
+        ),
+        "runner_sha256": PROJECT_ROOT / "run.py",
+        "tests_sha256": PROJECT_ROOT / "tests" / "test_cd_primary_mechanism_unit.py",
+    }
+    for key, path in expected_files.items():
+        if sha256_file(path) != str(config[key]):
+            raise ValueError(f"Mechanism audit source identity changed: {path}")
     return config
 
 
@@ -912,13 +989,29 @@ def main() -> None:
     parser = argparse.ArgumentParser(
         description="Post-primary symbolic-value mechanism audit."
     )
+    parser.add_argument("--prepare-config", action="store_true")
     parser.add_argument("--verify-only", action="store_true")
     args = parser.parse_args()
-    result = (
-        verify_mechanism_audit()
-        if args.verify_only
-        else execute_mechanism_audit()
-    )
+    if args.prepare_config and args.verify_only:
+        parser.error("--prepare-config and --verify-only are mutually exclusive.")
+    if args.prepare_config:
+        payload = write_mechanism_config()
+        result = {
+            "status": "symbolic_value_mechanism_config_written",
+            "path": CONFIG_PATH.relative_to(PROJECT_ROOT).as_posix(),
+            "manifest_sha256": payload["manifest_sha256"],
+            "source_commit": payload["source_commit"],
+            "row_level_mechanism_trace_accessed_during_preparation": False,
+            "next_gate": (
+                "commit only the mechanism-audit config and require exact-head CI"
+            ),
+        }
+    else:
+        result = (
+            verify_mechanism_audit()
+            if args.verify_only
+            else execute_mechanism_audit()
+        )
     print(json.dumps(result, sort_keys=True, indent=2))
 
 

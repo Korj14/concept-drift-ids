@@ -918,6 +918,11 @@ def test_offline_failure_preserves_attempt_and_failure_evidence(
     monkeypatch.setattr(offline, "_output_dir", lambda condition, seed: out)
     monkeypatch.setattr(
         offline,
+        "artifact_identity_context",
+        lambda config, condition, seed: {"identity": "test"},
+    )
+    monkeypatch.setattr(
+        offline,
         "_stage8_eval_payload",
         lambda seed, arm: (_ for _ in ()).throw(
             RuntimeError("synthetic offline failure")

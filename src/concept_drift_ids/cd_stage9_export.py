@@ -3,8 +3,11 @@ from __future__ import annotations
 import json
 import shutil
 from pathlib import Path
+from math import sqrt
 from statistics import mean, median, stdev
 from typing import Any, Mapping, Sequence
+
+from scipy.stats import t as student_t
 
 from concept_drift_ids.cd_control_plane import canonical_sha256, write_json_new
 from concept_drift_ids.cd_primary_phase_b import ARM_NAMES
@@ -35,16 +38,33 @@ def _read_json(path: Path) -> dict[str, Any]:
 
 def _numeric_summary(values: Sequence[float]) -> dict[str, Any]:
     vals = [float(v) for v in values]
+    avg = mean(vals)
+    sd = stdev(vals) if len(vals) > 1 else 0.0
+    loo = [
+        mean(vals[:index] + vals[index + 1 :])
+        for index in range(len(vals))
+        if len(vals) > 1
+    ]
+    if len(vals) > 1:
+        critical = float(student_t.ppf(0.975, df=len(vals) - 1))
+        half_width = critical * sd / sqrt(len(vals))
+        interval = [avg - half_width, avg + half_width]
+    else:
+        interval = [avg, avg]
     return {
         "values": vals,
-        "mean": mean(vals),
+        "mean": avg,
         "median": median(vals),
-        "sample_sd": stdev(vals) if len(vals) > 1 else 0.0,
+        "sample_sd": sd,
         "minimum": min(vals),
         "maximum": max(vals),
         "positive": sum(v > 0 for v in vals),
         "negative": sum(v < 0 for v in vals),
         "zero": sum(v == 0 for v in vals),
+        "leave_one_seed_out_mean_range": (
+            [min(loo), max(loo)] if loo else [avg, avg]
+        ),
+        "paired_t95_interval_descriptive": interval,
     }
 
 
@@ -77,6 +97,71 @@ def _stage9_metrics(condition: str, seed: int, arm: str) -> dict[str, float]:
         "fpr": float(post["fpr"]),
         "mcsc": float(explanation["mcsc"]),
         "resolved_coverage": float(explanation["resolved_coverage"]),
+    }
+
+
+
+def _stage9_seed_manifest(condition: str, seed: int) -> dict[str, Any]:
+    return _read_json(_phase_c_dir(condition, seed) / "phase_c_seed_manifest.json")
+
+
+def _maintenance_metrics(condition: str, seed: int, arm: str) -> dict[str, float]:
+    payload = _read_json(_phase_c_dir(condition, seed) / f"{arm}_evaluation.json")
+    summary = payload["maintenance_summary"]
+    return {
+        "opportunity_count": float(summary["opportunity_count"]),
+        "publication_count": float(summary["publication_count"]),
+        "completed_validation_count": float(summary["completed_validation_count"]),
+        "censored_or_blocked_count": float(summary["censored_or_blocked_count"]),
+        "compute_seconds": float(summary["compute_seconds"]),
+        "mean_validation_wait_rows": (
+            float(summary["mean_validation_wait_rows"])
+            if summary["mean_validation_wait_rows"] is not None
+            else float("nan")
+        ),
+    }
+
+
+def _trigger_summary(condition: str) -> dict[str, Any]:
+    rows = [
+        _stage9_seed_manifest(condition, seed)["trigger_diagnostics"]
+        for seed in PRIMARY_SEEDS
+    ]
+    first_post = [
+        row["first_post_reference_confirmation_delay_rows"] for row in rows
+    ]
+    excess = [row["latency_adjusted_excess_delay_rows"] for row in rows]
+    return {
+        "per_seed": rows,
+        "pre_reference_alarm_count": _numeric_summary(
+            [float(row["pre_reference_alarm_count"]) for row in rows]
+        ),
+        "detector_event_count": _numeric_summary(
+            [float(row["detector_event_count"]) for row in rows]
+        ),
+        "post_reference_event_count": _numeric_summary(
+            [float(row["post_reference_event_count"]) for row in rows]
+        ),
+        "first_post_reference_confirmation_delay_rows": {
+            "values": first_post,
+            "observed_count": sum(value is not None for value in first_post),
+            "censored_count": sum(value is None for value in first_post),
+            "observed_summary": (
+                _numeric_summary([float(v) for v in first_post if v is not None])
+                if any(v is not None for v in first_post)
+                else None
+            ),
+        },
+        "latency_adjusted_excess_delay_rows": {
+            "values": excess,
+            "observed_count": sum(value is not None for value in excess),
+            "censored_count": sum(value is None for value in excess),
+            "observed_summary": (
+                _numeric_summary([float(v) for v in excess if v is not None])
+                if any(v is not None for v in excess)
+                else None
+            ),
+        },
     }
 
 
@@ -231,6 +316,30 @@ def export_stage9() -> dict[str, Any]:
             "d_drift_minus_d_periodic": _paired_effects(
                 by_arm["d_drift"], by_arm["d_periodic"]
             ),
+        }
+        condition_payload["trigger_diagnostics"] = _trigger_summary(condition)
+        condition_payload["maintenance"] = {
+            arm: {
+                metric: _numeric_summary(
+                    [
+                        row[metric]
+                        for row in [
+                            _maintenance_metrics(condition, seed, arm)
+                            for seed in PRIMARY_SEEDS
+                        ]
+                        if row[metric] == row[metric]
+                    ]
+                )
+                for metric in (
+                    "opportunity_count",
+                    "publication_count",
+                    "completed_validation_count",
+                    "censored_or_blocked_count",
+                    "compute_seconds",
+                    "mean_validation_wait_rows",
+                )
+            }
+            for arm in ("d_drift", "d_periodic")
         }
         aggregate["conditions"][condition] = condition_payload
 

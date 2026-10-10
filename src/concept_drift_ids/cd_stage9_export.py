@@ -86,6 +86,10 @@ def _numeric_summary(values: Sequence[float]) -> dict[str, Any]:
             [min(loo), max(loo)] if loo else [avg, avg]
         ),
         "t95_interval_descriptive": interval,
+        "t95_interval_scope": (
+            "stochastic_seed_dispersion_conditional_on_fixed_scenario;"
+            "not_environmental_or_deployment_population_inference"
+        ),
     }
 
 

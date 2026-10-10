@@ -779,7 +779,14 @@ def test_stage8_offline_eval_rejects_raw_hash_mismatch(
         offline._stage8_eval_payload(0, "d_drift")
 
 
-def test_stage9_execution_plan_covers_full_frozen_matrix() -> None:
+def test_stage9_execution_plan_covers_full_frozen_matrix(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(
+        execute,
+        "global_artifact_identity_context",
+        lambda config: {"global": "identity"},
+    )
     plan = execute.build_execution_plan({"matched_baseline_required": True})
     assert len(plan["steps"]) == 125
     assert plan["condition_order"]["offline"] == list(config.OFFLINE_CONDITIONS)
@@ -793,7 +800,14 @@ def test_stage9_execution_plan_covers_full_frozen_matrix() -> None:
     )
 
 
-def test_stage9_execution_plan_without_runtime_baseline_has_110_steps() -> None:
+def test_stage9_execution_plan_without_runtime_baseline_has_110_steps(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(
+        execute,
+        "global_artifact_identity_context",
+        lambda config: {"global": "identity"},
+    )
     plan = execute.build_execution_plan({"matched_baseline_required": False})
     assert len(plan["steps"]) == 110
     assert config.MATCHED_BASELINE_CONDITION not in plan["condition_order"]["adaptive"]
@@ -914,3 +928,55 @@ def test_offline_failure_preserves_attempt_and_failure_evidence(
     assert (out / "attempt.json").is_file()
     assert (out / "failure.json").is_file()
     assert not (out / "result.json").exists()
+
+
+def test_artifact_identity_context_binds_required_protocol_identities() -> None:
+    contract = {
+        "scenario": {
+            "manifest_canonical_sha256": "scenario",
+            "preprocessing_state_hash": "prep",
+        },
+        "system_a": {
+            "manifest_sha256": "system-a",
+            "checkpoint_sha256_by_seed": {"0": "checkpoint-0"},
+        },
+        "r0_v2": {"manifest_sha256": "r0"},
+        "primary_control_plane": {"config_sha256": "cp"},
+        "primary_symbolic_operator": {"config_sha256": "sym"},
+        "fusion": {"primary_neural_weight": 0.5},
+    }
+    condition_spec = {
+        "base_primary_contract_sha256": "primary",
+        "changed_factors": ["label_latency"],
+        "label_latency": 0,
+    }
+    cfg = {
+        "manifest_sha256": "stage9-config",
+        "stage8_parent": {
+            "evidence_commit": "stage8-evidence",
+            "closure_commit": "stage8-closure",
+        },
+        "runtime": {"runtime": "identity"},
+        "frozen_primary_contract": {
+            "contract": contract,
+            "contract_sha256": "primary",
+        },
+        "conditions": {
+            "offline": {},
+            "symbolic_gate": {},
+            "adaptive": {"latency_0": condition_spec},
+        },
+    }
+    context = config.artifact_identity_context(
+        cfg, condition="latency_0", seed=0
+    )
+    assert context["scenario_manifest_canonical_sha256"] == "scenario"
+    assert context["preprocessing_state_hash"] == "prep"
+    assert context["system_a_manifest_sha256"] == "system-a"
+    assert context["system_a_checkpoint_sha256"] == "checkpoint-0"
+    assert context["r0_v2_manifest_sha256"] == "r0"
+    assert context["primary_control_plane_config_sha256"] == "cp"
+    assert context["primary_symbolic_operator_config_sha256"] == "sym"
+    assert context["condition_spec_sha256"] == config.canonical_sha256(
+        condition_spec
+    )

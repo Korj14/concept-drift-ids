@@ -87,6 +87,26 @@ def _verified_writer_json(path: Path) -> dict[str, Any]:
     return payload
 
 
+
+def _frozen_fusion_threshold(
+    config: Mapping[str, Any],
+    *,
+    seed: int,
+    neural_weight: float,
+) -> float:
+    key = str(float(neural_weight))
+    frozen = float(
+        config["parent_primary_reference"]["fusion"]["thresholds"][key][str(seed)]
+    )
+    source_value = float(
+        fused_threshold(seed=seed, neural_weight=float(neural_weight))
+    )
+    if frozen != source_value:
+        raise ValueError(
+            "Stage-9 fusion threshold differs from frozen primary config."
+        )
+    return frozen
+
 def _evaluation_root(condition_id: str) -> Path:
     if condition_id in OFFLINE_CONDITIONS:
         return STAGE9_OUTPUT_ROOT / "offline" / condition_id
@@ -358,7 +378,8 @@ def _new_trajectory_seed(condition_id: str, seed: int) -> dict[str, Any]:
 
         arm_summaries: dict[str, Any] = {}
         lambda_one: dict[str, Any] = {}
-        primary_threshold = fused_threshold(
+        primary_threshold = _frozen_fusion_threshold(
+            config,
             seed=seed,
             neural_weight=PRIMARY_NEURAL_WEIGHT,
         )
@@ -542,7 +563,11 @@ def _offline_lambda_seed(condition_id: str, seed: int) -> dict[str, Any]:
             "source_summary_sha256": source["summary_sha256"],
             "source_prediction_trace": source["prediction_trace"],
             "neural_weight": weight,
-            "threshold": fused_threshold(seed=seed, neural_weight=weight),
+            "threshold": _frozen_fusion_threshold(
+                config,
+                seed=seed,
+                neural_weight=weight,
+            ),
             "metrics": metrics,
             # Symbolic explanation construct is independent of fusion weight.
             "explanation": source["explanation"],

@@ -221,7 +221,11 @@ def _window_summary_from_trace(
         [bool(row["conflict_abstain"]) for row in rows],
         dtype=bool,
     )
-    threshold = fused_threshold(seed=seed, neural_weight=PRIMARY_NEURAL_WEIGHT)
+    threshold = _frozen_fusion_threshold(
+        config,
+        seed=seed,
+        neural_weight=PRIMARY_NEURAL_WEIGHT,
+    )
 
     windows: dict[str, list[dict[str, Any]]] = {"pre": [], "post": []}
     for domain, start, stop in (

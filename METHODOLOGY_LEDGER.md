@@ -2648,3 +2648,53 @@ The binding post-primary interpretation is recorded in
 `STAGE8_SYMBOLIC_MECHANISM_AUDIT_INTERPRETATION.md`.
 
 Stage 9 remains prospectively frozen and is not modified in response to this result.
+
+
+### Stage-9 prespecified robustness implementation freeze before outcome access — 10 October 2026
+
+After Stage-8 primary evidence, the post-primary mechanism audit, and the already-prespecified
+Stage-9 robustness protocol were frozen, an additive Stage-9 implementation tranche was created.
+At the time of this implementation freeze:
+
+- no `data/manifests/cd_stage9_run_config_v1.json` existed;
+- no Stage-9 adaptive row had been processed;
+- no Stage-9 symbolic-gate trajectory had been executed;
+- no Stage-9 robustness outcome had been scored or inspected.
+
+The implementation does not modify Stage-8 scientific Python sources or overwrite Stage-8 evidence.
+It uses separate Stage-9 entrypoints and write-once roots.
+
+The implementation freezes the following previously open execution details before outcome access:
+
+- Page-Hinkley uses the explicit River 0.26.1 constructor defaults:
+  `min_instances=30`, `delta=.005`, `threshold=50`, `alpha=.9999`,
+  `mode="both"`; these values were not selected from Stage-8 trigger clocks or outcomes;
+- the static-style symbolic gate removes Wilson-LCB acceptance requirements while preserving the
+  frozen support, covered-count, point precision, point neural-fidelity, 100-replicate persistence,
+  and complexity requirements;
+- 2,500/10,000 reporting-window sensitivities inherit the primary 1,000-row minimum-remainder merge
+  rule and frozen recovery definition;
+- no-replay retains the primary current mature window, optimizer and update budget and supplies
+  exactly zero replay rows;
+- Stage-9 configuration requires Python 3.11.9, the exact Stage-8 dependency lock/distribution
+  identity, deterministic single-thread numerical settings, and records platform/runtime identity;
+- if the material runtime differs from Stage 8, a matched Stage-9 primary-condition baseline is
+  mandatory and adaptive variants are interpreted primarily against it;
+- static-gate treatment may execute on a different runtime, but a pure isolated-gate-effect claim is
+  prohibited unless the material runtime matches Stage 8.
+
+The implementation adds fail-closed checks for exact config/source/parent identities, config-only
+freeze commits, checkpoint-pure detector admission, delayed-label signal recomputation, replay
+identity and overlap, all-five-seed pre-scoring gates, generation/validation disjointness, shared
+neural identity across symbolic arms, accepted R0.v2 identity, frozen fusion thresholds, lambda=1
+neural-only equality, boundary blindness, write-once evidence and compact/heavy evidence separation.
+
+Stage-9 effects retain the same five matched seeds within the fixed primary scenario. Robustness
+aggregates report all seed effects, descriptive summaries, leave-one-seed-out mean ranges and the
+primary-style paired t95 interval with an explicit fixed-scenario scope. No new robustness p-value
+family is created.
+
+The binding implementation decisions are recorded in `STAGE9_IMPLEMENTATION_FREEZE.md`. The
+implementation source must pass the Research Contract before any Stage-9 config is prepared; the
+generated config must then be the sole path in a one-parent freeze commit and pass exact-head CI
+before the first Stage-9 treatment execution.

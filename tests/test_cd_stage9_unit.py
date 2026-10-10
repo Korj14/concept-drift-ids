@@ -295,27 +295,40 @@ def test_config_preparation_declares_no_stage9_outcome_access(
         "_requirements_identity",
         lambda: {"installed_distributions_sha256": "req"},
     )
-    monkeypatch.setattr(
-        config,
-        "_runtime_inventory",
-        lambda: {
-            "platform": "x",
-            "processor": "p",
-            "python_version": "3.11.9",
-            "python_implementation": "CPython",
-            "torch_version": "t",
-        },
+    runtime = {
+        "platform": "x",
+        "processor": "p",
+        "python_version": "3.11.9",
+        "python_implementation": "CPython",
+        "torch_version": "t",
+        "torch_deterministic_algorithms": True,
+        "torch_num_threads": 1,
+        "torch_num_interop_threads": 1,
+        "thread_environment": dict(config.PRIMARY_THREAD_ENV),
+    }
+    monkeypatch.setattr(config, "_runtime_inventory", lambda: dict(runtime))
+    fingerprint = config._runtime_fingerprint(
+        runtime,
+        locked_distributions_sha256="req",
     )
     monkeypatch.setattr(
         config,
         "_primary_runtime_reference",
         lambda: {
-            "platform": "x",
-            "processor": "p",
-            "python_version": "3.11.9",
-            "python_implementation": "CPython",
-            "torch_version": "t",
-            "locked_distributions_sha256": "req",
+            "seed_fingerprints": {
+                str(seed): dict(fingerprint) for seed in config.PRIMARY_SEEDS
+            },
+            "common_fingerprint": dict(fingerprint),
+            "common_fingerprint_sha256": config.canonical_sha256(fingerprint),
+        },
+    )
+    monkeypatch.setattr(
+        config,
+        "_stage8_frozen_primary_contract",
+        lambda: {
+            "source_config_manifest_sha256": "primary-config",
+            "contract": {"primary": "contract"},
+            "contract_sha256": "primary-contract",
         },
     )
     monkeypatch.setattr(

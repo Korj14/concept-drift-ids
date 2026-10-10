@@ -37,6 +37,26 @@ def _read_json(path: Path) -> dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+def _read_verified_json(
+    path: Path,
+    *,
+    inner_hash_key: str | None = None,
+) -> dict[str, Any]:
+    payload = _read_json(path)
+    stored_payload = payload.pop("payload_sha256", None)
+    if stored_payload is not None and stored_payload != canonical_sha256(payload):
+        raise ValueError(f"Writer payload hash mismatch: {path}")
+    if inner_hash_key is not None:
+        stored_inner = payload.get(inner_hash_key)
+        core = dict(payload)
+        core.pop(inner_hash_key, None)
+        if stored_inner != canonical_sha256(core):
+            raise ValueError(
+                f"Canonical {inner_hash_key} mismatch: {path}"
+            )
+    return payload
+
+
 def _numeric_summary(values: Sequence[float]) -> dict[str, Any]:
     vals = [float(v) for v in values]
     avg = mean(vals)
@@ -81,11 +101,14 @@ def _stage8_eval_payload(seed: int, arm: str) -> dict[str, Any]:
         / f"seed-{seed}"
         / f"{arm}_evaluation.json"
     )
-    return _read_json(path)
+    return _read_verified_json(path, inner_hash_key="summary_sha256")
 
 
 def _offline_result(condition: str, seed: int) -> dict[str, Any]:
-    return _read_json(offline_output_dir(condition, seed) / "result.json")
+    return _read_verified_json(
+        offline_output_dir(condition, seed) / "result.json",
+        inner_hash_key="result_sha256",
+    )
 
 
 def _offline_lambda_metrics(
@@ -245,7 +268,10 @@ def _stage8_reference(seed: int, arm: str) -> dict[str, float]:
 
 
 def _stage9_metrics(condition: str, seed: int, arm: str) -> dict[str, float]:
-    payload = _read_json(_phase_c_dir(condition, seed) / f"{arm}_evaluation.json")
+    payload = _read_verified_json(
+        _phase_c_dir(condition, seed) / f"{arm}_evaluation.json",
+        inner_hash_key="summary_sha256",
+    )
     post = payload["metrics_by_neural_weight"]["0.5"]["post"]
     explanation = payload["explanation"]["post"]
     return {
@@ -259,11 +285,17 @@ def _stage9_metrics(condition: str, seed: int, arm: str) -> dict[str, float]:
 
 
 def _stage9_seed_manifest(condition: str, seed: int) -> dict[str, Any]:
-    return _read_json(_phase_c_dir(condition, seed) / "phase_c_seed_manifest.json")
+    return _read_verified_json(
+        _phase_c_dir(condition, seed) / "phase_c_seed_manifest.json",
+        inner_hash_key="manifest_sha256",
+    )
 
 
 def _maintenance_metrics(condition: str, seed: int, arm: str) -> dict[str, float]:
-    payload = _read_json(_phase_c_dir(condition, seed) / f"{arm}_evaluation.json")
+    payload = _read_verified_json(
+        _phase_c_dir(condition, seed) / f"{arm}_evaluation.json",
+        inner_hash_key="summary_sha256",
+    )
     summary = payload["maintenance_summary"]
     return {
         "opportunity_count": float(summary["opportunity_count"]),
@@ -476,19 +508,33 @@ def export_stage9() -> dict[str, Any]:
 
     if bool(config["matched_baseline_required"]):
         baseline_condition = "matched_primary_baseline"
-        reference_kind = "matched_stage9_baseline"
     else:
         baseline_condition = None
-        reference_kind = "frozen_stage8_primary"
 
     aggregate: dict[str, Any] = {
         "schema_version": 1,
         "status": "stage9_robustness_aggregate_complete",
         "stage9_config_manifest_sha256": config["manifest_sha256"],
         "stage8_parent": config["stage8_parent"],
-        "reference_kind": reference_kind,
+        "reference_policy": {
+            "offline_conditions": "frozen_stage8_primary",
+            "static_symbolic_gate": "frozen_stage8_primary",
+            "matched_primary_baseline": "frozen_stage8_primary",
+            "adaptive_variants": (
+                "matched_stage9_baseline"
+                if baseline_condition is not None
+                else "frozen_stage8_primary"
+            ),
+        },
         "conditions": {},
-        "inference": "prespecified_robustness_no_new_confirmatory_family",
+        "inference": {
+            "classification": "prespecified_robustness_no_new_confirmatory_family",
+            "p_values_computed": False,
+            "all_frozen_conditions_reported": True,
+            "condition_selection_by_outcome_forbidden": True,
+            "seed_is_inferential_unit_within_fixed_scenario": True,
+            "environmental_replication_claim_forbidden": True,
+        },
     }
 
     for condition in OFFLINE_CONDITIONS:

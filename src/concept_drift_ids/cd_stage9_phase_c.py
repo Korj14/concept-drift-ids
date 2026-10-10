@@ -27,6 +27,7 @@ from concept_drift_ids.cd_stage9_config import (
     STAGE9_OUTPUT_ROOT,
     verify_stage9_config_for_execution,
 )
+from concept_drift_ids.cd_stage9_offline import _verified_trace as verified_stage8_trace
 from concept_drift_ids.cd_stage9_phase_a import (
     _seed_dir as phase_a_seed_dir,
     adaptive_condition_ids,
@@ -195,6 +196,11 @@ def execute_stage9_phase_c_seed(condition: str, seed: int) -> dict[str, Any]:
 
         arm_summaries: dict[str, Any] = {}
         lambda_one: dict[str, SymbolicArmEvaluation] = {}
+        primary_c_trace = (
+            verified_stage8_trace(seed, "c_frozen_symbolic")
+            if condition in GATE_CONDITIONS
+            else None
+        )
 
         for arm in ARM_NAMES:
             trajectory = load_stage9_arm_trajectory(condition, seed, arm)
@@ -214,6 +220,31 @@ def execute_stage9_phase_c_seed(condition: str, seed: int) -> dict[str, Any]:
                 weight=1.0,
             )
             lambda_one[arm] = neural_only
+
+            if arm == "c_frozen_symbolic" and primary_c_trace is not None:
+                if len(primary_c_trace) != len(y):
+                    raise ValueError("Static-gate C reference row count changed.")
+                for index, frozen in enumerate(primary_c_trace):
+                    if int(frozen["decision_lambda_0_5"]) != int(
+                        base.thresholded_decision[index]
+                    ):
+                        raise ValueError(
+                            "Static-gate C decision differs from frozen Stage-8 C."
+                        )
+                    if float(frozen["fused_probability_lambda_0_5"]) != float(
+                        base.fused_probability[index]
+                    ):
+                        raise ValueError(
+                            "Static-gate C fused score differs from frozen Stage-8 C."
+                        )
+                    if bool(frozen["covered"]) != bool(base.covered[index]):
+                        raise ValueError(
+                            "Static-gate C coverage differs from frozen Stage-8 C."
+                        )
+                    if int(frozen["symbolic_class"]) != int(base.symbolic_class[index]):
+                        raise ValueError(
+                            "Static-gate C symbolic class differs from frozen Stage-8 C."
+                        )
 
             primary_threshold = fused_threshold(
                 seed=seed,

@@ -646,3 +646,42 @@ def test_static_gate_primary_config_reuse_requires_corrected_identity(
     )
     with pytest.raises(ValueError, match="wrong corrected Stage-8 config"):
         phase_b._load_primary_corrected_config()
+
+
+def test_export_verified_json_rejects_internal_hash_tamper(
+    tmp_path: Path,
+) -> None:
+    path = tmp_path / "payload.json"
+    payload = {"value": 1}
+    payload["summary_sha256"] = config.canonical_sha256(payload)
+    from concept_drift_ids.cd_control_plane import write_json_new
+    write_json_new(path, payload)
+
+    loaded = export._read_verified_json(path, inner_hash_key="summary_sha256")
+    assert loaded["value"] == 1
+
+    tampered = json.loads(path.read_text(encoding="utf-8"))
+    tampered["value"] = 2
+    # Recompute only the outer writer hash to simulate a file whose bytes look
+    # self-consistent but whose scientific inner identity has changed.
+    body = dict(tampered)
+    body.pop("payload_sha256", None)
+    tampered["payload_sha256"] = config.canonical_sha256(body)
+    path.write_text(json.dumps(tampered, sort_keys=True), encoding="utf-8")
+
+    with pytest.raises(ValueError, match="summary_sha256"):
+        export._read_verified_json(path, inner_hash_key="summary_sha256")
+
+
+def test_numeric_summary_marks_t_interval_as_fixed_scenario_descriptive() -> None:
+    summary = export._numeric_summary([1.0, 2.0, 3.0, 4.0, 5.0])
+    assert "not_environmental" in summary["t95_interval_scope"]
+
+
+def test_stage9_aggregate_inference_contract_has_no_new_pvalues() -> None:
+    # This checks the frozen exporter source-level contract rather than outcomes.
+    source = Path(export.__file__).read_text(encoding="utf-8")
+    assert '"p_values_computed": False' in source
+    assert '"all_frozen_conditions_reported": True' in source
+    assert '"condition_selection_by_outcome_forbidden": True' in source
+    assert '"reference_policy"' in source

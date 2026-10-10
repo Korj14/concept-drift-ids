@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import json
+
 from dataclasses import replace
 from pathlib import Path
 import inspect
@@ -796,7 +798,7 @@ def test_stage9_execution_plan_covers_full_frozen_matrix(
         "global_artifact_identity_context",
         lambda config: {"global": "identity"},
     )
-    plan = execute.build_execution_plan({"matched_baseline_required": True})
+    plan = execute.build_execution_plan({"manifest_sha256": "cfg", "matched_baseline_required": True})
     assert len(plan["steps"]) == 125
     assert plan["condition_order"]["offline"] == list(config.OFFLINE_CONDITIONS)
     assert plan["condition_order"]["symbolic_gate"] == list(config.GATE_CONDITIONS)
@@ -817,7 +819,7 @@ def test_stage9_execution_plan_without_runtime_baseline_has_110_steps(
         "global_artifact_identity_context",
         lambda config: {"global": "identity"},
     )
-    plan = execute.build_execution_plan({"matched_baseline_required": False})
+    plan = execute.build_execution_plan({"manifest_sha256": "cfg", "matched_baseline_required": False})
     assert len(plan["steps"]) == 110
     assert config.MATCHED_BASELINE_CONDITION not in plan["condition_order"]["adaptive"]
 

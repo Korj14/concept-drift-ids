@@ -23,12 +23,17 @@ from concept_drift_ids.cd_runtime import (
 )
 from concept_drift_ids.cd_shared_runner import ControlPlaneConfig
 from concept_drift_ids.cd_symbolic_arms import SymbolicOperatorConfig
-from concept_drift_ids.scenario_manifest import sha256_normalized_text
+from concept_drift_ids.scenario_manifest import sha256_file, sha256_normalized_text
 
 
-STAGE9_SCHEMA_VERSION = 1
-STAGE9_RUN_ID = "cd-robustness-v1"
+STAGE9_SCHEMA_VERSION = 2
+STAGE9_RUN_ID = "cd-robustness-v1_1"
 STAGE9_PROTOCOL_PATH = "STAGE9_PRESPECIFIED_ROBUSTNESS_PROTOCOL.md"
+STAGE9_CORRECTION_PROTOCOL_PATH = "STAGE9_V1_1_EXECUTION_CORRECTION.md"
+HISTORICAL_STAGE9_V1_FREEZE_COMMIT = "d27b2e6019822a9082a3cb1ec7cb38ea20cdf7d8"
+HISTORICAL_STAGE9_V1_CONFIG_MANIFEST_SHA256 = (
+    "84357c4a29e8c48ea15669412f2cf562c9e6be528100bb3007936f18d918b017"
+)
 STAGE8_PARENT_EVIDENCE_COMMIT = "c2ded83b8195b9321e715626c1f305f9627936e8"
 STAGE8_CLOSURE_COMMIT = "f8a424389056a048a6ad6be0b744bf6d12b69df2"
 STAGE8_COMPACT_EXPORT_MANIFEST_SHA256 = (
@@ -47,9 +52,18 @@ STAGE8_CORRECTED_CONFIG_PATH = (
     PROJECT_ROOT / "data" / "manifests" / "cd_primary_run_config_v1_1.json"
 )
 STAGE8_COMPACT_ROOT = PROJECT_ROOT / "results" / "frozen" / "cd_primary_v1"
-STAGE9_CONFIG_PATH = PROJECT_ROOT / "data" / "manifests" / "cd_stage9_run_config_v1.json"
-STAGE9_OUTPUT_ROOT = PROJECT_ROOT / "artifacts" / "cd_robustness_v1"
-STAGE9_COMPACT_ROOT = PROJECT_ROOT / "results" / "frozen" / "cd_robustness_v1"
+HISTORICAL_STAGE9_V1_CONFIG_PATH = (
+    PROJECT_ROOT / "data" / "manifests" / "cd_stage9_run_config_v1.json"
+)
+HISTORICAL_STAGE9_V1_OUTPUT_ROOT = PROJECT_ROOT / "artifacts" / "cd_robustness_v1"
+HISTORICAL_STAGE9_V1_COMPACT_ROOT = (
+    PROJECT_ROOT / "results" / "frozen" / "cd_robustness_v1"
+)
+STAGE9_CONFIG_PATH = (
+    PROJECT_ROOT / "data" / "manifests" / "cd_stage9_run_config_v1_1.json"
+)
+STAGE9_OUTPUT_ROOT = PROJECT_ROOT / "artifacts" / "cd_robustness_v1_1"
+STAGE9_COMPACT_ROOT = PROJECT_ROOT / "results" / "frozen" / "cd_robustness_v1_1"
 
 OFFLINE_CONDITIONS = (
     "lambda_0_7",
@@ -115,6 +129,7 @@ REUSED_STAGE8_SOURCE_PATHS = (
 
 STAGE9_SOURCE_PATHS = (
     "STAGE9_PRESPECIFIED_ROBUSTNESS_PROTOCOL.md",
+    "STAGE9_V1_1_EXECUTION_CORRECTION.md",
     "STAGE9_IMPLEMENTATION.md",
     "src/concept_drift_ids/cd_stage9_config.py",
     "src/concept_drift_ids/cd_stage9_monitor.py",

@@ -685,3 +685,94 @@ def test_stage9_aggregate_inference_contract_has_no_new_pvalues() -> None:
     assert '"all_frozen_conditions_reported": True' in source
     assert '"condition_selection_by_outcome_forbidden": True' in source
     assert '"reference_policy"' in source
+
+
+def test_stage8_offline_eval_is_bound_to_compact_manifest(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    from concept_drift_ids.cd_control_plane import write_json_new
+    from concept_drift_ids.scenario_manifest import sha256_file
+
+    root = tmp_path
+    compact_root = root / "results" / "frozen" / "cd_primary_v1"
+    eval_path = (
+        compact_root
+        / "phase_c_offline_evaluation_v1_1"
+        / "seed-0"
+        / "d_drift_evaluation.json"
+    )
+    eval_path.parent.mkdir(parents=True, exist_ok=True)
+    evaluation = {"seed": 0, "arm": "d_drift"}
+    evaluation["summary_sha256"] = config.canonical_sha256(evaluation)
+    write_json_new(eval_path, evaluation)
+
+    export_path = eval_path.relative_to(root).as_posix()
+    manifest = {
+        "schema_version": 1,
+        "files": {
+            "x": {
+                "export_path": export_path,
+                "source_path": "artifacts/source.json",
+                "sha256": sha256_file(eval_path),
+            }
+        },
+    }
+    manifest["manifest_sha256"] = config.canonical_sha256(manifest)
+    manifest_path = compact_root / "compact_export_manifest.json"
+    write_json_new(manifest_path, manifest)
+
+    monkeypatch.setattr(offline, "PROJECT_ROOT", root)
+    monkeypatch.setattr(offline, "STAGE8_COMPACT_ROOT", compact_root)
+    monkeypatch.setattr(
+        offline,
+        "STAGE8_COMPACT_EXPORT_MANIFEST_SHA256",
+        manifest["manifest_sha256"],
+    )
+
+    loaded = offline._stage8_eval_payload(0, "d_drift")
+    assert loaded["seed"] == 0
+    assert loaded["arm"] == "d_drift"
+
+
+def test_stage8_offline_eval_rejects_raw_hash_mismatch(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    from concept_drift_ids.cd_control_plane import write_json_new
+
+    root = tmp_path
+    compact_root = root / "results" / "frozen" / "cd_primary_v1"
+    eval_path = (
+        compact_root
+        / "phase_c_offline_evaluation_v1_1"
+        / "seed-0"
+        / "d_drift_evaluation.json"
+    )
+    eval_path.parent.mkdir(parents=True, exist_ok=True)
+    evaluation = {"seed": 0, "arm": "d_drift"}
+    evaluation["summary_sha256"] = config.canonical_sha256(evaluation)
+    write_json_new(eval_path, evaluation)
+
+    manifest = {
+        "schema_version": 1,
+        "files": {
+            "x": {
+                "export_path": eval_path.relative_to(root).as_posix(),
+                "source_path": "artifacts/source.json",
+                "sha256": "0" * 64,
+            }
+        },
+    }
+    manifest["manifest_sha256"] = config.canonical_sha256(manifest)
+    write_json_new(compact_root / "compact_export_manifest.json", manifest)
+
+    monkeypatch.setattr(offline, "PROJECT_ROOT", root)
+    monkeypatch.setattr(offline, "STAGE8_COMPACT_ROOT", compact_root)
+    monkeypatch.setattr(
+        offline,
+        "STAGE8_COMPACT_EXPORT_MANIFEST_SHA256",
+        manifest["manifest_sha256"],
+    )
+    with pytest.raises(ValueError, match="raw hash"):
+        offline._stage8_eval_payload(0, "d_drift")

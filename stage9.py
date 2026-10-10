@@ -23,6 +23,7 @@ def main() -> None:
 
     prepare = sub.add_parser("prepare")
     prepare.add_argument("--verify", action="store_true")
+    prepare.add_argument("--repository-contract", action="store_true")
 
     phase_a = sub.add_parser("phase-a")
     phase_a.add_argument("--condition", required=True)
@@ -51,17 +52,25 @@ def main() -> None:
 
     if args.command == "prepare":
         from concept_drift_ids.cd_stage9_config import (
-            load_stage9_config,
             verify_stage9_config_for_execution,
+            verify_stage9_config_repository_contract,
             write_stage9_config,
         )
 
-        if args.verify:
-            payload = verify_stage9_config_for_execution()
+        if args.verify or args.repository_contract:
+            payload = (
+                verify_stage9_config_repository_contract()
+                if args.repository_contract
+                else verify_stage9_config_for_execution()
+            )
             print(
                 __import__("json").dumps(
                     {
-                        "status": "stage9_config_verified_for_execution",
+                        "status": (
+                            "stage9_config_verified_repository_contract"
+                            if args.repository_contract
+                            else "stage9_config_verified_for_execution"
+                        ),
                         "manifest_sha256": payload["manifest_sha256"],
                         "source_commit": payload["source_commit"],
                         "matched_stage9_baseline_required": payload["runtime"][

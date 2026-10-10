@@ -10,6 +10,7 @@ from statistics import mean, median, stdev
 from typing import Any, Iterable, Mapping, Sequence
 
 import numpy as np
+from scipy.stats import t
 
 from concept_drift_ids.cd_control_plane import canonical_sha256, write_json_new
 from concept_drift_ids.cd_evidence import read_jsonl
@@ -765,6 +766,24 @@ def _numeric_summary(values: Sequence[float]) -> dict[str, Any]:
     }
 
 
+def _paired_effect_summary(values: Sequence[float]) -> dict[str, Any]:
+    if len(values) != len(PRIMARY_SEEDS):
+        raise ValueError("Stage-9 paired effect summary requires all five frozen seeds.")
+    summary = _numeric_summary(values)
+    sample_sd = float(summary["sample_sd"])
+    sem = sample_sd / math.sqrt(float(len(PRIMARY_SEEDS)))
+    margin = float(t.ppf(0.975, df=len(PRIMARY_SEEDS) - 1) * sem)
+    summary["paired_t95_interval"] = [
+        float(summary["mean"] - margin),
+        float(summary["mean"] + margin),
+    ]
+    summary["interval_scope"] = (
+        "paired_seed_variation_within_fixed_scenario_not_deployment_population"
+    )
+    summary["p_value_computed"] = False
+    return summary
+
+
 def _seed_arm_post(condition_id: str, seed: int, arm: str) -> tuple[float, float]:
     output_dir = _seed_dir(condition_id, seed)
     if condition_id in OFFLINE_CONDITIONS:
@@ -827,7 +846,7 @@ def build_stage9_condition_aggregate(condition_id: str) -> dict[str, Any]:
             for arm, metrics in arm_post.items()
         },
         "effects": {
-            endpoint: _numeric_summary(values)
+            endpoint: _paired_effect_summary(values)
             for endpoint, values in effects.items()
         },
     }

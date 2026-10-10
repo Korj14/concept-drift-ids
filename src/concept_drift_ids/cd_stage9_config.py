@@ -263,22 +263,58 @@ def _runtime_inventory() -> dict[str, Any]:
     }
 
 
-def _primary_runtime_reference() -> dict[str, Any]:
-    path = (
-        STAGE8_COMPACT_ROOT
-        / "phase_a_shared_control_plane"
-        / "seed-0"
-        / "run_manifest.json"
-    )
-    payload, _ = _canonical_manifest(path)
-    runtime = dict(payload["runtime"])
+def _runtime_fingerprint(
+    runtime: Mapping[str, Any],
+    *,
+    locked_distributions_sha256: str,
+) -> dict[str, Any]:
     return {
-        "platform": runtime["platform"],
-        "processor": runtime["processor"],
-        "python_version": runtime["python_version"],
-        "python_implementation": runtime["python_implementation"],
-        "torch_version": runtime["torch_version"],
-        "locked_distributions_sha256": runtime["locked_distributions_sha256"],
+        "platform": str(runtime["platform"]),
+        "processor": str(runtime["processor"]),
+        "python_version": str(runtime["python_version"]),
+        "python_implementation": str(runtime["python_implementation"]),
+        "torch_version": str(runtime["torch_version"]),
+        "torch_deterministic_algorithms": bool(
+            runtime["torch_deterministic_algorithms"]
+        ),
+        "torch_num_threads": int(runtime["torch_num_threads"]),
+        "torch_num_interop_threads": int(runtime["torch_num_interop_threads"]),
+        "thread_environment": dict(runtime["thread_environment"]),
+        "locked_distributions_sha256": str(locked_distributions_sha256),
+    }
+
+
+def _primary_runtime_reference() -> dict[str, Any]:
+    seed_fingerprints: dict[str, dict[str, Any]] = {}
+    for seed in PRIMARY_SEEDS:
+        path = (
+            STAGE8_COMPACT_ROOT
+            / "phase_a_shared_control_plane"
+            / f"seed-{seed}"
+            / "run_manifest.json"
+        )
+        payload, _ = _canonical_manifest(path)
+        runtime = dict(payload["runtime"])
+        seed_fingerprints[str(seed)] = _runtime_fingerprint(
+            runtime,
+            locked_distributions_sha256=str(
+                runtime["locked_distributions_sha256"]
+            ),
+        )
+
+    unique = {
+        canonical_sha256(fingerprint)
+        for fingerprint in seed_fingerprints.values()
+    }
+    if len(unique) != 1:
+        raise ValueError(
+            "Frozen Stage-8 Phase-A seeds do not share one runtime fingerprint."
+        )
+    common = seed_fingerprints[str(PRIMARY_SEEDS[0])]
+    return {
+        "seed_fingerprints": seed_fingerprints,
+        "common_fingerprint": common,
+        "common_fingerprint_sha256": canonical_sha256(common),
     }
 
 
@@ -287,13 +323,13 @@ def _runtime_requires_matched_baseline(
     primary: Mapping[str, Any],
     requirements: Mapping[str, Any],
 ) -> bool:
-    keys = ("platform", "processor", "python_version", "python_implementation", "torch_version")
-    if any(str(current.get(key)) != str(primary.get(key)) for key in keys):
-        return True
-    return (
-        str(requirements["installed_distributions_sha256"])
-        != str(primary["locked_distributions_sha256"])
+    current_fingerprint = _runtime_fingerprint(
+        current,
+        locked_distributions_sha256=str(
+            requirements["installed_distributions_sha256"]
+        ),
     )
+    return current_fingerprint != primary["common_fingerprint"]
 
 
 def _verify_reused_stage8_source_tree(
@@ -381,6 +417,29 @@ def _verify_stage8_parent() -> dict[str, Any]:
     }
 
 
+def _stage8_frozen_primary_contract() -> dict[str, Any]:
+    corrected, corrected_hash = _canonical_manifest(
+        STAGE8_CORRECTED_CONFIG_PATH
+    )
+    if corrected_hash != STAGE8_CORRECTED_CONFIG_MANIFEST_SHA256:
+        raise ValueError("Unexpected Stage-8 corrected config identity.")
+    keys = (
+        "scenario",
+        "system_a",
+        "r0_v2",
+        "primary_control_plane",
+        "primary_symbolic_operator",
+        "fusion",
+        "analysis",
+    )
+    contract = {key: corrected[key] for key in keys}
+    return {
+        "source_config_manifest_sha256": corrected_hash,
+        "contract": contract,
+        "contract_sha256": canonical_sha256(contract),
+    }
+
+
 def _condition_specs(*, baseline_required: bool) -> dict[str, Any]:
     primary = asdict(ControlPlaneConfig())
     adaptive: dict[str, Any] = {
@@ -447,6 +506,7 @@ def build_stage9_config() -> dict[str, Any]:
     _require_stage8_closure_ancestor()
     _require_no_stage9_outputs_before_preparation()
     parent = _verify_stage8_parent()
+    primary_contract = _stage8_frozen_primary_contract()
     requirements = _requirements_identity()
     runtime = _runtime_inventory()
     primary_runtime = _primary_runtime_reference()
@@ -466,6 +526,7 @@ def build_stage9_config() -> dict[str, Any]:
             "closure_commit": STAGE8_CLOSURE_COMMIT,
             **parent,
         },
+        "frozen_primary_contract": primary_contract,
         "protocol": {
             "path": STAGE9_PROTOCOL_PATH,
             "sha256": source_hashes[STAGE9_PROTOCOL_PATH],
@@ -582,6 +643,8 @@ def verify_stage9_config_for_execution(
         **_verify_stage8_parent(),
     }:
         raise ValueError("Stage-8 parent evidence changed.")
+    if config["frozen_primary_contract"] != _stage8_frozen_primary_contract():
+        raise ValueError("Frozen Stage-8 primary treatment contract changed.")
     current_hashes = _text_hashes(STAGE9_SOURCE_PATHS)
     if current_hashes != config["scientific_source_hashes"]:
         raise ValueError("Stage-9 scientific source identity changed.")

@@ -390,3 +390,42 @@ def test_window_aggregate_does_not_redefine_whole_post_endpoint(
     assert payload["reporting_window_rows"] == 2500
     assert payload["whole_post_endpoints_changed"] is False
     assert set(payload["recovery"]) == set(phase_b.ARM_NAMES)
+
+
+def test_execution_worktree_allowance_is_compact_output_only(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    calls: dict[tuple[str, ...], str] = {
+        ("status", "--porcelain"): "?? results/frozen/cd_robustness_v1/aggregate.json",
+    }
+
+    def fake_git_output(*args: str) -> str:
+        if args in calls:
+            return calls[args]
+        raise RuntimeError("stop after worktree gate")
+
+    monkeypatch.setattr(config, "_git_output", fake_git_output)
+    with pytest.raises(RuntimeError, match="stop after worktree gate"):
+        config.verify_stage9_config_for_execution(
+            allow_untracked_compact_output=True
+        )
+
+    calls[("status", "--porcelain")] = (
+        "?? results/frozen/cd_robustness_v1/aggregate.json\n"
+        "?? unrelated.txt"
+    )
+    with pytest.raises(RuntimeError, match="clean worktree"):
+        config.verify_stage9_config_for_execution(
+            allow_untracked_compact_output=True
+        )
+
+
+def test_stage9_portability_attributes_are_scoped() -> None:
+    config_attr = (
+        config.PROJECT_ROOT / "data" / "manifests" / ".gitattributes"
+    ).read_text(encoding="utf-8")
+    compact_attr = (
+        config.PROJECT_ROOT / "results" / "frozen" / ".gitattributes"
+    ).read_text(encoding="utf-8")
+    assert "cd_stage9_run_config_v1.json text eol=lf" in config_attr
+    assert "cd_robustness_v1/** text eol=lf" in compact_attr

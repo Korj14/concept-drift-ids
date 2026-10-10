@@ -96,12 +96,13 @@ Each row belongs to one of four authority states:
 
    T exercises symbolic authority where C abstains.
 
-3. **revision**:
+3. **retained-authority**:
    - C covered = true;
    - T covered = true.
 
-   Both exercise symbolic authority. Any prediction difference is therefore associated with changed
-   symbolic score/class/rule state under the same neural trajectory and same fusion policy.
+   Both exercise symbolic authority. A prediction difference on this stratum is associated with a
+   changed realized symbolic output/state under the same neural trajectory and same fusion policy.
+   The stratum name does not assert that a formal lifecycle refinement occurred.
 
 4. **neither-authoritative**:
    - C covered = false;
@@ -144,26 +145,26 @@ For each domain and target arm, construct three disjoint switch mechanisms:
 
 - W = withdrawal rows;
 - A = addition rows;
-- R = revision rows.
+- R = retained-authority rows.
 
 Start from the complete C primary decision vector.
 
-For any subset S of {W,A,R}, create a hybrid prediction vector by replacing C decisions with the
+For any subset S of {W,A,B}, create a hybrid prediction vector by replacing C decisions with the
 target-arm stored decisions only on rows belonging to mechanisms in S.
 
 Let:
 
 `v(S) = MCC(y, hybrid_decision(S))`.
 
-Compute the exact three-player Shapley value for W, A and R:
+Compute the exact three-player Shapley value for W, A and B:
 
 `phi_i = sum_{S subset N\{i}} |S|!(|N|-|S|-1)!/|N|! * [v(S union {i}) - v(S)]`.
 
 Required invariants:
 
 - v(empty) = stored C MCC;
-- v({W,A,R}) = stored target-arm MCC;
-- phi_W + phi_A + phi_R = target MCC - C MCC within numerical tolerance;
+- v({W,A,B}) = stored target-arm MCC;
+- phi_W + phi_A + phi_B = target MCC - C MCC within numerical tolerance;
 - neither-authoritative rows have identical C/T primary decisions.
 
 The Shapley values are an order-independent descriptive allocation of the realized MCC difference
@@ -177,7 +178,7 @@ Because correctness is row-additive, also report exact net correction contributi
 
 - withdrawal net corrections;
 - addition net corrections;
-- revision net corrections.
+- retained-authority net corrections.
 
 This provides an interpretable companion to the nonlinear MCC Shapley decomposition.
 
@@ -216,9 +217,9 @@ mechanism claim is:
 This is a valid symbolic-lifecycle contribution but is not evidence that newly evolved rules
 themselves dominate neural-only prediction.
 
-### 10.2 Addition/revision-dominant result
+### 10.2 Addition/retained-authority-dominant result
 
-If addition and/or revision contribute materially and consistently, the defensible claim may include
+If addition and/or retained-authority rows contribute materially and consistently, the defensible claim may include
 that evolved symbolic states added useful predictive information on rows where symbolic authority was
 retained or newly established.
 
@@ -290,7 +291,36 @@ It may not:
 - delete or reinterpret the negative MCSC result;
 - justify retuning the symbolic gate or detector in the primary experiment.
 
-## 15. Restart rule
+## 15. Execution freeze sequence
+
+Before row-level mechanism traces are accessed:
+
+1. mechanism-audit source/protocol/tests must be committed and pass the repository Research Contract;
+2. on that exact clean source head, run:
+
+   `powershell -ExecutionPolicy Bypass -File scripts/run_primary.ps1 cd-primary-mechanism-audit --prepare-config`
+
+3. preparation may read only compact Stage-8 evidence and source/protocol identities; it must record
+   `row_level_mechanism_trace_accessed_during_preparation=false`;
+4. the generated
+   `data/manifests/cd_primary_mechanism_audit_v1.json`
+   must be the only changed path in its freeze commit;
+5. exact-head CI must pass on that config-only commit;
+6. only then execute:
+
+   `powershell -ExecutionPolicy Bypass -File scripts/run_primary.ps1 cd-primary-mechanism-audit`
+
+7. immediately verify from the same config head:
+
+   `powershell -ExecutionPolicy Bypass -File scripts/run_primary.ps1 cd-primary-mechanism-audit --verify-only`
+
+Verification must re-read and re-hash the frozen heavy traces and regenerate every seed result rather
+than trusting the saved mechanism JSON.
+
+After verified mechanism evidence is archived in Git, the exact-config execution gate is expected to
+close because HEAD will no longer equal the config-freeze commit.
+
+## 16. Restart rule
 
 A mechanism-audit failure triggers Stage-8 restart only if it exposes an underlying primary invariant
 violation, such as non-identical neural trajectories, mismatched labels/rows, trace identity failure,

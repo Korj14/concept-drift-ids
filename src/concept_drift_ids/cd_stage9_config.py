@@ -452,6 +452,35 @@ def _condition_spec(
     raise ValueError(f"Unknown frozen Stage-9 condition: {condition}")
 
 
+def global_artifact_identity_context(
+    config: Mapping[str, Any],
+) -> dict[str, Any]:
+    contract = config["frozen_primary_contract"]["contract"]
+    scenario = contract["scenario"]
+    return {
+        "stage8_parent_evidence_commit": config["stage8_parent"]["evidence_commit"],
+        "stage8_closure_commit": config["stage8_parent"]["closure_commit"],
+        "stage9_config_manifest_sha256": config["manifest_sha256"],
+        "runtime_identity_sha256": canonical_sha256(config["runtime"]),
+        "scenario_manifest_canonical_sha256": scenario[
+            "manifest_canonical_sha256"
+        ],
+        "preprocessing_state_hash": scenario["preprocessing_state_hash"],
+        "system_a_manifest_sha256": contract["system_a"]["manifest_sha256"],
+        "r0_v2_manifest_sha256": contract["r0_v2"]["manifest_sha256"],
+        "primary_control_plane_config_sha256": contract[
+            "primary_control_plane"
+        ]["config_sha256"],
+        "primary_symbolic_operator_config_sha256": contract[
+            "primary_symbolic_operator"
+        ]["config_sha256"],
+        "fusion_contract_sha256": canonical_sha256(contract["fusion"]),
+        "frozen_primary_contract_sha256": config[
+            "frozen_primary_contract"
+        ]["contract_sha256"],
+    }
+
+
 def artifact_identity_context(
     config: Mapping[str, Any],
     *,

@@ -22,6 +22,7 @@ from concept_drift_ids.cd_primary_adapter import (
     build_primary_input_bundle,
     load_primary_stream,
 )
+from concept_drift_ids.cd_primary_phase_a import _verify_run_manifest_hash
 from concept_drift_ids.cd_runtime import configure_torch_primary_runtime
 from concept_drift_ids.cd_shared_runner import freeze_shared_trajectory
 from concept_drift_ids.cd_stage9_config import (
@@ -241,6 +242,7 @@ def verify_stage9_phase_a_seed(
     if not manifest_path.is_file():
         raise FileNotFoundError(f"Missing Stage-9 Phase-A manifest: {manifest_path}")
     manifest = _read_json(manifest_path)
+    _verify_run_manifest_hash(manifest)
     if manifest["status"] != "complete_unscored_stage9_shared_trajectory":
         raise ValueError("Stage-9 Phase-A status is not complete/unscored.")
     if int(manifest["seed"]) != seed:

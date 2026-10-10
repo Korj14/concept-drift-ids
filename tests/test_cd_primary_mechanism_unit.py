@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 import math
+from pathlib import Path
 
 import numpy as np
+import pytest
 
 import concept_drift_ids.cd_primary_mechanism as mechanism
 from concept_drift_ids.cd_implementation_preflight import PROJECT_ROOT
@@ -96,3 +98,97 @@ def test_root_runner_exposes_mechanism_audit() -> None:
     text = (PROJECT_ROOT / "run.py").read_text(encoding="utf-8")
     assert '"cd-primary-mechanism-audit"' in text
     assert "run_primary_mechanism_audit" in text
+
+
+
+def test_mechanism_config_preparation_does_not_read_heavy_traces(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    monkeypatch.setattr(mechanism, "PROJECT_ROOT", tmp_path)
+    monkeypatch.setattr(mechanism, "CONFIG_PATH", tmp_path / "config.json")
+    monkeypatch.setattr(
+        mechanism,
+        "_verify_parent_compact_evidence",
+        lambda: {
+            "compact_export_manifest_sha256": (
+                mechanism.PARENT_COMPACT_EXPORT_MANIFEST_SHA256
+            ),
+            "confirmatory_aggregate_sha256": (
+                mechanism.PARENT_CONFIRMATORY_AGGREGATE_SHA256
+            ),
+        },
+    )
+    monkeypatch.setattr(mechanism, "require_clean_worktree", lambda **kwargs: None)
+    monkeypatch.setattr(
+        mechanism,
+        "_git_output",
+        lambda *args, **kwargs: "source-commit",
+    )
+    monkeypatch.setattr(
+        mechanism,
+        "_trace_summary",
+        lambda *args, **kwargs: (_ for _ in ()).throw(
+            AssertionError("row-level trace path must not be touched")
+        ),
+    )
+
+    files = {
+        mechanism.PROTOCOL_PATH: b"protocol",
+        "src/concept_drift_ids/cd_primary_mechanism.py": b"source",
+        "run.py": b"runner",
+        "tests/test_cd_primary_mechanism_unit.py": b"tests",
+    }
+    for relative, data in files.items():
+        path = tmp_path / relative
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(data)
+
+    payload = mechanism.build_mechanism_config()
+    assert payload["source_commit"] == "source-commit"
+    assert payload["row_level_mechanism_trace_accessed_during_preparation"] is False
+    assert payload["analysis_classification"].startswith(
+        "exploratory_descriptive_post_primary"
+    )
+
+
+def test_mechanism_config_contains_frozen_decomposition_identity(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    monkeypatch.setattr(mechanism, "PROJECT_ROOT", tmp_path)
+    monkeypatch.setattr(
+        mechanism,
+        "_verify_parent_compact_evidence",
+        lambda: {
+            "compact_export_manifest_sha256": (
+                mechanism.PARENT_COMPACT_EXPORT_MANIFEST_SHA256
+            ),
+            "confirmatory_aggregate_sha256": (
+                mechanism.PARENT_CONFIRMATORY_AGGREGATE_SHA256
+            ),
+        },
+    )
+    monkeypatch.setattr(mechanism, "require_clean_worktree", lambda **kwargs: None)
+    monkeypatch.setattr(
+        mechanism,
+        "_git_output",
+        lambda *args, **kwargs: "source-commit",
+    )
+    files = {
+        mechanism.PROTOCOL_PATH: b"protocol",
+        "src/concept_drift_ids/cd_primary_mechanism.py": b"source",
+        "run.py": b"runner",
+        "tests/test_cd_primary_mechanism_unit.py": b"tests",
+    }
+    for relative, data in files.items():
+        path = tmp_path / relative
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(data)
+
+    payload = mechanism.build_mechanism_config()
+    assert tuple(payload["mechanisms"]) == mechanism.MECHANISMS
+    assert tuple(payload["domains"]) == mechanism.DOMAINS
+    assert payload["boundary_index"] == mechanism.BOUNDARY_INDEX
+    assert payload["stream_rows"] == mechanism.STREAM_ROWS
+    assert payload["primary_decision_key"] == mechanism.PRIMARY_DECISION_KEY

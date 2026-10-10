@@ -192,3 +192,60 @@ def test_mechanism_config_contains_frozen_decomposition_identity(
     assert payload["boundary_index"] == mechanism.BOUNDARY_INDEX
     assert payload["stream_rows"] == mechanism.STREAM_ROWS
     assert payload["primary_decision_key"] == mechanism.PRIMARY_DECISION_KEY
+
+
+
+def test_postwrite_config_verifier_uses_tracked_only_clean_gate(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    calls = {"full": 0, "tracked": 0}
+
+    monkeypatch.setattr(
+        mechanism,
+        "require_clean_worktree",
+        lambda **kwargs: calls.__setitem__("full", calls["full"] + 1),
+    )
+    monkeypatch.setattr(
+        mechanism,
+        "_require_no_tracked_worktree_changes",
+        lambda: calls.__setitem__("tracked", calls["tracked"] + 1),
+    )
+
+    # Stop after the cleanliness branch, before any real config/Git reads.
+    monkeypatch.setattr(
+        mechanism,
+        "load_mechanism_config",
+        lambda: (_ for _ in ()).throw(RuntimeError("stop")),
+    )
+
+    with pytest.raises(RuntimeError, match="stop"):
+        mechanism.verify_mechanism_config_for_execution(
+            require_fully_clean=False
+        )
+    assert calls == {"full": 0, "tracked": 1}
+
+
+def test_preexecution_config_verifier_requires_fully_clean_gate(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    calls = {"full": 0, "tracked": 0}
+
+    monkeypatch.setattr(
+        mechanism,
+        "require_clean_worktree",
+        lambda **kwargs: calls.__setitem__("full", calls["full"] + 1),
+    )
+    monkeypatch.setattr(
+        mechanism,
+        "_require_no_tracked_worktree_changes",
+        lambda: calls.__setitem__("tracked", calls["tracked"] + 1),
+    )
+    monkeypatch.setattr(
+        mechanism,
+        "load_mechanism_config",
+        lambda: (_ for _ in ()).throw(RuntimeError("stop")),
+    )
+
+    with pytest.raises(RuntimeError, match="stop"):
+        mechanism.verify_mechanism_config_for_execution()
+    assert calls == {"full": 1, "tracked": 0}

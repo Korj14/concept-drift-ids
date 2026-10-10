@@ -129,6 +129,7 @@ CONDITIONS: dict[str, dict[str, Any]] = {
         "group": "symbolic_gate",
         "kind": "static_style_symbolic_gate",
         "reuse_primary_phase_a": True,
+        "isolated_gate_interpretation_requires_stage8_material_runtime_match": True,
         "operator_config_sha256": STATIC_OPERATOR.sha256(),
         "gate": {
             "min_support": 0.001,

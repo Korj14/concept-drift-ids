@@ -22,13 +22,17 @@ from concept_drift_ids.cd_primary_adapter import (
     load_accepted_system_a_model,
     load_primary_stream,
 )
-from concept_drift_ids.cd_primary_config import PRIMARY_OUTPUT_ROOT
+from concept_drift_ids.cd_primary_config import (
+    PRIMARY_OUTPUT_ROOT,
+    load_primary_run_config,
+)
 from concept_drift_ids.cd_primary_phase_a import verify_phase_a_seed as verify_primary_phase_a_seed
 from concept_drift_ids.cd_stage9_config import (
     ADAPTIVE_VARIANTS,
     GATE_CONDITIONS,
     MATCHED_BASELINE_CONDITION,
     PRIMARY_SEEDS,
+    STAGE8_CORRECTED_CONFIG_MANIFEST_SHA256,
     STAGE8_CORRECTED_CONFIG_PATH,
     STAGE9_OUTPUT_ROOT,
     STAGE9_RUN_ID,
@@ -482,7 +486,15 @@ def load_stage9_arm_trajectory(
 
 
 def _load_primary_corrected_config() -> dict[str, Any]:
-    return json.loads(STAGE8_CORRECTED_CONFIG_PATH.read_text(encoding="utf-8"))
+    payload = load_primary_run_config(path=STAGE8_CORRECTED_CONFIG_PATH)
+    if (
+        payload["manifest_sha256"]
+        != STAGE8_CORRECTED_CONFIG_MANIFEST_SHA256
+    ):
+        raise ValueError(
+            "Static-gate Phase-A reuse references the wrong corrected Stage-8 config."
+        )
+    return payload
 
 
 def _operator_for_condition(condition: str) -> SymbolicOperatorConfig:

@@ -373,7 +373,6 @@ def build_stage9_config() -> dict[str, Any]:
         },
         "stage9_outcomes_accessed_during_preparation": False,
     }
-    payload["payload_sha256"] = canonical_sha256(payload)
     payload["manifest_sha256"] = canonical_sha256(payload)
     return payload
 
@@ -386,10 +385,14 @@ def write_stage9_config() -> dict[str, Any]:
 
 def load_stage9_config() -> dict[str, Any]:
     payload = _read_json(STAGE9_CONFIG_PATH)
-    stored = payload.pop("manifest_sha256", None)
-    if stored != canonical_sha256(payload):
-        raise ValueError("Stage-9 config canonical hash mismatch.")
-    payload["manifest_sha256"] = stored
+    stored_payload = payload.pop("payload_sha256", None)
+    if stored_payload is not None and stored_payload != canonical_sha256(payload):
+        raise ValueError("Stage-9 config writer payload hash mismatch.")
+    stored = payload.get("manifest_sha256")
+    core = dict(payload)
+    core.pop("manifest_sha256", None)
+    if stored != canonical_sha256(core):
+        raise ValueError("Stage-9 config canonical manifest hash mismatch.")
     return payload
 
 
@@ -413,7 +416,14 @@ def verify_stage9_config_for_execution() -> dict[str, Any]:
         raise RuntimeError("Stage-9 execution requires a clean worktree.")
     config = load_stage9_config()
     head = _git_output("rev-parse", "HEAD")
-    if head != _git_output("log", "-n", "1", "--format=%H", "--", str(STAGE9_CONFIG_PATH.relative_to(PROJECT_ROOT))):
+    if head != _git_output(
+        "log",
+        "-n",
+        "1",
+        "--format=%H",
+        "--",
+        STAGE9_CONFIG_PATH.relative_to(PROJECT_ROOT).as_posix(),
+    ):
         raise ValueError("Stage-9 execution requires exact config-freeze HEAD.")
     _require_config_only_freeze(config)
     if config["stage9_outcomes_accessed_during_preparation"] is not False:

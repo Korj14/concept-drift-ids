@@ -409,6 +409,11 @@ def test_execution_worktree_allowance_is_compact_output_only(
         raise RuntimeError("stop after worktree gate")
 
     monkeypatch.setattr(config, "_git_output", fake_git_output)
+    monkeypatch.setattr(
+        config,
+        "load_stage9_config",
+        lambda: (_ for _ in ()).throw(RuntimeError("stop after worktree gate")),
+    )
     with pytest.raises(RuntimeError, match="stop after worktree gate"):
         config.verify_stage9_config_for_execution(
             allow_untracked_compact_output=True

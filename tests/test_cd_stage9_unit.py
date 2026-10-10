@@ -582,9 +582,18 @@ def test_every_stage9_condition_is_bound_to_primary_contract_and_declares_change
         "page_hinkley_hard_error": ["detector_family"],
         "adwin_brier": ["detector_signal"],
         "no_replay": ["replay_training_rows"],
-        "lambda_0_7": ["fusion_neural_weight"],
-        "lambda_0_9": ["fusion_neural_weight"],
-        "lambda_1_0": ["fusion_neural_weight"],
+        "lambda_0_7": [
+            "fusion_neural_weight",
+            "frozen_seed_specific_fusion_threshold",
+        ],
+        "lambda_0_9": [
+            "fusion_neural_weight",
+            "frozen_seed_specific_fusion_threshold",
+        ],
+        "lambda_1_0": [
+            "fusion_neural_weight",
+            "frozen_seed_specific_fusion_threshold",
+        ],
         "window_2500": ["reporting_window_rows"],
         "window_10000": ["reporting_window_rows"],
         "static_symbolic_gate": ["symbolic_acceptance_gate"],

@@ -135,7 +135,9 @@ Stage-9 config preparation records:
 - Python version and implementation;
 - Torch version;
 - CPU-only status;
-- thread environment;
+- required thread environment;
+- deterministic-algorithm state;
+- Torch intra-op and inter-op thread counts;
 - exact installed-distribution identity.
 
 It also reads the frozen Stage-8 Phase-A runtime identity.

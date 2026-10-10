@@ -240,6 +240,27 @@ def _runtime_requires_matched_baseline(
     )
 
 
+def _verify_reused_stage8_source_tree(
+    corrected_config: Mapping[str, Any],
+) -> dict[str, str]:
+    expected = dict(corrected_config["scientific_source_hashes"])
+    current: dict[str, str] = {}
+    for relative, expected_hash in expected.items():
+        path = PROJECT_ROOT / relative
+        if not path.is_file():
+            raise FileNotFoundError(
+                f"Missing Stage-8 scientific source reused by Stage 9: {path}"
+            )
+        observed = sha256_normalized_text(path)
+        if observed != str(expected_hash):
+            raise ValueError(
+                "Stage-8 scientific source changed before Stage-9 reuse: "
+                f"{relative}"
+            )
+        current[relative] = observed
+    return current
+
+
 def _verify_stage8_parent() -> dict[str, Any]:
     corrected, corrected_hash = _canonical_manifest(STAGE8_CORRECTED_CONFIG_PATH)
     if corrected_hash != STAGE8_CORRECTED_CONFIG_MANIFEST_SHA256:
@@ -249,6 +270,7 @@ def _verify_stage8_parent() -> dict[str, Any]:
         != STAGE8_UPSTREAM_ARTIFACT_CONFIG_MANIFEST_SHA256
     ):
         raise ValueError("Unexpected Stage-8 upstream artifact-config identity.")
+    reused_source_hashes = _verify_reused_stage8_source_tree(corrected)
 
     compact, compact_hash = _canonical_manifest(
         STAGE8_COMPACT_ROOT / "compact_export_manifest.json"
@@ -292,6 +314,9 @@ def _verify_stage8_parent() -> dict[str, Any]:
         "corrected_config_manifest_sha256": corrected_hash,
         "compact_export_manifest_sha256": compact_hash,
         "confirmatory_aggregate_sha256": confirmatory_hash,
+        "reused_stage8_scientific_source_tree_sha256": canonical_sha256(
+            reused_source_hashes
+        ),
     }
 
 

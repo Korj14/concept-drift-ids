@@ -223,44 +223,73 @@ def execute_offline_condition(condition: str, seed: int) -> dict[str, Any]:
         raise FileExistsError(f"Refusing to reuse Stage-9 offline output: {out}")
     out.mkdir(parents=True, exist_ok=False)
 
-    results: dict[str, Any] = {}
-    for arm in ARM_NAMES:
-        compact = _stage8_eval_payload(seed, arm)
-        if condition.startswith("lambda_"):
-            weight = {
-                "lambda_0_7": "0.7",
-                "lambda_0_9": "0.9",
-                "lambda_1_0": "1.0",
-            }[condition]
-            results[arm] = {
-                "source_summary_sha256": compact["summary_sha256"],
-                "neural_weight": float(weight),
-                "metrics": compact["metrics_by_neural_weight"][weight],
-                "recomputed": False,
-            }
-        else:
-            rows = _verified_trace(seed, arm)
-            size = 2500 if condition == "window_2500" else 10000
-            results[arm] = {
-                "source_summary_sha256": compact["summary_sha256"],
-                "source_prediction_trace": compact["prediction_trace"],
-                "recomputed": True,
-                **_window_result(rows, window_size=size),
-            }
+    write_json_new(
+        out / "attempt.json",
+        {
+            "condition_id": condition,
+            "seed": seed,
+            "stage9_config_manifest_sha256": config["manifest_sha256"],
+            "source": "frozen_stage8_evidence",
+            "adaptive_state_rerun": False,
+            "threshold_refit": False,
+        },
+    )
 
-    payload = {
-        "schema_version": 1,
-        "status": "stage9_offline_condition_complete",
-        "condition_id": condition,
-        "seed": seed,
-        "stage9_config_manifest_sha256": config["manifest_sha256"],
-        "stage8_parent": config["stage8_parent"],
-        "results": results,
-        "adaptive_state_rerun": False,
-        "threshold_refit": False,
-    }
-    payload["result_sha256"] = canonical_sha256(payload)
-    write_json_new(out / "result.json", payload)
+    try:
+        results: dict[str, Any] = {}
+        for arm in ARM_NAMES:
+            compact = _stage8_eval_payload(seed, arm)
+            if condition.startswith("lambda_"):
+                weight = {
+                    "lambda_0_7": "0.7",
+                    "lambda_0_9": "0.9",
+                    "lambda_1_0": "1.0",
+                }[condition]
+                results[arm] = {
+                    "source_summary_sha256": compact["summary_sha256"],
+                    "neural_weight": float(weight),
+                    "metrics": compact["metrics_by_neural_weight"][weight],
+                    "recomputed": False,
+                }
+            else:
+                rows = _verified_trace(seed, arm)
+                size = 2500 if condition == "window_2500" else 10000
+                results[arm] = {
+                    "source_summary_sha256": compact["summary_sha256"],
+                    "source_prediction_trace": compact["prediction_trace"],
+                    "recomputed": True,
+                    **_window_result(rows, window_size=size),
+                }
+
+        payload = {
+            "schema_version": 1,
+            "status": "stage9_offline_condition_complete",
+            "condition_id": condition,
+            "seed": seed,
+            "stage9_config_manifest_sha256": config["manifest_sha256"],
+            "stage8_parent": config["stage8_parent"],
+            "results": results,
+            "adaptive_state_rerun": False,
+            "threshold_refit": False,
+        }
+        payload["result_sha256"] = canonical_sha256(payload)
+        write_json_new(out / "result.json", payload)
+    except Exception as exc:
+        failure = out / "failure.json"
+        if not failure.exists():
+            write_json_new(
+                failure,
+                {
+                    "condition_id": condition,
+                    "seed": seed,
+                    "exception_type": type(exc).__name__,
+                    "message": str(exc),
+                    "adaptive_state_rerun": False,
+                    "threshold_refit": False,
+                },
+            )
+        raise
+
     return {
         "status": payload["status"],
         "condition_id": condition,

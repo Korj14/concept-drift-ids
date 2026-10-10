@@ -23,12 +23,17 @@ from concept_drift_ids.cd_runtime import (
 )
 from concept_drift_ids.cd_shared_runner import ControlPlaneConfig
 from concept_drift_ids.cd_symbolic_arms import SymbolicOperatorConfig
-from concept_drift_ids.scenario_manifest import sha256_normalized_text
+from concept_drift_ids.scenario_manifest import sha256_file, sha256_normalized_text
 
 
-STAGE9_SCHEMA_VERSION = 1
-STAGE9_RUN_ID = "cd-robustness-v1"
+STAGE9_SCHEMA_VERSION = 2
+STAGE9_RUN_ID = "cd-robustness-v1_1"
 STAGE9_PROTOCOL_PATH = "STAGE9_PRESPECIFIED_ROBUSTNESS_PROTOCOL.md"
+STAGE9_CORRECTION_PROTOCOL_PATH = "STAGE9_V1_1_EXECUTION_CORRECTION.md"
+HISTORICAL_STAGE9_V1_FREEZE_COMMIT = "d27b2e6019822a9082a3cb1ec7cb38ea20cdf7d8"
+HISTORICAL_STAGE9_V1_CONFIG_MANIFEST_SHA256 = (
+    "84357c4a29e8c48ea15669412f2cf562c9e6be528100bb3007936f18d918b017"
+)
 STAGE8_PARENT_EVIDENCE_COMMIT = "c2ded83b8195b9321e715626c1f305f9627936e8"
 STAGE8_CLOSURE_COMMIT = "f8a424389056a048a6ad6be0b744bf6d12b69df2"
 STAGE8_COMPACT_EXPORT_MANIFEST_SHA256 = (
@@ -47,9 +52,18 @@ STAGE8_CORRECTED_CONFIG_PATH = (
     PROJECT_ROOT / "data" / "manifests" / "cd_primary_run_config_v1_1.json"
 )
 STAGE8_COMPACT_ROOT = PROJECT_ROOT / "results" / "frozen" / "cd_primary_v1"
-STAGE9_CONFIG_PATH = PROJECT_ROOT / "data" / "manifests" / "cd_stage9_run_config_v1.json"
-STAGE9_OUTPUT_ROOT = PROJECT_ROOT / "artifacts" / "cd_robustness_v1"
-STAGE9_COMPACT_ROOT = PROJECT_ROOT / "results" / "frozen" / "cd_robustness_v1"
+HISTORICAL_STAGE9_V1_CONFIG_PATH = (
+    PROJECT_ROOT / "data" / "manifests" / "cd_stage9_run_config_v1.json"
+)
+HISTORICAL_STAGE9_V1_OUTPUT_ROOT = PROJECT_ROOT / "artifacts" / "cd_robustness_v1"
+HISTORICAL_STAGE9_V1_COMPACT_ROOT = (
+    PROJECT_ROOT / "results" / "frozen" / "cd_robustness_v1"
+)
+STAGE9_CONFIG_PATH = (
+    PROJECT_ROOT / "data" / "manifests" / "cd_stage9_run_config_v1_1.json"
+)
+STAGE9_OUTPUT_ROOT = PROJECT_ROOT / "artifacts" / "cd_robustness_v1_1"
+STAGE9_COMPACT_ROOT = PROJECT_ROOT / "results" / "frozen" / "cd_robustness_v1_1"
 
 OFFLINE_CONDITIONS = (
     "lambda_0_7",
@@ -115,6 +129,7 @@ REUSED_STAGE8_SOURCE_PATHS = (
 
 STAGE9_SOURCE_PATHS = (
     "STAGE9_PRESPECIFIED_ROBUSTNESS_PROTOCOL.md",
+    "STAGE9_V1_1_EXECUTION_CORRECTION.md",
     "STAGE9_IMPLEMENTATION.md",
     "src/concept_drift_ids/cd_stage9_config.py",
     "src/concept_drift_ids/cd_stage9_monitor.py",
@@ -173,6 +188,16 @@ def _canonical_manifest(path: Path) -> tuple[dict[str, Any], str]:
     return payload, str(stored)
 
 
+def _read_writer_hashed_json(path: Path) -> dict[str, Any]:
+    payload = _read_json(path)
+    stored = payload.pop("payload_sha256", None)
+    if stored is None:
+        raise ValueError(f"Missing writer payload hash: {path}")
+    if stored != canonical_sha256(payload):
+        raise ValueError(f"Writer payload hash mismatch: {path}")
+    return payload
+
+
 def _text_hashes(paths: Sequence[str]) -> dict[str, str]:
     out: dict[str, str] = {}
     for relative in paths:
@@ -203,6 +228,21 @@ def _require_stage8_closure_ancestor() -> None:
         )
 
 
+def _require_historical_v1_freeze_ancestor() -> None:
+    result = _git(
+        "merge-base",
+        "--is-ancestor",
+        HISTORICAL_STAGE9_V1_FREEZE_COMMIT,
+        "HEAD",
+        check=False,
+    )
+    if result.returncode != 0:
+        raise ValueError(
+            "Stage-9 v1.1 source HEAD does not descend from the failed v1 "
+            "config-freeze commit."
+        )
+
+
 def _require_no_stage9_outputs_before_preparation() -> None:
     occupied = [
         path
@@ -214,6 +254,121 @@ def _require_no_stage9_outputs_before_preparation() -> None:
             "Stage-9 preparation requires no pre-existing robustness output roots: "
             + ", ".join(str(path) for path in occupied)
         )
+
+
+def _historical_v1_execution_identity() -> dict[str, Any]:
+    historical_config, historical_manifest_sha = _canonical_manifest(
+        HISTORICAL_STAGE9_V1_CONFIG_PATH
+    )
+    if historical_manifest_sha != HISTORICAL_STAGE9_V1_CONFIG_MANIFEST_SHA256:
+        raise ValueError("Unexpected historical Stage-9 v1 config identity.")
+
+    config_commit = _git_output(
+        "log",
+        "-n",
+        "1",
+        "--format=%H",
+        "--",
+        HISTORICAL_STAGE9_V1_CONFIG_PATH.relative_to(PROJECT_ROOT).as_posix(),
+    )
+    if config_commit != HISTORICAL_STAGE9_V1_FREEZE_COMMIT:
+        raise ValueError("Historical Stage-9 v1 config freeze commit changed.")
+
+    if HISTORICAL_STAGE9_V1_COMPACT_ROOT.exists():
+        raise RuntimeError(
+            "Historical Stage-9 v1 compact root exists unexpectedly; "
+            "failure classification must be revisited."
+        )
+    if not HISTORICAL_STAGE9_V1_OUTPUT_ROOT.is_dir():
+        raise FileNotFoundError(
+            "Historical Stage-9 v1 failed output root is missing."
+        )
+
+    relative_files = sorted(
+        path.relative_to(HISTORICAL_STAGE9_V1_OUTPUT_ROOT).as_posix()
+        for path in HISTORICAL_STAGE9_V1_OUTPUT_ROOT.rglob("*")
+        if path.is_file()
+    )
+    expected_files = [
+        "execution_plan.json",
+        "offline/lambda_0_7/seed-0/attempt.json",
+        "offline/lambda_0_7/seed-0/failure.json",
+    ]
+    if relative_files != expected_files:
+        raise ValueError(
+            "Historical Stage-9 v1 failed output file set changed: "
+            f"{relative_files}"
+        )
+    if any(path.endswith("result.json") for path in relative_files):
+        raise ValueError(
+            "Historical Stage-9 v1 contains an accepted result; "
+            "correction classification is invalid."
+        )
+
+    attempt_path = (
+        HISTORICAL_STAGE9_V1_OUTPUT_ROOT
+        / "offline"
+        / "lambda_0_7"
+        / "seed-0"
+        / "attempt.json"
+    )
+    failure_path = attempt_path.with_name("failure.json")
+    attempt = _read_writer_hashed_json(attempt_path)
+    failure = _read_writer_hashed_json(failure_path)
+    plan_path = HISTORICAL_STAGE9_V1_OUTPUT_ROOT / "execution_plan.json"
+    plan = _read_writer_hashed_json(plan_path)
+    stored_plan = plan.get("plan_sha256")
+    plan_core = dict(plan)
+    plan_core.pop("plan_sha256", None)
+    if stored_plan != canonical_sha256(plan_core):
+        raise ValueError("Historical Stage-9 v1 execution-plan hash changed.")
+    if (
+        plan.get("stage9_config_manifest_sha256")
+        != HISTORICAL_STAGE9_V1_CONFIG_MANIFEST_SHA256
+    ):
+        raise ValueError("Historical Stage-9 v1 execution plan references wrong config.")
+
+    if attempt.get("condition_id") != "lambda_0_7" or int(attempt.get("seed", -1)) != 0:
+        raise ValueError("Historical Stage-9 v1 attempt identity changed.")
+    if (
+        attempt.get("stage9_config_manifest_sha256")
+        != HISTORICAL_STAGE9_V1_CONFIG_MANIFEST_SHA256
+    ):
+        raise ValueError("Historical Stage-9 v1 attempt references wrong config.")
+    if failure.get("condition_id") != "lambda_0_7" or int(failure.get("seed", -1)) != 0:
+        raise ValueError("Historical Stage-9 v1 failure identity changed.")
+    if failure.get("exception_type") != "AttributeError":
+        raise ValueError("Historical Stage-9 v1 failure exception type changed.")
+    if failure.get("message") != "'list' object has no attribute 'values'":
+        raise ValueError("Historical Stage-9 v1 failure message changed.")
+
+    output_files = {
+        relative: sha256_file(HISTORICAL_STAGE9_V1_OUTPUT_ROOT / relative)
+        for relative in relative_files
+    }
+    return {
+        "config_freeze_commit": HISTORICAL_STAGE9_V1_FREEZE_COMMIT,
+        "config_manifest_sha256": HISTORICAL_STAGE9_V1_CONFIG_MANIFEST_SHA256,
+        "config_prepared_from_git_commit": historical_config[
+            "prepared_from_git_commit"
+        ],
+        "output_root": "artifacts/cd_robustness_v1",
+        "output_files": output_files,
+        "accepted_result_json_present": False,
+        "compact_root_present": False,
+        "first_failed_step": {
+            "group": "offline",
+            "condition_id": "lambda_0_7",
+            "seed": 0,
+            "phase": "offline",
+        },
+        "failure_exception": "AttributeError: 'list' object has no attribute 'values'",
+        "failure_location": "cd_stage9_offline._stage8_eval_payload.manifest_files_values",
+        "stage8_compact_manifest_accessed": True,
+        "stage8_arm_evaluation_payload_consumed": False,
+        "stage9_robustness_outcome_accessed": False,
+        "scientific_scope_change": False,
+    }
 
 
 def _requirements_identity() -> dict[str, Any]:
@@ -674,8 +829,10 @@ def _condition_specs(
 def build_stage9_config() -> dict[str, Any]:
     _require_clean_for_preparation()
     _require_stage8_closure_ancestor()
+    _require_historical_v1_freeze_ancestor()
     _require_no_stage9_outputs_before_preparation()
     parent = _verify_stage8_parent()
+    historical_v1 = _historical_v1_execution_identity()
     primary_contract = _stage8_frozen_primary_contract()
     requirements = _requirements_identity()
     runtime = _runtime_inventory()
@@ -689,7 +846,7 @@ def build_stage9_config() -> dict[str, Any]:
     payload: dict[str, Any] = {
         "schema_version": STAGE9_SCHEMA_VERSION,
         "run_id": STAGE9_RUN_ID,
-        "status": "frozen_before_stage9_robustness_access",
+        "status": "frozen_before_stage9_robustness_access_v1_1_correction",
         "prepared_from_git_commit": source_commit,
         "stage8_parent": {
             "evidence_commit": STAGE8_PARENT_EVIDENCE_COMMIT,
@@ -697,9 +854,14 @@ def build_stage9_config() -> dict[str, Any]:
             **parent,
         },
         "frozen_primary_contract": primary_contract,
+        "historical_v1_execution": historical_v1,
         "protocol": {
             "path": STAGE9_PROTOCOL_PATH,
             "sha256": source_hashes[STAGE9_PROTOCOL_PATH],
+        },
+        "correction_protocol": {
+            "path": STAGE9_CORRECTION_PROTOCOL_PATH,
+            "sha256": source_hashes[STAGE9_CORRECTION_PROTOCOL_PATH],
         },
         "scientific_source_hashes": source_hashes,
         "scientific_source_tree_sha256": canonical_sha256(source_hashes),
@@ -730,13 +892,24 @@ def build_stage9_config() -> dict[str, Any]:
             "stage8_primary_replacement_forbidden": True,
         },
         "execution": {
-            "heavy_root": "artifacts/cd_robustness_v1",
-            "compact_root": "results/frozen/cd_robustness_v1",
+            "heavy_root": "artifacts/cd_robustness_v1_1",
+            "compact_root": "results/frozen/cd_robustness_v1_1",
             "write_once": True,
             "config_only_freeze_commit_required": True,
             "exact_head_ci_required_before_adaptive_access": True,
         },
         "stage9_outcomes_accessed_during_preparation": False,
+        "correction_scope": {
+            "scientific_scope_change": False,
+            "treatment_change": False,
+            "endpoint_change": False,
+            "threshold_change": False,
+            "seed_change": False,
+            "statistical_family_change": False,
+            "implementation_change": (
+                "iterate frozen Stage-8 compact manifest files array directly"
+            ),
+        },
     }
     payload["manifest_sha256"] = canonical_sha256(payload)
     return payload
@@ -787,7 +960,7 @@ def verify_stage9_config_for_execution(
             allow_untracked_compact_output
             and lines
             and all(
-                line.startswith("?? results/frozen/cd_robustness_v1/")
+                line.startswith("?? results/frozen/cd_robustness_v1_1/")
                 for line in lines
             )
         )
@@ -818,6 +991,8 @@ def verify_stage9_config_for_execution(
         raise ValueError("Stage-8 parent evidence changed.")
     if config["frozen_primary_contract"] != _stage8_frozen_primary_contract():
         raise ValueError("Frozen Stage-8 primary treatment contract changed.")
+    if config["historical_v1_execution"] != _historical_v1_execution_identity():
+        raise ValueError("Historical Stage-9 v1 failure evidence changed.")
     current_hashes = _text_hashes(STAGE9_SOURCE_PATHS)
     if current_hashes != config["scientific_source_hashes"]:
         raise ValueError("Stage-9 scientific source identity changed.")

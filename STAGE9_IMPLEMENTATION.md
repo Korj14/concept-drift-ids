@@ -407,3 +407,57 @@ Global aggregate and compact-export manifests carry the corresponding run-global
 Low-level row traces, checkpoint files and maintenance streams remain transitively bound through their
 verified run/arm/seed manifests rather than duplicating the same metadata on every row or binary
 checkpoint.
+
+
+## 13. Stage-9 v1.1 execution correction
+
+The first Stage-9 `execute-all` attempt under frozen config v1 did not produce an accepted robustness
+result.
+
+The predetermined first step was Group-O `lambda_0_7`, seed 0. The runner wrote the pre-outcome
+execution plan and the step `attempt.json`, then failed in the Stage-8 compact-manifest provenance
+reader with:
+
+`AttributeError: 'list' object has no attribute 'values'`
+
+The immutable Stage-8 compact export manifest stores `files` as a list of descriptor objects. The
+Stage-9 v1 reader incorrectly treated it as a mapping. The original unit tests reproduced that wrong
+synthetic shape and therefore did not expose the defect.
+
+The governing correction protocol is:
+
+`STAGE9_V1_1_EXECUTION_CORRECTION.md`
+
+The correction is implementation/provenance-only. It does not alter:
+
+- the Stage-8 primary evidence or analysis;
+- the Stage-9 robustness estimand;
+- the frozen condition family;
+- any treatment or comparator;
+- any seed;
+- any threshold;
+- any detector parameter;
+- replay policy;
+- latency;
+- symbolic gate;
+- endpoint;
+- statistical family.
+
+Historical v1 artifacts remain immutable under `artifacts/cd_robustness_v1`. Corrected execution
+uses new identities:
+
+- `data/manifests/cd_stage9_run_config_v1_1.json`;
+- run ID `cd-robustness-v1_1`;
+- `artifacts/cd_robustness_v1_1`;
+- `results/frozen/cd_robustness_v1_1`.
+
+Before v1.1 config preparation, the implementation verifies the exact historical failed-v1 file set,
+writer hashes, execution-plan hash, first condition/seed, exception, absence of any historical
+`result.json`, and absence of a historical compact export. The v1.1 config records raw hashes of the
+preserved historical files.
+
+The corrected reader requires the real Stage-8 `files` list schema and fails closed on a mapping
+shape. Regression tests include the governing Stage-8 compact manifest.
+
+A wrapper-safe `verify-config` command is provided so config verification runs under the same frozen
+PowerShell runtime environment as scientific execution.

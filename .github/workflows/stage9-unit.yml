@@ -43,6 +43,7 @@ jobs:
         run: |
           $required = @(
             "STAGE9_PRESPECIFIED_ROBUSTNESS_PROTOCOL.md",
+            "STAGE9_V1_1_EXECUTION_CORRECTION.md",
             "STAGE9_IMPLEMENTATION.md",
             "src/concept_drift_ids/cd_stage9_config.py",
             "src/concept_drift_ids/cd_stage9_monitor.py",

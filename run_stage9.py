@@ -21,6 +21,7 @@ def main() -> None:
         "command",
         choices=(
             "prepare",
+            "verify-config",
             "offline",
             "phase-a",
             "phase-b",
@@ -38,6 +39,34 @@ def main() -> None:
             parser.error("prepare takes no additional arguments")
         from concept_drift_ids.cd_stage9_config import main as run
         run()
+        return
+    if args.command == "verify-config":
+        if remainder:
+            parser.error("verify-config takes no additional arguments")
+        import json
+        from concept_drift_ids.cd_stage9_config import (
+            verify_stage9_config_for_execution,
+        )
+        config = verify_stage9_config_for_execution()
+        print(
+            json.dumps(
+                {
+                    "status": "stage9_config_verified",
+                    "manifest_sha256": config["manifest_sha256"],
+                    "prepared_from_git_commit": config[
+                        "prepared_from_git_commit"
+                    ],
+                    "matched_baseline_required": config[
+                        "matched_baseline_required"
+                    ],
+                    "historical_v1_execution": config[
+                        "historical_v1_execution"
+                    ],
+                },
+                sort_keys=True,
+                indent=2,
+            )
+        )
         return
     if args.command == "offline":
         from concept_drift_ids.cd_stage9_offline import main as run

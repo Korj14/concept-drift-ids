@@ -282,7 +282,21 @@ def test_config_preparation_declares_no_stage9_outcome_access(
     monkeypatch.setattr(config, "_require_clean_for_preparation", lambda: None)
     monkeypatch.setattr(config, "_require_stage8_closure_ancestor", lambda: None)
     monkeypatch.setattr(
+        config, "_require_historical_v1_freeze_ancestor", lambda: None
+    )
+    monkeypatch.setattr(
         config, "_require_no_stage9_outputs_before_preparation", lambda: None
+    )
+    monkeypatch.setattr(
+        config,
+        "_historical_v1_execution_identity",
+        lambda: {
+            "config_freeze_commit": config.HISTORICAL_STAGE9_V1_FREEZE_COMMIT,
+            "config_manifest_sha256": config.HISTORICAL_STAGE9_V1_CONFIG_MANIFEST_SHA256,
+            "accepted_result_json_present": False,
+            "stage9_robustness_outcome_accessed": False,
+            "scientific_scope_change": False,
+        },
     )
     monkeypatch.setattr(
         config,
@@ -420,7 +434,7 @@ def test_execution_worktree_allowance_is_compact_output_only(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     calls: dict[tuple[str, ...], str] = {
-        ("status", "--porcelain"): "?? results/frozen/cd_robustness_v1/aggregate.json",
+        ("status", "--porcelain"): "?? results/frozen/cd_robustness_v1_1/aggregate.json",
     }
 
     def fake_git_output(*args: str) -> str:
@@ -440,7 +454,7 @@ def test_execution_worktree_allowance_is_compact_output_only(
         )
 
     calls[("status", "--porcelain")] = (
-        "?? results/frozen/cd_robustness_v1/aggregate.json\n"
+        "?? results/frozen/cd_robustness_v1_1/aggregate.json\n"
         "?? unrelated.txt"
     )
     with pytest.raises(RuntimeError, match="clean worktree"):
@@ -457,7 +471,9 @@ def test_stage9_portability_attributes_are_scoped() -> None:
         config.PROJECT_ROOT / "results" / "frozen" / ".gitattributes"
     ).read_text(encoding="utf-8")
     assert "cd_stage9_run_config_v1.json text eol=lf" in config_attr
+    assert "cd_stage9_run_config_v1_1.json text eol=lf" in config_attr
     assert "cd_robustness_v1/** text eol=lf" in compact_attr
+    assert "cd_robustness_v1_1/** text eol=lf" in compact_attr
 
 
 def test_reused_stage8_computational_sources_are_historically_bound() -> None:
@@ -725,13 +741,13 @@ def test_stage8_offline_eval_is_bound_to_compact_manifest(
     export_path = eval_path.relative_to(root).as_posix()
     manifest = {
         "schema_version": 1,
-        "files": {
-            "x": {
+        "files": [
+            {
                 "export_path": export_path,
                 "source_path": "artifacts/source.json",
                 "sha256": sha256_file(eval_path),
             }
-        },
+        ],
     }
     manifest["manifest_sha256"] = config.canonical_sha256(manifest)
     manifest_path = compact_root / "compact_export_manifest.json"
@@ -771,13 +787,13 @@ def test_stage8_offline_eval_rejects_raw_hash_mismatch(
 
     manifest = {
         "schema_version": 1,
-        "files": {
-            "x": {
+        "files": [
+            {
                 "export_path": eval_path.relative_to(root).as_posix(),
                 "source_path": "artifacts/source.json",
                 "sha256": "0" * 64,
             }
-        },
+        ],
     }
     manifest["manifest_sha256"] = config.canonical_sha256(manifest)
     write_json_new(compact_root / "compact_export_manifest.json", manifest)
@@ -999,3 +1015,255 @@ def test_artifact_identity_context_binds_required_protocol_identities() -> None:
     assert context["condition_spec_sha256"] == config.canonical_sha256(
         condition_spec
     )
+
+
+def test_governing_stage8_compact_manifest_uses_descriptor_list() -> None:
+    manifest = offline._stage8_compact_manifest()
+    assert isinstance(manifest["files"], list)
+    assert manifest["files"]
+    assert all(isinstance(item, dict) for item in manifest["files"])
+    assert all("export_path" in item and "sha256" in item for item in manifest["files"])
+
+
+def test_stage8_offline_eval_rejects_mapping_shaped_files(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    from concept_drift_ids.cd_control_plane import write_json_new
+    from concept_drift_ids.scenario_manifest import sha256_file
+
+    root = tmp_path
+    compact_root = root / "results" / "frozen" / "cd_primary_v1"
+    eval_path = (
+        compact_root
+        / "phase_c_offline_evaluation_v1_1"
+        / "seed-0"
+        / "d_drift_evaluation.json"
+    )
+    eval_path.parent.mkdir(parents=True, exist_ok=True)
+    evaluation = {"seed": 0, "arm": "d_drift"}
+    evaluation["summary_sha256"] = config.canonical_sha256(evaluation)
+    write_json_new(eval_path, evaluation)
+
+    manifest = {
+        "schema_version": 1,
+        "files": {
+            "x": {
+                "export_path": eval_path.relative_to(root).as_posix(),
+                "source_path": "artifacts/source.json",
+                "sha256": sha256_file(eval_path),
+            }
+        },
+    }
+    manifest["manifest_sha256"] = config.canonical_sha256(manifest)
+    write_json_new(compact_root / "compact_export_manifest.json", manifest)
+
+    monkeypatch.setattr(offline, "PROJECT_ROOT", root)
+    monkeypatch.setattr(offline, "STAGE8_COMPACT_ROOT", compact_root)
+    monkeypatch.setattr(
+        offline,
+        "STAGE8_COMPACT_EXPORT_MANIFEST_SHA256",
+        manifest["manifest_sha256"],
+    )
+    with pytest.raises(ValueError, match="files must be a list"):
+        offline._stage8_eval_payload(0, "d_drift")
+
+
+def test_stage9_v1_1_uses_new_write_once_identities() -> None:
+    assert config.STAGE9_SCHEMA_VERSION == 2
+    assert config.STAGE9_RUN_ID == "cd-robustness-v1_1"
+    assert config.STAGE9_CONFIG_PATH.name == "cd_stage9_run_config_v1_1.json"
+    assert config.STAGE9_OUTPUT_ROOT.name == "cd_robustness_v1_1"
+    assert config.STAGE9_COMPACT_ROOT.name == "cd_robustness_v1_1"
+    assert config.HISTORICAL_STAGE9_V1_CONFIG_PATH.name == (
+        "cd_stage9_run_config_v1.json"
+    )
+    assert config.HISTORICAL_STAGE9_V1_OUTPUT_ROOT.name == "cd_robustness_v1"
+
+
+def test_v1_1_config_records_historical_failure_without_scope_change(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    historical = {
+        "config_freeze_commit": config.HISTORICAL_STAGE9_V1_FREEZE_COMMIT,
+        "config_manifest_sha256": config.HISTORICAL_STAGE9_V1_CONFIG_MANIFEST_SHA256,
+        "accepted_result_json_present": False,
+        "stage9_robustness_outcome_accessed": False,
+        "scientific_scope_change": False,
+    }
+    monkeypatch.setattr(config, "_require_clean_for_preparation", lambda: None)
+    monkeypatch.setattr(config, "_require_stage8_closure_ancestor", lambda: None)
+    monkeypatch.setattr(
+        config, "_require_historical_v1_freeze_ancestor", lambda: None
+    )
+    monkeypatch.setattr(
+        config, "_require_no_stage9_outputs_before_preparation", lambda: None
+    )
+    monkeypatch.setattr(
+        config, "_historical_v1_execution_identity", lambda: historical
+    )
+    monkeypatch.setattr(
+        config,
+        "_verify_stage8_parent",
+        lambda: {
+            "corrected_config_manifest_sha256": "a",
+            "compact_export_manifest_sha256": "b",
+            "confirmatory_aggregate_sha256": "c",
+        },
+    )
+    monkeypatch.setattr(
+        config,
+        "_requirements_identity",
+        lambda: {"installed_distributions_sha256": "req"},
+    )
+    runtime = {
+        "platform": "x",
+        "processor": "p",
+        "python_version": "3.11.9",
+        "python_implementation": "CPython",
+        "torch_version": "t",
+        "torch_deterministic_algorithms": True,
+        "torch_num_threads": 1,
+        "torch_num_interop_threads": 1,
+        "thread_environment": dict(config.PRIMARY_THREAD_ENV),
+    }
+    fingerprint = config._runtime_fingerprint(
+        runtime, locked_distributions_sha256="req"
+    )
+    monkeypatch.setattr(config, "_runtime_inventory", lambda: dict(runtime))
+    monkeypatch.setattr(
+        config,
+        "_primary_runtime_reference",
+        lambda: {
+            "seed_fingerprints": {
+                str(seed): dict(fingerprint) for seed in config.PRIMARY_SEEDS
+            },
+            "common_fingerprint": dict(fingerprint),
+            "common_fingerprint_sha256": config.canonical_sha256(fingerprint),
+        },
+    )
+    monkeypatch.setattr(
+        config,
+        "_stage8_frozen_primary_contract",
+        lambda: {
+            "source_config_manifest_sha256": "primary-config",
+            "contract": {"primary": "contract"},
+            "contract_sha256": "primary-contract",
+        },
+    )
+    monkeypatch.setattr(
+        config,
+        "_text_hashes",
+        lambda paths: {path: f"hash:{path}" for path in paths},
+    )
+    monkeypatch.setattr(config, "_git_output", lambda *args: "source-head")
+    payload = config.build_stage9_config()
+    assert payload["historical_v1_execution"] == historical
+    assert payload["correction_scope"]["scientific_scope_change"] is False
+    assert payload["correction_scope"]["treatment_change"] is False
+    assert payload["correction_scope"]["endpoint_change"] is False
+    assert payload["run_id"] == "cd-robustness-v1_1"
+
+
+def test_historical_v1_failure_identity_requires_exact_preserved_remnants(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    from concept_drift_ids.cd_control_plane import write_json_new
+
+    config_path = tmp_path / "data" / "manifests" / "cd_stage9_run_config_v1.json"
+    config_path.parent.mkdir(parents=True, exist_ok=True)
+    historical_config = {
+        "schema_version": 1,
+        "prepared_from_git_commit": "implementation-head",
+    }
+    historical_config["manifest_sha256"] = config.canonical_sha256(
+        historical_config
+    )
+    write_json_new(config_path, historical_config)
+
+    output_root = tmp_path / "artifacts" / "cd_robustness_v1"
+    step_root = output_root / "offline" / "lambda_0_7" / "seed-0"
+    step_root.mkdir(parents=True, exist_ok=True)
+
+    plan = {
+        "schema_version": 1,
+        "stage9_config_manifest_sha256": historical_config["manifest_sha256"],
+        "steps": [],
+    }
+    plan["plan_sha256"] = config.canonical_sha256(plan)
+    write_json_new(output_root / "execution_plan.json", plan)
+
+    write_json_new(
+        step_root / "attempt.json",
+        {
+            "condition_id": "lambda_0_7",
+            "seed": 0,
+            "stage9_config_manifest_sha256": historical_config["manifest_sha256"],
+        },
+    )
+    write_json_new(
+        step_root / "failure.json",
+        {
+            "condition_id": "lambda_0_7",
+            "seed": 0,
+            "exception_type": "AttributeError",
+            "message": "'list' object has no attribute 'values'",
+        },
+    )
+
+    monkeypatch.setattr(config, "PROJECT_ROOT", tmp_path)
+    monkeypatch.setattr(
+        config, "HISTORICAL_STAGE9_V1_CONFIG_PATH", config_path
+    )
+    monkeypatch.setattr(
+        config, "HISTORICAL_STAGE9_V1_OUTPUT_ROOT", output_root
+    )
+    monkeypatch.setattr(
+        config,
+        "HISTORICAL_STAGE9_V1_COMPACT_ROOT",
+        tmp_path / "results" / "frozen" / "cd_robustness_v1",
+    )
+    monkeypatch.setattr(
+        config,
+        "HISTORICAL_STAGE9_V1_CONFIG_MANIFEST_SHA256",
+        historical_config["manifest_sha256"],
+    )
+    monkeypatch.setattr(
+        config,
+        "HISTORICAL_STAGE9_V1_FREEZE_COMMIT",
+        "freeze-head",
+    )
+    monkeypatch.setattr(
+        config,
+        "_git_output",
+        lambda *args: "freeze-head",
+    )
+
+    identity = config._historical_v1_execution_identity()
+    assert identity["accepted_result_json_present"] is False
+    assert identity["stage9_robustness_outcome_accessed"] is False
+    assert identity["scientific_scope_change"] is False
+    assert set(identity["output_files"]) == {
+        "execution_plan.json",
+        "offline/lambda_0_7/seed-0/attempt.json",
+        "offline/lambda_0_7/seed-0/failure.json",
+    }
+
+    write_json_new(
+        step_root / "result.json",
+        {"status": "unexpected_result"},
+    )
+    with pytest.raises(ValueError, match="file set changed|accepted result"):
+        config._historical_v1_execution_identity()
+
+
+def test_stage9_v1_1_preparation_requires_failed_v1_freeze_ancestor(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    class Result:
+        returncode = 1
+
+    monkeypatch.setattr(config, "_git", lambda *args, **kwargs: Result())
+    with pytest.raises(ValueError, match="failed v1 config-freeze"):
+        config._require_historical_v1_freeze_ancestor()

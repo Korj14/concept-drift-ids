@@ -549,6 +549,9 @@ def execute_stage9_symbolic_seed(condition_id: str, seed: int) -> dict[str, Any]
             "git_commit": _git_output("rev-parse", "HEAD"),
             "status": "complete_unscored_stage9_symbolic_trajectories",
             "stage9_config_manifest_sha256": config["manifest_sha256"],
+            "parent_r0_v2_manifest_sha256": config["parent_primary_reference"][
+                "r0_v2"
+            ]["manifest_sha256"],
             "shared_identity_sha256": identity["identity_sha256"],
             "all_phase_a_shared_identity_sha256": all_shared,
             "operator_config_sha256": operator.sha256(),
@@ -617,6 +620,10 @@ def verify_stage9_symbolic_seed(
         raise ValueError("Stage-9 Phase-B condition/seed identity mismatch.")
     if manifest["stage9_config_manifest_sha256"] != config["manifest_sha256"]:
         raise ValueError("Stage-9 Phase-B references wrong config.")
+    if manifest["parent_r0_v2_manifest_sha256"] != config[
+        "parent_primary_reference"
+    ]["r0_v2"]["manifest_sha256"]:
+        raise ValueError("Stage-9 Phase-B references wrong R0.v2 identity.")
     if manifest["shared_identity_sha256"] != expected_shared:
         raise ValueError("Stage-9 Phase-B shared identity differs from verified Phase A.")
     if manifest["all_phase_a_shared_identity_sha256"] != expected_all:

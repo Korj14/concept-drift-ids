@@ -19,6 +19,7 @@ from concept_drift_ids.cd_stage9_config import (
     STAGE8_COMPACT_ROOT,
     STAGE9_COMPACT_ROOT,
     STAGE9_OUTPUT_ROOT,
+    global_artifact_identity_context,
     verify_stage9_config_for_execution,
 )
 from concept_drift_ids.cd_stage9_execute import PLAN_PATH, _load_verified_plan
@@ -415,6 +416,9 @@ def verify_stage9_compact_export() -> dict[str, Any]:
         raise ValueError("Stage-9 compact export references wrong frozen config.")
     if manifest["stage8_parent"] != config["stage8_parent"]:
         raise ValueError("Stage-9 compact export Stage-8 parent changed.")
+    expected_global_context = global_artifact_identity_context(config)
+    if manifest["identity_context"] != expected_global_context:
+        raise ValueError("Stage-9 compact export identity context changed.")
     plan = _load_verified_plan(config)
     if manifest["execution_plan_sha256"] != plan["plan_sha256"]:
         raise ValueError("Stage-9 compact export execution-plan identity changed.")
@@ -436,6 +440,8 @@ def verify_stage9_compact_export() -> dict[str, Any]:
         raise ValueError("Stage-9 aggregate references wrong frozen config.")
     if aggregate["stage8_parent"] != config["stage8_parent"]:
         raise ValueError("Stage-9 aggregate Stage-8 parent changed.")
+    if aggregate["identity_context"] != expected_global_context:
+        raise ValueError("Stage-9 aggregate identity context changed.")
     if aggregate["execution_plan_sha256"] != plan["plan_sha256"]:
         raise ValueError("Stage-9 aggregate execution-plan identity changed.")
 
@@ -576,6 +582,7 @@ def export_stage9() -> dict[str, Any]:
         "status": "stage9_robustness_aggregate_complete",
         "stage9_config_manifest_sha256": config["manifest_sha256"],
         "stage8_parent": config["stage8_parent"],
+        "identity_context": global_artifact_identity_context(config),
         "execution_plan_sha256": plan["plan_sha256"],
         "reference_policy": {
             "offline_conditions": "frozen_stage8_primary",
@@ -688,6 +695,7 @@ def export_stage9() -> dict[str, Any]:
         "status": "stage9_compact_export_complete",
         "stage9_config_manifest_sha256": config["manifest_sha256"],
         "stage8_parent": config["stage8_parent"],
+        "identity_context": global_artifact_identity_context(config),
         "execution_plan_sha256": plan["plan_sha256"],
         "conditions": {
             "offline": list(OFFLINE_CONDITIONS),

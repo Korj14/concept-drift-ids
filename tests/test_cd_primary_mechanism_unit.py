@@ -155,6 +155,7 @@ def test_mechanism_config_preparation_does_not_read_heavy_traces(
 
     files = {
         mechanism.PROTOCOL_PATH: b"protocol",
+        mechanism.CORRECTION_PROTOCOL_PATH: b"correction",
         "src/concept_drift_ids/cd_primary_mechanism.py": b"source",
         "run.py": b"runner",
         "tests/test_cd_primary_mechanism_unit.py": b"tests",
@@ -208,6 +209,7 @@ def test_mechanism_config_contains_frozen_decomposition_identity(
     )
     files = {
         mechanism.PROTOCOL_PATH: b"protocol",
+        mechanism.CORRECTION_PROTOCOL_PATH: b"correction",
         "src/concept_drift_ids/cd_primary_mechanism.py": b"source",
         "run.py": b"runner",
         "tests/test_cd_primary_mechanism_unit.py": b"tests",

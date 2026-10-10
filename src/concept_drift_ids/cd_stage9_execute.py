@@ -236,7 +236,14 @@ def _run_or_verify_step(
 
 def execute_all_stage9(*, verify_only: bool = False) -> dict[str, Any]:
     config = verify_stage9_config_for_execution()
-    plan = ensure_execution_plan(config)
+    if verify_only:
+        if not PLAN_PATH.is_file():
+            raise FileNotFoundError(
+                "Stage-9 execution plan is absent; verify-only must not create it."
+            )
+        plan = _load_verified_plan(config)
+    else:
+        plan = ensure_execution_plan(config)
     completed = 0
     existing = 0
 

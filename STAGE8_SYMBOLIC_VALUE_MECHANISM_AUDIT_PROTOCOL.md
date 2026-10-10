@@ -156,7 +156,7 @@ Let:
 
 `v(S) = MCC(y, hybrid_decision(S))`.
 
-Compute the exact three-player Shapley value for W, A and R:
+Compute the exact three-player Shapley value for W, A and B:
 
 `phi_i = sum_{S subset N\{i}} |S|!(|N|-|S|-1)!/|N|! * [v(S union {i}) - v(S)]`.
 

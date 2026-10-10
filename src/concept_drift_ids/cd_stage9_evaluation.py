@@ -198,6 +198,7 @@ def _window_summary_from_trace(
     *,
     window_size: int,
     seed: int,
+    config: Mapping[str, Any],
 ) -> dict[str, Any]:
     if window_size not in {2_500, 10_000}:
         raise ValueError("Unsupported Stage-9 reporting-window size.")
@@ -625,6 +626,7 @@ def _offline_window_seed(condition_id: str, seed: int) -> dict[str, Any]:
             rows,
             window_size=window_size,
             seed=seed,
+            config=config,
         )
         compact = _verified_writer_json(
             PRIMARY_COMPACT_PHASE_C_ROOT

@@ -228,6 +228,21 @@ def _require_stage8_closure_ancestor() -> None:
         )
 
 
+def _require_historical_v1_freeze_ancestor() -> None:
+    result = _git(
+        "merge-base",
+        "--is-ancestor",
+        HISTORICAL_STAGE9_V1_FREEZE_COMMIT,
+        "HEAD",
+        check=False,
+    )
+    if result.returncode != 0:
+        raise ValueError(
+            "Stage-9 v1.1 source HEAD does not descend from the failed v1 "
+            "config-freeze commit."
+        )
+
+
 def _require_no_stage9_outputs_before_preparation() -> None:
     occupied = [
         path
@@ -814,6 +829,7 @@ def _condition_specs(
 def build_stage9_config() -> dict[str, Any]:
     _require_clean_for_preparation()
     _require_stage8_closure_ancestor()
+    _require_historical_v1_freeze_ancestor()
     _require_no_stage9_outputs_before_preparation()
     parent = _verify_stage8_parent()
     historical_v1 = _historical_v1_execution_identity()

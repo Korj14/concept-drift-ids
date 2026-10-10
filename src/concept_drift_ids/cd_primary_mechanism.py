@@ -46,7 +46,7 @@ BOUNDARY_INDEX = 69_260
 STREAM_ROWS = 138_530
 SEEDS = (0, 1, 2, 3, 4)
 TARGET_ARMS = ("d_drift", "d_periodic")
-MECHANISMS = ("withdrawal", "addition", "revision")
+MECHANISMS = ("withdrawal", "addition", "retained_authority")
 DOMAINS = ("pre", "post")
 PRIMARY_DECISION_KEY = "decision_lambda_0_5"
 LAMBDA_ONE_DECISION_KEY = "decision_lambda_1_0"
@@ -346,7 +346,7 @@ def _authority_state(c_covered: bool, t_covered: bool) -> str:
     if not c_covered and t_covered:
         return "addition"
     if c_covered and t_covered:
-        return "revision"
+        return "retained_authority"
     return "neither_authoritative"
 
 

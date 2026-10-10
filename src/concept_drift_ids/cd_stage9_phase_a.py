@@ -306,6 +306,10 @@ def verify_stage9_phase_a_seed(
         seed=seed,
         config=config,
     )
+    if input_identity.get("stage9_config_manifest_sha256") != config["manifest_sha256"]:
+        raise ValueError("Stage-9 input identity references wrong config.")
+    if input_identity.get("stage9_condition_id") != condition_id:
+        raise ValueError("Stage-9 input identity references wrong condition.")
 
     events = read_jsonl(seed_dir / "events.jsonl")
     for event in events:

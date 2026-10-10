@@ -4,8 +4,11 @@ from pathlib import Path
 
 import pytest
 
-from concept_drift_ids.cd_control_plane import MatureLabelRecord
-from concept_drift_ids.cd_shared_runner import SharedTrajectory
+from concept_drift_ids.cd_control_plane import (
+    MatureLabelRecord,
+    SharedErrorDriftMonitor,
+)
+from concept_drift_ids.cd_shared_runner import ControlPlaneConfig, SharedTrajectory
 from concept_drift_ids import cd_stage9_config as config
 from concept_drift_ids import cd_stage9_control_plane as control
 from concept_drift_ids.cd_stage9_phase_a import condition_control_plane_config
@@ -32,6 +35,59 @@ def test_stage9_condition_family_is_frozen() -> None:
     assert config.CONDITIONS["A_NO_REPLAY"]["replay"] == "none"
     assert config.CONDITIONS["O_LAMBDA_100"]["threshold_refit"] is False
 
+
+
+def test_primary_stage9_control_plane_parameters_match_stage8_defaults() -> None:
+    primary = ControlPlaneConfig()
+    stage9 = control.Stage9ControlPlaneConfig()
+    assert stage9.label_latency == primary.label_latency == 5_000
+    assert stage9.current_window == primary.current_window == 10_000
+    assert stage9.reservoir_capacity == primary.reservoir_capacity == 10_000
+    assert stage9.replay_anchor_rows == primary.replay_anchor_rows == 5_000
+    assert stage9.replay_online_rows == primary.replay_online_rows == 5_000
+    assert stage9.neural_update == primary.neural_update
+    assert stage9.detector_kind == "adwin_hard_error"
+
+
+def test_primary_stage9_hard_error_monitor_matches_stage8_monitor() -> None:
+    threshold = 0.7
+    frozen = SharedErrorDriftMonitor(monitor_threshold=threshold)
+    stage9 = control.Stage9DriftMonitor(
+        monitor_threshold=threshold,
+        detector_kind="adwin_hard_error",
+    )
+    frozen.start_initial_epoch("cp")
+    stage9.start_initial_epoch("cp")
+
+    for index in range(512):
+        probability = 0.9 if index % 7 else 0.1
+        label = 1 if index % 11 else 0
+        record = MatureLabelRecord(
+            row_id=f"r-{index}",
+            origin_index=index,
+            maturity_index=index + 5_000,
+            checkpoint_sha256="cp",
+            neural_probability=probability,
+            true_label=label,
+        )
+        expected = frozen.observe(record)
+        observed = stage9.observe(record)
+        assert observed.row_id == expected.row_id
+        assert observed.origin_index == expected.origin_index
+        assert observed.maturity_index == expected.maturity_index
+        assert observed.epoch_id == expected.epoch_id
+        assert observed.epoch_checkpoint_sha256 == expected.epoch_checkpoint_sha256
+        assert (
+            observed.prediction_checkpoint_sha256
+            == expected.prediction_checkpoint_sha256
+        )
+        assert observed.admitted == expected.admitted
+        assert observed.drift_detected == expected.drift_detected
+        assert observed.reason == expected.reason
+        assert observed.hard_error == expected.error
+        assert observed.signal == (
+            None if expected.error is None else float(expected.error)
+        )
 
 def test_page_hinkley_uses_explicit_river_0261_defaults() -> None:
     assert config.PAGE_HINKLEY_CONFIG == {

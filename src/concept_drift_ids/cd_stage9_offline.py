@@ -8,13 +8,13 @@ from pathlib import Path
 from typing import Any, Mapping
 
 import numpy as np
+from sklearn.metrics import f1_score, matthews_corrcoef
 
 from concept_drift_ids.cd_control_plane import canonical_sha256, write_json_new
 from concept_drift_ids.cd_primary_adapter import EXPECTED_PRE_ROWS
 from concept_drift_ids.cd_primary_phase_b import ARM_NAMES
 from concept_drift_ids.cd_primary_phase_c import (
     _recovery_summary,
-    _safe_binary_metrics,
     _safe_explanation,
 )
 from concept_drift_ids.cd_implementation_preflight import PROJECT_ROOT
@@ -103,10 +103,6 @@ def _window_result(
     window_size: int,
 ) -> dict[str, Any]:
     y = np.asarray([int(row["true_label"]) for row in rows], dtype=np.int8)
-    probability = np.asarray(
-        [float(row["fused_probability_lambda_0_5"]) for row in rows],
-        dtype=np.float64,
-    )
     decision = np.asarray(
         [int(row["decision_lambda_0_5"]) for row in rows], dtype=np.int8
     )
@@ -135,22 +131,17 @@ def _window_result(
             a = start + local_start
             b = start + local_stop
             s = slice(a, b)
-            metrics = _safe_binary_metrics(y[s], probability[s], 0.5)
             stored = decision[s]
-            metrics["tp"] = int(np.sum((y[s] == 1) & (stored == 1)))
-            metrics["tn"] = int(np.sum((y[s] == 0) & (stored == 0)))
-            metrics["fp"] = int(np.sum((y[s] == 0) & (stored == 1)))
-            metrics["fn"] = int(np.sum((y[s] == 1) & (stored == 0)))
-            if metrics["tp"] + metrics["tn"] + metrics["fp"] + metrics["fn"] != b - a:
+            tp = int(np.sum((y[s] == 1) & (stored == 1)))
+            tn = int(np.sum((y[s] == 0) & (stored == 0)))
+            fp = int(np.sum((y[s] == 0) & (stored == 1)))
+            fn = int(np.sum((y[s] == 1) & (stored == 0)))
+            if tp + tn + fp + fn != b - a:
                 raise AssertionError("Stage-9 window confusion accounting failed.")
-            # Recompute decision-derived metrics to avoid an arbitrary threshold.
-            from sklearn.metrics import f1_score, matthews_corrcoef
-            metrics["mcc"] = float(matthews_corrcoef(y[s], stored))
-            metrics["f1"] = float(f1_score(y[s], stored, zero_division=0))
-            benign = metrics["tn"] + metrics["fp"]
-            metrics["fpr"] = (
-                float(metrics["fp"] / benign) if benign else None
-            )
+            mcc = float(matthews_corrcoef(y[s], stored))
+            f1 = float(f1_score(y[s], stored, zero_division=0))
+            benign = tn + fp
+            fpr = float(fp / benign) if benign else None
             explanation = _safe_explanation(
                 y[s],
                 symbolic_class=symbolic_class[s],
@@ -163,9 +154,9 @@ def _window_result(
                     "start_index": a,
                     "end_index_exclusive": b,
                     "row_count": b - a,
-                    "mcc": metrics["mcc"],
-                    "fpr": metrics["fpr"],
-                    "f1": metrics["f1"],
+                    "mcc": mcc,
+                    "fpr": fpr,
+                    "f1": f1,
                     "mcsc": explanation["mcsc"],
                     "resolved_coverage": explanation["resolved_coverage"],
                     "conflict_abstain_rate": explanation["conflict_abstain_rate"],

@@ -30,6 +30,12 @@ Stage 9 has separate entrypoints:
 Stage 9 imports tested Stage-8 helpers where semantics are intentionally unchanged. It does not mutate
 Stage-8 artifacts.
 
+Every Stage-8 computational module reused by Stage 9 is re-hashed at config preparation/execution and
+must equal its historical hash in the corrected Stage-8 config. Later legitimate changes to
+non-executed Stage-8 governance files (for example mechanism archival attributes) are not confused
+with computational-source drift. Additional helper modules not present in that historical source map
+are frozen directly in the Stage-9 scientific source identity.
+
 ## 3. Condition families
 
 ### Group O — offline-only

@@ -323,6 +323,9 @@ def test_stage9_config_preparation_flags_outcome_blind(
             ),
         },
     )
+    frozen_lock = config.sha256_normalized_text(
+        config.PROJECT_ROOT / "requirements-lock.txt"
+    )
     monkeypatch.setattr(
         config,
         "_verify_parent_primary_config",
@@ -333,7 +336,16 @@ def test_stage9_config_preparation_flags_outcome_blind(
                 "manifest_canonical_sha256": "scenario",
                 "preprocessing_state_hash": "preprocessing",
                 "stream_rows": 138_530,
-            }
+            },
+            "primary_control_plane": {"identity": "control"},
+            "primary_symbolic_operator": {"identity": "symbolic"},
+            "fusion": {"identity": "fusion"},
+            "system_a": {"identity": "system-a"},
+            "r0_v2": {"identity": "r0"},
+            "requirements": {
+                "binding_normalized_text_sha256": frozen_lock,
+                "installed_distributions_sha256": "lock",
+            },
         },
     )
     monkeypatch.setattr(config, "_git_output", lambda *a, **k: "source-head")

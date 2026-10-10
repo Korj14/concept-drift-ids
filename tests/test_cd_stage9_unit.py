@@ -125,15 +125,18 @@ def test_runtime_difference_forces_matched_baseline() -> None:
         "python_version": "3.11.9",
         "python_implementation": "CPython",
         "torch_version": "2.14.1+cpu",
+        "torch_deterministic_algorithms": True,
+        "torch_num_threads": 1,
+        "torch_num_interop_threads": 1,
+        "thread_environment": dict(config.PRIMARY_THREAD_ENV),
     }
-    primary = {
-        **current,
-        "platform": "Windows-primary",
-        "locked_distributions_sha256": "same",
-    }
+    primary_fingerprint = config._runtime_fingerprint(
+        {**current, "platform": "Windows-primary"},
+        locked_distributions_sha256="same",
+    )
     assert config._runtime_requires_matched_baseline(
         current,
-        primary,
+        {"common_fingerprint": primary_fingerprint},
         {"installed_distributions_sha256": "same"},
     )
 
@@ -470,3 +473,83 @@ def test_stage9_preparation_refuses_preexisting_output_roots(
     monkeypatch.setattr(config, "STAGE9_COMPACT_ROOT", compact)
     with pytest.raises(RuntimeError, match="pre-existing robustness output"):
         config._require_no_stage9_outputs_before_preparation()
+
+
+def test_primary_runtime_reference_requires_all_five_seeds_match(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    base_runtime = {
+        "platform": "Windows-primary",
+        "processor": "cpu",
+        "python_version": "3.11.9",
+        "python_implementation": "CPython",
+        "torch_version": "2.14.1+cpu",
+        "torch_deterministic_algorithms": True,
+        "torch_num_threads": 1,
+        "torch_num_interop_threads": 1,
+        "thread_environment": dict(config.PRIMARY_THREAD_ENV),
+        "locked_distributions_sha256": "lock",
+    }
+
+    def fake_manifest(path: Path):
+        seed = int(path.parent.name.split("-")[1])
+        runtime = dict(base_runtime)
+        if seed == 4:
+            runtime["processor"] = "different-cpu"
+        return {"runtime": runtime}, f"manifest-{seed}"
+
+    monkeypatch.setattr(config, "_canonical_manifest", fake_manifest)
+    with pytest.raises(ValueError, match="do not share one runtime"):
+        config._primary_runtime_reference()
+
+
+def test_primary_runtime_reference_records_all_five_seed_fingerprints(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    base_runtime = {
+        "platform": "Windows-primary",
+        "processor": "cpu",
+        "python_version": "3.11.9",
+        "python_implementation": "CPython",
+        "torch_version": "2.14.1+cpu",
+        "torch_deterministic_algorithms": True,
+        "torch_num_threads": 1,
+        "torch_num_interop_threads": 1,
+        "thread_environment": dict(config.PRIMARY_THREAD_ENV),
+        "locked_distributions_sha256": "lock",
+    }
+    monkeypatch.setattr(
+        config,
+        "_canonical_manifest",
+        lambda path: ({"runtime": dict(base_runtime)}, "manifest"),
+    )
+    reference = config._primary_runtime_reference()
+    assert set(reference["seed_fingerprints"]) == {"0", "1", "2", "3", "4"}
+    assert reference["common_fingerprint_sha256"] == config.canonical_sha256(
+        reference["common_fingerprint"]
+    )
+
+
+def test_frozen_primary_contract_is_bound_to_corrected_stage8_config(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    source = {
+        "scenario": {"id": "scenario"},
+        "system_a": {"id": "system-a"},
+        "r0_v2": {"id": "r0"},
+        "primary_control_plane": {"id": "cp"},
+        "primary_symbolic_operator": {"id": "symbolic"},
+        "fusion": {"id": "fusion"},
+        "analysis": {"id": "analysis"},
+    }
+    monkeypatch.setattr(
+        config,
+        "_canonical_manifest",
+        lambda path: (dict(source), config.STAGE8_CORRECTED_CONFIG_MANIFEST_SHA256),
+    )
+    frozen = config._stage8_frozen_primary_contract()
+    assert frozen["source_config_manifest_sha256"] == (
+        config.STAGE8_CORRECTED_CONFIG_MANIFEST_SHA256
+    )
+    assert frozen["contract"] == source
+    assert frozen["contract_sha256"] == config.canonical_sha256(source)

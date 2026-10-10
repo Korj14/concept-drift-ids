@@ -369,8 +369,6 @@ def test_stage9_config_preparation_flags_outcome_blind(
     }
     monkeypatch.setattr(config, "_primary_runtime", lambda: runtime)
     monkeypatch.setattr(config, "_current_runtime", lambda: runtime)
-    monkeypatch.setattr(config, "sha256_file", lambda path: "hash")
-
     payload = config.build_stage9_config()
     assert payload["preparation"] == {
         "primary_partitions_loaded": False,

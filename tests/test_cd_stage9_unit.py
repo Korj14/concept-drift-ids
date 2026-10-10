@@ -292,6 +292,21 @@ def test_no_replay_verifier_rejects_any_replay_row(
         )
 
 
+
+def test_stage9_scientific_source_hashes_are_eol_portable(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    (tmp_path / "lf.txt").write_bytes(b"alpha\nbeta\n")
+    (tmp_path / "crlf.txt").write_bytes(b"alpha\r\nbeta\r\n")
+    monkeypatch.setattr(
+        config,
+        "SCIENTIFIC_SOURCE_PATHS",
+        ("lf.txt", "crlf.txt"),
+    )
+    hashes = config._source_hashes(project_root=tmp_path)
+    assert hashes["lf.txt"] == hashes["crlf.txt"]
+
 def test_stage9_config_preparation_flags_outcome_blind(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:

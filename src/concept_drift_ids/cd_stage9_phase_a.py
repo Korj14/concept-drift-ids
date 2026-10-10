@@ -9,6 +9,7 @@ import numpy as np
 
 from concept_drift_ids.cd_control_plane import (
     SYSTEM_A_MONITOR_THRESHOLDS,
+    canonical_sha256,
     write_json_new,
 )
 from concept_drift_ids.cd_evidence import (
@@ -93,6 +94,34 @@ def _child_checkpoint_descriptors(seed_dir: Path) -> dict[str, dict[str, str]]:
     return out
 
 
+
+def _verify_primary_input_identity(
+    audit: Mapping[str, Any],
+    *,
+    seed: int,
+    config: Mapping[str, Any],
+) -> None:
+    expected_system = config["parent_primary_reference"]["system_a"]
+    if audit["preprocessing_state_hash"] != config["scenario"]["preprocessing_state_hash"]:
+        raise ValueError("Stage-9 preprocessing identity differs from frozen primary.")
+    if int(audit["stream_rows"]) != int(config["scenario"]["stream_rows"]):
+        raise ValueError("Stage-9 stream length differs from frozen primary.")
+    if int(audit["training_anchor_rows"]) != 10_000:
+        raise ValueError("Stage-9 training anchor size differs from frozen primary.")
+    if audit["initial_checkpoint_sha256"] != expected_system[
+        "checkpoint_sha256_by_seed"
+    ][str(seed)]:
+        raise ValueError("Stage-9 initial neural checkpoint identity changed.")
+    if float(audit["monitor_threshold"]) != float(
+        expected_system["monitor_threshold_by_seed"][str(seed)]
+    ):
+        raise ValueError("Stage-9 monitor threshold differs from frozen seed threshold.")
+    layout = audit["stream_layout"]
+    if int(layout["boundary_index"]) != int(config["scenario"]["boundary_index"]):
+        raise ValueError("Stage-9 input boundary identity differs from frozen scenario.")
+    if layout.get("boundary_visibility_to_adaptive_runner") is not False:
+        raise ValueError("Stage-9 input identity exposes boundary to adaptive runner.")
+
 def execute_stage9_phase_a_seed(condition_id: str, seed: int) -> dict[str, Any]:
     if condition_id not in ADAPTIVE_CONDITIONS:
         raise ValueError(f"Unsupported adaptive condition: {condition_id}")
@@ -132,6 +161,11 @@ def execute_stage9_phase_a_seed(condition_id: str, seed: int) -> dict[str, Any]:
 
     try:
         bundle = build_primary_input_bundle(seed)
+        _verify_primary_input_identity(
+            bundle.audit_identity,
+            seed=seed,
+            config=config,
+        )
         input_identity_path = seed_dir / "input_identity.json"
         input_identity_sha256 = write_json_new(
             input_identity_path,
@@ -263,6 +297,16 @@ def verify_stage9_phase_a_seed(
         raise ValueError("Boundary metadata contamination flag is not false.")
 
     verify_manifest_files(seed_dir, manifest)
+    input_identity = _read_json(seed_dir / "input_identity.json")
+    stored_input_payload = input_identity.pop("payload_sha256", None)
+    if stored_input_payload != canonical_sha256(input_identity):
+        raise ValueError("Stage-9 input-identity writer hash mismatch.")
+    _verify_primary_input_identity(
+        input_identity,
+        seed=seed,
+        config=config,
+    )
+
     events = read_jsonl(seed_dir / "events.jsonl")
     for event in events:
         validate_event(event)

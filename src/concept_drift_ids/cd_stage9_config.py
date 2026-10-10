@@ -456,6 +456,13 @@ def build_stage9_config(*, project_root: Path = PROJECT_ROOT) -> dict[str, Any]:
             "stream_rows": PRIMARY_STREAM_ROWS,
         },
         "seeds": list(PRIMARY_SEEDS),
+        "parent_primary_reference": {
+            "primary_control_plane": primary["primary_control_plane"],
+            "primary_symbolic_operator": primary["primary_symbolic_operator"],
+            "fusion": primary["fusion"],
+            "system_a": primary["system_a"],
+            "r0_v2": primary["r0_v2"],
+        },
         "conditions": _condition_payload(runtime_comparison),
         "detectors": {
             "adwin": dict(ADWIN_CONFIG),
@@ -627,6 +634,17 @@ def verify_stage9_config_repository_contract(
         "confirmatory_aggregate_sha256"
     ]:
         raise ValueError("Stage-9 parent confirmatory aggregate changed.")
+
+    primary = _verify_parent_primary_config()
+    expected_primary_reference = {
+        "primary_control_plane": primary["primary_control_plane"],
+        "primary_symbolic_operator": primary["primary_symbolic_operator"],
+        "fusion": primary["fusion"],
+        "system_a": primary["system_a"],
+        "r0_v2": primary["r0_v2"],
+    }
+    if config["parent_primary_reference"] != expected_primary_reference:
+        raise ValueError("Stage-9 parent primary control identities changed.")
 
     if tuple(config["seeds"]) != PRIMARY_SEEDS:
         raise ValueError("Stage-9 seed set changed.")

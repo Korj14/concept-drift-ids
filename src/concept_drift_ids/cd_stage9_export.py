@@ -23,6 +23,7 @@ from concept_drift_ids.cd_stage9_config import (
 )
 from concept_drift_ids.cd_stage9_offline import (
     _output_dir as offline_output_dir,
+    _stage8_eval_payload,
     verify_offline_condition,
 )
 from concept_drift_ids.cd_stage9_phase_a import adaptive_condition_ids
@@ -96,16 +97,6 @@ def _numeric_summary(values: Sequence[float]) -> dict[str, Any]:
 def _optional_numeric_summary(values: Sequence[float]) -> dict[str, Any] | None:
     vals = [float(v) for v in values if float(v) == float(v)]
     return _numeric_summary(vals) if vals else None
-
-
-def _stage8_eval_payload(seed: int, arm: str) -> dict[str, Any]:
-    path = (
-        STAGE8_COMPACT_ROOT
-        / "phase_c_offline_evaluation_v1_1"
-        / f"seed-{seed}"
-        / f"{arm}_evaluation.json"
-    )
-    return _read_verified_json(path, inner_hash_key="summary_sha256")
 
 
 def _offline_result(condition: str, seed: int) -> dict[str, Any]:

@@ -260,6 +260,15 @@ def verify_stage9_phase_a_seed(
         if int(schedule["maturity_index"]) != int(p["origin_index"]) + cp.label_latency:
             raise ValueError("Stage-9 label maturity violates condition latency.")
 
+    for observation in detector:
+        if observation["admitted"]:
+            if observation.get("signal_name") != cp.detector_signal:
+                raise ValueError("Stage-9 admitted detector signal type changed.")
+            if observation.get("signal_value") is None:
+                raise ValueError("Stage-9 admitted detector observation lacks signal.")
+        elif observation.get("signal_value") is not None:
+            raise ValueError("Rejected Stage-9 detector observation carries a signal value.")
+
     if not cp.replay_enabled:
         if any(tx["replay_row_ids"] for tx in replay):
             raise ValueError("No-replay condition contains replay rows.")

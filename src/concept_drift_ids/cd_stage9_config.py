@@ -440,62 +440,120 @@ def _stage8_frozen_primary_contract() -> dict[str, Any]:
     }
 
 
-def _condition_specs(*, baseline_required: bool) -> dict[str, Any]:
+def _condition_specs(
+    *,
+    baseline_required: bool,
+    primary_contract_sha256: str,
+) -> dict[str, Any]:
     primary = asdict(ControlPlaneConfig())
+
+    def bind(
+        spec: Mapping[str, Any],
+        *,
+        changed_factors: Sequence[str],
+    ) -> dict[str, Any]:
+        return {
+            **dict(spec),
+            "base_primary_contract_sha256": str(primary_contract_sha256),
+            "changed_factors": list(changed_factors),
+        }
+
     adaptive: dict[str, Any] = {
-        "latency_0": {
-            "label_latency": 0,
-            "detector_family": "adwin",
-            "detector_signal": "hard_error",
-            "replay_enabled": True,
-        },
-        "latency_10000": {
-            "label_latency": 10000,
-            "detector_family": "adwin",
-            "detector_signal": "hard_error",
-            "replay_enabled": True,
-        },
-        "page_hinkley_hard_error": {
-            "label_latency": primary["label_latency"],
-            "detector_family": "page_hinkley",
-            "detector_signal": "hard_error",
-            "detector_config": dict(PAGE_HINKLEY_CONFIG),
-            "replay_enabled": True,
-        },
-        "adwin_brier": {
-            "label_latency": primary["label_latency"],
-            "detector_family": "adwin",
-            "detector_signal": "brier",
-            "detector_config": dict(ADWIN_CONFIG),
-            "replay_enabled": True,
-        },
-        "no_replay": {
-            "label_latency": primary["label_latency"],
-            "detector_family": "adwin",
-            "detector_signal": "hard_error",
-            "replay_enabled": False,
-        },
-    }
-    if baseline_required:
-        adaptive = {
-            MATCHED_BASELINE_CONDITION: {
-                "label_latency": primary["label_latency"],
+        "latency_0": bind(
+            {
+                "label_latency": 0,
                 "detector_family": "adwin",
                 "detector_signal": "hard_error",
                 "replay_enabled": True,
             },
+            changed_factors=("label_latency",),
+        ),
+        "latency_10000": bind(
+            {
+                "label_latency": 10000,
+                "detector_family": "adwin",
+                "detector_signal": "hard_error",
+                "replay_enabled": True,
+            },
+            changed_factors=("label_latency",),
+        ),
+        "page_hinkley_hard_error": bind(
+            {
+                "label_latency": primary["label_latency"],
+                "detector_family": "page_hinkley",
+                "detector_signal": "hard_error",
+                "detector_config": dict(PAGE_HINKLEY_CONFIG),
+                "replay_enabled": True,
+            },
+            changed_factors=("detector_family",),
+        ),
+        "adwin_brier": bind(
+            {
+                "label_latency": primary["label_latency"],
+                "detector_family": "adwin",
+                "detector_signal": "brier",
+                "detector_config": dict(ADWIN_CONFIG),
+                "replay_enabled": True,
+            },
+            changed_factors=("detector_signal",),
+        ),
+        "no_replay": bind(
+            {
+                "label_latency": primary["label_latency"],
+                "detector_family": "adwin",
+                "detector_signal": "hard_error",
+                "replay_enabled": False,
+            },
+            changed_factors=("replay_training_rows",),
+        ),
+    }
+    if baseline_required:
+        adaptive = {
+            MATCHED_BASELINE_CONDITION: bind(
+                {
+                    "label_latency": primary["label_latency"],
+                    "detector_family": "adwin",
+                    "detector_signal": "hard_error",
+                    "replay_enabled": True,
+                },
+                changed_factors=(),
+            ),
             **adaptive,
         }
     return {
         "offline": {
-            "lambda_0_7": {"neural_weight": 0.70, "source": "frozen_stage8_trace"},
-            "lambda_0_9": {"neural_weight": 0.90, "source": "frozen_stage8_trace"},
-            "lambda_1_0": {"neural_weight": 1.00, "source": "frozen_stage8_trace"},
-            "window_2500": {"reporting_window_rows": 2500, "source": "frozen_stage8_trace"},
-            "window_10000": {"reporting_window_rows": 10000, "source": "frozen_stage8_trace"},
+            "lambda_0_7": bind(
+                {"neural_weight": 0.70, "source": "frozen_stage8_trace"},
+                changed_factors=("fusion_neural_weight",),
+            ),
+            "lambda_0_9": bind(
+                {"neural_weight": 0.90, "source": "frozen_stage8_trace"},
+                changed_factors=("fusion_neural_weight",),
+            ),
+            "lambda_1_0": bind(
+                {"neural_weight": 1.00, "source": "frozen_stage8_trace"},
+                changed_factors=("fusion_neural_weight",),
+            ),
+            "window_2500": bind(
+                {
+                    "reporting_window_rows": 2500,
+                    "source": "frozen_stage8_trace",
+                },
+                changed_factors=("reporting_window_rows",),
+            ),
+            "window_10000": bind(
+                {
+                    "reporting_window_rows": 10000,
+                    "source": "frozen_stage8_trace",
+                },
+                changed_factors=("reporting_window_rows",),
+            ),
         },
         "symbolic_gate": {
-            "static_symbolic_gate": dict(STATIC_GATE_CONFIG),
+            "static_symbolic_gate": bind(
+                dict(STATIC_GATE_CONFIG),
+                changed_factors=("symbolic_acceptance_gate",),
+            ),
         },
         "adaptive": adaptive,
     }
@@ -537,7 +595,10 @@ def build_stage9_config() -> dict[str, Any]:
         "runtime": runtime,
         "primary_runtime_reference": primary_runtime,
         "matched_baseline_required": baseline_required,
-        "conditions": _condition_specs(baseline_required=baseline_required),
+        "conditions": _condition_specs(
+            baseline_required=baseline_required,
+            primary_contract_sha256=primary_contract["contract_sha256"],
+        ),
         "seeds": list(PRIMARY_SEEDS),
         "scenario": {
             "scenario_id": "cicids2017_sudden_benign_v1",

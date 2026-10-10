@@ -2322,3 +2322,329 @@ succeeds, the corrected implementation-ready state must receive a new annotated 
 No detector, neural adaptation, replay, symbolic rule, lifecycle threshold, fusion parameter,
 statistical endpoint, or treatment definition changed. Primary adaptive pre/post execution remains
 locked and untouched.
+
+
+### Stage 8 primary-execution surface frozen prospectively before run-config generation — 9 October 2026
+
+The corrected implementation-ready annotated tag `cd-implementation-ready-v1.1` was verified
+remotely to resolve to accepted commit
+`5627e36c7f1fef9620346e31e2aee01a2dd155ee`. Accepted `main` was identical to that commit when
+`stage8-cd-primary-evaluation` was created.
+
+No primary adaptive pre/post row had been processed when the Stage-8 execution surface below was
+implemented.
+
+Stage 8 now freezes a five-gate primary workflow:
+
+1. no-data run-config generation and commit;
+2. all five Phase-A shared detector/neural trajectories;
+3. all five Phase-B C/D-drift/D-periodic symbolic trajectories;
+4. all five Phase-C offline boundary-aware evaluations followed by the prespecified aggregate;
+5. compact evidence export for Git after the complete primary analysis.
+
+`STAGE8_PRIMARY_EXECUTION_PROTOCOL.md` is the prospective execution contract.
+
+The run-config builder hashes the governing-source identities, protocol bundle, scientific source
+tree, requirements lock, accepted scenario/preprocessing/System-A/R0 identities, control-plane and
+symbolic configurations, fusion thresholds, seeds, arms, phase order and runtime contract. The config
+is generated without loading any scenario partition. Primary execution fails closed if the tracked
+config, source hashes, protocol hashes, dependency lock, corrected implementation-ready ancestry or
+clean-worktree condition changes.
+
+The primary runtime launcher `scripts/run_primary.ps1` sets
+`PYTHONHASHSEED=0`, `OMP_NUM_THREADS=1`, `MKL_NUM_THREADS=1`,
+`OPENBLAS_NUM_THREADS=1` and `NUMEXPR_NUM_THREADS=1` before Python starts. The existing Python
+runtime verifier then enforces deterministic/single-thread numerical execution.
+
+The Stage-8 scenario adapter is deliberately separated from the treatment-independent shared runner.
+It may reconstruct the frozen scenario and evaluator-known partition lengths, but adaptive row
+identities are neutral `stream:<index>` values and no boundary/partition field is supplied to the
+shared control plane. The training anchor uses the frozen uniform sampling seed and accepted
+training-only preprocessing state.
+
+Several additional implementation/audit hardenings were made prospectively before primary access:
+
+- D-periodic received the same local seed-mismatch guard as C and D-drift; a duplicated D-drift seed
+  check was removed.
+- Symbolic maintenance records now retain complete candidate-generation provenance, including
+  selected features, SHAP ranking, background/attribution row IDs, candidate structures and timing,
+  rather than only counts/evidence IDs.
+- Verified `RuleBaseState` deserialization was added so Phase C scores immutable Phase-B symbolic
+  versions rather than rerunning candidate generation or lifecycle maintenance.
+- Phase-A and Phase-B technical failures are preserved in write-once failure artifacts.
+- Phase-A command output was intentionally narrowed to integrity hashes/status and does not print
+  drift/update/pending-state outcomes during held-out execution.
+- Heavy primary execution evidence was moved to the Git-ignored
+  `artifacts/cd_primary_v1/` tree so one successful seed does not invalidate the clean-worktree
+  gate for the next seed.
+- A prospective compact export step copies only manifests, summaries, states and version evidence to
+  `results/frozen/cd_primary_v1/` after the entire primary evaluation, while retaining exact hashes
+  back to the heavy evidence tree.
+- Phase C verifies both compressed prediction-trace file hashes and the canonical uncompressed JSONL
+  content identity.
+- Phase B cannot begin until all five Phase-A seeds verify; Phase C cannot begin until all five
+  Phase-A and all five Phase-B seeds verify. This prevents partially observed earlier seeds from
+  influencing implementation of later treatment/evaluation stages.
+- The five-seed confirmatory aggregate has its own integrity verifier and compact export requires
+  that aggregate to verify.
+
+These changes alter no frozen drift detector parameter, verification latency, replay/neural update
+budget, symbolic gate, trigger schedule, fusion authority/threshold, confirmatory endpoint or
+inferential unit. They are execution/evidence hardening performed before primary held-out access.
+
+The root runner now exposes gated commands for config preparation, Phase A, Phase B, Phase C and
+compact export. Repository-only Stage-8 tests cover no-data preparation, deferred scenario-adapter
+access, source/config hashing, rule-state round-trip, periodic seed rejection, candidate provenance,
+Git-ignored heavy evidence, deterministic trace content identity and launcher environment ordering.
+
+**Current gate:** the primary run config
+`data/manifests/cd_primary_run_config_v1.json` has not yet been generated. No primary adaptive
+pre/post execution has occurred. The next permitted action after exact-head CI is local no-data
+`cd-primary-prepare`, followed by committing that generated manifest and requiring clean,
+exact-config-head CI before the first Phase-A seed.
+
+
+### Stage 8 final pre-access adversarial integrity pass — 9 October 2026
+
+A final adversarial audit of the still-unexecuted Stage-8 primary pipeline identified additional
+fail-closed reproducibility/provenance improvements. No primary run config had yet been generated and
+no primary adaptive row had been processed.
+
+The execution gate now requires the current Git `HEAD` to equal exactly the commit that last
+committed `data/manifests/cd_primary_run_config_v1.json`. Source/protocol hashes remain checked as
+well, but hash equality alone is no longer sufficient to permit execution after any later commit.
+GitHub Actions now fetches full history and annotated tags; when the primary config exists, the
+Stage-8 repository test verifies the committed config on the exact branch push head. Synthetic PR
+merge SHAs are distinguished from the binding exact-config-head push run.
+
+Dependency reproducibility was also strengthened. The binding requirements-lock identity is its
+normalized UTF-8 text SHA-256, avoiding CRLF/LF checkout dependence. `requirements-lock.txt` is
+pinned to LF for future checkouts. Preparation and execution both verify every exact
+`name==version` distribution in the lock against the active environment. The frozen config records
+the exact installed distribution map and its canonical identity. Platform-specific raw lockfile bytes
+are deliberately not embedded in the frozen config.
+
+Phase-B verification now checks the Phase-B-to-arm manifest descriptors and the complete inference
+version chain: initial/final identities, increasing publication clocks, contiguous version increments,
+and exact parent version/hash links. Phase-C seed manifests now bind explicitly to the exact Phase-A
+and Phase-B seed manifest identities. Compact export re-verifies all three phases and the confirmatory
+aggregate before copying compact evidence.
+
+The lambda=1 control was strengthened from cross-arm equality alone to exact row-wise equality between
+each arm's lambda=1 fused score and the shared neural score, followed by cross-arm equality.
+
+The Research Contract workflow itself, together with `.gitattributes` and `.gitignore`, is included
+in the frozen scientific source identity because these files now materially enforce execution,
+portability and evidence-location semantics.
+
+These changes are prospective integrity hardening only. They do not alter the frozen concept-drift
+detector, label latency, neural adaptation/replay budget, symbolic lifecycle operator, periodic clocks,
+fusion weights/thresholds, confirmatory endpoints or inferential unit.
+
+**Held-out status remains unchanged:** the primary run config has not yet been generated and no
+primary adaptive pre/post execution has occurred.
+
+
+### Stage 8 recovery reporting alignment before primary access — 9 October 2026
+
+A final comparison of the Phase-C recovery output against the frozen analysis protocol found a
+reporting-scale mismatch before any primary access. The generic recovery helper correctly identifies
+the first two-window-persistent recovery at an absolute stream clock, while the protocol additionally
+requires recovery time to be reported in logical rows from the controlled boundary.
+
+Phase C now preserves the absolute `recovery_clock` for audit and adds
+`recovery_rows_from_boundary = recovery_clock - boundary_index`. For right-censored trajectories,
+the same transformation yields the censored duration from boundary to stream end. The weighted
+three-window pre baseline, inequality direction, two-consecutive-window persistence requirement and
+right-censoring rule are unchanged.
+
+A repository-only regression test requires a recovery beginning at the first post window to report
+zero rows from the boundary.
+
+This is a prospective reporting-alignment correction only. No primary adaptive run config has yet
+been generated and no primary adaptive pre/post row has been processed.
+
+
+### Final Stage-8 cross-phase evidence rebinding before primary access — 9 October 2026
+
+After Research Contract #468 passed on Stage-8 head
+`c99cf2c6fcfb4cd7f75c2d427b3b891083d99cd0`, a final manual adversarial verifier audit was
+performed before run-config generation and before any primary adaptive held-out access.
+
+The audit found no treatment contamination in the Phase-A adapter/control-plane path, but identified
+one provenance-verification gap. Phase-B verification proved that its three symbolic arms agreed with
+one another on a shared-control-plane identity, yet it did not independently re-bind that identity to
+the currently verified Phase-A seed artifact. Phase-C seed verification was bound to Phase-A/Phase-B
+seed manifests, but its individual arm summaries were not independently re-bound to the exact
+Phase-A shared identity and Phase-B arm-manifest identity.
+
+This was classified as a pre-access integrity-hardening issue rather than a scientific-design
+change.
+
+The correction now requires Phase-B verification to re-verify all five Phase-A seeds, reproduce the
+full all-seed Phase-A identity map, bind every arm and trajectory to the verified Phase-A seed
+identity, and verify the frozen symbolic-operator identity.
+
+Phase-C verification now binds every arm summary back to the verified Phase-A shared identity and its
+exact Phase-B arm manifest, checks that the copied maintenance summary equals the frozen Phase-B
+summary, and verifies each compressed prediction trace's row count against the frozen stream length
+in addition to its compressed-file and canonical uncompressed-content hashes.
+
+Repository-only adversarial tests now create:
+
+- an internally self-consistent Phase-B artifact carrying a forged shared identity; and
+- a Phase-C arm summary detached from the verified Phase-A identity.
+
+Both must fail closed.
+
+No primary run config existed at this point. No primary pre/post adaptive partition had been executed
+or scored. No detector, neural update, replay rule, symbolic operator, trigger clock, threshold,
+fusion setting, endpoint, or inferential unit changed.
+
+A new exact-terminal-head Research Contract pass is mandatory after this hardening before
+`cd-primary-prepare` may be run.
+
+
+### Stage-8 config-only freeze-commit invariant — 9 October 2026
+
+A final command-path audit identified that requiring `HEAD` to equal the last commit touching the
+primary run-config file was necessary but not sufficient to prove that the freeze commit itself
+contained only the generated config.
+
+Before primary run-config generation, the execution gate was strengthened so that the config commit
+must have exactly one parent, that parent must equal the `prepared_from_git_commit` recorded by the
+no-data preparation step, and the commit's changed path set must be exactly
+`data/manifests/cd_primary_run_config_v1.json`.
+
+A regression test covers the valid case, a wrong-parent case and an extra-file case.
+
+No primary run config existed when this control was added. No primary adaptive held-out row had been
+processed or scored. The control changes no scientific parameter or treatment; it closes a
+repository-governance degree of freedom at the first-access boundary.
+
+
+### Phase-C v1 execution defect and versioned v1.1 correction — 9 October 2026
+
+After all five primary Phase-A shared-control-plane trajectories and all five Phase-B symbolic
+trajectories completed and verified under frozen primary config
+`3e3f768b5aa32f469440bb334508f747bbf2f7f5b08d9570a7aef2dbb9cb0257`,
+the first Phase-C boundary-aware scoring command was attempted for seed 0.
+
+The command failed before the first Phase-A JSONL artifact could be read with:
+
+`NameError: name 'read_jsonl' is not defined`.
+
+The defect was traced to `cd_primary_phase_c.py` calling `read_jsonl` without importing it from
+`concept_drift_ids.cd_evidence`.
+
+The Phase-C function had created its write-once `attempt.json`, then failed at the first
+`read_jsonl(...predictions.jsonl)` call. The exception handler preserved `failure.json`.
+
+At that failure point no prediction array, true-label stream array, symbolic scoring, fused score,
+pre/post metric, MCSC, recovery output, trigger diagnostic, retention probe, compressed prediction
+trace, arm evaluation summary, or Phase-C seed manifest had been successfully produced.
+
+This is therefore classified as a technical execution defect discovered after held-out access in
+Phases A/B but before any successful Phase-C scoring result existed.
+
+A dedicated correction branch, `stage8-phase-c-v1-1-correction`, was created from the exact original
+primary config commit `bfa14b942e4a5b2fbfa8aa3c43728a7f1cd81645`.
+
+The original v1 config and failed Phase-C attempt remain immutable. Phase A and Phase B are not
+rerun.
+
+The v1.1 correction:
+
+- imports `read_jsonl` explicitly;
+- allows Phase-A/Phase-B verifiers to accept an explicit correction config whose
+  `upstream_artifact_config_manifest_sha256` points to the original v1 config;
+- re-verifies and freezes the exact five Phase-A run/shared identities and five Phase-B
+  manifest/isolation identities into the correction config;
+- requires the failed v1 seed-0 directory to contain exactly `attempt.json` and `failure.json`;
+- rejects correction preparation if any scored v1 Phase-C output exists;
+- requires exact equality between v1 and v1.1 for governing-source, scenario, System-A, R0.v2,
+  control-plane, symbolic-operator, fusion and analysis blocks;
+- freezes the corrected source/protocol/dependency identities;
+- forbids Phase-A/Phase-B re-execution under the correction;
+- writes corrected Phase-C evidence only under
+  `artifacts/cd_primary_v1/phase_c_offline_evaluation_v1_1/`;
+- includes the preserved failed v1 attempt/failure in the final compact evidence export.
+
+`STAGE8_PHASE_C_V1_1_CORRECTION.md` is the binding correction record.
+
+A new correction config,
+`data/manifests/cd_primary_run_config_v1_1.json`, must be generated locally only after correction
+source CI passes. Its commit must contain exactly that one file and pass exact-head CI before any
+corrected Phase-C execution.
+
+No detector, neural update, replay mechanism, symbolic lifecycle rule, trigger schedule, fusion
+threshold, endpoint, inferential unit, or robustness definition changed.
+
+
+### Stage-8 symbolic mechanism audit v1.1 failure, v1.2 correction, and frozen interpretation — 10 October 2026
+
+After the Stage-8 primary evidence and post-primary mechanism protocol were frozen, mechanism-audit
+config v1.1 was prepared without row-level mechanism-trace access and committed at
+`533063c72e8e11afb3530e05aa56dcb7c1a3f7a6`.
+
+The first v1.1 execution attempt accessed the already-frozen Phase-C row traces and then failed before
+any accepted seed result was written with:
+
+`KeyError: 'manifest_sha256'`
+
+The cause was local to the exploratory mechanism reader: `_phase_b_arm_manifest()` verified the
+embedded Phase-B arm-manifest identity and removed that field with `pop()`, while downstream
+`analyze_seed()` attempted to persist the verified identity.
+
+The failed v1.1 output root existed but contained no files. The failure and trace-access state were
+preserved rather than deleted or disguised as a pre-access correction.
+
+A versioned v1.2 implementation correction was accepted at
+`b51a2238aeb3dcbbd677e6669d9cadbf2bd4a6e5`. It changed no Stage-8 primary prediction, treatment,
+endpoint, threshold, detector event, symbolic trajectory, confirmatory statistic, mechanism stratum,
+seed, comparator, or reporting domain. It retained the already-verified Phase-B manifest identity and
+added regression coverage for the exact failure.
+
+The v1.2 mechanism config was frozen in the sole-path commit
+`325604265c9ef5478e897d76adc9b45ad20eb929`, with manifest
+`e7d1ffe85a9d8442435c279bee79103f23a468b3fdf52f6f92f427e4f6131e7d`.
+Exact-head Research Contract runs #574 and #575 passed before v1.2 execution.
+
+The v1.2 audit then executed once and `--verify-only` independently regenerated all five seed
+results from the frozen heavy traces with identical identities:
+
+- aggregate: `6c35c026c52fa7bee93cd31bffa459b2bf605efe950f9645e6bea48f86a99acd`;
+- audit manifest: `c8edd1228942371d55b13e196c3050a9fa64d51c9e36069dc218c0dc03c89b66`.
+
+The seven compact mechanism evidence files were archived at
+`90e574fd3cee278fd4514609c24dfe58d5c6d944`. An explicit LF Git attribute protects the
+mechanism-config/evidence raw file hashes across checkouts.
+
+The exploratory post-reference D-drift-versus-C mechanism result is withdrawal-dominant:
+
+- mean total MCC difference: +0.059752;
+- mean withdrawal Shapley MCC contribution: +0.057321;
+- mean addition contribution: +0.002431;
+- retained-authority contribution: exactly 0 in all five seeds;
+- mean withdrawal row fraction: 0.157895;
+- mean addition row fraction: 0.013720;
+- mean retained-authority row fraction: 0.799423;
+- mean net corrected decisions: +346.8 withdrawal, +15.8 addition, 0 retained authority.
+
+Across all five D-drift post traces, withdrawal contains 1,997 rescues and 263 harms. The rescues are
+missed-attack corrections; the harms are benign false positives. Addition contains 79 rescues and no
+harms, primarily correcting benign false positives.
+
+Seven of eight D-drift publications were effective before the designated controlled boundary. The
+only post-reference D-drift publication, seed-0 `v0003`, has -1 net corrected decision over its
+later version segment, while the preceding pre-reference-published `v0002` has +280 over its
+post-reference segment. This does not support a simple boundary -> detector -> post-boundary symbolic
+repair narrative.
+
+Matched D-periodic is also withdrawal-dominant, so the mechanism evidence supports symbolic-lifecycle
+mitigation of stale authority but does not establish ADWIN trigger-specific superiority.
+
+The binding post-primary interpretation is recorded in
+`STAGE8_SYMBOLIC_MECHANISM_AUDIT_INTERPRETATION.md`.
+
+Stage 9 remains prospectively frozen and is not modified in response to this result.

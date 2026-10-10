@@ -1,0 +1,338 @@
+{
+  "active_revision_ids": [
+    "sem-s4-62d1f83b944f50dc-rev-280eb59672120db5",
+    "sem-s4-66e3dc8cac434da1-rev-3a001689b424aee8",
+    "sem-s4-799502d6956c2bc7-rev-d1246c116ba912df",
+    "sem-s4-8a8bd24bc943a6c6-rev-f9196ea732f78252",
+    "sem-s4-d921e73dd34c1c61-rev-bc9779291c848208",
+    "sem-s4-de9c6dab6f02b0d4-rev-bf226a07fc4ff5f0"
+  ],
+  "canonical_sha256": "b76ad8338ebd840f9820a290365c1e086cbfffd494560c0e27b36413e7aa7a76",
+  "history_sha256": "dc0117a3f05354e5f2c70a44a3af4036bc347186ae4d6045b015f1b7227eb21e",
+  "parent_version_id": null,
+  "parent_version_sha256": null,
+  "payload_sha256": "9a74f907289e54dd5eb99f55a6d186fbc55d233973ef02b6d173281fc9fa075b",
+  "revisions": [
+    {
+      "class_precision": 1.0,
+      "class_precision_lcb": null,
+      "complexity": 4,
+      "conditions": [
+        {
+          "feature": "Destination Port",
+          "operator": ">",
+          "raw_threshold": 32.00006432871669,
+          "threshold": -0.4207981824874878
+        },
+        {
+          "feature": "Bwd Packet Length Std",
+          "operator": "<=",
+          "raw_threshold": 1496.8329242530829,
+          "threshold": 1.3048039078712463
+        },
+        {
+          "feature": "Average Packet Size",
+          "operator": ">",
+          "raw_threshold": 7.366668197078525,
+          "threshold": -0.6370151937007904
+        },
+        {
+          "feature": "Idle Max",
+          "operator": ">",
+          "raw_threshold": 51093891.87084282,
+          "threshold": 1.21871680021286
+        }
+      ],
+      "confidence": 1.0,
+      "consequent": 0,
+      "covered_count": 4555,
+      "failure_streak": 0,
+      "generation_evidence_id": null,
+      "lifecycle_state": "active",
+      "lifecycle_transition": "migrated_r0_v2",
+      "lineage_id": "r0-s4-62d1f83b944f50dc",
+      "neural_checkpoint_sha256": "9b9e56371f3246482998c4efea4829e1e6d5aaf549bb43e1af05e471dfcb9e93",
+      "neural_fidelity": 1.0,
+      "neural_fidelity_lcb": null,
+      "parent_lineage_ids": [],
+      "parent_rule_revision_ids": [],
+      "relations": [],
+      "rule_base_version_id": "d-s4-r0v2",
+      "rule_revision_id": "sem-s4-62d1f83b944f50dc-rev-280eb59672120db5",
+      "seed": 4,
+      "semantic_rule_id": "sem-s4-62d1f83b944f50dc",
+      "source_candidate_id": "s4-leaf15",
+      "stability": 1.0,
+      "support": 0.036531767800715396,
+      "valid_from": 0,
+      "valid_to": null,
+      "validation_evidence_id": "d4513990c64acd1e0369c54176a731b7628235cc956813bd32d5ca4c7720ca02"
+    },
+    {
+      "class_precision": 0.9945750452079566,
+      "class_precision_lcb": null,
+      "complexity": 4,
+      "conditions": [
+        {
+          "feature": "Destination Port",
+          "operator": "<=",
+          "raw_threshold": 261.5001929515756,
+          "threshold": -0.40856069326400757
+        },
+        {
+          "feature": "Bwd Packet Length Std",
+          "operator": ">",
+          "raw_threshold": 1496.8329242530829,
+          "threshold": 1.3048039078712463
+        },
+        {
+          "feature": "Average Packet Size",
+          "operator": ">",
+          "raw_threshold": 702.3137201762538,
+          "threshold": 1.4857116341590881
+        },
+        {
+          "feature": "Idle Max",
+          "operator": "<=",
+          "raw_threshold": 12649999.981751805,
+          "threshold": -0.0284406840801239
+        }
+      ],
+      "confidence": 0.9367088607594937,
+      "consequent": 1,
+      "covered_count": 553,
+      "failure_streak": 0,
+      "generation_evidence_id": null,
+      "lifecycle_state": "active",
+      "lifecycle_transition": "migrated_r0_v2",
+      "lineage_id": "r0-s4-66e3dc8cac434da1",
+      "neural_checkpoint_sha256": "9b9e56371f3246482998c4efea4829e1e6d5aaf549bb43e1af05e471dfcb9e93",
+      "neural_fidelity": 0.9367088607594937,
+      "neural_fidelity_lcb": null,
+      "parent_lineage_ids": [],
+      "parent_rule_revision_ids": [],
+      "relations": [],
+      "rule_base_version_id": "d-s4-r0v2",
+      "rule_revision_id": "sem-s4-66e3dc8cac434da1-rev-3a001689b424aee8",
+      "seed": 4,
+      "semantic_rule_id": "sem-s4-66e3dc8cac434da1",
+      "source_candidate_id": "s4-leaf20",
+      "stability": 1.0,
+      "support": 0.00443514107437884,
+      "valid_from": 0,
+      "valid_to": null,
+      "validation_evidence_id": "d4513990c64acd1e0369c54176a731b7628235cc956813bd32d5ca4c7720ca02"
+    },
+    {
+      "class_precision": 1.0,
+      "class_precision_lcb": null,
+      "complexity": 2,
+      "conditions": [
+        {
+          "feature": "Destination Port",
+          "operator": ">",
+          "raw_threshold": 261.5001929515756,
+          "threshold": -0.40856069326400757
+        },
+        {
+          "feature": "Bwd Packet Length Std",
+          "operator": ">",
+          "raw_threshold": 1496.8329242530829,
+          "threshold": 1.3048039078712463
+        }
+      ],
+      "confidence": 1.0,
+      "consequent": 0,
+      "covered_count": 204,
+      "failure_streak": 0,
+      "generation_evidence_id": null,
+      "lifecycle_state": "active",
+      "lifecycle_transition": "migrated_r0_v2",
+      "lineage_id": "r0-s4-799502d6956c2bc7",
+      "neural_checkpoint_sha256": "9b9e56371f3246482998c4efea4829e1e6d5aaf549bb43e1af05e471dfcb9e93",
+      "neural_fidelity": 1.0,
+      "neural_fidelity_lcb": null,
+      "parent_lineage_ids": [],
+      "parent_rule_revision_ids": [],
+      "relations": [],
+      "rule_base_version_id": "d-s4-r0v2",
+      "rule_revision_id": "sem-s4-799502d6956c2bc7-rev-d1246c116ba912df",
+      "seed": 4,
+      "semantic_rule_id": "sem-s4-799502d6956c2bc7",
+      "source_candidate_id": "s4-leaf22",
+      "stability": 1.0,
+      "support": 0.00163610990808912,
+      "valid_from": 0,
+      "valid_to": null,
+      "validation_evidence_id": "d4513990c64acd1e0369c54176a731b7628235cc956813bd32d5ca4c7720ca02"
+    },
+    {
+      "class_precision": 0.9994848213093172,
+      "class_precision_lcb": null,
+      "complexity": 4,
+      "conditions": [
+        {
+          "feature": "Destination Port",
+          "operator": ">",
+          "raw_threshold": 32.00006432871669,
+          "threshold": -0.4207981824874878
+        },
+        {
+          "feature": "Bwd Packet Length Std",
+          "operator": "<=",
+          "raw_threshold": 1496.8329242530829,
+          "threshold": 1.3048039078712463
+        },
+        {
+          "feature": "Average Packet Size",
+          "operator": ">",
+          "raw_threshold": 7.366668197078525,
+          "threshold": -0.6370151937007904
+        },
+        {
+          "feature": "Idle Max",
+          "operator": "<=",
+          "raw_threshold": 51093891.87084282,
+          "threshold": 1.21871680021286
+        }
+      ],
+      "confidence": 0.9994848213093172,
+      "consequent": 0,
+      "covered_count": 104818,
+      "failure_streak": 0,
+      "generation_evidence_id": null,
+      "lifecycle_state": "active",
+      "lifecycle_transition": "migrated_r0_v2",
+      "lineage_id": "r0-s4-8a8bd24bc943a6c6",
+      "neural_checkpoint_sha256": "9b9e56371f3246482998c4efea4829e1e6d5aaf549bb43e1af05e471dfcb9e93",
+      "neural_fidelity": 0.9999141368848862,
+      "neural_fidelity_lcb": null,
+      "parent_lineage_ids": [],
+      "parent_rule_revision_ids": [],
+      "relations": [],
+      "rule_base_version_id": "d-s4-r0v2",
+      "rule_revision_id": "sem-s4-8a8bd24bc943a6c6-rev-f9196ea732f78252",
+      "seed": 4,
+      "semantic_rule_id": "sem-s4-8a8bd24bc943a6c6",
+      "source_candidate_id": "s4-leaf14",
+      "stability": 1.0,
+      "support": 0.840655727186693,
+      "valid_from": 0,
+      "valid_to": null,
+      "validation_evidence_id": "d4513990c64acd1e0369c54176a731b7628235cc956813bd32d5ca4c7720ca02"
+    },
+    {
+      "class_precision": 1.0,
+      "class_precision_lcb": null,
+      "complexity": 4,
+      "conditions": [
+        {
+          "feature": "Destination Port",
+          "operator": "<=",
+          "raw_threshold": 32.00006432871669,
+          "threshold": -0.4207981824874878
+        },
+        {
+          "feature": "Bwd Packet Length Std",
+          "operator": ">",
+          "raw_threshold": 302.066725118891,
+          "threshold": -0.11707142367959023
+        },
+        {
+          "feature": "Bwd Packet Length Std",
+          "operator": "<=",
+          "raw_threshold": 1496.8329242530829,
+          "threshold": 1.3048039078712463
+        },
+        {
+          "feature": "Average Packet Size",
+          "operator": ">",
+          "raw_threshold": 7.366668197078525,
+          "threshold": -0.6370151937007904
+        }
+      ],
+      "confidence": 1.0,
+      "consequent": 0,
+      "covered_count": 450,
+      "failure_streak": 0,
+      "generation_evidence_id": null,
+      "lifecycle_state": "active",
+      "lifecycle_transition": "migrated_r0_v2",
+      "lineage_id": "r0-s4-d921e73dd34c1c61",
+      "neural_checkpoint_sha256": "9b9e56371f3246482998c4efea4829e1e6d5aaf549bb43e1af05e471dfcb9e93",
+      "neural_fidelity": 1.0,
+      "neural_fidelity_lcb": null,
+      "parent_lineage_ids": [],
+      "parent_rule_revision_ids": [],
+      "relations": [],
+      "rule_base_version_id": "d-s4-r0v2",
+      "rule_revision_id": "sem-s4-d921e73dd34c1c61-rev-bc9779291c848208",
+      "seed": 4,
+      "semantic_rule_id": "sem-s4-d921e73dd34c1c61",
+      "source_candidate_id": "s4-leaf12",
+      "stability": 1.0,
+      "support": 0.003609065973726,
+      "valid_from": 0,
+      "valid_to": null,
+      "validation_evidence_id": "d4513990c64acd1e0369c54176a731b7628235cc956813bd32d5ca4c7720ca02"
+    },
+    {
+      "class_precision": 1.0,
+      "class_precision_lcb": null,
+      "complexity": 4,
+      "conditions": [
+        {
+          "feature": "Destination Port",
+          "operator": ">",
+          "raw_threshold": 84.00007338054002,
+          "threshold": -0.4180254191160202
+        },
+        {
+          "feature": "Bwd Packet Length Std",
+          "operator": "<=",
+          "raw_threshold": 1496.8329242530829,
+          "threshold": 1.3048039078712463
+        },
+        {
+          "feature": "Average Packet Size",
+          "operator": "<=",
+          "raw_threshold": 7.366668197078525,
+          "threshold": -0.6370151937007904
+        },
+        {
+          "feature": "Idle Max",
+          "operator": "<=",
+          "raw_threshold": 10216818.509933127,
+          "threshold": -0.10737547278404236
+        }
+      ],
+      "confidence": 0.998342770335589,
+      "consequent": 0,
+      "covered_count": 7241,
+      "failure_streak": 0,
+      "generation_evidence_id": null,
+      "lifecycle_state": "active",
+      "lifecycle_transition": "migrated_r0_v2",
+      "lineage_id": "r0-s4-de9c6dab6f02b0d4",
+      "neural_checkpoint_sha256": "9b9e56371f3246482998c4efea4829e1e6d5aaf549bb43e1af05e471dfcb9e93",
+      "neural_fidelity": 0.998342770335589,
+      "neural_fidelity_lcb": null,
+      "parent_lineage_ids": [],
+      "parent_rule_revision_ids": [],
+      "relations": [],
+      "rule_base_version_id": "d-s4-r0v2",
+      "rule_revision_id": "sem-s4-de9c6dab6f02b0d4-rev-bf226a07fc4ff5f0",
+      "seed": 4,
+      "semantic_rule_id": "sem-s4-de9c6dab6f02b0d4",
+      "source_candidate_id": "s4-leaf7",
+      "stability": 1.0,
+      "support": 0.05807388159055547,
+      "valid_from": 0,
+      "valid_to": null,
+      "validation_evidence_id": "d4513990c64acd1e0369c54176a731b7628235cc956813bd32d5ca4c7720ca02"
+    }
+  ],
+  "rule_base_version_id": "d-s4-r0v2",
+  "seed": 4,
+  "version_number": 0
+}

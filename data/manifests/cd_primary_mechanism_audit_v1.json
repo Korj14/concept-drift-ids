@@ -1,0 +1,42 @@
+{
+  "analysis_classification": "post_primary_exploratory_secondary",
+  "boundary_index": 69260,
+  "domains": [
+    "pre",
+    "post"
+  ],
+  "input_policy": "immutable_stage8_phase_c_prediction_traces_only",
+  "manifest_sha256": "b5ea68cebdbbe5c316544bcc187f2b771babbdf01b1c4dcb3373763f0e72fd87",
+  "mcc_allocation": "exact_three_player_shapley_over_stored_primary_decisions",
+  "mechanisms": [
+    "withdrawal",
+    "addition",
+    "revision"
+  ],
+  "new_model_execution": false,
+  "new_pvalue_family": false,
+  "new_rule_generation": false,
+  "parent_compact_export_manifest_sha256": "409b516d75cbc5e71d3633019008432ea6088d1d923b4e4a95570263528ed523",
+  "parent_confirmatory_aggregate_sha256": "1be77ce4be9f3faad021a3f3bfd636488e5de6aa1b2a6e7c596e48feb41bb54d",
+  "parent_evidence_commit": "c2ded83b8195b9321e715626c1f305f9627936e8",
+  "payload_sha256": "e4ce0821c2995ab2261f72ba8a41980821acb217d66f1cbf702f45804bedc1ba",
+  "primary_neural_weight": 0.5,
+  "protocol_path": "STAGE8_SYMBOLIC_VALUE_MECHANISM_AUDIT_PROTOCOL.md",
+  "row_level_mechanism_trace_inspected_before_freeze": false,
+  "schema_version": 1,
+  "seeds": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "source_commit": "bf33f2312733ae183a03ce3816ab4d31a4b3d267",
+  "status": "frozen_post_primary_exploratory_mechanism_audit_before_row_trace_inspection",
+  "stream_rows": 138530,
+  "target_arms": [
+    "d_drift",
+    "d_periodic"
+  ],
+  "threshold_refit": false
+}

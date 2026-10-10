@@ -1,0 +1,892 @@
+{
+  "comparisons": {
+    "d_drift": {
+      "domains": {
+        "post": {
+          "mcc_decomposition": {
+            "c_mcc": 0.797808413537425,
+            "coalition_mcc": {
+              "addition": 0.7983588315915645,
+              "addition+retained_authority": 0.7983588315915645,
+              "addition+retained_authority+withdrawal": 0.8462292407823774,
+              "addition+withdrawal": 0.8462292407823774,
+              "none": 0.797808413537425,
+              "retained_authority": 0.797808413537425,
+              "retained_authority+withdrawal": 0.8457122651925939,
+              "withdrawal": 0.8457122651925939
+            },
+            "shapley_mcc_contribution": {
+              "addition": 0.0005336968219614713,
+              "retained_authority": 0.0,
+              "withdrawal": 0.04788713042299086
+            },
+            "target_mcc": 0.8462292407823774,
+            "total_mcc_difference": 0.048420827244952336
+          },
+          "row_count": 69270,
+          "strata": {
+            "addition": {
+              "attack_rows": 526,
+              "benign_rows": 18,
+              "c_conflict_count": 0,
+              "c_confusion": {
+                "fn": 0,
+                "fp": 4,
+                "tn": 14,
+                "tp": 526
+              },
+              "c_error_count": 4,
+              "c_uncovered_count": 544,
+              "harm_count": 0,
+              "net_corrected_decisions": 3,
+              "rescue_count": 3,
+              "row_count": 544,
+              "row_fraction": 0.007853327558827776,
+              "same_correct_count": 540,
+              "same_wrong_count": 1,
+              "target_conflict_count": 0,
+              "target_confusion": {
+                "fn": 0,
+                "fp": 1,
+                "tn": 17,
+                "tp": 526
+              },
+              "target_error_count": 1,
+              "target_uncovered_count": 0
+            },
+            "neither_authoritative": {
+              "attack_rows": 5,
+              "benign_rows": 527,
+              "c_conflict_count": 0,
+              "c_confusion": {
+                "fn": 0,
+                "fp": 6,
+                "tn": 521,
+                "tp": 5
+              },
+              "c_error_count": 6,
+              "c_uncovered_count": 532,
+              "harm_count": 0,
+              "net_corrected_decisions": 0,
+              "rescue_count": 0,
+              "row_count": 532,
+              "row_fraction": 0.007680092392088928,
+              "same_correct_count": 526,
+              "same_wrong_count": 6,
+              "target_conflict_count": 0,
+              "target_confusion": {
+                "fn": 0,
+                "fp": 6,
+                "tn": 521,
+                "tp": 5
+              },
+              "target_error_count": 6,
+              "target_uncovered_count": 532
+            },
+            "retained_authority": {
+              "attack_rows": 2759,
+              "benign_rows": 63810,
+              "c_conflict_count": 0,
+              "c_confusion": {
+                "fn": 962,
+                "fp": 0,
+                "tn": 63810,
+                "tp": 1797
+              },
+              "c_error_count": 962,
+              "c_uncovered_count": 0,
+              "harm_count": 0,
+              "net_corrected_decisions": 0,
+              "rescue_count": 0,
+              "row_count": 66569,
+              "row_fraction": 0.9610076512198643,
+              "same_correct_count": 65607,
+              "same_wrong_count": 962,
+              "target_conflict_count": 0,
+              "target_confusion": {
+                "fn": 962,
+                "fp": 0,
+                "tn": 63810,
+                "tp": 1797
+              },
+              "target_error_count": 962,
+              "target_uncovered_count": 0
+            },
+            "withdrawal": {
+              "attack_rows": 283,
+              "benign_rows": 1342,
+              "c_conflict_count": 0,
+              "c_confusion": {
+                "fn": 283,
+                "fp": 0,
+                "tn": 1342,
+                "tp": 0
+              },
+              "c_error_count": 283,
+              "c_uncovered_count": 0,
+              "harm_count": 7,
+              "net_corrected_decisions": 276,
+              "rescue_count": 283,
+              "row_count": 1625,
+              "row_fraction": 0.023458928829219,
+              "same_correct_count": 1335,
+              "same_wrong_count": 0,
+              "target_conflict_count": 0,
+              "target_confusion": {
+                "fn": 0,
+                "fp": 7,
+                "tn": 1335,
+                "tp": 283
+              },
+              "target_error_count": 7,
+              "target_uncovered_count": 1625
+            }
+          },
+          "total_harm_count": 7,
+          "total_net_corrected_decisions": 279,
+          "total_rescue_count": 286
+        },
+        "pre": {
+          "mcc_decomposition": {
+            "c_mcc": 0.7658099226230694,
+            "coalition_mcc": {
+              "addition": 0.7658099226230694,
+              "addition+retained_authority": 0.7663609580489186,
+              "addition+retained_authority+withdrawal": 0.8173958768125066,
+              "addition+withdrawal": 0.8168748199536205,
+              "none": 0.7658099226230694,
+              "retained_authority": 0.7663609580489186,
+              "retained_authority+withdrawal": 0.8173958768125066,
+              "withdrawal": 0.8168748199536205
+            },
+            "shapley_mcc_contribution": {
+              "addition": 0.0,
+              "retained_authority": 0.0005360461423676299,
+              "withdrawal": 0.0510499080470696
+            },
+            "target_mcc": 0.8173958768125066,
+            "total_mcc_difference": 0.05158595418943723
+          },
+          "row_count": 69260,
+          "strata": {
+            "addition": {
+              "attack_rows": 360,
+              "benign_rows": 5,
+              "c_conflict_count": 0,
+              "c_confusion": {
+                "fn": 0,
+                "fp": 0,
+                "tn": 5,
+                "tp": 360
+              },
+              "c_error_count": 0,
+              "c_uncovered_count": 365,
+              "harm_count": 0,
+              "net_corrected_decisions": 0,
+              "rescue_count": 0,
+              "row_count": 365,
+              "row_fraction": 0.005269997112330349,
+              "same_correct_count": 365,
+              "same_wrong_count": 0,
+              "target_conflict_count": 0,
+              "target_confusion": {
+                "fn": 0,
+                "fp": 0,
+                "tn": 5,
+                "tp": 360
+              },
+              "target_error_count": 0,
+              "target_uncovered_count": 0
+            },
+            "neither_authoritative": {
+              "attack_rows": 207,
+              "benign_rows": 180,
+              "c_conflict_count": 0,
+              "c_confusion": {
+                "fn": 11,
+                "fp": 2,
+                "tn": 178,
+                "tp": 196
+              },
+              "c_error_count": 13,
+              "c_uncovered_count": 387,
+              "harm_count": 0,
+              "net_corrected_decisions": 0,
+              "rescue_count": 0,
+              "row_count": 387,
+              "row_fraction": 0.005587640773895466,
+              "same_correct_count": 374,
+              "same_wrong_count": 13,
+              "target_conflict_count": 0,
+              "target_confusion": {
+                "fn": 11,
+                "fp": 2,
+                "tn": 178,
+                "tp": 196
+              },
+              "target_error_count": 13,
+              "target_uncovered_count": 387
+            },
+            "retained_authority": {
+              "attack_rows": 2665,
+              "benign_rows": 65307,
+              "c_conflict_count": 0,
+              "c_confusion": {
+                "fn": 1068,
+                "fp": 0,
+                "tn": 65307,
+                "tp": 1597
+              },
+              "c_error_count": 1068,
+              "c_uncovered_count": 0,
+              "harm_count": 0,
+              "net_corrected_decisions": 3,
+              "rescue_count": 3,
+              "row_count": 67972,
+              "row_fraction": 0.9814034074501877,
+              "same_correct_count": 66904,
+              "same_wrong_count": 1065,
+              "target_conflict_count": 0,
+              "target_confusion": {
+                "fn": 1065,
+                "fp": 0,
+                "tn": 65307,
+                "tp": 1600
+              },
+              "target_error_count": 1065,
+              "target_uncovered_count": 0
+            },
+            "withdrawal": {
+              "attack_rows": 357,
+              "benign_rows": 179,
+              "c_conflict_count": 0,
+              "c_confusion": {
+                "fn": 357,
+                "fp": 0,
+                "tn": 179,
+                "tp": 0
+              },
+              "c_error_count": 357,
+              "c_uncovered_count": 0,
+              "harm_count": 1,
+              "net_corrected_decisions": 286,
+              "rescue_count": 287,
+              "row_count": 536,
+              "row_fraction": 0.007738954663586485,
+              "same_correct_count": 178,
+              "same_wrong_count": 70,
+              "target_conflict_count": 379,
+              "target_confusion": {
+                "fn": 70,
+                "fp": 1,
+                "tn": 178,
+                "tp": 287
+              },
+              "target_error_count": 71,
+              "target_uncovered_count": 157
+            }
+          },
+          "total_harm_count": 1,
+          "total_net_corrected_decisions": 289,
+          "total_rescue_count": 290
+        }
+      },
+      "final_rule_base_version_id": "d-s0-v0003",
+      "initial_rule_base_version_id": "d-s0-r0v2",
+      "phase_b_arm_manifest_sha256": "f32220cf4d5a9485ad9eb492d35d19645e8b158c9a51cd27f03999aa3e6edead",
+      "publications": [
+        {
+          "canonical_sha256": "624f203911b41244752d3fd0f461d67d1bc4a1457a26248a3c4120229048d8ab",
+          "effective_index": 30000,
+          "file_key": "version_0001",
+          "history_sha256": "13456e625ee041178afe05488faefd23a485c5d0b5b0dde08b7de5c505563df4",
+          "rule_base_version_id": "d-s0-v0001"
+        },
+        {
+          "canonical_sha256": "c59b04798c679ccadee95e74e16ec6faf11e83ae413604a31bec4c7a1f29d3e8",
+          "effective_index": 58360,
+          "file_key": "version_0002",
+          "history_sha256": "ed8947da49571c5c57b8c2fac8ccd2da8cfd6d110a7edb0df92ba8ac70af2bd0",
+          "rule_base_version_id": "d-s0-v0002"
+        },
+        {
+          "canonical_sha256": "1e132baaec07229aad1fd6e76f8ade6b9af04a75ba4148719bece0c874e7ac79",
+          "effective_index": 121112,
+          "file_key": "version_0003",
+          "history_sha256": "2ab1db336b7d1365e2e22cebae1b4e762efb3d13b9501428eb8d7befe4449a88",
+          "rule_base_version_id": "d-s0-v0003"
+        }
+      ],
+      "rule_version_context": {
+        "post": {
+          "d-s0-v0002": {
+            "authority_counts": {
+              "addition": 364,
+              "neither_authoritative": 342,
+              "retained_authority": 49783,
+              "withdrawal": 1363
+            },
+            "c_error_count": 1164,
+            "covered_count": 50147,
+            "covered_rate": 0.9671179510915683,
+            "first_origin_index": 69260,
+            "harm_count": 6,
+            "last_origin_index": 121111,
+            "net_corrected_decisions": 280,
+            "publication_effective_index": 58360,
+            "publication_timing": "pre_reference",
+            "rescue_count": 286,
+            "row_count": 51852,
+            "target_error_count": 884
+          },
+          "d-s0-v0003": {
+            "authority_counts": {
+              "addition": 180,
+              "neither_authoritative": 190,
+              "retained_authority": 16786,
+              "withdrawal": 262
+            },
+            "c_error_count": 91,
+            "covered_count": 16966,
+            "covered_rate": 0.974049833505569,
+            "first_origin_index": 121112,
+            "harm_count": 1,
+            "last_origin_index": 138529,
+            "net_corrected_decisions": -1,
+            "publication_effective_index": 121112,
+            "publication_timing": "post_reference",
+            "rescue_count": 0,
+            "row_count": 17418,
+            "target_error_count": 92
+          }
+        },
+        "pre": {
+          "d-s0-r0v2": {
+            "authority_counts": {
+              "addition": 0,
+              "neither_authoritative": 289,
+              "retained_authority": 29711,
+              "withdrawal": 0
+            },
+            "c_error_count": 791,
+            "covered_count": 29711,
+            "covered_rate": 0.9903666666666666,
+            "first_origin_index": 0,
+            "harm_count": 0,
+            "last_origin_index": 29999,
+            "net_corrected_decisions": 0,
+            "publication_effective_index": 0,
+            "publication_timing": "initial",
+            "rescue_count": 0,
+            "row_count": 30000,
+            "target_error_count": 791
+          },
+          "d-s0-v0001": {
+            "authority_counts": {
+              "addition": 260,
+              "neither_authoritative": 67,
+              "retained_authority": 27556,
+              "withdrawal": 477
+            },
+            "c_error_count": 506,
+            "covered_count": 27816,
+            "covered_rate": 0.980818053596615,
+            "first_origin_index": 30000,
+            "harm_count": 1,
+            "last_origin_index": 58359,
+            "net_corrected_decisions": 289,
+            "publication_effective_index": 30000,
+            "publication_timing": "pre_reference",
+            "rescue_count": 290,
+            "row_count": 28360,
+            "target_error_count": 217
+          },
+          "d-s0-v0002": {
+            "authority_counts": {
+              "addition": 105,
+              "neither_authoritative": 31,
+              "retained_authority": 10705,
+              "withdrawal": 59
+            },
+            "c_error_count": 141,
+            "covered_count": 10810,
+            "covered_rate": 0.9917431192660551,
+            "first_origin_index": 58360,
+            "harm_count": 0,
+            "last_origin_index": 69259,
+            "net_corrected_decisions": 0,
+            "publication_effective_index": 58360,
+            "publication_timing": "pre_reference",
+            "rescue_count": 0,
+            "row_count": 10900,
+            "target_error_count": 141
+          }
+        }
+      },
+      "target_arm": "d_drift"
+    },
+    "d_periodic": {
+      "domains": {
+        "post": {
+          "mcc_decomposition": {
+            "c_mcc": 0.797808413537425,
+            "coalition_mcc": {
+              "addition": 0.7978304104328016,
+              "addition+retained_authority": 0.7978304104328016,
+              "addition+retained_authority+withdrawal": 0.9500798521081509,
+              "addition+withdrawal": 0.9500798521081509,
+              "none": 0.797808413537425,
+              "retained_authority": 0.797808413537425,
+              "retained_authority+withdrawal": 0.9500961662479002,
+              "withdrawal": 0.9500961662479002
+            },
+            "shapley_mcc_contribution": {
+              "addition": 2.841377813644909e-06,
+              "retained_authority": 0.0,
+              "withdrawal": 0.15226859719291225
+            },
+            "target_mcc": 0.9500798521081509,
+            "total_mcc_difference": 0.1522714385707259
+          },
+          "row_count": 69270,
+          "strata": {
+            "addition": {
+              "attack_rows": 4,
+              "benign_rows": 468,
+              "c_conflict_count": 0,
+              "c_confusion": {
+                "fn": 0,
+                "fp": 4,
+                "tn": 464,
+                "tp": 4
+              },
+              "c_error_count": 4,
+              "c_uncovered_count": 472,
+              "harm_count": 4,
+              "net_corrected_decisions": 0,
+              "rescue_count": 4,
+              "row_count": 472,
+              "row_fraction": 0.006813916558394688,
+              "same_correct_count": 464,
+              "same_wrong_count": 0,
+              "target_conflict_count": 0,
+              "target_confusion": {
+                "fn": 4,
+                "fp": 0,
+                "tn": 468,
+                "tp": 0
+              },
+              "target_error_count": 4,
+              "target_uncovered_count": 0
+            },
+            "neither_authoritative": {
+              "attack_rows": 527,
+              "benign_rows": 77,
+              "c_conflict_count": 0,
+              "c_confusion": {
+                "fn": 0,
+                "fp": 6,
+                "tn": 71,
+                "tp": 527
+              },
+              "c_error_count": 6,
+              "c_uncovered_count": 604,
+              "harm_count": 0,
+              "net_corrected_decisions": 0,
+              "rescue_count": 0,
+              "row_count": 604,
+              "row_fraction": 0.008719503392522015,
+              "same_correct_count": 598,
+              "same_wrong_count": 6,
+              "target_conflict_count": 0,
+              "target_confusion": {
+                "fn": 0,
+                "fp": 6,
+                "tn": 71,
+                "tp": 527
+              },
+              "target_error_count": 6,
+              "target_uncovered_count": 604
+            },
+            "retained_authority": {
+              "attack_rows": 1879,
+              "benign_rows": 57996,
+              "c_conflict_count": 0,
+              "c_confusion": {
+                "fn": 105,
+                "fp": 0,
+                "tn": 57996,
+                "tp": 1774
+              },
+              "c_error_count": 105,
+              "c_uncovered_count": 0,
+              "harm_count": 0,
+              "net_corrected_decisions": 0,
+              "rescue_count": 0,
+              "row_count": 59875,
+              "row_fraction": 0.8643713007073769,
+              "same_correct_count": 59770,
+              "same_wrong_count": 105,
+              "target_conflict_count": 0,
+              "target_confusion": {
+                "fn": 105,
+                "fp": 0,
+                "tn": 57996,
+                "tp": 1774
+              },
+              "target_error_count": 105,
+              "target_uncovered_count": 0
+            },
+            "withdrawal": {
+              "attack_rows": 1163,
+              "benign_rows": 7156,
+              "c_conflict_count": 0,
+              "c_confusion": {
+                "fn": 1140,
+                "fp": 0,
+                "tn": 7156,
+                "tp": 23
+              },
+              "c_error_count": 1140,
+              "c_uncovered_count": 0,
+              "harm_count": 51,
+              "net_corrected_decisions": 923,
+              "rescue_count": 974,
+              "row_count": 8319,
+              "row_fraction": 0.12009527934170637,
+              "same_correct_count": 7128,
+              "same_wrong_count": 166,
+              "target_conflict_count": 23,
+              "target_confusion": {
+                "fn": 166,
+                "fp": 51,
+                "tn": 7105,
+                "tp": 997
+              },
+              "target_error_count": 217,
+              "target_uncovered_count": 8296
+            }
+          },
+          "total_harm_count": 55,
+          "total_net_corrected_decisions": 923,
+          "total_rescue_count": 978
+        },
+        "pre": {
+          "mcc_decomposition": {
+            "c_mcc": 0.7658099226230694,
+            "coalition_mcc": {
+              "addition": 0.7660014037667299,
+              "addition+retained_authority": 0.7660014037667299,
+              "addition+retained_authority+withdrawal": 0.7958653060638899,
+              "addition+withdrawal": 0.7958653060638899,
+              "none": 0.7658099226230694,
+              "retained_authority": 0.7658099226230694,
+              "retained_authority+withdrawal": 0.7956848396103637,
+              "withdrawal": 0.7956848396103637
+            },
+            "shapley_mcc_contribution": {
+              "addition": 0.00018597379859336405,
+              "retained_authority": 0.0,
+              "withdrawal": 0.029869409642227226
+            },
+            "target_mcc": 0.7958653060638899,
+            "total_mcc_difference": 0.030055383440820593
+          },
+          "row_count": 69260,
+          "strata": {
+            "addition": {
+              "attack_rows": 0,
+              "benign_rows": 61,
+              "c_conflict_count": 0,
+              "c_confusion": {
+                "fn": 0,
+                "fp": 1,
+                "tn": 60,
+                "tp": 0
+              },
+              "c_error_count": 1,
+              "c_uncovered_count": 61,
+              "harm_count": 0,
+              "net_corrected_decisions": 1,
+              "rescue_count": 1,
+              "row_count": 61,
+              "row_fraction": 0.0008807392434305515,
+              "same_correct_count": 60,
+              "same_wrong_count": 0,
+              "target_conflict_count": 0,
+              "target_confusion": {
+                "fn": 0,
+                "fp": 0,
+                "tn": 61,
+                "tp": 0
+              },
+              "target_error_count": 0,
+              "target_uncovered_count": 0
+            },
+            "neither_authoritative": {
+              "attack_rows": 567,
+              "benign_rows": 124,
+              "c_conflict_count": 0,
+              "c_confusion": {
+                "fn": 11,
+                "fp": 1,
+                "tn": 123,
+                "tp": 556
+              },
+              "c_error_count": 12,
+              "c_uncovered_count": 691,
+              "harm_count": 0,
+              "net_corrected_decisions": 0,
+              "rescue_count": 0,
+              "row_count": 691,
+              "row_fraction": 0.009976898642795265,
+              "same_correct_count": 679,
+              "same_wrong_count": 12,
+              "target_conflict_count": 0,
+              "target_confusion": {
+                "fn": 11,
+                "fp": 1,
+                "tn": 123,
+                "tp": 556
+              },
+              "target_error_count": 12,
+              "target_uncovered_count": 691
+            },
+            "retained_authority": {
+              "attack_rows": 2820,
+              "benign_rows": 64719,
+              "c_conflict_count": 0,
+              "c_confusion": {
+                "fn": 1223,
+                "fp": 0,
+                "tn": 64719,
+                "tp": 1597
+              },
+              "c_error_count": 1223,
+              "c_uncovered_count": 0,
+              "harm_count": 0,
+              "net_corrected_decisions": 0,
+              "rescue_count": 0,
+              "row_count": 67539,
+              "row_fraction": 0.9751516026566561,
+              "same_correct_count": 66316,
+              "same_wrong_count": 1223,
+              "target_conflict_count": 0,
+              "target_confusion": {
+                "fn": 1223,
+                "fp": 0,
+                "tn": 64719,
+                "tp": 1597
+              },
+              "target_error_count": 1223,
+              "target_uncovered_count": 0
+            },
+            "withdrawal": {
+              "attack_rows": 202,
+              "benign_rows": 767,
+              "c_conflict_count": 0,
+              "c_confusion": {
+                "fn": 202,
+                "fp": 0,
+                "tn": 767,
+                "tp": 0
+              },
+              "c_error_count": 202,
+              "c_uncovered_count": 0,
+              "harm_count": 25,
+              "net_corrected_decisions": 166,
+              "rescue_count": 191,
+              "row_count": 969,
+              "row_fraction": 0.013990759457118106,
+              "same_correct_count": 742,
+              "same_wrong_count": 11,
+              "target_conflict_count": 0,
+              "target_confusion": {
+                "fn": 11,
+                "fp": 25,
+                "tn": 742,
+                "tp": 191
+              },
+              "target_error_count": 36,
+              "target_uncovered_count": 969
+            }
+          },
+          "total_harm_count": 25,
+          "total_net_corrected_decisions": 167,
+          "total_rescue_count": 192
+        }
+      },
+      "final_rule_base_version_id": "d-s0-v0003",
+      "initial_rule_base_version_id": "d-s0-r0v2",
+      "phase_b_arm_manifest_sha256": "6d9d54d2da681d2ce78fd751845d70c86819d129e9afcd529e04f47dcfd7d199",
+      "publications": [
+        {
+          "canonical_sha256": "52aa2012b2bba894f0b1d64905ca7d544ace91d03f26ef1488018adb1204ff39",
+          "effective_index": 42707,
+          "file_key": "version_0001",
+          "history_sha256": "af70ff833c63ed10b12f01dfe1f0ea1d5acef174002cd96c769dda7759331e54",
+          "rule_base_version_id": "d-s0-v0001"
+        },
+        {
+          "canonical_sha256": "77f301e774907ead4f04aaad033ae004d2bbd1a0b07da918eaba7c5f1730dc18",
+          "effective_index": 70413,
+          "file_key": "version_0002",
+          "history_sha256": "ec83ee817b369b2471dc37d49bdd969ac8904dbb8fb960d761ae400f87bab5c0",
+          "rule_base_version_id": "d-s0-v0002"
+        },
+        {
+          "canonical_sha256": "7ecb0988d0deeb89c0b6c75a449b0c6919423d9d92e61bb3c6c6b6ce2ec6ce11",
+          "effective_index": 125825,
+          "file_key": "version_0003",
+          "history_sha256": "89d95eed3c8f1e988d5cc35158e86a323aac31f0c4a1ee14f5548fe84cc31b80",
+          "rule_base_version_id": "d-s0-v0003"
+        }
+      ],
+      "rule_version_context": {
+        "post": {
+          "d-s0-v0001": {
+            "authority_counts": {
+              "addition": 13,
+              "neither_authoritative": 5,
+              "retained_authority": 888,
+              "withdrawal": 247
+            },
+            "c_error_count": 45,
+            "covered_count": 901,
+            "covered_rate": 0.7814397224631396,
+            "first_origin_index": 69260,
+            "harm_count": 0,
+            "last_origin_index": 70412,
+            "net_corrected_decisions": 45,
+            "publication_effective_index": 42707,
+            "publication_timing": "pre_reference",
+            "rescue_count": 45,
+            "row_count": 1153,
+            "target_error_count": 0
+          },
+          "d-s0-v0002": {
+            "authority_counts": {
+              "addition": 308,
+              "neither_authoritative": 466,
+              "retained_authority": 46784,
+              "withdrawal": 7854
+            },
+            "c_error_count": 1146,
+            "covered_count": 47092,
+            "covered_rate": 0.8498520176135134,
+            "first_origin_index": 70413,
+            "harm_count": 48,
+            "last_origin_index": 125824,
+            "net_corrected_decisions": 824,
+            "publication_effective_index": 70413,
+            "publication_timing": "post_reference",
+            "rescue_count": 872,
+            "row_count": 55412,
+            "target_error_count": 322
+          },
+          "d-s0-v0003": {
+            "authority_counts": {
+              "addition": 151,
+              "neither_authoritative": 133,
+              "retained_authority": 12203,
+              "withdrawal": 218
+            },
+            "c_error_count": 64,
+            "covered_count": 12354,
+            "covered_rate": 0.9723730814639906,
+            "first_origin_index": 125825,
+            "harm_count": 7,
+            "last_origin_index": 138529,
+            "net_corrected_decisions": 54,
+            "publication_effective_index": 125825,
+            "publication_timing": "post_reference",
+            "rescue_count": 61,
+            "row_count": 12705,
+            "target_error_count": 10
+          }
+        },
+        "pre": {
+          "d-s0-r0v2": {
+            "authority_counts": {
+              "addition": 0,
+              "neither_authoritative": 369,
+              "retained_authority": 42338,
+              "withdrawal": 0
+            },
+            "c_error_count": 1234,
+            "covered_count": 42338,
+            "covered_rate": 0.9913597302549934,
+            "first_origin_index": 0,
+            "harm_count": 0,
+            "last_origin_index": 42706,
+            "net_corrected_decisions": 0,
+            "publication_effective_index": 0,
+            "publication_timing": "initial",
+            "rescue_count": 0,
+            "row_count": 42707,
+            "target_error_count": 1234
+          },
+          "d-s0-v0001": {
+            "authority_counts": {
+              "addition": 61,
+              "neither_authoritative": 322,
+              "retained_authority": 25201,
+              "withdrawal": 969
+            },
+            "c_error_count": 204,
+            "covered_count": 25262,
+            "covered_rate": 0.9513802583512221,
+            "first_origin_index": 42707,
+            "harm_count": 25,
+            "last_origin_index": 69259,
+            "net_corrected_decisions": 167,
+            "publication_effective_index": 42707,
+            "publication_timing": "pre_reference",
+            "rescue_count": 192,
+            "row_count": 26553,
+            "target_error_count": 37
+          }
+        }
+      },
+      "target_arm": "d_periodic"
+    }
+  },
+  "mechanism_config_manifest_sha256": "e7d1ffe85a9d8442435c279bee79103f23a468b3fdf52f6f92f427e4f6131e7d",
+  "parent_compact_export_manifest_sha256": "409b516d75cbc5e71d3633019008432ea6088d1d923b4e4a95570263528ed523",
+  "parent_evidence_commit": "c2ded83b8195b9321e715626c1f305f9627936e8",
+  "payload_sha256": "df380075a199f87b9a65b75554f6b13fe8c81bc35d4817e0a2ee490ed8d583b0",
+  "result_sha256": "ec35b9b1ab78c3550dbe51b65ab70c3d7f7b69e055b220b64876486825e0008f",
+  "schema_version": 1,
+  "seed": 0,
+  "status": "symbolic_value_mechanism_audit_complete",
+  "trace_inputs": {
+    "d_drift": {
+      "c_frozen_symbolic": {
+        "canonical_jsonl_sha256": "c23d64e10e6c3f3a4e3a20a0785aadc0941355f6ad156140b0508a22f1e38bd1",
+        "path": "c_frozen_symbolic_prediction_trace.jsonl.gz",
+        "row_count": 138530,
+        "sha256": "0e7c2645e62c6ee0abd3f0c23188761d3f91718b9dff7325426e789766db6518"
+      },
+      "d_drift": {
+        "canonical_jsonl_sha256": "87a481f7dcf14c5d9d78f0b1a18cc4f66655d82d4f4c7982df06fdecb272cc04",
+        "path": "d_drift_prediction_trace.jsonl.gz",
+        "row_count": 138530,
+        "sha256": "121a102231268f1a9374a72fe76210c2bb6eb6afd4e87ad4e5ea52cf5a29d614"
+      }
+    },
+    "d_periodic": {
+      "c_frozen_symbolic": {
+        "canonical_jsonl_sha256": "c23d64e10e6c3f3a4e3a20a0785aadc0941355f6ad156140b0508a22f1e38bd1",
+        "path": "c_frozen_symbolic_prediction_trace.jsonl.gz",
+        "row_count": 138530,
+        "sha256": "0e7c2645e62c6ee0abd3f0c23188761d3f91718b9dff7325426e789766db6518"
+      },
+      "d_periodic": {
+        "canonical_jsonl_sha256": "0d8cef8682a52e4e46594f1e822fb3868d3f35cfa2c4e51b841ab3e58385119e",
+        "path": "d_periodic_prediction_trace.jsonl.gz",
+        "row_count": 138530,
+        "sha256": "5fe35a850c4055927e654ee4693e398e25b8e024b2cad3eba487db4b63e2e060"
+      }
+    }
+  }
+}

@@ -32,7 +32,10 @@ STAGE8_COMPACT_EXPORT_MANIFEST_SHA256 = (
 STAGE8_CONFIRMATORY_AGGREGATE_SHA256 = (
     "1be77ce4be9f3faad021a3f3bfd636488e5de6aa1b2a6e7c596e48feb41bb54d"
 )
-STAGE8_PRIMARY_CONFIG_MANIFEST_SHA256 = (
+STAGE8_CORRECTED_CONFIG_MANIFEST_SHA256 = (
+    "d380fce5f9db8f0b639dc999298a263b10a10a3d02e35def226a121d098e2222"
+)
+STAGE8_UPSTREAM_ARTIFACT_CONFIG_MANIFEST_SHA256 = (
     "3e3f768b5aa32f469440bb334508f747bbf2f7f5b08d9570a7aef2dbb9cb0257"
 )
 STAGE8_CORRECTED_CONFIG_PATH = (
@@ -213,8 +216,13 @@ def _runtime_requires_matched_baseline(
 
 def _verify_stage8_parent() -> dict[str, Any]:
     corrected, corrected_hash = _canonical_manifest(STAGE8_CORRECTED_CONFIG_PATH)
-    if corrected_hash != STAGE8_PRIMARY_CONFIG_MANIFEST_SHA256:
+    if corrected_hash != STAGE8_CORRECTED_CONFIG_MANIFEST_SHA256:
         raise ValueError("Unexpected Stage-8 corrected config identity.")
+    if (
+        corrected.get("upstream_artifact_config_manifest_sha256")
+        != STAGE8_UPSTREAM_ARTIFACT_CONFIG_MANIFEST_SHA256
+    ):
+        raise ValueError("Unexpected Stage-8 upstream artifact-config identity.")
 
     compact, compact_hash = _canonical_manifest(
         STAGE8_COMPACT_ROOT / "compact_export_manifest.json"

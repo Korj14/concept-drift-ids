@@ -864,3 +864,25 @@ def test_execute_all_verifies_and_skips_completed_step(
     result = execute._run_or_verify_step(step, verify_only=False)
     assert result["action"] == "verified_existing_complete"
     assert result["result"] == {"verified": True}
+
+
+def test_execute_all_verify_only_does_not_create_missing_plan(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    monkeypatch.setattr(
+        execute,
+        "verify_stage9_config_for_execution",
+        lambda: {"manifest_sha256": "cfg", "matched_baseline_required": False},
+    )
+    monkeypatch.setattr(execute, "PLAN_PATH", tmp_path / "missing-plan.json")
+    with pytest.raises(FileNotFoundError, match="must not create"):
+        execute.execute_all_stage9(verify_only=True)
+    assert not (tmp_path / "missing-plan.json").exists()
+
+
+def test_export_source_requires_execution_plan_identity() -> None:
+    source = Path(export.__file__).read_text(encoding="utf-8")
+    assert "_load_verified_plan(config)" in source
+    assert '"execution_plan_sha256"' in source
+    assert '"execution_plan"' in source

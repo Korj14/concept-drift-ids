@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import replace
 from pathlib import Path
+import inspect
 
 import pytest
 
@@ -81,6 +82,15 @@ def test_page_hinkley_parameters_are_explicitly_frozen() -> None:
         "mode": "both",
     }
 
+
+
+def test_page_hinkley_freeze_matches_locked_river_defaults() -> None:
+    from river.drift import PageHinkley
+
+    signature = inspect.signature(PageHinkley)
+    for key, expected in config.PAGE_HINKLEY_CONFIG.items():
+        assert key in signature.parameters
+        assert signature.parameters[key].default == expected
 
 def test_runtime_difference_forces_matched_baseline() -> None:
     current = {

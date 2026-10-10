@@ -25,6 +25,7 @@ def main() -> None:
             "phase-a",
             "phase-b",
             "phase-c",
+            "execute-all",
             "export",
         ),
     )
@@ -52,6 +53,10 @@ def main() -> None:
         return
     if args.command == "phase-c":
         from concept_drift_ids.cd_stage9_phase_c import main as run
+        run()
+        return
+    if args.command == "execute-all":
+        from concept_drift_ids.cd_stage9_execute import main as run
         run()
         return
 

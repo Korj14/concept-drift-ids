@@ -24,6 +24,7 @@ from concept_drift_ids.cd_stage9_config import (
     STAGE9_OUTPUT_ROOT,
     STAGE9_RUN_ID,
     _git_output,
+    artifact_identity_context,
     verify_stage9_config_for_execution,
 )
 from concept_drift_ids.cd_stage9_shared_runner import (
@@ -120,6 +121,9 @@ def execute_stage9_phase_a_seed(condition: str, seed: int) -> dict[str, Any]:
         "boundary_metadata_passed_to_runner": False,
         "scoring_performed": False,
         "symbolic_arms_executed": False,
+        "identity_context": artifact_identity_context(
+            config, condition=condition, seed=seed
+        ),
     }
     write_json_new(seed_dir / "attempt.json", attempt)
 
@@ -173,6 +177,9 @@ def execute_stage9_phase_a_seed(condition: str, seed: int) -> dict[str, Any]:
                 "scenario": config["scenario"],
                 "input_identity": bundle.audit_identity,
                 "adaptive_runner_received_boundary_metadata": False,
+                "artifact_identity_context": artifact_identity_context(
+                    config, condition=condition, seed=seed
+                ),
             },
             initial_checkpoint_sha256=bundle.initial_checkpoint_sha256,
             preprocessing_sha256=bundle.preprocessing_state_hash,
@@ -194,6 +201,9 @@ def execute_stage9_phase_a_seed(condition: str, seed: int) -> dict[str, Any]:
                     "message": str(exc),
                     "scoring_performed": False,
                     "symbolic_arms_executed": False,
+                    "identity_context": artifact_identity_context(
+                        config, condition=condition, seed=seed
+                    ),
                 },
             )
         raise

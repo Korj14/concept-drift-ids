@@ -291,7 +291,36 @@ It may not:
 - delete or reinterpret the negative MCSC result;
 - justify retuning the symbolic gate or detector in the primary experiment.
 
-## 15. Restart rule
+## 15. Execution freeze sequence
+
+Before row-level mechanism traces are accessed:
+
+1. mechanism-audit source/protocol/tests must be committed and pass the repository Research Contract;
+2. on that exact clean source head, run:
+
+   `powershell -ExecutionPolicy Bypass -File scripts/run_primary.ps1 cd-primary-mechanism-audit --prepare-config`
+
+3. preparation may read only compact Stage-8 evidence and source/protocol identities; it must record
+   `row_level_mechanism_trace_accessed_during_preparation=false`;
+4. the generated
+   `data/manifests/cd_primary_mechanism_audit_v1.json`
+   must be the only changed path in its freeze commit;
+5. exact-head CI must pass on that config-only commit;
+6. only then execute:
+
+   `powershell -ExecutionPolicy Bypass -File scripts/run_primary.ps1 cd-primary-mechanism-audit`
+
+7. immediately verify from the same config head:
+
+   `powershell -ExecutionPolicy Bypass -File scripts/run_primary.ps1 cd-primary-mechanism-audit --verify-only`
+
+Verification must re-read and re-hash the frozen heavy traces and regenerate every seed result rather
+than trusting the saved mechanism JSON.
+
+After verified mechanism evidence is archived in Git, the exact-config execution gate is expected to
+close because HEAD will no longer equal the config-freeze commit.
+
+## 16. Restart rule
 
 A mechanism-audit failure triggers Stage-8 restart only if it exposes an underlying primary invariant
 violation, such as non-identical neural trajectories, mismatched labels/rows, trace identity failure,

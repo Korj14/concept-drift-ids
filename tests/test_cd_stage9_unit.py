@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+import inspect
 
 import pytest
 
@@ -11,6 +12,8 @@ from concept_drift_ids.cd_control_plane import (
 from concept_drift_ids.cd_shared_runner import ControlPlaneConfig, SharedTrajectory
 from concept_drift_ids import cd_stage9_config as config
 from concept_drift_ids import cd_stage9_control_plane as control
+from concept_drift_ids import cd_stage9_phase_a as phase_a
+from concept_drift_ids import cd_stage9_symbolic as symbolic
 from concept_drift_ids.cd_stage9_phase_a import condition_control_plane_config
 from concept_drift_ids.symbolic import reporting_windows
 
@@ -88,6 +91,28 @@ def test_primary_stage9_hard_error_monitor_matches_stage8_monitor() -> None:
         assert observed.signal == (
             None if expected.error is None else float(expected.error)
         )
+
+
+def test_stage9_adaptive_modules_do_not_consume_boundary_constant() -> None:
+    for module in (control, phase_a, symbolic):
+        source = inspect.getsource(module)
+        assert "PRIMARY_BOUNDARY_INDEX" not in source
+        assert '"boundary_index"' not in source
+    assert "boundary" not in inspect.signature(
+        control.Stage9SharedControlPlaneRunner.__init__
+    ).parameters
+    assert "boundary" not in inspect.signature(
+        control.Stage9SharedControlPlaneRunner.run
+    ).parameters
+
+
+def test_stage9_output_roots_are_separate_from_stage8() -> None:
+    normalized = config.STAGE9_OUTPUT_ROOT.as_posix()
+    compact = config.STAGE9_COMPACT_ROOT.as_posix()
+    assert "cd_robustness_v1" in normalized
+    assert "cd_robustness_v1" in compact
+    assert "cd_primary_v1" not in normalized
+    assert "cd_primary_v1" not in compact
 
 def test_page_hinkley_uses_explicit_river_0261_defaults() -> None:
     assert config.PAGE_HINKLEY_CONFIG == {

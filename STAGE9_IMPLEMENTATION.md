@@ -376,3 +376,34 @@ Any t-based 95% interval emitted by the robustness summary is labeled descriptiv
 dispersion conditional on the fixed scenario, not environmental/deployment-population inference.
 
 No robustness condition may be omitted, promoted or suppressed according to outcome direction.
+
+
+## 12. Explicit artifact identity context
+
+To satisfy the protocol's per-artifact provenance requirement directly, Stage-9 run-level scientific
+artifacts now carry canonical identity context instead of relying only on transitive config lookup.
+
+Per-seed contexts bind:
+
+- Stage-8 parent evidence and closure commits;
+- Stage-9 config manifest;
+- current Stage-9 runtime identity;
+- scenario-manifest identity;
+- preprocessing-state hash;
+- System-A manifest and seed-specific starting checkpoint;
+- accepted R0.v2 manifest;
+- primary control-plane config;
+- primary symbolic-operator config;
+- fusion contract;
+- frozen primary-contract hash;
+- exact Stage-9 condition-spec hash;
+- condition ID and seed.
+
+The context is recorded and verified in Group-O results, Phase-A run identity, Phase-B seed/arm
+manifests, and Phase-C seed/arm summaries.
+
+Global aggregate and compact-export manifests carry the corresponding run-global identity context.
+
+Low-level row traces, checkpoint files and maintenance streams remain transitively bound through their
+verified run/arm/seed manifests rather than duplicating the same metadata on every row or binary
+checkpoint.

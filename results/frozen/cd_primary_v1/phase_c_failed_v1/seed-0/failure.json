@@ -1,0 +1,8 @@
+{
+  "adaptive_components_received_boundary": false,
+  "exception_type": "NameError",
+  "message": "name 'read_jsonl' is not defined",
+  "payload_sha256": "57177ecb57772072f7f29a873801ed065ff7c8b8898629420fb2f7ad259ed60c",
+  "phase": "offline_boundary_aware_evaluation",
+  "seed": 0
+}

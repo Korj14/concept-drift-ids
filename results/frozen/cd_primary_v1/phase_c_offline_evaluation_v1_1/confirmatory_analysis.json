@@ -1,0 +1,113 @@
+{
+  "confirmatory_family": {
+    "endpoint_order": [
+      "E1_post_mcc_d_drift_minus_c",
+      "E2_post_mcsc_d_drift_minus_c",
+      "E3_post_mcsc_d_drift_minus_d_periodic"
+    ],
+    "familywise_alpha": 0.05,
+    "holm_adjusted_p": {
+      "E1_post_mcc_d_drift_minus_c": 0.09375,
+      "E2_post_mcsc_d_drift_minus_c": 1.0,
+      "E3_post_mcsc_d_drift_minus_d_periodic": 1.0
+    },
+    "inferential_unit": "matched_seed_within_fixed_primary_scenario",
+    "raw_sign_test_p": {
+      "E1_post_mcc_d_drift_minus_c": 0.03125,
+      "E2_post_mcsc_d_drift_minus_c": 0.96875,
+      "E3_post_mcsc_d_drift_minus_d_periodic": 0.8125
+    },
+    "summaries": {
+      "E1_post_mcc_d_drift_minus_c": {
+        "ci95_high": 0.06967145522829853,
+        "ci95_low": 0.04983185505625059,
+        "effects": [
+          0.048420827244952336,
+          0.06331523927252902,
+          0.07004419703990727,
+          0.06008466317941408,
+          0.0568933489745701
+        ],
+        "endpoint": "E1_post_mcc_d_drift_minus_c",
+        "leave_one_seed_out_mean_max": 0.06258436211660512,
+        "leave_one_seed_out_mean_min": 0.057178519667866384,
+        "maximum": 0.07004419703990727,
+        "mean": 0.05975165514227456,
+        "median": 0.06008466317941408,
+        "minimum": 0.048420827244952336,
+        "negative": 0,
+        "positive": 5,
+        "sample_sd": 0.007989117909816433,
+        "sign_test_n_effective": 5,
+        "sign_test_p_one_sided": 0.03125,
+        "sign_test_positive": 5,
+        "zero": 0
+      },
+      "E2_post_mcsc_d_drift_minus_c": {
+        "ci95_high": 0.025468654007629016,
+        "ci95_low": -0.1516747703322917,
+        "effects": [
+          0.06351582763741959,
+          -0.08916618539068899,
+          -0.11006369764087676,
+          -0.08940972771377831,
+          -0.09039150770373228
+        ],
+        "endpoint": "E2_post_mcsc_d_drift_minus_c",
+        "leave_one_seed_out_mean_max": -0.051362898292695,
+        "leave_one_seed_out_mean_min": -0.09475777961226908,
+        "maximum": 0.06351582763741959,
+        "mean": -0.06310305816233135,
+        "median": -0.08940972771377831,
+        "minimum": -0.11006369764087676,
+        "negative": 4,
+        "positive": 1,
+        "sample_sd": 0.07133307585473316,
+        "sign_test_n_effective": 5,
+        "sign_test_p_one_sided": 0.96875,
+        "sign_test_positive": 1,
+        "zero": 0
+      },
+      "E3_post_mcsc_d_drift_minus_d_periodic": {
+        "ci95_high": 0.08729262002866685,
+        "ci95_low": -0.11329147871797542,
+        "effects": [
+          0.1176347569862084,
+          -0.07861235882459505,
+          -0.03308910214945404,
+          0.005236671160365081,
+          -0.07616711389579578
+        ],
+        "endpoint": "E3_post_mcsc_d_drift_minus_d_periodic",
+        "leave_one_seed_out_mean_max": 0.003403803025330915,
+        "leave_one_seed_out_mean_min": -0.04565797592736995,
+        "maximum": 0.1176347569862084,
+        "mean": -0.012999429344654279,
+        "median": -0.03308910214945404,
+        "minimum": -0.07861235882459505,
+        "negative": 3,
+        "positive": 2,
+        "sample_sd": 0.08077229388820746,
+        "sign_test_n_effective": 5,
+        "sign_test_p_one_sided": 0.8125,
+        "sign_test_positive": 2,
+        "zero": 0
+      }
+    }
+  },
+  "inferential_scope": "stochastic_seed_variation_conditional_on_fixed_primary_scenario",
+  "lambda_one_predictive_equality_all_seeds": true,
+  "manifest_sha256": "1be77ce4be9f3faad021a3f3bfd636488e5de6aa1b2a6e7c596e48feb41bb54d",
+  "payload_sha256": "1dd1383aed8fd56109c0b92acc41ed6f78134d94c92ac846238cf219022af038",
+  "primary_config_manifest_sha256": "d380fce5f9db8f0b639dc999298a263b10a10a3d02e35def226a121d098e2222",
+  "schema_version": 1,
+  "seed_manifest_sha256": {
+    "0": "7bfcca14b122259ec6c64612fed868f084570793facf4cafe6057388b9e4c282",
+    "1": "fabdbb2855fca0b9890653db415e15c119b31a18f4b30a7a9161ec6f7a20165a",
+    "2": "d9d9a62ea839c5fa393d4412abc6076f9b9efca0ae213bcea270766e6539a618",
+    "3": "44fe3e12e4d1fbc13f81e0bbdee3424019b7cd7da27678066968114660e2cbbf",
+    "4": "ae4cd7959cf0c03287c033189b25245e357c5f3a36860e6aeb119e2a3f320278"
+  },
+  "status": "complete_prespecified_five_seed_confirmatory_family",
+  "windows_or_rules_treated_as_independent_replicates": false
+}

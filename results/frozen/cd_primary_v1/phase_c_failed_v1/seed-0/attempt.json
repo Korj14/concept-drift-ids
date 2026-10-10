@@ -1,0 +1,7 @@
+{
+  "adaptive_components_received_boundary": false,
+  "payload_sha256": "c811949b9bce0732344199ab3d6e70eb7fce0d5ffda9c8c2b36f6147c9c0c2e6",
+  "phase": "offline_boundary_aware_evaluation",
+  "primary_config_manifest_sha256": "3e3f768b5aa32f469440bb334508f747bbf2f7f5b08d9570a7aef2dbb9cb0257",
+  "seed": 0
+}

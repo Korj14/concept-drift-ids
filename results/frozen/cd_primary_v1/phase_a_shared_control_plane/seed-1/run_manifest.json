@@ -1,0 +1,228 @@
+{
+  "arm": "shared_control_plane",
+  "files": {
+    "checkpoint_chain": {
+      "path": "checkpoint_chain.jsonl",
+      "sha256": "b47b3e52780aae2a06f55c213803babb9aec89e783a7248f90148629db184a75"
+    },
+    "child_checkpoint_0001": {
+      "path": "checkpoints/seed-1-event-1.pt",
+      "sha256": "2f311a9e3f17e63fbabda3315a35f99eab3b2f90a57789f58e9b04f8e4a178ff"
+    },
+    "child_checkpoint_0002": {
+      "path": "checkpoints/seed-1-event-2.pt",
+      "sha256": "1bdc78be473df8bff7391e00e82483c58391993a6f08fd7cd873aa517fd95706"
+    },
+    "child_checkpoint_0003": {
+      "path": "checkpoints/seed-1-event-3.pt",
+      "sha256": "03dc5c7fbfe8bf775c600db2a47ae0babecbcb015c2ab1fe277c2cc719aeb592"
+    },
+    "child_checkpoint_0004": {
+      "path": "checkpoints/seed-1-event-4.pt",
+      "sha256": "cd201a391950813c199d2024509db5353b7b22000c6bd5c817e4c73984b44833"
+    },
+    "child_checkpoint_0005": {
+      "path": "checkpoints/seed-1-event-5.pt",
+      "sha256": "eb69975bf27838abf94013d85f5e94ea707fc0d075f851494459f6a4098cd442"
+    },
+    "child_checkpoint_0006": {
+      "path": "checkpoints/seed-1-event-6.pt",
+      "sha256": "c1d4bb4e4246a3d6a27bb026dbda6b71c419d4493a48cd70d48ddcb2fd412d1e"
+    },
+    "detector_observations": {
+      "path": "detector_observations.jsonl",
+      "sha256": "c985a9e0cebbd10c6ec6a297afee48a1794ecb620c3002ab50131f7814c3c1b7"
+    },
+    "events": {
+      "path": "events.jsonl",
+      "sha256": "5f792b7774c5f23d22b4af037b0a22a5bdb70787dd6a1fef9e38bc14b803ef73"
+    },
+    "input_identity": {
+      "path": "input_identity.json",
+      "sha256": "55b516867eb08d7f5bbeccd7d36c9a7cbc3fffc6269d09a1ba059194250e916e"
+    },
+    "label_schedule": {
+      "path": "label_schedule.jsonl",
+      "sha256": "0c09da6966430dc160ac1bd2e0f9602aa2c39c0006147cf8f7371971e6c07674"
+    },
+    "predictions": {
+      "path": "predictions.jsonl",
+      "sha256": "adb3f0ef167d58a60ff65eb3e5598d1f7ffd3b5bd051155fc3d24d451c6027a4"
+    },
+    "replay_transactions": {
+      "path": "replay_transactions.jsonl",
+      "sha256": "da8fc19fbdd8fa1647102347a2cf8ac30d0f6b5cf88a5911f66f244c4a058113"
+    },
+    "shared_identity": {
+      "path": "shared_identity.json",
+      "sha256": "6e34731796572c4e4e212c6bfc3bc4fe073d706d9930a054b3d3a342f11ea01e"
+    }
+  },
+  "git_commit": "bfa14b942e4a5b2fbfa8aa3c43728a7f1cd81645",
+  "initial_checkpoint_sha256": "07696c3f580645d9c96ac3e736cfb5eeaa8033f148bf64822e8ee105861cf552",
+  "manifest_sha256": "6f49566d0be8e51f6b3c8a826e87381d6426bbc013dea2f7b90631912fdb4f4c",
+  "payload_sha256": "380ef362d67ea407721217f8d70490ada4db7d0b72e2ef97793ee3dc3aa1906e",
+  "preprocessing_sha256": "4527f77220f2cf6063108a7d71d80aaa0e82099ad282ff25408a2d9ce3488b1e",
+  "protocol_hashes": {
+    "C_D_DRIFT_MONITOR_PROTOCOL.md": "4fdcf905dedf1b48cd905b3dc566cc1ab1639b894b30e18e3eb8e8cef28b2901",
+    "C_D_FINAL_ANALYSIS_REPRODUCIBILITY_PROTOCOL.md": "069ca382151d986098a3a6660468b6b71afdcd73880da6d6956f4eb77ab1c3f6",
+    "C_D_FUSION_THRESHOLD_PROTOCOL.md": "9f884462af9c6ea30dabaada92ac775f9d7ecc7618a07793392ddbb813d97700",
+    "C_D_NEURAL_ADAPTATION_PROTOCOL.md": "05a3a40652a4920f656e8f7b20eea2000d6463fb5bab703542e79ec9f2da9ce4",
+    "C_D_STREAM_TIME_CONTRACT.md": "dcdccb86352cb551b1dc01ab62c8a7860aabe7dbcb60809a5632f1f5f6f54e3d",
+    "D_SYMBOLIC_LIFECYCLE_PROTOCOL.md": "b24d41892d944df544fd899b56838c6e748c1472d3d655add47120b199abc5ce",
+    "D_TRIGGER_ABLATION_PROTOCOL.md": "391e5c4456376ef1715fb6d14816eaa271325a097db19be7540a422f57425d20",
+    "EXPERIMENT_CONTROL_REGISTER.md": "600ccbacdb347ecba6f19f26770721f842631bf053b8a9beab3da6b7f3e1b5cc",
+    "GOVERNING_SOURCES.md": "9969689b34f31a338858b002f00d833f9b000095d9029120e36d1e35998dd390",
+    "RESEARCH_DOCTRINE.md": "9b2c24c956d5b46155ce11f4cba03760db1c46ddcddcc2d8a358600234ad1f32",
+    "STAGE7_R0_V2_PORTABILITY_CORRECTION.md": "303f2cf99249b51c32a7348f2907f24d97fa77a8a7aced1143a308b5cbb8acfa",
+    "STAGE7_SYMBOLIC_IMPLEMENTATION.md": "da57ec8dce6bb9febdce6b7d49102f6b134b0e281337d3f2b6c86ea25cabd6aa",
+    "STAGE8_PRIMARY_EXECUTION_PROTOCOL.md": "e5f4fcd922e369892758439f0b1d6b68161685db2dc5722c3f1772a1ad50e1cc",
+    "STATISTICAL_ANALYSIS_PLAN.md": "e2654009bfbaa03e6e3d3a78b73badb21adc0d3112ff7bed41333e58f5735518"
+  },
+  "run_id": "cd-primary-v1-phase-a-seed-1",
+  "runtime": {
+    "locked_distributions": {
+      "Jinja2": "3.1.6",
+      "MarkupSafe": "3.0.4",
+      "Pygments": "2.21.0",
+      "cloudpickle": "3.1.2",
+      "colorama": "0.4.6",
+      "contourpy": "1.3.3",
+      "cycler": "0.12.1",
+      "filelock": "4.0.12",
+      "fonttools": "4.66.1",
+      "fsspec": "2026.9.0",
+      "iniconfig": "2.3.0",
+      "joblib": "1.6.0",
+      "kiwisolver": "1.5.1",
+      "llvmlite": "0.50.0",
+      "matplotlib": "3.11.2",
+      "mpmath": "1.3.0",
+      "narwhals": "2.26.0",
+      "networkx": "3.6.1",
+      "numba": "0.68.0",
+      "numpy": "2.4.6",
+      "packaging": "26.3",
+      "pandas": "3.0.6",
+      "pillow": "12.3.0",
+      "pluggy": "1.6.0",
+      "pyparsing": "3.3.3",
+      "pytest": "9.1.1",
+      "python-dateutil": "2.9.0.post0",
+      "river": "0.26.1",
+      "scikit-learn": "1.9.1",
+      "scipy": "1.17.1",
+      "shap": "0.51.0",
+      "six": "1.17.0",
+      "slicer": "0.0.8",
+      "sympy": "1.14.0",
+      "threadpoolctl": "3.7.0",
+      "torch": "2.14.1",
+      "tqdm": "4.70.1",
+      "typing_extensions": "4.16.0",
+      "tzdata": "2026.5"
+    },
+    "locked_distributions_sha256": "8a928d5c9df8554f88ba80edd2918f5f6a18b382697f6f561dbe87a8ed9a0052",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "processor": "AMD64 Family 25 Model 80 Stepping 0, AuthenticAMD",
+    "python_implementation": "CPython",
+    "python_version": "3.11.9",
+    "thread_environment": {
+      "MKL_NUM_THREADS": "1",
+      "NUMEXPR_NUM_THREADS": "1",
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1",
+      "PYTHONHASHSEED": "0"
+    },
+    "threadpool_info": [
+      {
+        "architecture": "Haswell",
+        "filepath": "C:\\Dev\\concept-drift-ids\\.venv\\Lib\\site-packages\\numpy.libs\\libscipy_openblas64_-63c857e738469261263c764a36be9436.dll",
+        "internal_api": "openblas",
+        "num_threads": 1,
+        "prefix": "libscipy_openblas",
+        "threading_layer": "pthreads",
+        "user_api": "blas",
+        "version": "0.3.31.188.0"
+      },
+      {
+        "filepath": "C:\\Dev\\concept-drift-ids\\.venv\\Lib\\site-packages\\torch\\lib\\libiomp5md.dll",
+        "internal_api": "openmp",
+        "num_threads": 1,
+        "prefix": "libiomp",
+        "user_api": "openmp",
+        "version": null
+      },
+      {
+        "filepath": "C:\\Dev\\concept-drift-ids\\.venv\\Lib\\site-packages\\torch\\lib\\libiompstubs5md.dll",
+        "internal_api": "openmp",
+        "num_threads": 1,
+        "prefix": "libiomp",
+        "user_api": "openmp",
+        "version": null
+      },
+      {
+        "architecture": "Haswell",
+        "filepath": "C:\\Dev\\concept-drift-ids\\.venv\\Lib\\site-packages\\scipy.libs\\libscipy_openblas-64eda39e79589aedb16f58e5547eb599.dll",
+        "internal_api": "openblas",
+        "num_threads": 1,
+        "prefix": "libscipy_openblas",
+        "threading_layer": "pthreads",
+        "user_api": "blas",
+        "version": "0.3.30"
+      },
+      {
+        "filepath": "C:\\Dev\\concept-drift-ids\\.venv\\Lib\\site-packages\\sklearn\\.libs\\vcomp140.dll",
+        "internal_api": "openmp",
+        "num_threads": 1,
+        "prefix": "vcomp",
+        "user_api": "openmp",
+        "version": null
+      }
+    ],
+    "torch_deterministic_algorithms": true,
+    "torch_num_interop_threads": 1,
+    "torch_num_threads": 1,
+    "torch_version": "2.14.1+cpu"
+  },
+  "scenario_identity": {
+    "adaptive_runner_received_boundary_metadata": false,
+    "input_identity": {
+      "feature_count": 77,
+      "identity_sha256": "1d8d9ada1ef76174089d5c3e719f5e0307af512e4945b439de7a9d5100852553",
+      "initial_checkpoint_sha256": "07696c3f580645d9c96ac3e736cfb5eeaa8033f148bf64822e8ee105861cf552",
+      "monitor_threshold": 0.9333740472793579,
+      "preprocessing_state_hash": "4527f77220f2cf6063108a7d71d80aaa0e82099ad282ff25408a2d9ce3488b1e",
+      "seed": 1,
+      "stream_layout": {
+        "boundary_index": 69260,
+        "boundary_visibility_to_adaptive_runner": false,
+        "post_reference_rows": 69270,
+        "pre_reference_rows": 69260
+      },
+      "stream_row_ids_sha256": "ab3bcc4a32a8a6172a09a3825cbbb2723ff97bcbd57984165c7d29b0d2b01327",
+      "stream_rows": 138530,
+      "training_anchor_row_ids_sha256": "a4fdaea3a5aef501c72c11a8593e80eab3ea7981adbd1c53841d3cb445708a8e",
+      "training_anchor_rows": 10000
+    },
+    "primary_config_manifest_sha256": "3e3f768b5aa32f469440bb334508f747bbf2f7f5b08d9570a7aef2dbb9cb0257",
+    "scenario": {
+      "boundary_role": "offline_scoring_and_diagnostics_only",
+      "logical_time": "zero_based_stream_row_index",
+      "manifest_canonical_sha256": "3d1c3f9775ac5c8a73053634784be513bb1714ef7f26fa9db406ccd78c4344e3",
+      "manifest_raw_sha256": "c864cd53b155ae1b29f2321d28b18562381fb6d1a77dc563b5f5eba3ec3eb82c",
+      "preprocessing_state_hash": "4527f77220f2cf6063108a7d71d80aaa0e82099ad282ff25408a2d9ce3488b1e",
+      "scenario_id": "cicids2017_sudden_benign_v1",
+      "scenario_version": 1,
+      "stream_order": [
+        "pre_drift",
+        "post_drift"
+      ],
+      "stream_rows": 138530
+    },
+    "scientific_source_tree_sha256": "c1a5878015a60fd4b204cde66e0b966721dcc1552b99d9642c80b08dc62aab5e"
+  },
+  "schema_version": 1,
+  "seed": 1,
+  "status": "complete_unscored_shared_trajectory"
+}

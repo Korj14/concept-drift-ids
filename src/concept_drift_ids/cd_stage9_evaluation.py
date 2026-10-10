@@ -559,13 +559,24 @@ def _offline_lambda_seed(condition_id: str, seed: int) -> dict[str, Any]:
         "arms": arms,
     }
     if condition_id == "O_LAMBDA_100":
-        decisions = [
-            float(arms[arm]["metrics"]["post"]["mcc"])
-            for arm in ARM_NAMES
+        if not (
+            arms["c_frozen_symbolic"]["metrics"]
+            == arms["d_drift"]["metrics"]
+            == arms["d_periodic"]["metrics"]
+        ):
+            raise ValueError("Frozen lambda=1 metrics differ across symbolic arms.")
+        parent_confirmatory = _verified_writer_json(
+            PRIMARY_COMPACT_PHASE_C_ROOT / "confirmatory_analysis.json"
+        )
+        if parent_confirmatory.get("lambda_one_predictive_equality_all_seeds") is not True:
+            raise ValueError(
+                "Frozen Stage-8 confirmatory evidence lacks row-wise lambda=1 equality."
+            )
+        payload["lambda_one_complete_metric_equality"] = True
+        payload["lambda_one_parent_rowwise_verification"] = True
+        payload["parent_confirmatory_manifest_sha256"] = parent_confirmatory[
+            "manifest_sha256"
         ]
-        if len(set(decisions)) != 1:
-            raise ValueError("Lambda=1 post MCC differs across symbolic arms.")
-        payload["lambda_one_post_mcc_equality"] = True
     payload["result_sha256"] = canonical_sha256(payload)
     write_json_new(output_dir / "result.json", payload)
     return verify_stage9_evaluation_seed(condition_id, seed)

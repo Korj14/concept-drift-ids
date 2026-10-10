@@ -1,0 +1,737 @@
+{
+  "aggregate_sha256": "6c35c026c52fa7bee93cd31bffa459b2bf605efe950f9645e6bea48f86a99acd",
+  "inference": "exploratory_descriptive_post_primary_no_new_pvalue_family",
+  "mechanism_config_manifest_sha256": "e7d1ffe85a9d8442435c279bee79103f23a468b3fdf52f6f92f427e4f6131e7d",
+  "parent_compact_export_manifest_sha256": "409b516d75cbc5e71d3633019008432ea6088d1d923b4e4a95570263528ed523",
+  "parent_evidence_commit": "c2ded83b8195b9321e715626c1f305f9627936e8",
+  "payload_sha256": "34f62766ad2096dff67dfd0d3ba95a77aa88e0dc023d14d7b652e3ca3f7ffaef",
+  "schema_version": 1,
+  "seed_count": 5,
+  "status": "symbolic_value_mechanism_aggregate_complete",
+  "targets": {
+    "d_drift": {
+      "post": {
+        "mechanisms": {
+          "addition": {
+            "net_corrected_decisions": {
+              "maximum": 68.0,
+              "mean": 15.8,
+              "median": 3.0,
+              "minimum": 2.0,
+              "negative": 0,
+              "positive": 5,
+              "sample_sd": 29.192464781172557,
+              "values": [
+                3.0,
+                4.0,
+                68.0,
+                2.0,
+                2.0
+              ],
+              "zero": 0
+            },
+            "row_fraction": {
+              "maximum": 0.015490111159231991,
+              "mean": 0.01372022520571676,
+              "median": 0.015490111159231991,
+              "minimum": 0.007853327558827776,
+              "negative": 0,
+              "positive": 5,
+              "sample_sd": 0.003321464023736633,
+              "values": [
+                0.007853327558827776,
+                0.015490111159231991,
+                0.014277464992060054,
+                0.015490111159231991,
+                0.015490111159231991
+              ],
+              "zero": 0
+            },
+            "shapley_mcc_contribution": {
+              "maximum": 0.010293923724868204,
+              "mean": 0.0024305945931962893,
+              "median": 0.0005336968219614713,
+              "minimum": 0.00032595258707968083,
+              "negative": 0,
+              "positive": 5,
+              "sample_sd": 0.004398004396862467,
+              "values": [
+                0.0005336968219614713,
+                0.0006630676443187266,
+                0.010293923724868204,
+                0.00033633218775336315,
+                0.00032595258707968083
+              ],
+              "zero": 0
+            }
+          },
+          "retained_authority": {
+            "net_corrected_decisions": {
+              "maximum": 0.0,
+              "mean": 0.0,
+              "median": 0.0,
+              "minimum": 0.0,
+              "negative": 0,
+              "positive": 0,
+              "sample_sd": 0.0,
+              "values": [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "zero": 5
+            },
+            "row_fraction": {
+              "maximum": 0.9610076512198643,
+              "mean": 0.7994225494442039,
+              "median": 0.7639959578461094,
+              "minimum": 0.7362350223762091,
+              "negative": 0,
+              "positive": 5,
+              "sample_sd": 0.09133922620775461,
+              "values": [
+                0.9610076512198643,
+                0.7718925941966219,
+                0.7362350223762091,
+                0.7639959578461094,
+                0.7639815215822146
+              ],
+              "zero": 0
+            },
+            "shapley_mcc_contribution": {
+              "maximum": 0.0,
+              "mean": 0.0,
+              "median": 0.0,
+              "minimum": 0.0,
+              "negative": 0,
+              "positive": 0,
+              "sample_sd": 0.0,
+              "values": [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "zero": 5
+            }
+          },
+          "withdrawal": {
+            "net_corrected_decisions": {
+              "maximum": 381.0,
+              "mean": 346.8,
+              "median": 358.0,
+              "minimum": 276.0,
+              "negative": 0,
+              "positive": 5,
+              "sample_sd": 42.55232073577186,
+              "values": [
+                276.0,
+                381.0,
+                377.0,
+                358.0,
+                342.0
+              ],
+              "zero": 0
+            },
+            "row_fraction": {
+              "maximum": 0.2285116211924354,
+              "mean": 0.157895192724123,
+              "median": 0.1786776382272268,
+              "minimum": 0.023458928829219,
+              "negative": 0,
+              "positive": 5,
+              "sample_sd": 0.07813558558747068,
+              "values": [
+                0.023458928829219,
+                0.17821567778258987,
+                0.2285116211924354,
+                0.1786776382272268,
+                0.18061209758914393
+              ],
+              "zero": 0
+            },
+            "shapley_mcc_contribution": {
+              "maximum": 0.0626521716282103,
+              "mean": 0.057321060549078276,
+              "median": 0.059748330991660714,
+              "minimum": 0.04788713042299086,
+              "negative": 0,
+              "positive": 5,
+              "sample_sd": 0.005696062435888214,
+              "values": [
+                0.04788713042299086,
+                0.0626521716282103,
+                0.05975027331503907,
+                0.059748330991660714,
+                0.05656739638749042
+              ],
+              "zero": 0
+            }
+          }
+        },
+        "total_mcc_difference": {
+          "maximum": 0.07004419703990727,
+          "mean": 0.05975165514227456,
+          "median": 0.06008466317941408,
+          "minimum": 0.048420827244952336,
+          "negative": 0,
+          "positive": 5,
+          "sample_sd": 0.007989117909816433,
+          "values": [
+            0.048420827244952336,
+            0.06331523927252902,
+            0.07004419703990727,
+            0.06008466317941408,
+            0.0568933489745701
+          ],
+          "zero": 0
+        }
+      },
+      "pre": {
+        "mechanisms": {
+          "addition": {
+            "net_corrected_decisions": {
+              "maximum": 1.0,
+              "mean": 0.2,
+              "median": 0.0,
+              "minimum": 0.0,
+              "negative": 0,
+              "positive": 1,
+              "sample_sd": 0.44721359549995804,
+              "values": [
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0
+              ],
+              "zero": 4
+            },
+            "row_fraction": {
+              "maximum": 0.009919145249783426,
+              "mean": 0.00459717008374242,
+              "median": 0.0025989026855327752,
+              "minimum": 0.0025989026855327752,
+              "negative": 0,
+              "positive": 5,
+              "sample_sd": 0.0031919952092146955,
+              "values": [
+                0.005269997112330349,
+                0.0025989026855327752,
+                0.009919145249783426,
+                0.0025989026855327752,
+                0.0025989026855327752
+              ],
+              "zero": 0
+            },
+            "shapley_mcc_contribution": {
+              "maximum": 0.00015904096861468764,
+              "mean": 3.180819372293753e-05,
+              "median": 0.0,
+              "minimum": 0.0,
+              "negative": 0,
+              "positive": 1,
+              "sample_sd": 7.112528340597044e-05,
+              "values": [
+                0.0,
+                0.0,
+                0.00015904096861468764,
+                0.0,
+                0.0
+              ],
+              "zero": 4
+            }
+          },
+          "retained_authority": {
+            "net_corrected_decisions": {
+              "maximum": 3.0,
+              "mean": 0.6,
+              "median": 0.0,
+              "minimum": 0.0,
+              "negative": 0,
+              "positive": 1,
+              "sample_sd": 1.3416407864998738,
+              "values": [
+                3.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "zero": 4
+            },
+            "row_fraction": {
+              "maximum": 0.9814034074501877,
+              "mean": 0.9536673404562517,
+              "median": 0.9506497256713832,
+              "minimum": 0.931302339012417,
+              "negative": 0,
+              "positive": 5,
+              "sample_sd": 0.01812407847732265,
+              "values": [
+                0.9814034074501877,
+                0.9565261334103379,
+                0.931302339012417,
+                0.9484550967369333,
+                0.9506497256713832
+              ],
+              "zero": 0
+            },
+            "shapley_mcc_contribution": {
+              "maximum": 0.0005360461423676299,
+              "mean": 0.00010720922847352598,
+              "median": 0.0,
+              "minimum": 0.0,
+              "negative": 0,
+              "positive": 1,
+              "sample_sd": 0.00023972712268211012,
+              "values": [
+                0.0005360461423676299,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "zero": 4
+            }
+          },
+          "withdrawal": {
+            "net_corrected_decisions": {
+              "maximum": 286.0,
+              "mean": 82.6,
+              "median": 17.0,
+              "minimum": 17.0,
+              "negative": 0,
+              "positive": 5,
+              "sample_sd": 116.53883472902928,
+              "values": [
+                286.0,
+                17.0,
+                76.0,
+                17.0,
+                17.0
+              ],
+              "zero": 0
+            },
+            "row_fraction": {
+              "maximum": 0.024285301761478487,
+              "mean": 0.00862258157666763,
+              "median": 0.004071614207334681,
+              "minimum": 0.003436326884204447,
+              "negative": 0,
+              "positive": 5,
+              "sample_sd": 0.008932113511630235,
+              "values": [
+                0.007738954663586485,
+                0.003436326884204447,
+                0.024285301761478487,
+                0.0035807103667340454,
+                0.004071614207334681
+              ],
+              "zero": 0
+            },
+            "shapley_mcc_contribution": {
+              "maximum": 0.0510499080470696,
+              "mean": 0.014520230007885205,
+              "median": 0.003091161230492134,
+              "minimum": 0.003071662057991475,
+              "negative": 0,
+              "positive": 5,
+              "sample_sd": 0.020807575984036764,
+              "values": [
+                0.0510499080470696,
+                0.003071662057991475,
+                0.012305123494857961,
+                0.003083295209014847,
+                0.003091161230492134
+              ],
+              "zero": 0
+            }
+          }
+        },
+        "total_mcc_difference": {
+          "maximum": 0.05158595418943723,
+          "mean": 0.014659247430081668,
+          "median": 0.0030911612304921343,
+          "minimum": 0.0030716620579914755,
+          "negative": 0,
+          "positive": 5,
+          "sample_sd": 0.021038628069712434,
+          "values": [
+            0.05158595418943723,
+            0.0030716620579914755,
+            0.012464164463472649,
+            0.003083295209014847,
+            0.0030911612304921343
+          ],
+          "zero": 0
+        }
+      }
+    },
+    "d_periodic": {
+      "post": {
+        "mechanisms": {
+          "addition": {
+            "net_corrected_decisions": {
+              "maximum": 11.0,
+              "mean": 2.4,
+              "median": 0.0,
+              "minimum": 0.0,
+              "negative": 0,
+              "positive": 2,
+              "sample_sd": 4.827007354458868,
+              "values": [
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                11.0
+              ],
+              "zero": 3
+            },
+            "row_fraction": {
+              "maximum": 0.03158654540204995,
+              "mean": 0.012146672441172224,
+              "median": 0.006813916558394688,
+              "minimum": 0.0033059044319330155,
+              "negative": 0,
+              "positive": 5,
+              "sample_sd": 0.011425651261655977,
+              "values": [
+                0.006813916558394688,
+                0.01296376497762379,
+                0.0033059044319330155,
+                0.006063230835859679,
+                0.03158654540204995
+              ],
+              "zero": 0
+            },
+            "shapley_mcc_contribution": {
+              "maximum": 0.0018252651583022248,
+              "mean": 0.00040031249959612635,
+              "median": 2.841377813644909e-06,
+              "minimum": 0.0,
+              "negative": 0,
+              "positive": 3,
+              "sample_sd": 0.0008000683495148808,
+              "values": [
+                2.841377813644909e-06,
+                0.00017345596186476203,
+                0.0,
+                0.0,
+                0.0018252651583022248
+              ],
+              "zero": 2
+            }
+          },
+          "retained_authority": {
+            "net_corrected_decisions": {
+              "maximum": 0.0,
+              "mean": -1.6,
+              "median": 0.0,
+              "minimum": -6.0,
+              "negative": 2,
+              "positive": 0,
+              "sample_sd": 2.6076809620810595,
+              "values": [
+                0.0,
+                -6.0,
+                0.0,
+                -2.0,
+                0.0
+              ],
+              "zero": 3
+            },
+            "row_fraction": {
+              "maximum": 0.9191857947163274,
+              "mean": 0.8422953659592898,
+              "median": 0.8643713007073769,
+              "minimum": 0.7410422982532121,
+              "negative": 0,
+              "positive": 5,
+              "sample_sd": 0.06919188968397308,
+              "values": [
+                0.8643713007073769,
+                0.9191857947163274,
+                0.8081131803089361,
+                0.7410422982532121,
+                0.8787642558105963
+              ],
+              "zero": 0
+            },
+            "shapley_mcc_contribution": {
+              "maximum": 0.0,
+              "mean": -0.00027707145939318185,
+              "median": 0.0,
+              "minimum": -0.001040732827513028,
+              "negative": 2,
+              "positive": 0,
+              "sample_sd": 0.0004522299954551898,
+              "values": [
+                0.0,
+                -0.001040732827513028,
+                0.0,
+                -0.00034462446945288105,
+                0.0
+              ],
+              "zero": 3
+            }
+          },
+          "withdrawal": {
+            "net_corrected_decisions": {
+              "maximum": 923.0,
+              "mean": 398.2,
+              "median": 389.0,
+              "minimum": -4.0,
+              "negative": 1,
+              "positive": 4,
+              "sample_sd": 336.0650234701612,
+              "values": [
+                923.0,
+                -4.0,
+                389.0,
+                278.0,
+                405.0
+              ],
+              "zero": 0
+            },
+            "row_fraction": {
+              "maximum": 0.20163129782012415,
+              "mean": 0.1150223762090371,
+              "median": 0.12009527934170637,
+              "minimum": 0.030922477262884364,
+              "negative": 0,
+              "positive": 5,
+              "sample_sd": 0.06846726906013385,
+              "values": [
+                0.12009527934170637,
+                0.030922477262884364,
+                0.1566334632597084,
+                0.20163129782012415,
+                0.06582936336076224
+              ],
+              "zero": 0
+            },
+            "shapley_mcc_contribution": {
+              "maximum": 0.15226859719291225,
+              "mean": 0.06530175764450868,
+              "median": 0.06194159641845176,
+              "minimum": -0.0006938224457071299,
+              "negative": 1,
+              "positive": 4,
+              "sample_sd": 0.05540075621587309,
+              "values": [
+                0.15226859719291225,
+                -0.0006938224457071299,
+                0.06194159641845176,
+                0.04669923678344551,
+                0.06629318027344105
+              ],
+              "zero": 0
+            }
+          }
+        },
+        "total_mcc_difference": {
+          "maximum": 0.1522714385707259,
+          "mean": 0.06542499868471163,
+          "median": 0.06194159641845176,
+          "minimum": -0.0015610993113553961,
+          "negative": 1,
+          "positive": 4,
+          "sample_sd": 0.05570572194279051,
+          "values": [
+            0.1522714385707259,
+            -0.0015610993113553961,
+            0.06194159641845176,
+            0.04635461231399263,
+            0.06811844543174328
+          ],
+          "zero": 0
+        }
+      },
+      "pre": {
+        "mechanisms": {
+          "addition": {
+            "net_corrected_decisions": {
+              "maximum": 1.0,
+              "mean": 0.2,
+              "median": 0.0,
+              "minimum": 0.0,
+              "negative": 0,
+              "positive": 1,
+              "sample_sd": 0.44721359549995804,
+              "values": [
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "zero": 4
+            },
+            "row_fraction": {
+              "maximum": 0.0008807392434305515,
+              "mean": 0.0001761478486861103,
+              "median": 0.0,
+              "minimum": 0.0,
+              "negative": 0,
+              "positive": 1,
+              "sample_sd": 0.00039387856375248964,
+              "values": [
+                0.0008807392434305515,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "zero": 4
+            },
+            "shapley_mcc_contribution": {
+              "maximum": 0.00018597379859336405,
+              "mean": 3.719475971867281e-05,
+              "median": 0.0,
+              "minimum": 0.0,
+              "negative": 0,
+              "positive": 1,
+              "sample_sd": 8.317001113772336e-05,
+              "values": [
+                0.00018597379859336405,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "zero": 4
+            }
+          },
+          "retained_authority": {
+            "net_corrected_decisions": {
+              "maximum": 0.0,
+              "mean": 0.0,
+              "median": 0.0,
+              "minimum": 0.0,
+              "negative": 0,
+              "positive": 0,
+              "sample_sd": 0.0,
+              "values": [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "zero": 5
+            },
+            "row_fraction": {
+              "maximum": 0.9751516026566561,
+              "mean": 0.9594917701414959,
+              "median": 0.9555876407738955,
+              "minimum": 0.9520358071036673,
+              "negative": 0,
+              "positive": 5,
+              "sample_sd": 0.009206553636615319,
+              "values": [
+                0.9751516026566561,
+                0.9599624602945424,
+                0.9555876407738955,
+                0.9520358071036673,
+                0.9547213398787179
+              ],
+              "zero": 0
+            },
+            "shapley_mcc_contribution": {
+              "maximum": 0.0,
+              "mean": 0.0,
+              "median": 0.0,
+              "minimum": 0.0,
+              "negative": 0,
+              "positive": 0,
+              "sample_sd": 0.0,
+              "values": [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "zero": 5
+            }
+          },
+          "withdrawal": {
+            "net_corrected_decisions": {
+              "maximum": 166.0,
+              "mean": 33.2,
+              "median": 0.0,
+              "minimum": 0.0,
+              "negative": 0,
+              "positive": 1,
+              "sample_sd": 74.23745685299303,
+              "values": [
+                166.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "zero": 4
+            },
+            "row_fraction": {
+              "maximum": 0.013990759457118106,
+              "mean": 0.002798151891423621,
+              "median": 0.0,
+              "minimum": 0.0,
+              "negative": 0,
+              "positive": 1,
+              "sample_sd": 0.006256857840592827,
+              "values": [
+                0.013990759457118106,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "zero": 4
+            },
+            "shapley_mcc_contribution": {
+              "maximum": 0.029869409642227226,
+              "mean": 0.005973881928445445,
+              "median": 0.0,
+              "minimum": 0.0,
+              "negative": 0,
+              "positive": 1,
+              "sample_sd": 0.01335800608156155,
+              "values": [
+                0.029869409642227226,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "zero": 4
+            }
+          }
+        },
+        "total_mcc_difference": {
+          "maximum": 0.030055383440820593,
+          "mean": 0.006011076688164118,
+          "median": 0.0,
+          "minimum": 0.0,
+          "negative": 0,
+          "positive": 1,
+          "sample_sd": 0.013441176092699274,
+          "values": [
+            0.030055383440820593,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "zero": 4
+        }
+      }
+    }
+  }
+}

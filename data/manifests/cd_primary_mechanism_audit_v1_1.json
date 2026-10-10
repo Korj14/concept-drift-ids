@@ -1,0 +1,49 @@
+{
+  "analysis_classification": "exploratory_descriptive_post_primary_no_new_pvalue_family",
+  "boundary_index": 69260,
+  "correction_protocol_path": "STAGE8_SYMBOLIC_MECHANISM_AUDIT_V1_1_CORRECTION.md",
+  "correction_protocol_sha256": "8a0c2b242cc41c62a8f294630a465df4c312381333b737d4c53c3762a60c1510",
+  "domains": [
+    "pre",
+    "post"
+  ],
+  "historical_v1": {
+    "config_manifest_sha256": "b5ea68cebdbbe5c316544bcc187f2b771babbdf01b1c4dcb3373763f0e72fd87",
+    "output_files": [],
+    "output_present": false
+  },
+  "lambda_one_decision_key": "decision_lambda_1_0",
+  "lambda_one_score_key": "fused_probability_lambda_1_0",
+  "manifest_sha256": "de33a7b09b26adefe1b5b574b958930e7f83a756aba9956ac243396a01690946",
+  "mechanisms": [
+    "withdrawal",
+    "addition",
+    "retained_authority"
+  ],
+  "parent_compact_export_manifest_sha256": "409b516d75cbc5e71d3633019008432ea6088d1d923b4e4a95570263528ed523",
+  "parent_confirmatory_aggregate_sha256": "1be77ce4be9f3faad021a3f3bfd636488e5de6aa1b2a6e7c596e48feb41bb54d",
+  "parent_evidence_commit": "c2ded83b8195b9321e715626c1f305f9627936e8",
+  "payload_sha256": "9e82e6a25255c6e0f2b219fbca8fa7b0a87efa6e42e9ec07165018698d3ac553",
+  "primary_decision_key": "decision_lambda_0_5",
+  "protocol_path": "STAGE8_SYMBOLIC_VALUE_MECHANISM_AUDIT_PROTOCOL.md",
+  "protocol_sha256": "ca9417b1a3e18ac809f40588baf51b1acfd0792937de374b1e792d526878abb8",
+  "row_level_mechanism_trace_accessed_during_v1_1_preparation": false,
+  "runner_sha256": "d319c951123bcfaac93d08c9d3c7230aada1ec8a895e7e9a3f557db19590265d",
+  "schema_version": 2,
+  "seeds": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "source_commit": "986b8604c7c3163bd53d2451390e4843985564de",
+  "source_sha256": "09fa98ec64b63ef7259ead441072a7e303f5f8eaba48c0ab4d4b2ec32aa7e49b",
+  "status": "frozen_post_primary_mechanism_v1_1_correction",
+  "stream_rows": 138530,
+  "target_arms": [
+    "d_drift",
+    "d_periodic"
+  ],
+  "tests_sha256": "97bb5d34f8b3037d6694e1f4f049a6e5d1bd63caee45a6969e4f2ce835806b5f"
+}

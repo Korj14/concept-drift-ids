@@ -24,6 +24,7 @@ from concept_drift_ids.cd_stage9_config import (
     STAGE8_COMPACT_EXPORT_MANIFEST_SHA256,
     STAGE8_COMPACT_ROOT,
     STAGE9_OUTPUT_ROOT,
+    artifact_identity_context,
     verify_stage9_config_for_execution,
 )
 from concept_drift_ids.scenario_manifest import sha256_file
@@ -232,6 +233,9 @@ def execute_offline_condition(condition: str, seed: int) -> dict[str, Any]:
             "source": "frozen_stage8_evidence",
             "adaptive_state_rerun": False,
             "threshold_refit": False,
+            "identity_context": artifact_identity_context(
+                config, condition=condition, seed=seed
+            ),
         },
     )
 
@@ -271,6 +275,9 @@ def execute_offline_condition(condition: str, seed: int) -> dict[str, Any]:
             "results": results,
             "adaptive_state_rerun": False,
             "threshold_refit": False,
+            "identity_context": artifact_identity_context(
+                config, condition=condition, seed=seed
+            ),
         }
         payload["result_sha256"] = canonical_sha256(payload)
         write_json_new(out / "result.json", payload)
@@ -286,6 +293,9 @@ def execute_offline_condition(condition: str, seed: int) -> dict[str, Any]:
                     "message": str(exc),
                     "adaptive_state_rerun": False,
                     "threshold_refit": False,
+                    "identity_context": artifact_identity_context(
+                        config, condition=condition, seed=seed
+                    ),
                 },
             )
         raise

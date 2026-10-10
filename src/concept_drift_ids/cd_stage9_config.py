@@ -794,6 +794,7 @@ def build_stage9_config() -> dict[str, Any]:
     _require_stage8_closure_ancestor()
     _require_no_stage9_outputs_before_preparation()
     parent = _verify_stage8_parent()
+    historical_v1 = _historical_v1_execution_identity()
     primary_contract = _stage8_frozen_primary_contract()
     requirements = _requirements_identity()
     runtime = _runtime_inventory()
@@ -807,7 +808,7 @@ def build_stage9_config() -> dict[str, Any]:
     payload: dict[str, Any] = {
         "schema_version": STAGE9_SCHEMA_VERSION,
         "run_id": STAGE9_RUN_ID,
-        "status": "frozen_before_stage9_robustness_access",
+        "status": "frozen_before_stage9_robustness_access_v1_1_correction",
         "prepared_from_git_commit": source_commit,
         "stage8_parent": {
             "evidence_commit": STAGE8_PARENT_EVIDENCE_COMMIT,
@@ -815,9 +816,14 @@ def build_stage9_config() -> dict[str, Any]:
             **parent,
         },
         "frozen_primary_contract": primary_contract,
+        "historical_v1_execution": historical_v1,
         "protocol": {
             "path": STAGE9_PROTOCOL_PATH,
             "sha256": source_hashes[STAGE9_PROTOCOL_PATH],
+        },
+        "correction_protocol": {
+            "path": STAGE9_CORRECTION_PROTOCOL_PATH,
+            "sha256": source_hashes[STAGE9_CORRECTION_PROTOCOL_PATH],
         },
         "scientific_source_hashes": source_hashes,
         "scientific_source_tree_sha256": canonical_sha256(source_hashes),
@@ -848,13 +854,24 @@ def build_stage9_config() -> dict[str, Any]:
             "stage8_primary_replacement_forbidden": True,
         },
         "execution": {
-            "heavy_root": "artifacts/cd_robustness_v1",
-            "compact_root": "results/frozen/cd_robustness_v1",
+            "heavy_root": "artifacts/cd_robustness_v1_1",
+            "compact_root": "results/frozen/cd_robustness_v1_1",
             "write_once": True,
             "config_only_freeze_commit_required": True,
             "exact_head_ci_required_before_adaptive_access": True,
         },
         "stage9_outcomes_accessed_during_preparation": False,
+        "correction_scope": {
+            "scientific_scope_change": False,
+            "treatment_change": False,
+            "endpoint_change": False,
+            "threshold_change": False,
+            "seed_change": False,
+            "statistical_family_change": False,
+            "implementation_change": (
+                "iterate frozen Stage-8 compact manifest files array directly"
+            ),
+        },
     }
     payload["manifest_sha256"] = canonical_sha256(payload)
     return payload
@@ -905,7 +922,7 @@ def verify_stage9_config_for_execution(
             allow_untracked_compact_output
             and lines
             and all(
-                line.startswith("?? results/frozen/cd_robustness_v1/")
+                line.startswith("?? results/frozen/cd_robustness_v1_1/")
                 for line in lines
             )
         )
@@ -936,6 +953,8 @@ def verify_stage9_config_for_execution(
         raise ValueError("Stage-8 parent evidence changed.")
     if config["frozen_primary_contract"] != _stage8_frozen_primary_contract():
         raise ValueError("Frozen Stage-8 primary treatment contract changed.")
+    if config["historical_v1_execution"] != _historical_v1_execution_identity():
+        raise ValueError("Historical Stage-9 v1 failure evidence changed.")
     current_hashes = _text_hashes(STAGE9_SOURCE_PATHS)
     if current_hashes != config["scientific_source_hashes"]:
         raise ValueError("Stage-9 scientific source identity changed.")

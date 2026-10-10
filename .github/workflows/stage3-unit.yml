@@ -69,6 +69,7 @@ jobs:
               "STAGE8_PRIMARY_RESULTS_INTERPRETATION.md",
               "Q1_ADVERSARIAL_AUDIT_REGISTER.md",
               "STAGE9_PRESPECIFIED_ROBUSTNESS_PROTOCOL.md",
+              "STAGE9_IMPLEMENTATION_FREEZE.md",
               "STAGE8_SYMBOLIC_VALUE_MECHANISM_AUDIT_PROTOCOL.md",
               "STAGE8_SYMBOLIC_MECHANISM_AUDIT_V1_1_CORRECTION.md",
               "STAGE8_SYMBOLIC_MECHANISM_AUDIT_INTERPRETATION.md",
@@ -125,6 +126,27 @@ jobs:
 
       - name: Run Stage 8 repository-only tests
         run: python -m pytest -q tests/test_cd_primary_stage8_unit.py tests/test_cd_primary_mechanism_unit.py
+
+      - name: Run Stage 9 repository-only tests
+        run: PYTHONPATH=src python -m pytest -q tests/test_cd_stage9_unit.py
+
+      - name: Verify frozen Stage 9 config repository contract
+        run: |
+          if [ -f data/manifests/cd_stage9_run_config_v1.json ]; then
+            PYTHONPATH=src python - <<'PY'
+          from concept_drift_ids.cd_stage9_config import (
+              verify_stage9_config_repository_contract,
+          )
+
+          payload = verify_stage9_config_repository_contract()
+          print(
+              "Stage-9 repository contract verified:",
+              payload["manifest_sha256"],
+          )
+          PY
+          else
+            echo "Stage-9 config not frozen yet; repository-contract execution gate not active."
+          fi
 
       - name: Run Stage 2 repository-only regression tests
         run: python -m pytest -q tests/test_sudden_benign_manifest.py -k "not provenance_files_still_match_frozen_manifest"

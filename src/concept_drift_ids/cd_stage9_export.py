@@ -73,14 +73,165 @@ def _optional_numeric_summary(values: Sequence[float]) -> dict[str, Any] | None:
     return _numeric_summary(vals) if vals else None
 
 
-def _stage8_reference(seed: int, arm: str) -> dict[str, float]:
+def _stage8_eval_payload(seed: int, arm: str) -> dict[str, Any]:
     path = (
         STAGE8_COMPACT_ROOT
         / "phase_c_offline_evaluation_v1_1"
         / f"seed-{seed}"
         / f"{arm}_evaluation.json"
     )
-    payload = _read_json(path)
+    return _read_json(path)
+
+
+def _offline_result(condition: str, seed: int) -> dict[str, Any]:
+    return _read_json(offline_output_dir(condition, seed) / "result.json")
+
+
+def _offline_lambda_metrics(
+    condition: str,
+    seed: int,
+    arm: str,
+) -> dict[str, float]:
+    result = _offline_result(condition, seed)["results"][arm]
+    post = result["metrics"]["post"]
+    explanation = _stage8_eval_payload(seed, arm)["explanation"]["post"]
+    return {
+        "mcc": float(post["mcc"]),
+        "f1": float(post["f1"]),
+        "fpr": float(post["fpr"]),
+        "mcsc": float(explanation["mcsc"]),
+        "resolved_coverage": float(explanation["resolved_coverage"]),
+    }
+
+
+def _recovery_metric_summary(
+    condition: str,
+    arm: str,
+    metric: str,
+) -> dict[str, Any]:
+    per_seed: list[dict[str, Any]] = []
+    observed_rows: list[float] = []
+    primary_observed_rows: list[float] = []
+    paired_observed_deltas: list[float] = []
+
+    for seed in PRIMARY_SEEDS:
+        alternative = _offline_result(condition, seed)["results"][arm]["recovery"][metric]
+        primary = _stage8_eval_payload(seed, arm)["primary_recovery"][metric]
+        record = {
+            "seed": seed,
+            "alternative": alternative,
+            "primary_window_5000": primary,
+        }
+        per_seed.append(record)
+
+        alt_rows = (
+            alternative.get("recovery_rows_from_boundary")
+            if alternative.get("available") is True
+            and alternative.get("right_censored") is False
+            else None
+        )
+        primary_rows = (
+            primary.get("recovery_rows_from_boundary")
+            if primary.get("available") is True
+            and primary.get("right_censored") is False
+            else None
+        )
+        if alt_rows is not None:
+            observed_rows.append(float(alt_rows))
+        if primary_rows is not None:
+            primary_observed_rows.append(float(primary_rows))
+        if alt_rows is not None and primary_rows is not None:
+            paired_observed_deltas.append(float(alt_rows) - float(primary_rows))
+
+    def _count(key: str, expected: Any) -> int:
+        return sum(
+            row["alternative"].get(key) is expected
+            for row in per_seed
+        )
+
+    return {
+        "per_seed": per_seed,
+        "available_count": _count("available", True),
+        "recovered_count": _count("recovered", True),
+        "right_censored_count": _count("right_censored", True),
+        "observed_recovery_rows_summary": _optional_numeric_summary(observed_rows),
+        "primary_5000_observed_recovery_rows_summary": _optional_numeric_summary(
+            primary_observed_rows
+        ),
+        "paired_observed_recovery_row_delta_vs_5000": _optional_numeric_summary(
+            paired_observed_deltas
+        ),
+        "paired_delta_scope": (
+            "descriptive_only_for_seeds_with_observed_recovery_under_both_windows"
+        ),
+    }
+
+
+def _offline_condition_aggregate(condition: str) -> dict[str, Any]:
+    if condition.startswith("lambda_"):
+        by_arm = {
+            arm: [
+                _offline_lambda_metrics(condition, seed, arm)
+                for seed in PRIMARY_SEEDS
+            ]
+            for arm in ARM_NAMES
+        }
+        reference = {
+            arm: [_stage8_reference(seed, arm) for seed in PRIMARY_SEEDS]
+            for arm in ARM_NAMES
+        }
+        payload: dict[str, Any] = {
+            "type": "fusion_authority_sensitivity",
+            "reference": "stage8_primary_lambda_0_5",
+            "adaptive_state_rerun": False,
+            "threshold_refit": False,
+            "arms": {},
+            "within_condition_primary_contrasts": {
+                "d_drift_minus_c": _paired_effects(
+                    by_arm["d_drift"], by_arm["c_frozen_symbolic"]
+                ),
+                "d_periodic_minus_c": _paired_effects(
+                    by_arm["d_periodic"], by_arm["c_frozen_symbolic"]
+                ),
+                "d_drift_minus_d_periodic": _paired_effects(
+                    by_arm["d_drift"], by_arm["d_periodic"]
+                ),
+            },
+        }
+        for arm in ARM_NAMES:
+            payload["arms"][arm] = {
+                metric: _numeric_summary([row[metric] for row in by_arm[arm]])
+                for metric in ("mcc", "f1", "fpr", "mcsc", "resolved_coverage")
+            }
+            payload["arms"][arm]["paired_effect_vs_primary_lambda_0_5"] = (
+                _paired_effects(by_arm[arm], reference[arm])
+            )
+        return payload
+
+    window_size = 2500 if condition == "window_2500" else 10000
+    return {
+        "type": "reporting_window_sensitivity",
+        "reference": "stage8_primary_window_5000",
+        "reporting_window_rows": window_size,
+        "adaptive_state_rerun": False,
+        "threshold_refit": False,
+        "whole_post_endpoints_changed": False,
+        "whole_post_endpoint_note": (
+            "Window size changes recovery reporting only; whole-post Stage-8 "
+            "endpoints and decisions remain immutable."
+        ),
+        "recovery": {
+            arm: {
+                metric: _recovery_metric_summary(condition, arm, metric)
+                for metric in ("mcc", "mcsc", "fpr")
+            }
+            for arm in ARM_NAMES
+        },
+    }
+
+
+def _stage8_reference(seed: int, arm: str) -> dict[str, float]:
+    payload = _stage8_eval_payload(seed, arm)
     post = payload["metrics_by_neural_weight"]["0.5"]["post"]
     explanation = payload["explanation"]["post"]
     return {
@@ -270,6 +421,9 @@ def export_stage9() -> dict[str, Any]:
         "conditions": {},
         "inference": "prespecified_robustness_no_new_confirmatory_family",
     }
+
+    for condition in OFFLINE_CONDITIONS:
+        aggregate["conditions"][condition] = _offline_condition_aggregate(condition)
 
     for condition in scored_conditions:
         by_arm = {

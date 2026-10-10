@@ -930,6 +930,22 @@ def execute_mechanism_audit() -> dict[str, Any]:
             "canonical_sha256": aggregate["aggregate_sha256"],
         }
 
+        input_traces: dict[str, Any] = {}
+        for seed in SEEDS:
+            seed_inputs: dict[str, Any] = {}
+            for target in TARGET_ARMS:
+                for arm, descriptor in seed_results[seed]["trace_inputs"][
+                    target
+                ].items():
+                    existing = seed_inputs.get(arm)
+                    normalized = dict(descriptor)
+                    if existing is not None and existing != normalized:
+                        raise AssertionError(
+                            "Repeated trace descriptor differs across comparisons."
+                        )
+                    seed_inputs[arm] = normalized
+            input_traces[str(seed)] = dict(sorted(seed_inputs.items()))
+
         manifest = {
             "schema_version": 1,
             "status": "symbolic_value_mechanism_audit_written",
@@ -943,6 +959,7 @@ def execute_mechanism_audit() -> dict[str, Any]:
                 PARENT_CONFIRMATORY_AGGREGATE_SHA256
             ),
             "protocol_path": PROTOCOL_PATH,
+            "input_traces": input_traces,
             "files": files,
         }
         manifest["manifest_sha256"] = canonical_sha256(manifest)
@@ -986,6 +1003,34 @@ def verify_mechanism_audit() -> dict[str, Any]:
             raise ValueError(f"Mechanism seed canonical hash mismatch: seed={seed}")
         if stored != descriptor["canonical_sha256"]:
             raise ValueError(f"Mechanism seed manifest binding mismatch: seed={seed}")
+
+        regenerated_seed = analyze_seed(seed)
+        regenerated_seed["mechanism_config_manifest_sha256"] = config[
+            "manifest_sha256"
+        ]
+        if canonical_sha256(regenerated_seed) != stored:
+            raise ValueError(
+                f"Mechanism seed result does not regenerate from frozen traces: seed={seed}"
+            )
+
+        expected_trace_inputs = manifest["input_traces"][str(seed)]
+        regenerated_flat: dict[str, Any] = {}
+        for target in TARGET_ARMS:
+            for arm, trace_descriptor in regenerated_seed["trace_inputs"][
+                target
+            ].items():
+                existing = regenerated_flat.get(arm)
+                normalized = dict(trace_descriptor)
+                if existing is not None and existing != normalized:
+                    raise ValueError(
+                        f"Repeated regenerated trace identity differs: seed={seed}, arm={arm}"
+                    )
+                regenerated_flat[arm] = normalized
+        if dict(sorted(regenerated_flat.items())) != expected_trace_inputs:
+            raise ValueError(
+                f"Mechanism audit input-trace binding mismatch: seed={seed}"
+            )
+
         seed_results[seed] = {**payload, "result_sha256": stored}
 
     aggregate_descriptor = manifest["files"]["aggregate"]

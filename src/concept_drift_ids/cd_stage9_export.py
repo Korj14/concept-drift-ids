@@ -65,7 +65,7 @@ def _numeric_summary(values: Sequence[float]) -> dict[str, Any]:
         "leave_one_seed_out_mean_range": (
             [min(loo), max(loo)] if loo else [avg, avg]
         ),
-        "paired_t95_interval_descriptive": interval,
+        "t95_interval_descriptive": interval,
     }
 
 

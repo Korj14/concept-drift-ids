@@ -784,23 +784,133 @@ def _paired_effect_summary(values: Sequence[float]) -> dict[str, Any]:
     return summary
 
 
-def _seed_arm_post(condition_id: str, seed: int, arm: str) -> tuple[float, float]:
+def _seed_arm_post(condition_id: str, seed: int, arm: str) -> dict[str, float]:
     output_dir = _seed_dir(condition_id, seed)
     if condition_id in OFFLINE_CONDITIONS:
         result = _verified_writer_json(output_dir / "result.json")
         if condition_id.startswith("O_WINDOW"):
-            mcc = float(result["arms"][arm]["whole_post_metrics"]["mcc"])
-            mcsc = float(result["arms"][arm]["whole_post_explanation"]["mcsc"])
+            detection = result["arms"][arm]["whole_post_metrics"]
+            explanation = result["arms"][arm]["whole_post_explanation"]
         else:
-            mcc = float(result["arms"][arm]["metrics"]["post"]["mcc"])
-            mcsc = float(result["arms"][arm]["explanation"]["post"]["mcsc"])
-        return mcc, mcsc
+            detection = result["arms"][arm]["metrics"]["post"]
+            explanation = result["arms"][arm]["explanation"]["post"]
+    else:
+        summary = _verified_writer_json(output_dir / f"{arm}_evaluation.json")
+        detection = summary["metrics"]["post"]
+        explanation = summary["explanation"]["post"]
 
-    summary = _verified_writer_json(output_dir / f"{arm}_evaluation.json")
-    return (
-        float(summary["metrics"]["post"]["mcc"]),
-        float(summary["explanation"]["post"]["mcsc"]),
+    return {
+        "mcc": float(detection["mcc"]),
+        "mcsc": float(explanation["mcsc"]),
+        "resolved_coverage": float(explanation["resolved_coverage"]),
+        "uncovered_rate": float(explanation["uncovered_rate"]),
+        "conflict_abstain_rate": float(explanation["conflict_abstain_rate"]),
+    }
+
+
+def _publication_context(publications: Sequence[Mapping[str, Any]]) -> list[dict[str, Any]]:
+    out: list[dict[str, Any]] = []
+    for item in publications:
+        effective = int(item["effective_index"])
+        out.append(
+            {
+                "effective_index": effective,
+                "rows_from_reference": effective - PRIMARY_BOUNDARY_INDEX,
+                "timing": (
+                    "pre_reference"
+                    if effective < PRIMARY_BOUNDARY_INDEX
+                    else "post_reference"
+                ),
+                "rule_base_version_id": item["rule_base_version_id"],
+            }
+        )
+    return out
+
+
+def _seed_operational_diagnostics(
+    condition_id: str,
+    seed: int,
+) -> dict[str, Any]:
+    if condition_id in OFFLINE_CONDITIONS:
+        seed_manifest = _verified_writer_json(
+            PRIMARY_COMPACT_PHASE_C_ROOT
+            / f"seed-{seed}"
+            / "phase_c_seed_manifest.json"
+        )
+        trigger = seed_manifest["trigger_diagnostics"]
+        maintenance: dict[str, Any] = {}
+        publications: dict[str, Any] = {}
+        for arm in ARM_NAMES:
+            evaluation = _verified_writer_json(
+                PRIMARY_COMPACT_PHASE_C_ROOT
+                / f"seed-{seed}"
+                / f"{arm}_evaluation.json"
+            )
+            arm_manifest = _verified_writer_json(
+                PRIMARY_COMPACT_ROOT
+                / "phase_b_symbolic_arms"
+                / f"seed-{seed}"
+                / arm
+                / "arm_manifest.json"
+            )
+            maintenance[arm] = evaluation["maintenance_summary"]
+            publications[arm] = _publication_context(arm_manifest["publications"])
+        return {
+            "source": "immutable_stage8_primary_trajectory",
+            "trigger": trigger,
+            "maintenance": maintenance,
+            "symbolic_publications": publications,
+        }
+
+    seed_manifest = _verified_writer_json(
+        _seed_dir(condition_id, seed) / "evaluation_manifest.json"
     )
+    maintenance = {}
+    publications = {}
+    for arm in ARM_NAMES:
+        evaluation = _verified_writer_json(
+            _seed_dir(condition_id, seed) / f"{arm}_evaluation.json"
+        )
+        arm_manifest = _verified_writer_json(
+            _phase_b_dir(condition_id, seed) / arm / "arm_manifest.json"
+        )
+        maintenance[arm] = evaluation["maintenance_summary"]
+        publications[arm] = _publication_context(arm_manifest["publications"])
+    return {
+        "source": (
+            "reused_stage8_shared_neural_trajectory"
+            if condition_id == "G_STATIC_GATE"
+            else "stage9_condition_specific_shared_neural_trajectory"
+        ),
+        "trigger": seed_manifest["trigger_diagnostics"],
+        "maintenance": maintenance,
+        "symbolic_publications": publications,
+    }
+
+
+def _qualitative_stage8_relation(
+    effect_summaries: Mapping[str, Mapping[str, Any]],
+) -> dict[str, Any]:
+    e1 = effect_summaries["E1_post_mcc_d_drift_minus_c"]
+    e2 = effect_summaries["E2_post_mcsc_d_drift_minus_c"]
+    e1_mean = float(e1["mean"])
+    e2_mean = float(e2["mean"])
+    if e1_mean < 0:
+        label = "predictive_direction_reversed"
+    elif e1_mean == 0:
+        label = "predictive_direction_null"
+    elif int(e1["positive"]) == len(PRIMARY_SEEDS) and e2_mean < 0:
+        label = "stage8_prediction_explanation_tradeoff_reproduced"
+    elif e1_mean > 0 and e2_mean < 0:
+        label = "stage8_tradeoff_direction_reproduced_with_weaker_seed_consistency"
+    else:
+        label = "predictive_gain_direction_reproduced_but_explanation_tradeoff_not_reproduced"
+    return {
+        "classification": label,
+        "descriptive_only": True,
+        "trigger_superiority_claim_permitted": False,
+        "stage8_primary_replaced": False,
+    }
 
 
 def build_stage9_condition_aggregate(condition_id: str) -> dict[str, Any]:
@@ -810,26 +920,47 @@ def build_stage9_condition_aggregate(condition_id: str) -> dict[str, Any]:
     for seed in PRIMARY_SEEDS:
         verify_stage9_evaluation_seed(condition_id, seed)
 
-    effects = {"E1_post_mcc_d_drift_minus_c": [], "E2_post_mcsc_d_drift_minus_c": [], "E3_post_mcsc_d_drift_minus_d_periodic": []}
-    arm_post: dict[str, dict[str, list[float]]] = {
-        arm: {"mcc": [], "mcsc": []} for arm in ARM_NAMES
+    effects = {
+        "E1_post_mcc_d_drift_minus_c": [],
+        "E2_post_mcsc_d_drift_minus_c": [],
+        "E3_post_mcsc_d_drift_minus_d_periodic": [],
     }
+    arm_post: dict[str, dict[str, list[float]]] = {
+        arm: {
+            "mcc": [],
+            "mcsc": [],
+            "resolved_coverage": [],
+            "uncovered_rate": [],
+            "conflict_abstain_rate": [],
+        }
+        for arm in ARM_NAMES
+    }
+    operational_diagnostics: dict[str, Any] = {}
     for seed in PRIMARY_SEEDS:
-        values = {}
+        values: dict[str, dict[str, float]] = {}
         for arm in ARM_NAMES:
-            mcc, mcsc = _seed_arm_post(condition_id, seed, arm)
-            arm_post[arm]["mcc"].append(mcc)
-            arm_post[arm]["mcsc"].append(mcsc)
-            values[arm] = (mcc, mcsc)
+            observed = _seed_arm_post(condition_id, seed, arm)
+            for metric, value in observed.items():
+                arm_post[arm][metric].append(value)
+            values[arm] = observed
         effects["E1_post_mcc_d_drift_minus_c"].append(
-            values["d_drift"][0] - values["c_frozen_symbolic"][0]
+            values["d_drift"]["mcc"] - values["c_frozen_symbolic"]["mcc"]
         )
         effects["E2_post_mcsc_d_drift_minus_c"].append(
-            values["d_drift"][1] - values["c_frozen_symbolic"][1]
+            values["d_drift"]["mcsc"] - values["c_frozen_symbolic"]["mcsc"]
         )
         effects["E3_post_mcsc_d_drift_minus_d_periodic"].append(
-            values["d_drift"][1] - values["d_periodic"][1]
+            values["d_drift"]["mcsc"] - values["d_periodic"]["mcsc"]
         )
+        operational_diagnostics[str(seed)] = _seed_operational_diagnostics(
+            condition_id,
+            seed,
+        )
+
+    effect_summaries = {
+        endpoint: _paired_effect_summary(values)
+        for endpoint, values in effects.items()
+    }
 
     aggregate = {
         "schema_version": 1,
@@ -845,10 +976,11 @@ def build_stage9_condition_aggregate(condition_id: str) -> dict[str, Any]:
             }
             for arm, metrics in arm_post.items()
         },
-        "effects": {
-            endpoint: _paired_effect_summary(values)
-            for endpoint, values in effects.items()
-        },
+        "effects": effect_summaries,
+        "operational_diagnostics": operational_diagnostics,
+        "qualitative_stage8_relation": _qualitative_stage8_relation(
+            effect_summaries
+        ),
     }
 
     if condition_id.startswith("O_WINDOW"):

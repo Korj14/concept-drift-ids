@@ -441,6 +441,58 @@ def _stage8_frozen_primary_contract() -> dict[str, Any]:
     }
 
 
+def _condition_spec(
+    config: Mapping[str, Any],
+    condition: str,
+) -> Mapping[str, Any]:
+    for family in ("offline", "symbolic_gate", "adaptive"):
+        specs = config["conditions"][family]
+        if condition in specs:
+            return specs[condition]
+    raise ValueError(f"Unknown frozen Stage-9 condition: {condition}")
+
+
+def artifact_identity_context(
+    config: Mapping[str, Any],
+    *,
+    condition: str,
+    seed: int,
+) -> dict[str, Any]:
+    contract = config["frozen_primary_contract"]["contract"]
+    system_a = contract["system_a"]
+    scenario = contract["scenario"]
+    return {
+        "stage8_parent_evidence_commit": config["stage8_parent"]["evidence_commit"],
+        "stage8_closure_commit": config["stage8_parent"]["closure_commit"],
+        "stage9_config_manifest_sha256": config["manifest_sha256"],
+        "condition_id": str(condition),
+        "seed": int(seed),
+        "runtime_identity_sha256": canonical_sha256(config["runtime"]),
+        "scenario_manifest_canonical_sha256": scenario[
+            "manifest_canonical_sha256"
+        ],
+        "preprocessing_state_hash": scenario["preprocessing_state_hash"],
+        "system_a_manifest_sha256": system_a["manifest_sha256"],
+        "system_a_checkpoint_sha256": system_a[
+            "checkpoint_sha256_by_seed"
+        ][str(seed)],
+        "r0_v2_manifest_sha256": contract["r0_v2"]["manifest_sha256"],
+        "primary_control_plane_config_sha256": contract[
+            "primary_control_plane"
+        ]["config_sha256"],
+        "primary_symbolic_operator_config_sha256": contract[
+            "primary_symbolic_operator"
+        ]["config_sha256"],
+        "fusion_contract_sha256": canonical_sha256(contract["fusion"]),
+        "condition_spec_sha256": canonical_sha256(
+            _condition_spec(config, condition)
+        ),
+        "frozen_primary_contract_sha256": config[
+            "frozen_primary_contract"
+        ]["contract_sha256"],
+    }
+
+
 def _condition_specs(
     *,
     baseline_required: bool,

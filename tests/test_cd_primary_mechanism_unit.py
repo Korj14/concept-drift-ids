@@ -208,6 +208,20 @@ def test_mechanism_config_contains_frozen_decomposition_identity(
     )
     monkeypatch.setattr(
         mechanism,
+        "_historical_v1_1_identity",
+        lambda: {
+            "config_manifest_sha256": (
+                mechanism.HISTORICAL_V1_1_CONFIG_MANIFEST_SHA256
+            ),
+            "config_commit": mechanism.HISTORICAL_V1_1_CONFIG_COMMIT,
+            "output_root_exists": True,
+            "output_present": False,
+            "output_files": [],
+            "failed_execution_trace_accessed": True,
+        },
+    )
+    monkeypatch.setattr(
+        mechanism,
         "_verify_parent_compact_evidence",
         lambda: {
             "compact_export_manifest_sha256": (
@@ -318,6 +332,17 @@ def test_historical_v1_config_identity_is_immutable() -> None:
     )
 
 
+
+def test_historical_v1_1_config_identity_is_immutable() -> None:
+    payload = mechanism._read_verified_json(
+        mechanism.HISTORICAL_V1_1_CONFIG_PATH
+    )
+    stored = payload.pop("manifest_sha256")
+    assert stored == mechanism.HISTORICAL_V1_1_CONFIG_MANIFEST_SHA256
+    assert mechanism.canonical_sha256(payload) == stored
+    assert payload["source_commit"] == "986b8604c7c3163bd53d2451390e4843985564de"
+    assert payload["row_level_mechanism_trace_accessed_during_v1_1_preparation"] is False
+
 def test_v1_2_uses_new_config_and_output_identities() -> None:
     assert mechanism.CONFIG_PATH.name == "cd_primary_mechanism_audit_v1_2.json"
     assert mechanism.OUTPUT_ROOT.name == "cd_primary_mechanism_v1_2"
@@ -328,7 +353,7 @@ def test_v1_2_uses_new_config_and_output_identities() -> None:
 
 
 
-def test_v1_2_preparation_allows_only_historical_v1_untracked_output(
+def test_v1_2_preparation_allows_historical_v1_and_v1_1_untracked_output(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     monkeypatch.setattr(

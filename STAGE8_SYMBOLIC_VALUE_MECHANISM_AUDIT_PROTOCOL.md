@@ -96,12 +96,13 @@ Each row belongs to one of four authority states:
 
    T exercises symbolic authority where C abstains.
 
-3. **revision**:
+3. **retained-authority**:
    - C covered = true;
    - T covered = true.
 
-   Both exercise symbolic authority. Any prediction difference is therefore associated with changed
-   symbolic score/class/rule state under the same neural trajectory and same fusion policy.
+   Both exercise symbolic authority. A prediction difference on this stratum is associated with a
+   changed realized symbolic output/state under the same neural trajectory and same fusion policy.
+   The stratum name does not assert that a formal lifecycle refinement occurred.
 
 4. **neither-authoritative**:
    - C covered = false;
@@ -144,11 +145,11 @@ For each domain and target arm, construct three disjoint switch mechanisms:
 
 - W = withdrawal rows;
 - A = addition rows;
-- R = revision rows.
+- R = retained-authority rows.
 
 Start from the complete C primary decision vector.
 
-For any subset S of {W,A,R}, create a hybrid prediction vector by replacing C decisions with the
+For any subset S of {W,A,B}, create a hybrid prediction vector by replacing C decisions with the
 target-arm stored decisions only on rows belonging to mechanisms in S.
 
 Let:
@@ -162,8 +163,8 @@ Compute the exact three-player Shapley value for W, A and R:
 Required invariants:
 
 - v(empty) = stored C MCC;
-- v({W,A,R}) = stored target-arm MCC;
-- phi_W + phi_A + phi_R = target MCC - C MCC within numerical tolerance;
+- v({W,A,B}) = stored target-arm MCC;
+- phi_W + phi_A + phi_B = target MCC - C MCC within numerical tolerance;
 - neither-authoritative rows have identical C/T primary decisions.
 
 The Shapley values are an order-independent descriptive allocation of the realized MCC difference
@@ -177,7 +178,7 @@ Because correctness is row-additive, also report exact net correction contributi
 
 - withdrawal net corrections;
 - addition net corrections;
-- revision net corrections.
+- retained-authority net corrections.
 
 This provides an interpretable companion to the nonlinear MCC Shapley decomposition.
 
@@ -216,9 +217,9 @@ mechanism claim is:
 This is a valid symbolic-lifecycle contribution but is not evidence that newly evolved rules
 themselves dominate neural-only prediction.
 
-### 10.2 Addition/revision-dominant result
+### 10.2 Addition/retained-authority-dominant result
 
-If addition and/or revision contribute materially and consistently, the defensible claim may include
+If addition and/or retained-authority rows contribute materially and consistently, the defensible claim may include
 that evolved symbolic states added useful predictive information on rows where symbolic authority was
 retained or newly established.
 

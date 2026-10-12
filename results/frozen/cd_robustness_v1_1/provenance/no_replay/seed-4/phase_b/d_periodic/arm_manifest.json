@@ -1,0 +1,84 @@
+{
+  "arm": "d_periodic",
+  "files": {
+    "final_state": {
+      "path": "final_state.json",
+      "sha256": "971bd54e7113b5271f5a33d7bcfe0179e2594c4644d4dece9e6b74aba0f2eaab"
+    },
+    "initial_state": {
+      "path": "initial_state.json",
+      "sha256": "475e79afede1dc3325dbb4e4421c5187fa9ae831c87c757bdf5524483b807a61"
+    },
+    "maintenance": {
+      "path": "maintenance.jsonl",
+      "sha256": "59e88a302ba810bdb7550c08c12d7be0f4b9f78fdc5e89d76d887b79145a159c"
+    },
+    "version_0001": {
+      "path": "versions/0001-d-s4-v0001.json",
+      "sha256": "030bea8505003a334295ca2c052dd4e5ce40e66e46a90302fe1b4f8740eb234b"
+    }
+  },
+  "final_history_sha256": "3bbe94b4f19de7c019698c14dd2e7ef1290163c64c08302ea492dd67f3d74cb4",
+  "final_rule_base_sha256": "98b512aa3ce15da9c9c24fe815431392860f41ca6af057a046560eed18d4c9fc",
+  "final_rule_base_version_id": "d-s4-v0001",
+  "identity_context": {
+    "condition_id": "no_replay",
+    "condition_spec_sha256": "e61011f38152838c67161ebe895b8e4457b3b3a4d08cc48f385845379ad90d78",
+    "frozen_primary_contract_sha256": "4bd0d2d2cb3b33b12286f19fcbae0c823e67c50a9c690f797d07a333fc6c9dc7",
+    "fusion_contract_sha256": "acb2ba17bad35700cfc2f6d539548c31cf86f944eb1aa2aea566828278bbde69",
+    "preprocessing_state_hash": "4527f77220f2cf6063108a7d71d80aaa0e82099ad282ff25408a2d9ce3488b1e",
+    "primary_control_plane_config_sha256": "7491733fe4bb7524eb38960b78067df44081fd4513055664985f3fd0d9841384",
+    "primary_symbolic_operator_config_sha256": "197360bb33718f32d7aebeb60b5e5fe3ba0619941c4a38a4f4c6ba3b529b7532",
+    "r0_v2_manifest_sha256": "131027d2f136494eb388183f18dcb7eb0e9d7e9fe786f22dba25f4e1624c1483",
+    "runtime_identity_sha256": "2c8058035fcb66ad7fa99559de9a8611f81a954f4f9055a832b59ec01d3bfa3b",
+    "scenario_manifest_canonical_sha256": "3d1c3f9775ac5c8a73053634784be513bb1714ef7f26fa9db406ccd78c4344e3",
+    "seed": 4,
+    "stage8_closure_commit": "f8a424389056a048a6ad6be0b744bf6d12b69df2",
+    "stage8_parent_evidence_commit": "c2ded83b8195b9321e715626c1f305f9627936e8",
+    "stage9_config_manifest_sha256": "b72fc0dce0df46974737cd0c33714cc17b23f31ce188e92d318b1787c0ae027e",
+    "system_a_checkpoint_sha256": "9b9e56371f3246482998c4efea4829e1e6d5aaf549bb43e1af05e471dfcb9e93",
+    "system_a_manifest_sha256": "42004b5ed100b690023b9998bdc959fac41ab947b996fb7c58e44cee5e8dc6de"
+  },
+  "initial_rule_base_sha256": "b76ad8338ebd840f9820a290365c1e086cbfffd494560c0e27b36413e7aa7a76",
+  "initial_rule_base_version_id": "d-s4-r0v2",
+  "maintenance_summary": {
+    "candidate_count": 35,
+    "censored_or_blocked_count": 3,
+    "completed_validation_count": 1,
+    "compute_seconds": 47.9433967,
+    "compute_seconds_per_opportunity": 11.985849175,
+    "compute_seconds_per_publication": 47.9433967,
+    "lifecycle_decision_counts": {
+      "candidate_rejected_quality_gate": 1,
+      "candidate_rejected_redundant": 3,
+      "demoted": 3,
+      "merge_consolidation": 1,
+      "no_refinement_gain": 1,
+      "refined": 2,
+      "retained": 3
+    },
+    "lifecycle_seconds": 0.3297052,
+    "mean_validation_wait_rows": 19463.0,
+    "no_op_count": 0,
+    "opportunity_count": 4,
+    "publication_count": 1,
+    "publication_per_opportunity": 0.25,
+    "shap_seconds": 47.543454600000004,
+    "surrogate_seconds": 0.0702369
+  },
+  "manifest_sha256": "44f543a908dc872b9d6c3fc38b16b32fd3f0bae81346883f2b6d4b9edae1e5c3",
+  "operator_config_sha256": "197360bb33718f32d7aebeb60b5e5fe3ba0619941c4a38a4f4c6ba3b529b7532",
+  "payload_sha256": "a2a39fa0605f12603b5e8bccdb6c4a52220b0dd1f5e69a6c1f0ba0020cb65bb2",
+  "publications": [
+    {
+      "canonical_sha256": "98b512aa3ce15da9c9c24fe815431392860f41ca6af057a046560eed18d4c9fc",
+      "effective_index": 70413,
+      "file_key": "version_0001",
+      "history_sha256": "3bbe94b4f19de7c019698c14dd2e7ef1290163c64c08302ea492dd67f3d74cb4",
+      "rule_base_version_id": "d-s4-v0001"
+    }
+  ],
+  "schema_version": 1,
+  "seed": 4,
+  "shared_identity_sha256": "8bff9841c50eabba07fa7abb3e51efd6240b02b81c29ec21773ef6688909eee8"
+}

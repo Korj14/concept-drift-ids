@@ -1,0 +1,17 @@
+{
+  "config_sha256": "3ecc7dd47eddbb2c5bfbc0823793a155f7c50d43514ec32be3b2d0c00571e452",
+  "final_checkpoint_sha256": "44562e90e47dc4cf2998d22b3941363297bea41e0a56b9ad0dc76d540e0ea38a",
+  "final_state_sha256": "504232269452c4aab002a6559e15a14507a6eede3bf86f7632137b48862d7767",
+  "payload_sha256": "6c77f100d37138784857101d518425b28907769a8de568e9402ef0672dc237f8",
+  "pending_labels": 5000,
+  "pending_neural_transaction": null,
+  "schema_version": 1,
+  "seed": 0,
+  "shared_identity": {
+    "checkpoint_chain_sha256": "31909912d593e94e5a5275a954d5c43caea7cac07126c38ca3aada92ac3ba52c",
+    "detector_events_sha256": "da60f3da6a5b8c4ac03b64115930f1391f85538c5ee1e1ad97182dfad3d952ab",
+    "identity_sha256": "db07c52bfc8606acf4207ca1b4a6d9b418c48a5ff44426c2aa3dbaa147b0e7f9",
+    "label_schedule_sha256": "e2bd5ece6aa633dd1609a298b2c4067f3b39cfe51a56fc02def9a210daaf6690",
+    "replay_evidence_sha256": "3dfd7f0a26668350a76a550117e36e60d0bc52b3562d388b8466ba22b016930f"
+  }
+}

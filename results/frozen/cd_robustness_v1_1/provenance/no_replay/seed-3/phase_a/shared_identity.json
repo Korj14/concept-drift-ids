@@ -1,0 +1,22 @@
+{
+  "config_sha256": "4030133dfc44564bab9dc491b0cebe70b089398c39c1f9883759e4afbab61c76",
+  "final_checkpoint_sha256": "d8b5a8886acd2396176fb7814d53f859238738248a86ff1cf433adcf508c0609",
+  "final_state_sha256": "e66901d49268e9f847eb852df8f304ecf0272a89c8895c87adee6579ae667c2a",
+  "payload_sha256": "16d2fb53aeab04606d7ce0544d45fddfaf7f612057f1a04d99194bf2e13a6fba",
+  "pending_labels": 5000,
+  "pending_neural_transaction": {
+    "confirmation_clock": 133775,
+    "event_id": 8,
+    "parent_checkpoint_sha256": "d8b5a8886acd2396176fb7814d53f859238738248a86ff1cf433adcf508c0609",
+    "parent_state_sha256": "e66901d49268e9f847eb852df8f304ecf0272a89c8895c87adee6579ae667c2a"
+  },
+  "schema_version": 1,
+  "seed": 3,
+  "shared_identity": {
+    "checkpoint_chain_sha256": "0a92e52498016097e896df31bab3c67660fb76c9c3f27cbb9ebcee9cd2cd3b18",
+    "detector_events_sha256": "0c1fd6bbc0cfa328c216ca5c8e824f4ec0bef93cc8098d0dd7902be61b77d756",
+    "identity_sha256": "9556135ce5bc56536e5f20b549fe3fd2f79734cc81f50f8e1163f4a9a31ec6e1",
+    "label_schedule_sha256": "e2bd5ece6aa633dd1609a298b2c4067f3b39cfe51a56fc02def9a210daaf6690",
+    "replay_evidence_sha256": "005075532252b9f179404ea7e82bd3686fac8d934d82071d0a6c9e283c85cad0"
+  }
+}

@@ -1,0 +1,84 @@
+{
+  "arm": "d_periodic",
+  "files": {
+    "final_state": {
+      "path": "final_state.json",
+      "sha256": "e89c0cf594e6a9e15a903e7756ce891de6b30c31c3c6db85a310d3ecfd692626"
+    },
+    "initial_state": {
+      "path": "initial_state.json",
+      "sha256": "8f5dac1d1ed1e225a97f080c65dfe70d4a0c00bf61dbac9528b31a7e8cc39f63"
+    },
+    "maintenance": {
+      "path": "maintenance.jsonl",
+      "sha256": "90f8c02acf42343bfc7cdfe2cfbba84636b495f24e4126943f02051af632b449"
+    },
+    "version_0001": {
+      "path": "versions/0001-d-s2-v0001.json",
+      "sha256": "3b350ff47039c3a4930ac6aa1a7a22255a0d243b193f2f6761e20116a50e983d"
+    }
+  },
+  "final_history_sha256": "dd07fb57d7a9a1d8c80b35d5bb4b738a234e915cb6a511edfdea892ba3122605",
+  "final_rule_base_sha256": "fb587092b3b23952724070c6dd042601a47e27768156cff65b8e735c9954eb36",
+  "final_rule_base_version_id": "d-s2-v0001",
+  "identity_context": {
+    "condition_id": "no_replay",
+    "condition_spec_sha256": "e61011f38152838c67161ebe895b8e4457b3b3a4d08cc48f385845379ad90d78",
+    "frozen_primary_contract_sha256": "4bd0d2d2cb3b33b12286f19fcbae0c823e67c50a9c690f797d07a333fc6c9dc7",
+    "fusion_contract_sha256": "acb2ba17bad35700cfc2f6d539548c31cf86f944eb1aa2aea566828278bbde69",
+    "preprocessing_state_hash": "4527f77220f2cf6063108a7d71d80aaa0e82099ad282ff25408a2d9ce3488b1e",
+    "primary_control_plane_config_sha256": "7491733fe4bb7524eb38960b78067df44081fd4513055664985f3fd0d9841384",
+    "primary_symbolic_operator_config_sha256": "197360bb33718f32d7aebeb60b5e5fe3ba0619941c4a38a4f4c6ba3b529b7532",
+    "r0_v2_manifest_sha256": "131027d2f136494eb388183f18dcb7eb0e9d7e9fe786f22dba25f4e1624c1483",
+    "runtime_identity_sha256": "2c8058035fcb66ad7fa99559de9a8611f81a954f4f9055a832b59ec01d3bfa3b",
+    "scenario_manifest_canonical_sha256": "3d1c3f9775ac5c8a73053634784be513bb1714ef7f26fa9db406ccd78c4344e3",
+    "seed": 2,
+    "stage8_closure_commit": "f8a424389056a048a6ad6be0b744bf6d12b69df2",
+    "stage8_parent_evidence_commit": "c2ded83b8195b9321e715626c1f305f9627936e8",
+    "stage9_config_manifest_sha256": "b72fc0dce0df46974737cd0c33714cc17b23f31ce188e92d318b1787c0ae027e",
+    "system_a_checkpoint_sha256": "7630514cf409256bd2bbe27eca59f881acb238be698b5fdb1ee12bca8e402491",
+    "system_a_manifest_sha256": "42004b5ed100b690023b9998bdc959fac41ab947b996fb7c58e44cee5e8dc6de"
+  },
+  "initial_rule_base_sha256": "c2451d8153862285a0fe60f88c6b9258101330dd28550b8ff906f73329dba08f",
+  "initial_rule_base_version_id": "d-s2-r0v2",
+  "maintenance_summary": {
+    "candidate_count": 36,
+    "censored_or_blocked_count": 3,
+    "completed_validation_count": 1,
+    "compute_seconds": 47.9900296,
+    "compute_seconds_per_opportunity": 11.9975074,
+    "compute_seconds_per_publication": 47.9900296,
+    "lifecycle_decision_counts": {
+      "candidate_rejected_quality_gate": 2,
+      "candidate_rejected_redundant": 3,
+      "demoted": 4,
+      "merge_consolidation": 1,
+      "new_addition": 1,
+      "refined": 3,
+      "retained": 3
+    },
+    "lifecycle_seconds": 0.4902516,
+    "mean_validation_wait_rows": 26083.0,
+    "no_op_count": 0,
+    "opportunity_count": 4,
+    "publication_count": 1,
+    "publication_per_opportunity": 0.25,
+    "shap_seconds": 47.4309904,
+    "surrogate_seconds": 0.0687876
+  },
+  "manifest_sha256": "44bdaa81d22ab77f4d9fb3671ac492cf3814e08217b05c25cd428bdd896834f0",
+  "operator_config_sha256": "197360bb33718f32d7aebeb60b5e5fe3ba0619941c4a38a4f4c6ba3b529b7532",
+  "payload_sha256": "817a1c083c15d1c6e9a9a949ddb4ff44f9431d28a32802fee4f412870be88119",
+  "publications": [
+    {
+      "canonical_sha256": "fb587092b3b23952724070c6dd042601a47e27768156cff65b8e735c9954eb36",
+      "effective_index": 70413,
+      "file_key": "version_0001",
+      "history_sha256": "dd07fb57d7a9a1d8c80b35d5bb4b738a234e915cb6a511edfdea892ba3122605",
+      "rule_base_version_id": "d-s2-v0001"
+    }
+  ],
+  "schema_version": 1,
+  "seed": 2,
+  "shared_identity_sha256": "b14fd62b74c6c36a8114b6dd6bd072f77c61b7d84bd241284ebcfaf744f248c5"
+}

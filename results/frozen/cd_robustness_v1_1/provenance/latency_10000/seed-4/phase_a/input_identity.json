@@ -1,0 +1,19 @@
+{
+  "feature_count": 77,
+  "identity_sha256": "f98708bbf4cc37c6efe0c8a02a91db289ef2d05049574665e6ccbc5907bb9bcb",
+  "initial_checkpoint_sha256": "9b9e56371f3246482998c4efea4829e1e6d5aaf549bb43e1af05e471dfcb9e93",
+  "monitor_threshold": 0.954619288444519,
+  "payload_sha256": "97b69258db9865e42d816f5fb328e5d05751e8b25cdc0d91c51aea740dcdfb7a",
+  "preprocessing_state_hash": "4527f77220f2cf6063108a7d71d80aaa0e82099ad282ff25408a2d9ce3488b1e",
+  "seed": 4,
+  "stream_layout": {
+    "boundary_index": 69260,
+    "boundary_visibility_to_adaptive_runner": false,
+    "post_reference_rows": 69270,
+    "pre_reference_rows": 69260
+  },
+  "stream_row_ids_sha256": "ab3bcc4a32a8a6172a09a3825cbbb2723ff97bcbd57984165c7d29b0d2b01327",
+  "stream_rows": 138530,
+  "training_anchor_row_ids_sha256": "a4fdaea3a5aef501c72c11a8593e80eab3ea7981adbd1c53841d3cb445708a8e",
+  "training_anchor_rows": 10000
+}

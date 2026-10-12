@@ -1,0 +1,53 @@
+{
+  "adaptive_components_received_boundary": false,
+  "arm_summary_sha256": {
+    "c_frozen_symbolic": "675810cb82f4a4c56ba182303c61e66c0137efdc7cad951e0089a7f808c8514d",
+    "d_drift": "3556b7e557a77e33bee50eb01850fe5fe99cc6a77b7ed8d8df09e16fc343824b",
+    "d_periodic": "2c0a14c5eb83b16ae90659ac7d2119ed3d4aaafc06a5f98684bdae035bce3706"
+  },
+  "boundary_index": 69260,
+  "condition_id": "latency_10000",
+  "identity_context": {
+    "condition_id": "latency_10000",
+    "condition_spec_sha256": "6adb3905a2db4fc6e3cfa0719e09191063eb99c08fd08b9463ea204706c34f0e",
+    "frozen_primary_contract_sha256": "4bd0d2d2cb3b33b12286f19fcbae0c823e67c50a9c690f797d07a333fc6c9dc7",
+    "fusion_contract_sha256": "acb2ba17bad35700cfc2f6d539548c31cf86f944eb1aa2aea566828278bbde69",
+    "preprocessing_state_hash": "4527f77220f2cf6063108a7d71d80aaa0e82099ad282ff25408a2d9ce3488b1e",
+    "primary_control_plane_config_sha256": "7491733fe4bb7524eb38960b78067df44081fd4513055664985f3fd0d9841384",
+    "primary_symbolic_operator_config_sha256": "197360bb33718f32d7aebeb60b5e5fe3ba0619941c4a38a4f4c6ba3b529b7532",
+    "r0_v2_manifest_sha256": "131027d2f136494eb388183f18dcb7eb0e9d7e9fe786f22dba25f4e1624c1483",
+    "runtime_identity_sha256": "2c8058035fcb66ad7fa99559de9a8611f81a954f4f9055a832b59ec01d3bfa3b",
+    "scenario_manifest_canonical_sha256": "3d1c3f9775ac5c8a73053634784be513bb1714ef7f26fa9db406ccd78c4344e3",
+    "seed": 3,
+    "stage8_closure_commit": "f8a424389056a048a6ad6be0b744bf6d12b69df2",
+    "stage8_parent_evidence_commit": "c2ded83b8195b9321e715626c1f305f9627936e8",
+    "stage9_config_manifest_sha256": "b72fc0dce0df46974737cd0c33714cc17b23f31ce188e92d318b1787c0ae027e",
+    "system_a_checkpoint_sha256": "cce1ce47db047b9d441bbe6dad9bd53f1ee6ff3ad7d404521cae72a38bccd4b4",
+    "system_a_manifest_sha256": "42004b5ed100b690023b9998bdc959fac41ab947b996fb7c58e44cee5e8dc6de"
+  },
+  "lambda_one_predictive_equality": true,
+  "manifest_sha256": "9720c8c13c05d5e22b0cd31222ed96711b94e8a9aaa8084e5ebb48dde08873dc",
+  "payload_sha256": "0d531637fd44c12c41f9fb328681e8f3bbbea052447238644e5a25e63282bf56",
+  "phase_a_run_manifest_sha256": "190a666cf626005fcddc732f08b1ccf60b18c465e0beb0bce2ee37358f3485dc",
+  "phase_b_seed_manifest_sha256": "5dc2671583fe9daa84cb706ec01a37ad332675c124ab6296be223a5bed18933e",
+  "schema_version": 1,
+  "seed": 3,
+  "stage9_config_manifest_sha256": "b72fc0dce0df46974737cd0c33714cc17b23f31ce188e92d318b1787c0ae027e",
+  "status": "complete_stage9_offline_evaluation",
+  "trigger_diagnostics": {
+    "detector_event_count": 6,
+    "first_post_reference_confirmation_clock": 79599,
+    "first_post_reference_confirmation_delay_rows": 10339,
+    "label_latency": 10000,
+    "latency_adjusted_excess_delay_rows": 339,
+    "neural_publication_count": 6,
+    "post_reference_event_count": 3,
+    "pre_reference_alarm_clocks": [
+      15247,
+      32719,
+      53071
+    ],
+    "pre_reference_alarm_count": 3,
+    "repeated_post_reference_events": 2
+  }
+}

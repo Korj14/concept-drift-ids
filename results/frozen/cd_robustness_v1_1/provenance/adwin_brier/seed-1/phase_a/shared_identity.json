@@ -1,0 +1,22 @@
+{
+  "config_sha256": "74f29c4f047d85505a1d4d4983505fd2096c1029566713ca23fa3dbc935b7838",
+  "final_checkpoint_sha256": "88aa3b0624fc1b20a54c7705aae1b1ecda6f70e4224b48d6df84e5fee8b252a7",
+  "final_state_sha256": "7ca5d0504e1598fa172f593698843e41c92ce4527b9980ace965a37c2ac270d5",
+  "payload_sha256": "4e8d6b35dd37bc98d01cbd905ce68003364b55b0dd24a85994dfe0c358429a78",
+  "pending_labels": 5000,
+  "pending_neural_transaction": {
+    "confirmation_clock": 136967,
+    "event_id": 7,
+    "parent_checkpoint_sha256": "88aa3b0624fc1b20a54c7705aae1b1ecda6f70e4224b48d6df84e5fee8b252a7",
+    "parent_state_sha256": "7ca5d0504e1598fa172f593698843e41c92ce4527b9980ace965a37c2ac270d5"
+  },
+  "schema_version": 1,
+  "seed": 1,
+  "shared_identity": {
+    "checkpoint_chain_sha256": "62170c03e00c971cfd718b860a778809ef7e764f00cb4e1a56f7b70f6215f02b",
+    "detector_events_sha256": "7fe27dce71b0b83c6bb20656bdaf3a9bde846d76e835d9b907d9621c13c56bbc",
+    "identity_sha256": "8734ae75174af141094e450afa36e52a0aeac17f68d7587c0d9a5578b7f5775b",
+    "label_schedule_sha256": "e2bd5ece6aa633dd1609a298b2c4067f3b39cfe51a56fc02def9a210daaf6690",
+    "replay_evidence_sha256": "645647d11551a1104fd45b616c5b1e0cc0220b593b79c040b67547327b46d38b"
+  }
+}

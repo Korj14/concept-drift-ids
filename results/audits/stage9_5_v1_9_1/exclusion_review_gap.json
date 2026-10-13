@@ -1,0 +1,29 @@
+{
+  "audit_id": "stage9.5-0-v1.9.1-exclusion-review-gap",
+  "classification": "preclosure_exclusion_review_completeness_gap",
+  "scientific_class": "not_Class_A",
+  "accepted_as_closure_evidence": false,
+  "exact_head": "07a012f125e1b3c092f150ca6117109f822a065a",
+  "stage9_5_run_id": 38446610098,
+  "stage9_run_id": 38446610077,
+  "stage9_same_head": "success",
+  "v1_9_1_scan": {
+    "pass": true,
+    "canonical_sha256": "f15eb59e75c5d382ebdf6a228e238e7ea9c65ef2d9b7bed0d0b2e249e3360e0a",
+    "parameter_register_sha256": "d66edb5d9a8741339996e62c102203dd37ba6ce14fab20a40acd8518a96d6064",
+    "artifact_zip_sha256": "ae1eb5db0faf0249cbf2c3e66a296f75c676589466993fa4879afd423b67f8fe",
+    "counts": {
+      "registered_entries": 87,
+      "material_candidates": 462,
+      "excluded_candidates": 1484,
+      "unclassified_material_candidates": 0,
+      "ambiguous_material_candidates": 0,
+      "unclassified_high_leverage_candidates": 0
+    }
+  },
+  "findings": [
+    "Stage9ControlPlaneConfig detector_family='adwin' and detector_signal='hard_error' were excluded despite being executable mirrors of the registered primary detector.",
+    "Symbolic lifecycle state/status/transition vocabulary was left as high-leverage excluded output labels; its governing transition semantics are now explicitly classified as a causal-design constant."
+  ],
+  "correction_protocol": "STAGE9_5_V1_10_FINAL_EXCLUSION_REVIEW_CORRECTION.md"
+}

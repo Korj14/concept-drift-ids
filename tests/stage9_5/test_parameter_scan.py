@@ -67,7 +67,7 @@ def test_scan_blocks_unregistered_high_leverage_constant(tmp_path: Path) -> None
             ],
         },
     }
-    path = tmp_path / "data/manifests/stage9_5_parameter_register_v1_10.json"
+    path = tmp_path / "data/manifests/stage9_5_parameter_register_v1_11.json"
     path.write_text(json.dumps(register), encoding="utf-8")
 
     try:
@@ -101,7 +101,7 @@ def test_scan_passes_when_high_leverage_constant_is_registered(tmp_path: Path) -
             "protocols": [],
         },
     }
-    path = tmp_path / "data/manifests/stage9_5_parameter_register_v1_10.json"
+    path = tmp_path / "data/manifests/stage9_5_parameter_register_v1_11.json"
     path.write_text(json.dumps(register), encoding="utf-8")
 
     report = run(tmp_path, tmp_path / "out", fail_on_unclassified_high=True)
@@ -148,7 +148,7 @@ def test_v1_3_blocks_unclassified_material_even_when_not_high_leverage(tmp_path:
             "protocols": [],
         },
     }
-    path = tmp_path / "data/manifests/stage9_5_parameter_register_v1_10.json"
+    path = tmp_path / "data/manifests/stage9_5_parameter_register_v1_11.json"
     path.write_text(json.dumps(register), encoding="utf-8")
     try:
         run(tmp_path, tmp_path / "out", fail_on_unclassified_high=True)
@@ -224,7 +224,7 @@ def test_ambiguous_material_mapping_blocks_pass(tmp_path: Path) -> None:
         ],
         "scan_roots": {"scientific_source":["src/concept_drift_ids/example.py"],"manifests":[],"protocols":[]},
     }
-    (tmp_path / "data/manifests/stage9_5_parameter_register_v1_10.json").write_text(json.dumps(register), encoding="utf-8")
+    (tmp_path / "data/manifests/stage9_5_parameter_register_v1_11.json").write_text(json.dumps(register), encoding="utf-8")
     report = run(tmp_path, tmp_path / "out", fail_on_unclassified_high=False)
     assert report["pass"] is False
     assert report["counts"]["ambiguous_material_candidates"] == 1
@@ -437,3 +437,75 @@ def test_v1_10_source_specific_detector_and_lifecycle_controls_are_material(tmp_
     }
     assert all(item.registered_ids == ("state_machine",) for item in found)
     assert not excluded
+
+
+def test_v1_11_small_material_expressions_and_replay_dict_values(tmp_path: Path) -> None:
+    from tools.stage9_5.parameter_scan import _python_candidates
+
+    (tmp_path / "src/concept_drift_ids").mkdir(parents=True)
+
+    cfg = tmp_path / "src/concept_drift_ids/cd_stage9_config.py"
+    cfg.write_text(
+        "def specs():\n"
+        "    return {'label_latency': 0, 'replay_enabled': False}\n",
+        encoding="utf-8",
+    )
+    cfg_register = {
+        "entries": [
+            {
+                "id":"latency",
+                "source_locations":["src/concept_drift_ids/cd_stage9_config.py"],
+                "accepted_value":[0,10000],
+                "scan_values":[0,10000],
+                "locator_patterns":["label_latency.*(?:0|10000)"],
+            },
+            {
+                "id":"no_replay",
+                "source_locations":["src/concept_drift_ids/cd_stage9_config.py"],
+                "accepted_value":False,
+                "scan_values":[False],
+                "locator_patterns":["^replay_enabled$"],
+            },
+        ]
+    }
+    found, _ = _python_candidates(tmp_path, "src/concept_drift_ids/cd_stage9_config.py", cfg_register)
+    assert any(item.value == 0 and item.registered_ids == ("latency",) for item in found)
+    assert any(
+        item.locator == "replay_enabled"
+        and item.value is False
+        and item.registered_ids == ("no_replay",)
+        for item in found
+    )
+
+    life = tmp_path / "src/concept_drift_ids/cd_symbolic_lifecycle.py"
+    life.write_text(
+        "def apply_lifecycle_maintenance(\n"
+        "    same_class_redundancy: float = 0.95,\n"
+        "    refinement_overlap: float = 0.50,\n"
+        "    cross_class_overlap: float = 0.50,\n"
+        "):\n"
+        "    streak = failure_streak + 1\n"
+        "    return streak\n",
+        encoding="utf-8",
+    )
+    life_register = {
+        "entries": [
+            {
+                "id":"overlap",
+                "source_locations":["src/concept_drift_ids/cd_symbolic_lifecycle.py"],
+                "accepted_value":[0.95,0.5],
+                "scan_values":[0.95,0.5],
+                "locator_patterns":["same_class_redundancy|refinement_overlap|cross_class_overlap"],
+            },
+            {
+                "id":"state_machine",
+                "source_locations":["src/concept_drift_ids/cd_symbolic_lifecycle.py"],
+                "accepted_value":[1],
+                "scan_values":[1],
+                "locator_patterns":["failure_streak|\\bstreak\\b"],
+            },
+        ]
+    }
+    found, _ = _python_candidates(tmp_path, "src/concept_drift_ids/cd_symbolic_lifecycle.py", life_register)
+    assert {item.value for item in found if item.registered_ids == ("overlap",)} == {0.5,0.95}
+    assert any(item.value == 1 and item.registered_ids == ("state_machine",) for item in found)

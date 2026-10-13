@@ -146,12 +146,12 @@ jobs:
       - name: Run Stage 9.5-2 independent statistical oracle
         shell: pwsh
         run: |
-          python tools/stage9_5/statistical_oracle.py --output-dir artifacts/stage9_5_v1/statistical_oracle
+          python tools/stage9_5/statistical_oracle.py --output-dir artifacts/stage9_5_oracle_v1_1/statistical_oracle
 
       - name: Upload Stage 9.5-2 oracle evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: stage9-5-statistical-oracle-v1
-          path: artifacts/stage9_5_v1/statistical_oracle/
+          name: stage9-5-statistical-oracle-v1-1
+          path: artifacts/stage9_5_oracle_v1_1/statistical_oracle/
           if-no-files-found: error

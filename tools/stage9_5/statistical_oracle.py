@@ -172,11 +172,28 @@ def _record_numeric(
         )
 
 
+def _jsonable(value: Any) -> Any:
+    if isinstance(value, set):
+        return sorted(_jsonable(v) for v in value)
+    if isinstance(value, tuple):
+        return [_jsonable(v) for v in value]
+    if isinstance(value, list):
+        return [_jsonable(v) for v in value]
+    if isinstance(value, dict):
+        return {str(k): _jsonable(v) for k, v in value.items()}
+    return value
+
+
 def _record_exact(report: dict[str, Any], name: str, actual: Any, expected: Any) -> None:
     report["comparison_count"] += 1
     if actual != expected:
         report["mismatches"].append(
-            {"name": name, "actual": actual, "expected": expected, "comparison": "exact"}
+            {
+                "name": name,
+                "actual": _jsonable(actual),
+                "expected": _jsonable(expected),
+                "comparison": "exact",
+            }
         )
 
 

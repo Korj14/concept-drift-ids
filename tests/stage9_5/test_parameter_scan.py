@@ -353,3 +353,30 @@ def test_v1_9_material_name_coverage_for_detector_and_r0_constants(tmp_path: Pat
     assert {"ADWIN_CONFIG","PAGE_HINKLEY_CONFIG","EXPECTED_ACTIVE_COUNTS"} <= material_locators
     assert all(item.registered_ids for item in found if item.locator in material_locators)
     assert not any(item.locator in material_locators for item in excluded)
+
+
+def test_v1_9_1_literal_container_keys_are_not_expression_candidates(tmp_path: Path) -> None:
+    from tools.stage9_5.parameter_scan import _python_candidates
+
+    (tmp_path / "src/concept_drift_ids").mkdir(parents=True)
+    p = tmp_path / "src/concept_drift_ids/example.py"
+    p.write_text(
+        "EXPECTED_ACTIVE_COUNTS = {0: 7, 1: 6, 2: 7, 3: 6, 4: 6}\n",
+        encoding="utf-8",
+    )
+    register = {
+        "entries": [{
+            "id":"r0_counts",
+            "source_locations":["src/concept_drift_ids/example.py"],
+            "accepted_value":[6,7],
+            "scan_values":[6,7],
+            "locator_patterns":["^EXPECTED_ACTIVE_COUNTS$"],
+        }]
+    }
+    found, excluded = _python_candidates(tmp_path, "src/concept_drift_ids/example.py", register)
+    assert {item.value for item in found if item.locator == "EXPECTED_ACTIVE_COUNTS"} == {6, 7}
+    assert all(item.registered_ids == ("r0_counts",) for item in found)
+    assert not any(
+        item.source_kind == "python_expression" and item.value in {0,1,2,3,4}
+        for item in found + excluded
+    )

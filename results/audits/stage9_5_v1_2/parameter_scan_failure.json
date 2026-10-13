@@ -1,0 +1,41 @@
+{
+  "audit_id": "stage9.5-0-parameter-control-completeness-v1_2",
+  "status": "failed_preserved",
+  "protocol_id": "stage9.5-q1-assurance-v1",
+  "head_sha": "6d0ffd834f17708ea9cbe14cbaa258c8796e8096",
+  "workflow_run_id": 38428852856,
+  "workflow_job_id": 115405386599,
+  "artifact_id": 11829378448,
+  "artifact_name": "stage9-5-parameter-scan-v1-2",
+  "artifact_zip_sha256": "4b2803b721c47a0ad1cabc2c7a8be57e2a863445a8db199474ea592de7e05088",
+  "report_canonical_sha256": "1fc3a65f7ac44601663daba2da12cc62720ae772eb6738ec6649b67270cdf5e5",
+  "counts": {
+    "registered_entries": 57,
+    "material_candidates": 236,
+    "excluded_candidates": 1018,
+    "unclassified_material_candidates": 17,
+    "unclassified_high_leverage_candidates": 8
+  },
+  "scanner_unit_tests": "5 passed",
+  "stage9_regression_contract": "success on same head",
+  "residual_disposition": {
+    "duplicate_or_parser_artifact": [
+      "Stage-9/Stage-9.5 primary lambda=0.50 declarations already frozen elsewhere",
+      "Stage-9/Stage-9.5 primary 5,000-row reporting-window declarations already frozen elsewhere",
+      "Stage-9.5 lambda=1 negative-control declarations already frozen elsewhere",
+      "Stage-8/9 structural token leaves /9 as a numeric token"
+    ],
+    "genuine_registry_classification_gaps": [
+      "analysis.confirmatory_unit",
+      "primary_control_plane neural-update learning_rate/weight_decay mirror",
+      "primary_symbolic_operator same_class_redundancy mirror",
+      "inference-only Phase-C scoring batch_size=4096",
+      "detector epoch_id state-machine identifiers 0/1",
+      "Stage-9.5 100-bootstrap-granularity future-sensitivity reference"
+    ]
+  },
+  "scientific_outcome_accessed": false,
+  "stage8_or_stage9_evidence_modified": false,
+  "scientific_interpretation": "registry/completeness correction only; no Class-A Stage-8/9 defect indicated",
+  "disposition": "preserve v1.2 block and create v1.3 registry/parser mapping correction; retain fail-closed scan criterion"
+}

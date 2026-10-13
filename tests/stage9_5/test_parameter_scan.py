@@ -67,7 +67,7 @@ def test_scan_blocks_unregistered_high_leverage_constant(tmp_path: Path) -> None
             ],
         },
     }
-    path = tmp_path / "data/manifests/stage9_5_parameter_register_v1_8.json"
+    path = tmp_path / "data/manifests/stage9_5_parameter_register_v1_9.json"
     path.write_text(json.dumps(register), encoding="utf-8")
 
     try:
@@ -101,7 +101,7 @@ def test_scan_passes_when_high_leverage_constant_is_registered(tmp_path: Path) -
             "protocols": [],
         },
     }
-    path = tmp_path / "data/manifests/stage9_5_parameter_register_v1_8.json"
+    path = tmp_path / "data/manifests/stage9_5_parameter_register_v1_9.json"
     path.write_text(json.dumps(register), encoding="utf-8")
 
     report = run(tmp_path, tmp_path / "out", fail_on_unclassified_high=True)
@@ -148,7 +148,7 @@ def test_v1_3_blocks_unclassified_material_even_when_not_high_leverage(tmp_path:
             "protocols": [],
         },
     }
-    path = tmp_path / "data/manifests/stage9_5_parameter_register_v1_8.json"
+    path = tmp_path / "data/manifests/stage9_5_parameter_register_v1_9.json"
     path.write_text(json.dumps(register), encoding="utf-8")
     try:
         run(tmp_path, tmp_path / "out", fail_on_unclassified_high=True)
@@ -224,7 +224,7 @@ def test_ambiguous_material_mapping_blocks_pass(tmp_path: Path) -> None:
         ],
         "scan_roots": {"scientific_source":["src/concept_drift_ids/example.py"],"manifests":[],"protocols":[]},
     }
-    (tmp_path / "data/manifests/stage9_5_parameter_register_v1_8.json").write_text(json.dumps(register), encoding="utf-8")
+    (tmp_path / "data/manifests/stage9_5_parameter_register_v1_9.json").write_text(json.dumps(register), encoding="utf-8")
     report = run(tmp_path, tmp_path / "out", fail_on_unclassified_high=False)
     assert report["pass"] is False
     assert report["counts"]["ambiguous_material_candidates"] == 1
@@ -310,3 +310,46 @@ def test_binary_file_mode_is_logged_exclusion(tmp_path: Path) -> None:
     found, excluded = _python_candidates(tmp_path, "src/concept_drift_ids/example.py", {"entries":[]})
     assert found == []
     assert any("file I/O mode" in str(item.exclusion_reason) for item in excluded)
+
+
+def test_v1_9_material_name_coverage_for_detector_and_r0_constants(tmp_path: Path) -> None:
+    from tools.stage9_5.parameter_scan import _python_candidates
+
+    (tmp_path / "src/concept_drift_ids").mkdir(parents=True)
+    p = tmp_path / "src/concept_drift_ids/example.py"
+    p.write_text(
+        "ADWIN_CONFIG = (0.002, 32, 5, 5, 10)\n"
+        "PAGE_HINKLEY_CONFIG = (30, 0.005, 50.0, 0.9999, 'both')\n"
+        "EXPECTED_ACTIVE_COUNTS = {0: 7, 1: 6, 2: 7, 3: 6, 4: 6}\n",
+        encoding="utf-8",
+    )
+    register = {
+        "entries": [
+            {
+                "id":"adwin",
+                "source_locations":["src/concept_drift_ids/example.py"],
+                "accepted_value":[0.002,32,5,10],
+                "scan_values":[0.002,32,5,10],
+                "locator_patterns":["^ADWIN_CONFIG$"],
+            },
+            {
+                "id":"ph",
+                "source_locations":["src/concept_drift_ids/example.py"],
+                "accepted_value":[30,0.005,50,0.9999,"both"],
+                "scan_values":[30,0.005,50,0.9999,"both"],
+                "locator_patterns":["^PAGE_HINKLEY_CONFIG$"],
+            },
+            {
+                "id":"r0_counts",
+                "source_locations":["src/concept_drift_ids/example.py"],
+                "accepted_value":[6,7],
+                "scan_values":[6,7],
+                "locator_patterns":["^EXPECTED_ACTIVE_COUNTS$"],
+            },
+        ]
+    }
+    found, excluded = _python_candidates(tmp_path, "src/concept_drift_ids/example.py", register)
+    material_locators = {item.locator for item in found}
+    assert {"ADWIN_CONFIG","PAGE_HINKLEY_CONFIG","EXPECTED_ACTIVE_COUNTS"} <= material_locators
+    assert all(item.registered_ids for item in found if item.locator in material_locators)
+    assert not any(item.locator in material_locators for item in excluded)

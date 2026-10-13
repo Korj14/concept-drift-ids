@@ -9,7 +9,7 @@ from dataclasses import dataclass, asdict
 from pathlib import Path
 from typing import Any, Iterable
 
-REGISTER_PATH = Path("data/manifests/stage9_5_parameter_register_v1_2.json")
+REGISTER_PATH = Path("data/manifests/stage9_5_parameter_register_v1_3.json")
 
 MATERIAL_RE = re.compile(
     r"(boundary|latenc|window|stride|remainder|threshold|lambda|fusion|seed|rng|"
@@ -265,7 +265,7 @@ def _markdown_candidates(root: Path, path: str, register: dict[str, Any]) -> tup
         if not stripped or stripped.startswith("#"):
             continue
         line = re.sub(r"^\s*(?:[-*+]\s+|\d+[.)]\s+)", "", raw_line)
-        line = re.sub(r"\bStage[- ]?\d+(?:\.\d+)?\b", "Stage", line, flags=re.I)
+        line = re.sub(r"\bStage[- ]?\d+(?:\.\d+)?(?:/\d+(?:\.\d+)?)?\b", "Stage", line, flags=re.I)
         line = re.sub(r"\bSection\s+\d+(?:\.\d+)?\b", "Section", line, flags=re.I)
         if not MATERIAL_RE.search(line) or not declaration.search(line):
             continue
@@ -341,7 +341,7 @@ def run(root: Path, output_dir: Path, fail_on_unclassified_high: bool = True) ->
     high_unclassified = [c for c in unclassified if c.leverage == "high"]
 
     report = {
-        "audit_id": "stage9.5-0-parameter-control-completeness-v1_2",
+        "audit_id": "stage9.5-0-parameter-control-completeness-v1_3",
         "protocol_id": register["protocol_id"],
         "upstream_closure_head": register["upstream_closure_head"],
         "parameter_register_sha256": hashlib.sha256((root / REGISTER_PATH).read_bytes()).hexdigest(),
@@ -353,7 +353,7 @@ def run(root: Path, output_dir: Path, fail_on_unclassified_high: bool = True) ->
             "unclassified_material_candidates": len(unclassified),
             "unclassified_high_leverage_candidates": len(high_unclassified),
         },
-        "pass": len(high_unclassified) == 0,
+        "pass": len(unclassified) == 0,
         "material_candidates": [asdict(c) for c in material],
         "unclassified_material_candidates": [asdict(c) for c in unclassified],
         "unclassified_high_leverage_candidates": [asdict(c) for c in high_unclassified],
@@ -367,7 +367,7 @@ def run(root: Path, output_dir: Path, fail_on_unclassified_high: bool = True) ->
     json_path.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
     lines = [
-        "# Stage 9.5-0 Parameter/Control Completeness Scan v1.2",
+        "# Stage 9.5-0 Parameter/Control Completeness Scan v1.3",
         "",
         f"- protocol: `{report['protocol_id']}`",
         f"- upstream closure head: `{report['upstream_closure_head']}`",
@@ -405,7 +405,7 @@ def run(root: Path, output_dir: Path, fail_on_unclassified_high: bool = True) ->
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--root", type=Path, default=Path("."))
-    parser.add_argument("--output-dir", type=Path, default=Path("results/audits/stage9_5_v1_2"))
+    parser.add_argument("--output-dir", type=Path, default=Path("results/audits/stage9_5_v1_3"))
     parser.add_argument("--no-fail", action="store_true")
     args = parser.parse_args()
     run(args.root.resolve(), args.output_dir, fail_on_unclassified_high=not args.no_fail)

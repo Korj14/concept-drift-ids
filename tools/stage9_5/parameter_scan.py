@@ -9,7 +9,7 @@ from dataclasses import dataclass, asdict
 from pathlib import Path
 from typing import Any, Iterable
 
-REGISTER_PATH = Path("data/manifests/stage9_5_parameter_register_v1_4.json")
+REGISTER_PATH = Path("data/manifests/stage9_5_parameter_register_v1_5.json")
 
 MATERIAL_RE = re.compile(
     r"(boundary|latenc|window|stride|remainder|threshold|lambda|fusion|seed|rng|"
@@ -18,7 +18,7 @@ MATERIAL_RE = re.compile(
     r"delta|clock|max.?bucket|min.?window|grace|top.?k|depth|leaf|opportun|periodic|"
     r"feature|dropout|pos.?weight|wilson|\bz\b|cooldown|confirm|persistence|"
     r"overlap|redundan|refinement|conflict|retire|demot|maturity|label|checkpoint|"
-    r"rows|arms|phases|primary.?weights?|neural.?weight)",
+    r"rows|arms?|phases?|conditions?|groups?|metrics?|primary.?weights?|neural.?weight|"\n    r"min.?instances|alpha|mode|(?:^|_)weight$)",
     re.I,
 )
 HASH_RE = re.compile(r"^[0-9a-f]{40,64}$", re.I)
@@ -51,6 +51,35 @@ def _load_register(root: Path) -> dict[str, Any]:
     return payload
 
 
+def _verify_scan_scope(root: Path, register: dict[str, Any]) -> dict[str, Any]:
+    bindings = register.get("scan_scope_bindings")
+    if not bindings:
+        return {"bound": False, "expected_python_sources": [], "actual_python_sources": list(register["scan_roots"]["scientific_source"])}
+    expected: set[str] = set()
+    manifests = list(bindings["scientific_source_manifests"])
+    for relative in manifests:
+        payload = json.loads((root / relative).read_text(encoding="utf-8"))
+        hashes = payload.get("scientific_source_hashes")
+        if not isinstance(hashes, dict):
+            raise ValueError(f"Missing scientific_source_hashes in {relative}.")
+        expected.update(str(path) for path in hashes if str(path).endswith(".py"))
+    expected_list = sorted(expected)
+    actual_list = sorted(str(path) for path in register["scan_roots"]["scientific_source"])
+    if actual_list != expected_list:
+        missing = sorted(set(expected_list) - set(actual_list))
+        extra = sorted(set(actual_list) - set(expected_list))
+        raise ValueError(
+            "Stage 9.5 scientific-source scan scope differs from accepted hash-bound source union. "
+            f"missing={missing}, extra={extra}"
+        )
+    return {
+        "bound": True,
+        "binding_manifests": manifests,
+        "expected_python_sources": expected_list,
+        "actual_python_sources": actual_list,
+    }
+
+
 def _flatten_values(value: Any) -> list[Any]:
     out: list[Any] = []
     if isinstance(value, dict):
@@ -64,6 +93,16 @@ def _flatten_values(value: Any) -> list[Any]:
     return out
 
 
+def _value_equal(value: Any, item: Any) -> bool:
+    if isinstance(value, bool) or isinstance(item, bool):
+        return isinstance(value, bool) and isinstance(item, bool) and value is item
+    if isinstance(value, (int, float)) and isinstance(item, (int, float)):
+        return float(value) == float(item)
+    if isinstance(value, str) and isinstance(item, str):
+        return value == item
+    return False
+
+
 def _registered_ids(
     register: dict[str, Any],
     path: str,
@@ -75,26 +114,12 @@ def _registered_ids(
         if path not in entry["source_locations"]:
             continue
         patterns = entry.get("locator_patterns", [])
-        if patterns and any(re.search(pattern, locator) for pattern in patterns):
-            hits.append(entry["id"])
+        if patterns and not any(re.search(pattern, locator) for pattern in patterns):
             continue
-        accepted = _flatten_values(entry["accepted_value"])
-        for item in accepted:
-            if isinstance(value, bool) and isinstance(item, bool) and value is item:
-                hits.append(entry["id"])
-                break
-            if isinstance(value, (int, float)) and not isinstance(value, bool):
-                if isinstance(item, (int, float)) and not isinstance(item, bool):
-                    if float(value) == float(item):
-                        hits.append(entry["id"])
-                        break
-            if isinstance(value, str) and isinstance(item, str):
-                if value == item or value in item:
-                    hits.append(entry["id"])
-                    break
+        accepted = _flatten_values(entry.get("scan_values", entry["accepted_value"]))
+        if any(_value_equal(value, item) for item in accepted):
+            hits.append(entry["id"])
     return tuple(sorted(set(hits)))
-
-
 def _leverage(locator: str, path: str) -> str:
     text = f"{path} {locator}".lower()
     high = (
@@ -119,9 +144,14 @@ def _is_trivial_python_literal(name: str, value: Any) -> str | None:
 
 def _python_candidates(root: Path, path: str, register: dict[str, Any]) -> tuple[list[Candidate], list[Candidate]]:
     source = (root / path).read_text(encoding="utf-8")
+    source_lines = source.splitlines()
     tree = ast.parse(source, filename=path)
     found: list[Candidate] = []
     excluded: list[Candidate] = []
+    emitted_line_values: set[tuple[int | None, str]] = set()
+
+    def _value_key(value: Any) -> str:
+        return json.dumps(value, sort_keys=True, ensure_ascii=False)
 
     def emit(name: str, node: ast.AST, value: Any) -> None:
         reason = _is_trivial_python_literal(name, value)
@@ -140,6 +170,7 @@ def _python_candidates(root: Path, path: str, register: dict[str, Any]) -> tuple
             excluded=reason is not None,
             exclusion_reason=reason,
         )
+        emitted_line_values.add((candidate.line, _value_key(value)))
         (excluded if candidate.excluded else found).append(candidate)
 
     for node in ast.walk(tree):
@@ -183,9 +214,70 @@ def _python_candidates(root: Path, path: str, register: dict[str, Any]) -> tuple
                 if isinstance(value, (str, int, float, bool)):
                     emit(kw.arg, kw, value)
 
+    class ExpressionVisitor(ast.NodeVisitor):
+        def __init__(self) -> None:
+            self.functions: list[str] = []
+
+        def visit_FunctionDef(self, node: ast.FunctionDef) -> None:
+            self.functions.append(node.name)
+            self.generic_visit(node)
+            self.functions.pop()
+
+        def visit_AsyncFunctionDef(self, node: ast.AsyncFunctionDef) -> None:
+            self.functions.append(node.name)
+            self.generic_visit(node)
+            self.functions.pop()
+
+        def visit_Constant(self, node: ast.Constant) -> None:
+            value = node.value
+            if isinstance(value, bool) or not isinstance(value, (int, float)):
+                return
+            lineno = getattr(node, "lineno", None)
+            if (lineno, _value_key(value)) in emitted_line_values:
+                return
+            line = source_lines[lineno - 1] if lineno and lineno <= len(source_lines) else ""
+            function_name = self.functions[-1] if self.functions else ""
+            line_material = bool(MATERIAL_RE.search(line))
+            context_material = bool(EXPRESSION_CONTEXT_RE.search(function_name))
+            if not line_material and not (context_material and abs(float(value)) >= 3.0):
+                return
+            context = f"{function_name} {line}"
+            if abs(float(value)) <= 2.0 and not re.search(
+                r"(lambda|weight|threshold|support|precision|fidelity|stability|alpha|delta)",
+                context,
+                re.I,
+            ):
+                excluded.append(
+                    Candidate(
+                        path=path,
+                        line=lineno,
+                        locator=f"{function_name or '<module>'} :: {line.strip()[:160]}",
+                        value=value,
+                        source_kind="python_expression",
+                        material_reason="excluded",
+                        registered_ids=(),
+                        leverage=_leverage(context, path),
+                        excluded=True,
+                        exclusion_reason="small expression literal treated as indexing/state bookkeeping absent parameter semantics",
+                    )
+                )
+                return
+            locator = f"{function_name or '<module>'} :: {line.strip()[:160]}"
+            found.append(
+                Candidate(
+                    path=path,
+                    line=lineno,
+                    locator=locator,
+                    value=value,
+                    source_kind="python_expression",
+                    material_reason="material expression literal",
+                    registered_ids=_registered_ids(register, path, locator, value),
+                    leverage=_leverage(locator, path),
+                )
+            )
+
+    ExpressionVisitor().visit(tree)
     return found, excluded
-
-
 def _walk_json(value: Any, prefix: str = "") -> Iterable[tuple[str, Any]]:
     if isinstance(value, dict):
         for key, item in value.items():
@@ -339,24 +431,27 @@ def run(root: Path, output_dir: Path, fail_on_unclassified_high: bool = True) ->
     material = sorted(unique.values(), key=lambda c: (c.path, c.line or 0, c.locator, repr(c.value)))
 
     unclassified = [c for c in material if not c.registered_ids]
+    ambiguous = [c for c in material if len(c.registered_ids) > 1]
     high_unclassified = [c for c in unclassified if c.leverage == "high"]
 
     report = {
-        "audit_id": "stage9.5-0-parameter-control-completeness-v1_4",
+        "audit_id": "stage9.5-0-parameter-control-completeness-v1_5",
         "protocol_id": register["protocol_id"],
         "upstream_closure_head": register["upstream_closure_head"],
         "parameter_register_sha256": hashlib.sha256((root / REGISTER_PATH).read_bytes()).hexdigest(),
-        "scan_roots": roots,
+        "scan_roots": roots,\n        "scan_scope_verification": scan_scope_verification,
         "counts": {
             "registered_entries": len(register["entries"]),
             "material_candidates": len(material),
             "excluded_candidates": len(excluded),
             "unclassified_material_candidates": len(unclassified),
+            "ambiguous_material_candidates": len(ambiguous),
             "unclassified_high_leverage_candidates": len(high_unclassified),
         },
-        "pass": len(unclassified) == 0,
+        "pass": len(unclassified) == 0 and len(ambiguous) == 0,
         "material_candidates": [asdict(c) for c in material],
         "unclassified_material_candidates": [asdict(c) for c in unclassified],
+        "ambiguous_material_candidates": [asdict(c) for c in ambiguous],
         "unclassified_high_leverage_candidates": [asdict(c) for c in high_unclassified],
         "exclusion_log": [asdict(c) for c in excluded],
     }
@@ -368,13 +463,14 @@ def run(root: Path, output_dir: Path, fail_on_unclassified_high: bool = True) ->
     json_path.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
     lines = [
-        "# Stage 9.5-0 Parameter/Control Completeness Scan v1.4",
+        "# Stage 9.5-0 Parameter/Control Completeness Scan v1.5",
         "",
         f"- protocol: `{report['protocol_id']}`",
         f"- upstream closure head: `{report['upstream_closure_head']}`",
         f"- register SHA-256: `{report['parameter_register_sha256']}`",
         f"- material candidates: **{report['counts']['material_candidates']}**",
         f"- unclassified material candidates: **{report['counts']['unclassified_material_candidates']}**",
+        f"- ambiguous material candidates: **{report['counts']['ambiguous_material_candidates']}**",
         f"- unclassified high-leverage candidates: **{report['counts']['unclassified_high_leverage_candidates']}**",
         f"- status: **{'PASS' if report['pass'] else 'BLOCKED'}**",
         "",
@@ -396,10 +492,11 @@ def run(root: Path, output_dir: Path, fail_on_unclassified_high: bool = True) ->
     ]
     md_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
-    if fail_on_unclassified_high and unclassified:
+    if fail_on_unclassified_high and (unclassified or ambiguous):
         raise SystemExit(
             f"Stage 9.5-0 blocked: {len(unclassified)} unclassified material "
-            f"candidates ({len(high_unclassified)} high-leverage)."
+            f"candidates ({len(high_unclassified)} high-leverage) and "
+            f"{len(ambiguous)} ambiguous material mappings."
         )
     return report
 
@@ -407,7 +504,7 @@ def run(root: Path, output_dir: Path, fail_on_unclassified_high: bool = True) ->
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--root", type=Path, default=Path("."))
-    parser.add_argument("--output-dir", type=Path, default=Path("results/audits/stage9_5_v1_4"))
+    parser.add_argument("--output-dir", type=Path, default=Path("results/audits/stage9_5_v1_5"))
     parser.add_argument("--no-fail", action="store_true")
     args = parser.parse_args()
     run(args.root.resolve(), args.output_dir, fail_on_unclassified_high=not args.no_fail)

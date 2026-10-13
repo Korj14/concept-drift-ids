@@ -9,7 +9,7 @@ from dataclasses import dataclass, asdict
 from pathlib import Path
 from typing import Any, Iterable
 
-REGISTER_PATH = Path("data/manifests/stage9_5_parameter_register_v1_6.json")
+REGISTER_PATH = Path("data/manifests/stage9_5_parameter_register_v1_7.json")
 
 MATERIAL_RE = re.compile(
     r"(boundary|latenc|window|stride|remainder|threshold|fusion|seed|rng|"
@@ -145,6 +145,10 @@ def _leverage(locator: str, path: str) -> str:
 def _is_trivial_python_literal(name: str, value: Any) -> str | None:
     if name.startswith("__"):
         return "dunder/internal constant"
+    if name in {"drift_detected", "total_rows", "best_epoch", "stale_epochs"}:
+        return "runtime state/sentinel initialization, not a scientific parameter"
+    if name == "mode" and isinstance(value, str) and value in {"r", "rb", "w", "wb", "a", "ab", "x", "xb"}:
+        return "file I/O mode, not a scientific parameter"
     if isinstance(value, int) and value in {-1, 0, 1, 2} and not MATERIAL_RE.search(name):
         return "common indexing/control literal without material semantic name"
     if isinstance(value, str) and (not value or HASH_RE.match(value)):
@@ -170,6 +174,8 @@ def _expression_exclusion_reason(
         return "probability-domain clipping bound"
     if re.search(r"0(?:\.0+)?\s*<=.*<=\s*1(?:\.0+)?", stripped):
         return "probability-domain validation bound"
+    if "where=" in stripped and float(value) == 0.0:
+        return "safe division zero fallback/guard"
     if "2.0 * precision * recall" in stripped or "2 * precision * recall" in stripped:
         return "F1 arithmetic identity"
     if re.search(r"1(?:\.0+)?\s*-\s*.*weight", stripped, re.I):
@@ -518,7 +524,7 @@ def run(root: Path, output_dir: Path, fail_on_unclassified_high: bool = True) ->
     high_unclassified = [c for c in unclassified if c.leverage == "high"]
 
     report = {
-        "audit_id": "stage9.5-0-parameter-control-completeness-v1_6",
+        "audit_id": "stage9.5-0-parameter-control-completeness-v1_7",
         "protocol_id": register["protocol_id"],
         "upstream_closure_head": register["upstream_closure_head"],
         "parameter_register_sha256": hashlib.sha256((root / REGISTER_PATH).read_bytes()).hexdigest(),
@@ -547,7 +553,7 @@ def run(root: Path, output_dir: Path, fail_on_unclassified_high: bool = True) ->
     json_path.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
     lines = [
-        "# Stage 9.5-0 Parameter/Control Completeness Scan v1.6",
+        "# Stage 9.5-0 Parameter/Control Completeness Scan v1.7",
         "",
         f"- protocol: `{report['protocol_id']}`",
         f"- upstream closure head: `{report['upstream_closure_head']}`",
@@ -588,7 +594,7 @@ def run(root: Path, output_dir: Path, fail_on_unclassified_high: bool = True) ->
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--root", type=Path, default=Path("."))
-    parser.add_argument("--output-dir", type=Path, default=Path("results/audits/stage9_5_v1_6"))
+    parser.add_argument("--output-dir", type=Path, default=Path("results/audits/stage9_5_v1_7"))
     parser.add_argument("--no-fail", action="store_true")
     args = parser.parse_args()
     run(args.root.resolve(), args.output_dir, fail_on_unclassified_high=not args.no_fail)

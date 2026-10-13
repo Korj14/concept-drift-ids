@@ -1,0 +1,14 @@
+{
+  "audit_id": "stage9.5-0-v1.8-exclusion-log-material-name-gap",
+  "classification": "scanner_material_name_coverage_defect",
+  "scientific_class": "not_Class_A",
+  "accepted_as_closure_evidence": false,
+  "discovered_from": "focused review of retained v1.7 exclusion log before 9.5-0 closure",
+  "affected_direct_source_controls": [
+    "src/concept_drift_ids/cd_control_plane.py::ADWIN_CONFIG",
+    "src/concept_drift_ids/cd_stage9_config.py::PAGE_HINKLEY_CONFIG",
+    "src/concept_drift_ids/cd_r0_lifecycle.py::EXPECTED_ACTIVE_COUNTS"
+  ],
+  "scientific_value_changes": false,
+  "correction_protocol": "STAGE9_5_V1_9_MATERIAL_NAME_COVERAGE_CORRECTION.md"
+}

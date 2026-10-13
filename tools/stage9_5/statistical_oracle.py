@@ -208,10 +208,15 @@ def _compare_summary(
     exact_keys = ("positive", "negative", "zero")
     for key in exact_keys:
         _record_exact(report, f"{prefix}.{key}", actual[key], expected[key])
-    for key in ("values",):
-        _record_exact(report, f"{prefix}.{key}.length", len(actual[key]), len(expected[key]))
-        for i, (a, e) in enumerate(zip(actual[key], expected[key])):
-            _record_numeric(report, f"{prefix}.{key}[{i}]", a, e)
+    expected_vector_key = "effects" if stage8 else "values"
+    _record_exact(
+        report,
+        f"{prefix}.values.length",
+        len(actual["values"]),
+        len(expected[expected_vector_key]),
+    )
+    for i, (a, e) in enumerate(zip(actual["values"], expected[expected_vector_key])):
+        _record_numeric(report, f"{prefix}.values[{i}]", a, e)
     numeric_keys = ("mean", "median", "sample_sd", "minimum", "maximum")
     for key in numeric_keys:
         _record_numeric(report, f"{prefix}.{key}", actual[key], expected[key])
@@ -632,26 +637,11 @@ def _verify_stage9(report: dict[str, Any], contract: Mapping[str, Any]) -> dict[
     return oracle
 
 
-def run(output_dir: Path) -> dict[str, Any]:
-    contract = _load_json(CONTRACT_PATH)
-    report: dict[str, Any] = {
-        "audit_id": "stage9.5-2-independent-statistical-oracle-v1",
-        "contract": str(CONTRACT_PATH.relative_to(PROJECT_ROOT)),
-        "production_aggregation_imports_used": False,
-        "comparison_count": 0,
-        "mismatches": [],
-        "stage8": None,
-        "stage9": None,
-    }
-    report["stage8"] = _verify_stage8(report, contract)
-    report["stage9"] = _verify_stage9(report, contract)
-    report["mismatch_count"] = len(report["mismatches"])
-    report["pass"] = report["mismatch_count"] == 0
-    report["status"] = "pass" if report["pass"] else "blocked"
+def _write_report(output_dir: Path, report: dict[str, Any]) -> None:
+    report["mismatch_count"] = len(report.get("mismatches", []))
     report["canonical_sha256"] = _canonical_sha256(
         {k: v for k, v in report.items() if k != "canonical_sha256"}
     )
-
     output_dir.mkdir(parents=True, exist_ok=True)
     (output_dir / "statistical_oracle_report.json").write_text(
         json.dumps(report, indent=2, sort_keys=True) + "\n",
@@ -660,22 +650,60 @@ def run(output_dir: Path) -> dict[str, Any]:
     lines = [
         "# Stage 9.5-2 Independent Statistical Oracle",
         "",
-        f"- status: **{report['status'].upper()}**",
-        f"- comparisons: **{report['comparison_count']}**",
+        f"- status: **{str(report.get('status', 'error')).upper()}**",
+        f"- comparisons: **{report.get('comparison_count', 0)}**",
         f"- mismatches: **{report['mismatch_count']}**",
         f"- report canonical SHA-256: `{report['canonical_sha256']}`",
         "",
         "## Mismatches",
         "",
     ]
-    if report["mismatches"]:
+    if report.get("mismatches"):
         for item in report["mismatches"][:100]:
             lines.append(f"- `{item['name']}`")
     else:
         lines.append("- none")
+    if report.get("exception"):
+        lines += [
+            "",
+            "## Unexpected exception",
+            "",
+            f"- type: `{report['exception']['type']}`",
+            f"- message: `{report['exception']['message']}`",
+        ]
     (output_dir / "STATISTICAL_ORACLE_REPORT.md").write_text(
         "\n".join(lines) + "\n", encoding="utf-8"
     )
+
+
+def run(output_dir: Path) -> dict[str, Any]:
+    contract = _load_json(CONTRACT_PATH)
+    report: dict[str, Any] = {
+        "audit_id": "stage9.5-2-independent-statistical-oracle-v1_1",
+        "contract": str(CONTRACT_PATH.relative_to(PROJECT_ROOT)),
+        "production_aggregation_imports_used": False,
+        "comparison_count": 0,
+        "mismatches": [],
+        "stage8": None,
+        "stage9": None,
+    }
+    output_dir.mkdir(parents=True, exist_ok=True)
+    try:
+        report["stage8"] = _verify_stage8(report, contract)
+        report["stage9"] = _verify_stage9(report, contract)
+    except Exception as exc:
+        report["pass"] = False
+        report["status"] = "error"
+        report["exception"] = {
+            "type": type(exc).__name__,
+            "message": str(exc),
+        }
+        _write_report(output_dir, report)
+        raise
+
+    report["pass"] = len(report["mismatches"]) == 0
+    report["status"] = "pass" if report["pass"] else "blocked"
+    _write_report(output_dir, report)
     if not report["pass"]:
         raise SystemExit(
             f"Stage 9.5-2 blocked: {report['mismatch_count']} discrepancies across "
@@ -689,7 +717,7 @@ def main() -> None:
     parser.add_argument(
         "--output-dir",
         type=Path,
-        default=Path("artifacts/stage9_5_v1/statistical_oracle"),
+        default=Path("artifacts/stage9_5_oracle_v1_1/statistical_oracle"),
     )
     args = parser.parse_args()
     run(args.output_dir)

@@ -416,6 +416,7 @@ def _markdown_candidates(root: Path, path: str, register: dict[str, Any]) -> tup
 
 def run(root: Path, output_dir: Path, fail_on_unclassified_high: bool = True) -> dict[str, Any]:
     register = _load_register(root)
+    scan_scope_verification = _verify_scan_scope(root, register)
     material: list[Candidate] = []
     excluded: list[Candidate] = []
 
@@ -446,7 +447,8 @@ def run(root: Path, output_dir: Path, fail_on_unclassified_high: bool = True) ->
         "protocol_id": register["protocol_id"],
         "upstream_closure_head": register["upstream_closure_head"],
         "parameter_register_sha256": hashlib.sha256((root / REGISTER_PATH).read_bytes()).hexdigest(),
-        "scan_roots": roots,\n        "scan_scope_verification": scan_scope_verification,
+        "scan_roots": roots,
+        "scan_scope_verification": scan_scope_verification,
         "counts": {
             "registered_entries": len(register["entries"]),
             "material_candidates": len(material),

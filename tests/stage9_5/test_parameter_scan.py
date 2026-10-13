@@ -67,7 +67,7 @@ def test_scan_blocks_unregistered_high_leverage_constant(tmp_path: Path) -> None
             ],
         },
     }
-    path = tmp_path / "data/manifests/stage9_5_parameter_register_v1_7.json"
+    path = tmp_path / "data/manifests/stage9_5_parameter_register_v1_8.json"
     path.write_text(json.dumps(register), encoding="utf-8")
 
     try:
@@ -101,7 +101,7 @@ def test_scan_passes_when_high_leverage_constant_is_registered(tmp_path: Path) -
             "protocols": [],
         },
     }
-    path = tmp_path / "data/manifests/stage9_5_parameter_register_v1_7.json"
+    path = tmp_path / "data/manifests/stage9_5_parameter_register_v1_8.json"
     path.write_text(json.dumps(register), encoding="utf-8")
 
     report = run(tmp_path, tmp_path / "out", fail_on_unclassified_high=True)
@@ -148,7 +148,7 @@ def test_v1_3_blocks_unclassified_material_even_when_not_high_leverage(tmp_path:
             "protocols": [],
         },
     }
-    path = tmp_path / "data/manifests/stage9_5_parameter_register_v1_7.json"
+    path = tmp_path / "data/manifests/stage9_5_parameter_register_v1_8.json"
     path.write_text(json.dumps(register), encoding="utf-8")
     try:
         run(tmp_path, tmp_path / "out", fail_on_unclassified_high=True)
@@ -224,7 +224,7 @@ def test_ambiguous_material_mapping_blocks_pass(tmp_path: Path) -> None:
         ],
         "scan_roots": {"scientific_source":["src/concept_drift_ids/example.py"],"manifests":[],"protocols":[]},
     }
-    (tmp_path / "data/manifests/stage9_5_parameter_register_v1_7.json").write_text(json.dumps(register), encoding="utf-8")
+    (tmp_path / "data/manifests/stage9_5_parameter_register_v1_8.json").write_text(json.dumps(register), encoding="utf-8")
     report = run(tmp_path, tmp_path / "out", fail_on_unclassified_high=False)
     assert report["pass"] is False
     assert report["counts"]["ambiguous_material_candidates"] == 1

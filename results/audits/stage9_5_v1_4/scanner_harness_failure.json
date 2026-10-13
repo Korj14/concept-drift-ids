@@ -1,0 +1,13 @@
+{
+  "audit_id": "stage9.5-0-v1.4-scanner-harness-failure",
+  "classification": "technical_scanner_harness_failure",
+  "scientific_class": "not_Class_A",
+  "accepted_as_completeness_evidence": false,
+  "exact_head": "585ce055633fd9c566af2e6d85ad126f3b2d5d2e",
+  "workflow_run_id": 38431370758,
+  "failure_phase": "scanner unit-test collection before parameter scan",
+  "error": "SyntaxError in MATERIAL_RE caused by literal \\\\n characters inserted between adjacent raw string literals.",
+  "stage9_regression_at_same_head": "success",
+  "scientific_outcomes_accessed": false,
+  "correction": "syntax-only v1.4.1 correction; parameter register and materiality policy unchanged"
+}

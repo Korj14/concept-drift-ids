@@ -95,12 +95,12 @@ jobs:
       - name: Run Stage 9.5-1 fresh-clone reconstruction
         shell: pwsh
         run: |
-          python tools/stage9_5/fresh_clone_reconstruction.py --output-dir artifacts/stage9_5_v1/fresh_clone_reconstruction
+          python tools/stage9_5/fresh_clone_reconstruction.py --output-dir artifacts/stage9_5_v1_1/fresh_clone_reconstruction
 
       - name: Upload Stage 9.5-1 reconstruction evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: stage9-5-fresh-clone-reconstruction-v1
-          path: artifacts/stage9_5_v1/fresh_clone_reconstruction/
+          name: stage9-5-fresh-clone-reconstruction-v1-1
+          path: artifacts/stage9_5_v1_1/fresh_clone_reconstruction/
           if-no-files-found: error

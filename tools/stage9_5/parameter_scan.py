@@ -395,9 +395,10 @@ def run(root: Path, output_dir: Path, fail_on_unclassified_high: bool = True) ->
     ]
     md_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
-    if fail_on_unclassified_high and high_unclassified:
+    if fail_on_unclassified_high and unclassified:
         raise SystemExit(
-            f"Stage 9.5-0 blocked: {len(high_unclassified)} unclassified high-leverage candidates."
+            f"Stage 9.5-0 blocked: {len(unclassified)} unclassified material "
+            f"candidates ({len(high_unclassified)} high-leverage)."
         )
     return report
 

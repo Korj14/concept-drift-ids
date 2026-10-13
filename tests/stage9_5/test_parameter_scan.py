@@ -67,7 +67,7 @@ def test_scan_blocks_unregistered_high_leverage_constant(tmp_path: Path) -> None
             ],
         },
     }
-    path = tmp_path / "data/manifests/stage9_5_parameter_register_v1_1.json"
+    path = tmp_path / "data/manifests/stage9_5_parameter_register_v1_2.json"
     path.write_text(json.dumps(register), encoding="utf-8")
 
     try:
@@ -101,9 +101,34 @@ def test_scan_passes_when_high_leverage_constant_is_registered(tmp_path: Path) -
             "protocols": [],
         },
     }
-    path = tmp_path / "data/manifests/stage9_5_parameter_register_v1_1.json"
+    path = tmp_path / "data/manifests/stage9_5_parameter_register_v1_2.json"
     path.write_text(json.dumps(register), encoding="utf-8")
 
     report = run(tmp_path, tmp_path / "out", fail_on_unclassified_high=True)
     assert report["pass"] is True
     assert report["counts"]["unclassified_high_leverage_candidates"] == 0
+
+
+def test_markdown_scanner_normalizes_comma_values_and_ignores_heading_numbers(tmp_path: Path) -> None:
+    from tools.stage9_5.parameter_scan import _markdown_candidates
+
+    p = tmp_path / "protocol.md"
+    p.write_text(
+        "# Stage 9 section 6\n"
+        "- D-periodic uses the exact clocks 27,706 / 55,412 / 83,118 / 110,824;\n",
+        encoding="utf-8",
+    )
+    register = {
+        "entries": [
+            {
+                "id": "trigger.periodic_clocks",
+                "source_locations": ["protocol.md"],
+                "accepted_value": [27706, 55412, 83118, 110824],
+                "locator_patterns": ["exact clocks"],
+            }
+        ]
+    }
+    found, excluded = _markdown_candidates(tmp_path, "protocol.md", register)
+    assert [item.value for item in found] == [27706, 55412, 83118, 110824]
+    assert all(item.registered_ids == ("trigger.periodic_clocks",) for item in found)
+    assert not excluded

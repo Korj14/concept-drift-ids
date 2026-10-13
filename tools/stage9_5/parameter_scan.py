@@ -254,19 +254,19 @@ def _markdown_candidates(root: Path, path: str, register: dict[str, Any]) -> tup
     found: list[Candidate] = []
     excluded: list[Candidate] = []
     declaration = re.compile(
-        r"(?:=|>=|<=|\\bexact\\b|\\bprimary\\b|\\bfixed\\b|\\bfrozen\\b|"
-        r"\\bthreshold\\b|\\blatency\\b|\\bwindow\\b|\\bseeds?\\b|\\bclocks?\\b|"
-        r"\\bsupport\\b|\\bprecision\\b|\\bfidelity\\b|\\bstability\\b|"
-        r"\\bcomplexity\\b|\\bbootstrap\\b|PYTHONHASHSEED|\\bmutant)",
+        r"(?:=|>=|<=|\bexact\b|\bprimary\b|\bfixed\b|\bfrozen\b|"
+        r"\bthreshold\b|\blatency\b|\bwindow\b|\bseeds?\b|\bclocks?\b|"
+        r"\bsupport\b|\bprecision\b|\bfidelity\b|\bstability\b|"
+        r"\bcomplexity\b|\bbootstrap\b|PYTHONHASHSEED|\bmutant)",
         re.I,
     )
     for lineno, raw_line in enumerate((root / path).read_text(encoding="utf-8").splitlines(), start=1):
         stripped = raw_line.strip()
         if not stripped or stripped.startswith("#"):
             continue
-        line = re.sub(r"^\\s*(?:[-*+]\\s+|\\d+[.)]\\s+)", "", raw_line)
-        line = re.sub(r"\\bStage[- ]?\\d+(?:\\.\\d+)?\\b", "Stage", line, flags=re.I)
-        line = re.sub(r"\\bSection\\s+\\d+(?:\\.\\d+)?\\b", "Section", line, flags=re.I)
+        line = re.sub(r"^\s*(?:[-*+]\s+|\d+[.)]\s+)", "", raw_line)
+        line = re.sub(r"\bStage[- ]?\d+(?:\.\d+)?\b", "Stage", line, flags=re.I)
+        line = re.sub(r"\bSection\s+\d+(?:\.\d+)?\b", "Section", line, flags=re.I)
         if not MATERIAL_RE.search(line) or not declaration.search(line):
             continue
         if re.search(

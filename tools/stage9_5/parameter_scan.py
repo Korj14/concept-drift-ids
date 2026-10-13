@@ -158,6 +158,7 @@ def _is_trivial_python_literal(name: str, value: Any) -> str | None:
 
 def _expression_exclusion_reason(
     *,
+    path: str,
     function_name: str,
     line: str,
     value: int | float,
@@ -184,6 +185,15 @@ def _expression_exclusion_reason(
         return "nanosecond-to-second unit conversion"
     if "historical" in function_name.lower():
         return "historical failed-run/provenance identity check"
+    if float(value) == 0.0 and re.search(r"\b(?:self\.)?(?:label_)?latency\s*<\s*0\b", stripped):
+        return "latency non-negativity validation lower bound"
+    if (
+        path == "src/concept_drift_ids/cd_primary_correction.py"
+        and function_name == "_failed_attempt_identity"
+        and float(value) == 0.0
+        and "seed" in stripped
+    ):
+        return "preserved failed-run seed identity/provenance check"
     return None
 
 
@@ -369,6 +379,7 @@ def _python_candidates(root: Path, path: str, register: dict[str, Any]) -> tuple
             context_material = bool(EXPRESSION_CONTEXT_RE.search(function_name))
             context = f"{function_name} {semantic_line}"
             explicit_exclusion = _expression_exclusion_reason(
+                path=path,
                 function_name=function_name,
                 line=line,
                 value=value,
@@ -588,7 +599,7 @@ def run(root: Path, output_dir: Path, fail_on_unclassified_high: bool = True) ->
     high_unclassified = [c for c in unclassified if c.leverage == "high"]
 
     report = {
-        "audit_id": "stage9.5-0-parameter-control-completeness-v1_11",
+        "audit_id": "stage9.5-0-parameter-control-completeness-v1_11_1",
         "protocol_id": register["protocol_id"],
         "upstream_closure_head": register["upstream_closure_head"],
         "parameter_register_sha256": hashlib.sha256((root / REGISTER_PATH).read_bytes()).hexdigest(),
@@ -617,7 +628,7 @@ def run(root: Path, output_dir: Path, fail_on_unclassified_high: bool = True) ->
     json_path.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
     lines = [
-        "# Stage 9.5-0 Parameter/Control Completeness Scan v1.11",
+        "# Stage 9.5-0 Parameter/Control Completeness Scan v1.11.1",
         "",
         f"- protocol: `{report['protocol_id']}`",
         f"- upstream closure head: `{report['upstream_closure_head']}`",
@@ -658,7 +669,7 @@ def run(root: Path, output_dir: Path, fail_on_unclassified_high: bool = True) ->
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--root", type=Path, default=Path("."))
-    parser.add_argument("--output-dir", type=Path, default=Path("results/audits/stage9_5_v1_11"))
+    parser.add_argument("--output-dir", type=Path, default=Path("results/audits/stage9_5_v1_11_1"))
     parser.add_argument("--no-fail", action="store_true")
     args = parser.parse_args()
     run(args.root.resolve(), args.output_dir, fail_on_unclassified_high=not args.no_fail)

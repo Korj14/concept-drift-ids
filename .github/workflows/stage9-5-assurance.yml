@@ -8,6 +8,9 @@ on:
     paths:
       - "STAGE9_5_Q1_INDEPENDENT_ASSURANCE_PROTOCOL.md"
       - "data/manifests/stage9_5_parameter_register_v1_11.json"
+      - "data/manifests/stage9_5_fresh_clone_reconstruction_v1.json"
+      - "STAGE9_5_0_PARAMETER_CONTROL_COMPLETENESS_CLOSURE.md"
+      - "STAGE9_5_1_FRESH_CLONE_RECONSTRUCTION_IMPLEMENTATION.md"
       - "tools/stage9_5/**"
       - "tests/stage9_5/**"
       - ".github/workflows/stage9-5-assurance.yml"
@@ -57,4 +60,47 @@ jobs:
         with:
           name: stage9-5-parameter-scan-v1-11-1
           path: artifacts/stage9_5_v1_11_1/parameter_scan/
+          if-no-files-found: error
+
+
+  fresh-clone-reconstruction:
+    runs-on: windows-latest
+    env:
+      PYTHONHASHSEED: "0"
+      OMP_NUM_THREADS: "1"
+      MKL_NUM_THREADS: "1"
+      OPENBLAS_NUM_THREADS: "1"
+      NUMEXPR_NUM_THREADS: "1"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11.9"
+
+      - name: Install historical frozen runtime
+        shell: pwsh
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements-lock.txt
+
+      - name: Run Stage 9.5-1 verifier tests
+        shell: pwsh
+        run: |
+          python -m pytest tests/stage9_5/test_fresh_clone_reconstruction.py -q
+
+      - name: Run Stage 9.5-1 fresh-clone reconstruction
+        shell: pwsh
+        run: |
+          python tools/stage9_5/fresh_clone_reconstruction.py --output-dir artifacts/stage9_5_v1/fresh_clone_reconstruction
+
+      - name: Upload Stage 9.5-1 reconstruction evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: stage9-5-fresh-clone-reconstruction-v1
+          path: artifacts/stage9_5_v1/fresh_clone_reconstruction/
           if-no-files-found: error

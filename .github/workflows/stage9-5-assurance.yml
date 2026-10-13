@@ -7,7 +7,7 @@ on:
   pull_request:
     paths:
       - "STAGE9_5_Q1_INDEPENDENT_ASSURANCE_PROTOCOL.md"
-      - "data/manifests/stage9_5_parameter_register_v1_5.json"
+      - "data/manifests/stage9_5_parameter_register_v1_6.json"
       - "tools/stage9_5/**"
       - "tests/stage9_5/**"
       - ".github/workflows/stage9-5-assurance.yml"
@@ -39,7 +39,7 @@ jobs:
       - name: Verify prospective Stage 9.5 freeze artifacts
         shell: pwsh
         run: |
-          python -c "from pathlib import Path; required=['STAGE9_5_Q1_INDEPENDENT_ASSURANCE_PROTOCOL.md','data/manifests/stage9_5_parameter_register_v1.json','data/manifests/stage9_5_parameter_register_v1_5.json']; missing=[p for p in required if not Path(p).is_file()]; assert not missing, missing"
+          python -c "from pathlib import Path; required=['STAGE9_5_Q1_INDEPENDENT_ASSURANCE_PROTOCOL.md','data/manifests/stage9_5_parameter_register_v1.json','data/manifests/stage9_5_parameter_register_v1_6.json']; missing=[p for p in required if not Path(p).is_file()]; assert not missing, missing"
 
       - name: Run Stage 9.5 scanner unit tests
         shell: pwsh
@@ -49,12 +49,12 @@ jobs:
       - name: Run Stage 9.5-0 parameter/control scan
         shell: pwsh
         run: |
-          python tools/stage9_5/parameter_scan.py --output-dir artifacts/stage9_5_v1_5/parameter_scan
+          python tools/stage9_5/parameter_scan.py --output-dir artifacts/stage9_5_v1_6/parameter_scan
 
       - name: Upload Stage 9.5-0 scan evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: stage9-5-parameter-scan-v1-5
-          path: artifacts/stage9_5_v1_5/parameter_scan/
+          name: stage9-5-parameter-scan-v1-6
+          path: artifacts/stage9_5_v1_6/parameter_scan/
           if-no-files-found: error

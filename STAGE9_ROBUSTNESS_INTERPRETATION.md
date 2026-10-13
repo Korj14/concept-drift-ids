@@ -246,7 +246,7 @@ shows that many successful D-drift publications occur before the controlled boun
 - no replay: 6 pre-reference, 1 post-reference;
 - static gate: 6 pre-reference, 1 post-reference.
 
-The publication-clock audit is descriptive/post-export and creates no new hypothesis test.
+The publication-clock audit is preserved at `results/audits/stage9_v1_1_publication_clock_audit.json`, with its deterministic derivation documented in `results/audits/STAGE9_V1_1_PUBLICATION_CLOCK_AUDIT.md`. It is descriptive/post-export and creates no new hypothesis test.
 
 Its timing result is nevertheless consistent with Stage 8 and further constrains causal language.
 

@@ -67,7 +67,7 @@ def test_scan_blocks_unregistered_high_leverage_constant(tmp_path: Path) -> None
             ],
         },
     }
-    path = tmp_path / "data/manifests/stage9_5_parameter_register_v1_4.json"
+    path = tmp_path / "data/manifests/stage9_5_parameter_register_v1_5.json"
     path.write_text(json.dumps(register), encoding="utf-8")
 
     try:
@@ -101,7 +101,7 @@ def test_scan_passes_when_high_leverage_constant_is_registered(tmp_path: Path) -
             "protocols": [],
         },
     }
-    path = tmp_path / "data/manifests/stage9_5_parameter_register_v1_4.json"
+    path = tmp_path / "data/manifests/stage9_5_parameter_register_v1_5.json"
     path.write_text(json.dumps(register), encoding="utf-8")
 
     report = run(tmp_path, tmp_path / "out", fail_on_unclassified_high=True)
@@ -148,7 +148,7 @@ def test_v1_3_blocks_unclassified_material_even_when_not_high_leverage(tmp_path:
             "protocols": [],
         },
     }
-    path = tmp_path / "data/manifests/stage9_5_parameter_register_v1_4.json"
+    path = tmp_path / "data/manifests/stage9_5_parameter_register_v1_5.json"
     path.write_text(json.dumps(register), encoding="utf-8")
     try:
         run(tmp_path, tmp_path / "out", fail_on_unclassified_high=True)
@@ -184,3 +184,63 @@ def test_v1_4_scans_material_row_arm_phase_and_weight_constants(tmp_path: Path) 
     locators = {item.locator for item in found}
     assert {"EXPECTED_PRE_ROWS","EXPECTED_POST_ROWS","PRIMARY_PHASES","PRIMARY_ARMS","PRIMARY_WEIGHTS","PRIMARY_NEURAL_WEIGHT"} <= locators
     assert all(item.registered_ids for item in found)
+
+
+def test_locator_pattern_does_not_bypass_wrong_value() -> None:
+    register = {
+        "entries": [{
+            "id": "latency",
+            "source_locations": ["x.py"],
+            "accepted_value": 5000,
+            "scan_values": [5000],
+            "locator_patterns": ["^LABEL_LATENCY$"],
+        }]
+    }
+    assert _registered_ids(register, "x.py", "LABEL_LATENCY", 10000) == ()
+
+
+def test_string_matching_is_exact_not_substring() -> None:
+    register = {
+        "entries": [{
+            "id": "arm",
+            "source_locations": ["x.py"],
+            "accepted_value": ["d_periodic"],
+        }]
+    }
+    assert _registered_ids(register, "x.py", "arm", "d_periodic") == ("arm",)
+    assert _registered_ids(register, "x.py", "arm", "periodic") == ()
+
+
+def test_ambiguous_material_mapping_blocks_pass(tmp_path: Path) -> None:
+    _minimal_repo(tmp_path)
+    source = tmp_path / "src/concept_drift_ids/example.py"
+    source.write_text("LABEL_LATENCY = 5000\n", encoding="utf-8")
+    register = {
+        "protocol_id": "stage9.5-q1-assurance-v1",
+        "upstream_closure_head": "head",
+        "entries": [
+            {"id":"a","source_locations":["src/concept_drift_ids/example.py"],"accepted_value":5000},
+            {"id":"b","source_locations":["src/concept_drift_ids/example.py"],"accepted_value":5000},
+        ],
+        "scan_roots": {"scientific_source":["src/concept_drift_ids/example.py"],"manifests":[],"protocols":[]},
+    }
+    (tmp_path / "data/manifests/stage9_5_parameter_register_v1_5.json").write_text(json.dumps(register), encoding="utf-8")
+    report = run(tmp_path, tmp_path / "out", fail_on_unclassified_high=False)
+    assert report["pass"] is False
+    assert report["counts"]["ambiguous_material_candidates"] == 1
+
+
+def test_expression_literal_discovers_hidden_generation_budget(tmp_path: Path) -> None:
+    from tools.stage9_5.parameter_scan import _python_candidates
+    (tmp_path / "src/concept_drift_ids").mkdir(parents=True)
+    p = tmp_path / "src/concept_drift_ids/example.py"
+    p.write_text(
+        "def _periodic_generation_ids(rows):\n"
+        "    if len(rows) < 10_000:\n"
+        "        return None\n"
+        "    return rows[-10_000:]\n",
+        encoding="utf-8",
+    )
+    register = {"entries":[]}
+    found, _ = _python_candidates(tmp_path, "src/concept_drift_ids/example.py", register)
+    assert any(item.value == 10000 and item.source_kind == "python_expression" for item in found)

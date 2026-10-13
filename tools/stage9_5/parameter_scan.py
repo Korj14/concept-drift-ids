@@ -18,11 +18,18 @@ MATERIAL_RE = re.compile(
     r"delta|clock|max.?bucket|min.?window|grace|top.?k|depth|leaf|opportun|periodic|"
     r"feature|dropout|pos.?weight|wilson|\bz\b|cooldown|confirm|persistence|"
     r"overlap|redundan|refinement|conflict|retire|demot|maturity|label|checkpoint|"
-    r"rows|arms?|phases?|conditions?|groups?|metrics?|primary.?weights?|neural.?weight|"\n    r"min.?instances|alpha|mode|(?:^|_)weight$)",
+    r"rows|arms?|phases?|conditions?|groups?|metrics?|primary.?weights?|neural.?weight|"
+    r"min.?instances|alpha|mode|(?:^|_)weight$)",
     re.I,
 )
 HASH_RE = re.compile(r"^[0-9a-f]{40,64}$", re.I)
 NUMBER_RE = re.compile(r"(?<![A-Za-z0-9_])[-+]?(?:(?:\d{1,3}(?:,\d{3})+|\d+)?\.\d+|\d{1,3}(?:,\d{3})+|\d+)(?:[eE][-+]?\d+)?(?![A-Za-z0-9_])")
+EXPRESSION_CONTEXT_RE = re.compile(
+    r"(generation|validation|replay|latenc|window|threshold|fusion|lambda|periodic|"
+    r"opportun|detector|gate|bootstrap|support|precision|fidelity|stability|"
+    r"weight|boundary|maturity|label)",
+    re.I,
+)
 
 
 @dataclass(frozen=True)

@@ -1,0 +1,25 @@
+{
+  "audit_id": "stage9.5-0-v1.6-parameter-scan-block",
+  "classification": "residual_registry_and_non_scientific_literal_classification",
+  "scientific_class": "not_Class_A_by_itself",
+  "accepted_as_closure_evidence": false,
+  "exact_head": "ab6c7ea1c02527957419e6eacecc78e5a63a9543",
+  "workflow_run_id": 38435795450,
+  "scan_canonical_sha256": "e43e0524efd46402acff248ce03577cacab985b8caa3ede3f3272cf9fc6014b5",
+  "artifact_zip_sha256": "8453b3e79513e99cbbc8fb1370753d9f1ddfd590647b4ab347bff56cf56dbabc",
+  "counts": {
+    "registered_entries": 82,
+    "material_candidates": 496,
+    "excluded_candidates": 1493,
+    "unclassified_material_candidates": 53,
+    "unclassified_high_leverage_candidates": 21,
+    "ambiguous_material_candidates": 3
+  },
+  "scope": {
+    "bound": true,
+    "python_sources": 38
+  },
+  "stage9_same_head_regression": "success",
+  "disposition": "Residuals individually reviewed. Scientific-looking residuals are mirrors of already accepted controls/derived identities; remaining literals are state sentinels, I/O modes, safe arithmetic guards, or engineering chunk sizes. No accepted scientific value changes.",
+  "correction_protocol": "STAGE9_5_V1_7_RESIDUAL_DISPOSITION_CORRECTION.md"
+}

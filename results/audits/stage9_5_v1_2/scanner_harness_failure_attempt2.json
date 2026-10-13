@@ -1,0 +1,14 @@
+{
+  "status": "failed_preserved",
+  "type": "stage9_5_v1_2_scanner_harness_failure_before_audit_execution",
+  "attempt": 2,
+  "head_sha": "17d82c8ad8e8e42f3830d51e9981dcfd812585b0",
+  "workflow_run_id": 38428195690,
+  "workflow_job_id": 115403075445,
+  "root_cause": "Markdown semantic-regex strings were committed with doubled backslash escapes, so word-boundary/whitespace expressions matched literal backslashes and the exact-clock normalization test returned no candidates",
+  "scanner_unit_tests": "4 passed, 1 failed",
+  "stage9_5_audit_result_created": false,
+  "scientific_outcome_accessed": false,
+  "stage8_or_stage9_evidence_modified": false,
+  "disposition": "preserve attempt; correct only regex escaping and add direct regression assertion before rerun"
+}

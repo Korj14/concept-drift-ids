@@ -17,7 +17,8 @@ MATERIAL_RE = re.compile(
     r"anchor|reservoir|batch|learning.?rate|\blr\b|weight.?decay|epoch|patience|"
     r"delta|clock|max.?bucket|min.?window|grace|top.?k|depth|leaf|opportun|periodic|"
     r"feature|dropout|pos.?weight|wilson|\bz\b|cooldown|confirm|persistence|"
-    r"overlap|redundan|refinement|conflict|retire|demot|maturity|label|checkpoint|"\n    r"rows|arms|phases|primary.?weights?|neural.?weight)",
+    r"overlap|redundan|refinement|conflict|retire|demot|maturity|label|checkpoint|"
+    r"rows|arms|phases|primary.?weights?|neural.?weight)",
     re.I,
 )
 HASH_RE = re.compile(r"^[0-9a-f]{40,64}$", re.I)

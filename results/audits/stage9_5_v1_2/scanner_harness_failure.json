@@ -1,0 +1,13 @@
+{
+  "status": "failed_preserved",
+  "type": "stage9_5_v1_2_scanner_harness_failure_before_audit_execution",
+  "head_sha": "4dd39fba5713a23dee96396f579dcd389c63ccaa",
+  "workflow_run_id": 38427337054,
+  "workflow_job_id": 115400051354,
+  "root_cause": "v1.2 parser edit accidentally truncated parameter_scan.py after _markdown_candidates, so test collection could not import run; audit scan was skipped",
+  "scanner_unit_tests": "collection error before execution",
+  "stage9_5_audit_result_created": false,
+  "scientific_outcome_accessed": false,
+  "stage8_or_stage9_evidence_modified": false,
+  "disposition": "preserve failure; reconstruct scanner from last intact v1.1 source, reapply v1.2 changes without truncation, and rerun tests before audit"
+}

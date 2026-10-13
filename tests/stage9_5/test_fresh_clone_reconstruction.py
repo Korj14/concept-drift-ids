@@ -69,3 +69,33 @@ def test_external_raw_inventory_is_complete() -> None:
     assert len(files) == 8
     assert sum(int(item["size_bytes"]) for item in files) == 884645759
     assert all(len(item["sha256"]) == 64 for item in files)
+
+
+def test_two_layer_writer_hash_order_matches_repository_contract(tmp_path: Path) -> None:
+    from tools.stage9_5.fresh_clone_reconstruction import _load_json
+
+    core = {"schema_version": 1, "value": 7}
+    manifest = dict(core)
+    manifest["manifest_sha256"] = _canonical_json_hash(manifest)
+    body = dict(manifest)
+    body["payload_sha256"] = _canonical_json_hash(body)
+
+    path = tmp_path / "manifest.json"
+    path.write_text(json.dumps(body, indent=2) + "\n", encoding="utf-8")
+
+    loaded = _load_json(path)
+    writer_hash = loaded.pop("payload_sha256")
+    assert writer_hash == _canonical_json_hash(loaded)
+    inner_hash = loaded.pop("manifest_sha256")
+    assert inner_hash == _canonical_json_hash(loaded)
+    assert inner_hash == manifest["manifest_sha256"]
+
+
+def test_repository_lf_identity_survives_windows_crlf_checkout(tmp_path: Path) -> None:
+    lf = b'{\n  "scenario": "x"\n}\n'
+    path = tmp_path / "scenario.json"
+    path.write_bytes(lf.replace(b"\n", b"\r\n"))
+
+    expected_repository_lf_hash = hashlib.sha256(lf).hexdigest()
+    assert _sha256_file(path) != expected_repository_lf_hash
+    assert _normalized_text_sha256(path) == expected_repository_lf_hash

@@ -1,0 +1,170 @@
+{
+  "schema_version": 1,
+  "status": "prospectively_frozen_before_stage9_5_2_oracle_execution",
+  "protocol_id": "stage9.5-q1-assurance-v1",
+  "package": "stage9.5-2-independent-statistical-oracle",
+  "scientific_objects_modified": false,
+  "production_aggregation_imports_forbidden": true,
+  "seeds": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "arms": [
+    "c_frozen_symbolic",
+    "d_drift",
+    "d_periodic"
+  ],
+  "stage8": {
+    "root": "results/frozen/cd_primary_v1/phase_c_offline_evaluation_v1_1",
+    "confirmatory_path": "results/frozen/cd_primary_v1/phase_c_offline_evaluation_v1_1/confirmatory_analysis.json",
+    "confirmatory_manifest_sha256": "1be77ce4be9f3faad021a3f3bfd636488e5de6aa1b2a6e7c596e48feb41bb54d",
+    "evaluation_pattern": "results/frozen/cd_primary_v1/phase_c_offline_evaluation_v1_1/seed-{seed}/{arm}_evaluation.json",
+    "primary_neural_weight": "0.5",
+    "partition": "post",
+    "endpoints": {
+      "E1_post_mcc_d_drift_minus_c": {
+        "left": [
+          "d_drift",
+          "mcc"
+        ],
+        "right": [
+          "c_frozen_symbolic",
+          "mcc"
+        ],
+        "direction": "greater"
+      },
+      "E2_post_mcsc_d_drift_minus_c": {
+        "left": [
+          "d_drift",
+          "mcsc"
+        ],
+        "right": [
+          "c_frozen_symbolic",
+          "mcsc"
+        ],
+        "direction": "greater"
+      },
+      "E3_post_mcsc_d_drift_minus_d_periodic": {
+        "left": [
+          "d_drift",
+          "mcsc"
+        ],
+        "right": [
+          "d_periodic",
+          "mcsc"
+        ],
+        "direction": "greater"
+      }
+    },
+    "familywise_alpha": 0.05,
+    "inferential_unit": "matched_seed_within_fixed_primary_scenario"
+  },
+  "primitive_recomputation": {
+    "predictive": {
+      "source_fields": [
+        "tn",
+        "fp",
+        "fn",
+        "tp"
+      ],
+      "formulas": {
+        "f1": "2*tp/(2*tp+fp+fn), with zero denominator -> 0",
+        "fpr": "fp/(fp+tn), with zero denominator -> 0",
+        "mcc": "(tp*tn-fp*fn)/sqrt((tp+fp)*(tp+fn)*(tn+fp)*(tn+fn)), with zero denominator -> 0"
+      }
+    },
+    "explanation": {
+      "mcsc": "0.5*(attack_correct_symbolic_coverage+benign_correct_symbolic_coverage)",
+      "resolved_coverage": "1-uncovered_rate-conflict_abstain_rate"
+    }
+  },
+  "summaries": {
+    "fields": [
+      "values",
+      "mean",
+      "median",
+      "sample_sd",
+      "minimum",
+      "maximum",
+      "positive",
+      "negative",
+      "zero",
+      "leave_one_seed_out_mean_min",
+      "leave_one_seed_out_mean_max",
+      "ci95_low",
+      "ci95_high"
+    ],
+    "t_interval": {
+      "confidence": 0.95,
+      "df": 4,
+      "definition": "mean +/- t_(0.975,4)*sample_sd/sqrt(5)"
+    },
+    "sign_test": {
+      "null_probability": 0.5,
+      "alternative": "greater",
+      "zero_effects_excluded_from_effective_n": true,
+      "definition": "exact binomial upper tail P[X>=positive]"
+    },
+    "holm": {
+      "family": [
+        "E1_post_mcc_d_drift_minus_c",
+        "E2_post_mcsc_d_drift_minus_c",
+        "E3_post_mcsc_d_drift_minus_d_periodic"
+      ],
+      "definition": "standard Holm step-down adjusted p-values with monotonicity and cap at 1"
+    }
+  },
+  "stage9": {
+    "root": "results/frozen/cd_robustness_v1_1",
+    "aggregate_path": "results/frozen/cd_robustness_v1_1/aggregate.json",
+    "aggregate_raw_sha256": "d6e70aaa591de7169ed9acc7f1da7c0aa6edfc7e7d3e8b5e72657d7d1e57be70",
+    "aggregate_canonical_sha256": "6432dd5791f0baa9bdb2597c072b866814fb614f5a1f670dffec7f760bd1491a",
+    "execution_plan_sha256": "4ae426dd32ffed2384b4565710364459f4ee0ac2752543d6ec075facf66e53c8",
+    "offline_conditions": [
+      "lambda_0_7",
+      "lambda_0_9",
+      "lambda_1_0",
+      "window_10000",
+      "window_2500"
+    ],
+    "scored_conditions": [
+      "adwin_brier",
+      "latency_0",
+      "latency_10000",
+      "no_replay",
+      "page_hinkley_hard_error",
+      "static_symbolic_gate"
+    ],
+    "offline_pattern": "results/frozen/cd_robustness_v1_1/offline/{condition}/seed-{seed}.json",
+    "scored_pattern": "results/frozen/cd_robustness_v1_1/scored/{condition}/seed-{seed}/{arm}_evaluation.json",
+    "rules": {
+      "offline_predictive": "recompute F1/FPR/MCC from per-seed confusion counts in results[arm].metrics.post",
+      "offline_explanation": "verify inherited MCSC/resolved-coverage against the corresponding immutable Stage-8 per-seed arm evidence; do not invent new explanation evidence",
+      "scored_predictive": "recompute F1/FPR/MCC from per-seed confusion counts at neural weight 0.5/post",
+      "scored_explanation": "recompute MCSC/resolved-coverage from per-seed explanation primitives",
+      "window_conditions": "whole-post predictive endpoints are unchanged by window-size condition; verify aggregate invariance and recompute only stored recovery/window summaries when primitive fields are available",
+      "no_new_confirmatory_family": true
+    }
+  },
+  "comparison_tolerances": {
+    "exact": [
+      "counts",
+      "labels",
+      "seed sets",
+      "file sets",
+      "hashes",
+      "sign counts"
+    ],
+    "json_exact_recomputation_absolute": 1e-12,
+    "floating_metric_recomputation_absolute": 1e-10,
+    "manuscript_rounded_values_authoritative": false
+  },
+  "stop_rules": {
+    "mismatch_above_tolerance": "blocking finding until explained",
+    "production_aggregation_module_import": "invalid oracle implementation",
+    "new_stage9_confirmatory_pvalue_family": "forbidden"
+  }
+}

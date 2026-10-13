@@ -49,12 +49,12 @@ jobs:
       - name: Run Stage 9.5-0 parameter/control scan
         shell: pwsh
         run: |
-          python tools/stage9_5/parameter_scan.py --output-dir artifacts/stage9_5_v1_11/parameter_scan
+          python tools/stage9_5/parameter_scan.py --output-dir artifacts/stage9_5_v1_11_1/parameter_scan
 
       - name: Upload Stage 9.5-0 scan evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: stage9-5-parameter-scan-v1-11
-          path: artifacts/stage9_5_v1_11/parameter_scan/
+          name: stage9-5-parameter-scan-v1-11-1
+          path: artifacts/stage9_5_v1_11_1/parameter_scan/
           if-no-files-found: error

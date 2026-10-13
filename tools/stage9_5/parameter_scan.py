@@ -209,6 +209,7 @@ def _python_candidates(root: Path, path: str, register: dict[str, Any]) -> tuple
     found: list[Candidate] = []
     excluded: list[Candidate] = []
     emitted_line_values: set[tuple[int | None, str]] = set()
+    assigned_literal_constant_locations: set[tuple[int | None, int | None]] = set()
 
     def _value_key(value: Any) -> str:
         return json.dumps(value, sort_keys=True, ensure_ascii=False)
@@ -249,6 +250,11 @@ def _python_candidates(root: Path, path: str, register: dict[str, Any]) -> tuple
                 value = ast.literal_eval(value_node)
             except Exception:
                 continue
+            for literal_node in ast.walk(value_node):
+                if isinstance(literal_node, ast.Constant):
+                    assigned_literal_constant_locations.add(
+                        (getattr(literal_node, "lineno", None), getattr(literal_node, "col_offset", None))
+                    )
             names: list[str] = []
             for target in targets:
                 if isinstance(target, ast.Name):
@@ -289,6 +295,8 @@ def _python_candidates(root: Path, path: str, register: dict[str, Any]) -> tuple
             self.functions.pop()
 
         def visit_Constant(self, node: ast.Constant) -> None:
+            if (getattr(node, "lineno", None), getattr(node, "col_offset", None)) in assigned_literal_constant_locations:
+                return
             value = node.value
             if isinstance(value, bool) or not isinstance(value, (int, float)):
                 return
@@ -524,7 +532,7 @@ def run(root: Path, output_dir: Path, fail_on_unclassified_high: bool = True) ->
     high_unclassified = [c for c in unclassified if c.leverage == "high"]
 
     report = {
-        "audit_id": "stage9.5-0-parameter-control-completeness-v1_9",
+        "audit_id": "stage9.5-0-parameter-control-completeness-v1_9_1",
         "protocol_id": register["protocol_id"],
         "upstream_closure_head": register["upstream_closure_head"],
         "parameter_register_sha256": hashlib.sha256((root / REGISTER_PATH).read_bytes()).hexdigest(),
@@ -594,7 +602,7 @@ def run(root: Path, output_dir: Path, fail_on_unclassified_high: bool = True) ->
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--root", type=Path, default=Path("."))
-    parser.add_argument("--output-dir", type=Path, default=Path("results/audits/stage9_5_v1_9"))
+    parser.add_argument("--output-dir", type=Path, default=Path("results/audits/stage9_5_v1_9_1"))
     parser.add_argument("--no-fail", action="store_true")
     args = parser.parse_args()
     run(args.root.resolve(), args.output_dir, fail_on_unclassified_high=not args.no_fail)

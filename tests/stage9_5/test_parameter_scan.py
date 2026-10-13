@@ -509,3 +509,59 @@ def test_v1_11_small_material_expressions_and_replay_dict_values(tmp_path: Path)
     found, _ = _python_candidates(tmp_path, "src/concept_drift_ids/cd_symbolic_lifecycle.py", life_register)
     assert {item.value for item in found if item.registered_ids == ("overlap",)} == {0.5,0.95}
     assert any(item.value == 1 and item.registered_ids == ("state_machine",) for item in found)
+
+
+def test_v1_11_1_validation_guards_excluded_but_latency_zero_treatment_material(tmp_path: Path) -> None:
+    from tools.stage9_5.parameter_scan import _python_candidates
+
+    (tmp_path / "src/concept_drift_ids").mkdir(parents=True)
+
+    shared = tmp_path / "src/concept_drift_ids/cd_stage9_shared_runner.py"
+    shared.write_text(
+        "def validate(label_latency):\n"
+        "    if label_latency < 0:\n"
+        "        raise ValueError('non-negative')\n",
+        encoding="utf-8",
+    )
+    found, excluded = _python_candidates(
+        tmp_path, "src/concept_drift_ids/cd_stage9_shared_runner.py", {"entries":[]}
+    )
+    assert not any(item.value == 0 for item in found)
+    assert any(
+        item.value == 0 and item.exclusion_reason == "latency non-negativity validation lower bound"
+        for item in excluded
+    )
+
+    correction = tmp_path / "src/concept_drift_ids/cd_primary_correction.py"
+    correction.write_text(
+        "def _failed_attempt_identity(attempt, failure):\n"
+        "    if int(attempt['seed']) != 0 or int(failure['seed']) != 0:\n"
+        "        raise ValueError('changed')\n",
+        encoding="utf-8",
+    )
+    found, excluded = _python_candidates(
+        tmp_path, "src/concept_drift_ids/cd_primary_correction.py", {"entries":[]}
+    )
+    assert not any(item.value == 0 for item in found)
+    assert sum(
+        item.value == 0 and item.exclusion_reason == "preserved failed-run seed identity/provenance check"
+        for item in excluded
+    ) == 2
+
+    cfg = tmp_path / "src/concept_drift_ids/cd_stage9_config.py"
+    cfg.write_text(
+        "def specs():\n"
+        "    return {'label_latency': 0}\n",
+        encoding="utf-8",
+    )
+    register = {
+        "entries":[{
+            "id":"latency",
+            "source_locations":["src/concept_drift_ids/cd_stage9_config.py"],
+            "accepted_value":[0,10000],
+            "scan_values":[0,10000],
+            "locator_patterns":["label_latency.*(?:0|10000)"],
+        }]
+    }
+    found, _ = _python_candidates(tmp_path, "src/concept_drift_ids/cd_stage9_config.py", register)
+    assert any(item.value == 0 and item.registered_ids == ("latency",) for item in found)

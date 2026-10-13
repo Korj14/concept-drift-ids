@@ -9,7 +9,7 @@ from dataclasses import dataclass, asdict
 from pathlib import Path
 from typing import Any, Iterable
 
-REGISTER_PATH = Path("data/manifests/stage9_5_parameter_register_v1.json")
+REGISTER_PATH = Path("data/manifests/stage9_5_parameter_register_v1_1.json")
 
 MATERIAL_RE = re.compile(
     r"(boundary|latenc|window|stride|remainder|threshold|lambda|fusion|seed|rng|"
@@ -63,10 +63,19 @@ def _flatten_values(value: Any) -> list[Any]:
     return out
 
 
-def _registered_ids(register: dict[str, Any], path: str, value: Any) -> tuple[str, ...]:
+def _registered_ids(
+    register: dict[str, Any],
+    path: str,
+    locator: str,
+    value: Any,
+) -> tuple[str, ...]:
     hits: list[str] = []
     for entry in register["entries"]:
         if path not in entry["source_locations"]:
+            continue
+        patterns = entry.get("locator_patterns", [])
+        if patterns and any(re.search(pattern, locator) for pattern in patterns):
+            hits.append(entry["id"])
             continue
         accepted = _flatten_values(entry["accepted_value"])
         for item in accepted:
@@ -125,7 +134,7 @@ def _python_candidates(root: Path, path: str, register: dict[str, Any]) -> tuple
             value=value,
             source_kind="python",
             material_reason="semantic-name match" if material else "excluded",
-            registered_ids=_registered_ids(register, path, value) if material else (),
+            registered_ids=_registered_ids(register, path, name, value) if material else (),
             leverage=_leverage(name, path),
             excluded=reason is not None,
             exclusion_reason=reason,
@@ -189,6 +198,29 @@ def _walk_json(value: Any, prefix: str = "") -> Iterable[tuple[str, Any]]:
         yield prefix, value
 
 
+def _json_exclusion_reason(locator: str, value: Any) -> str | None:
+    provenance_prefixes = (
+        "primary_runtime_reference.",
+        "runtime.",
+        "requirements.",
+        "scientific_source_hashes.",
+        "source_hashes.",
+        "preparation.",
+        "correction.",
+        "correction_scope.",
+        "historical_v1_execution.",
+        "frozen_primary_contract.contract.",
+    )
+    if locator.startswith(provenance_prefixes):
+        return "provenance/runtime/corrected-contract mirror; audited by identity/hash assurance rather than counted as a distinct parameter"
+    low = locator.lower()
+    if any(token in low for token in ("sha256", "commit", "tree_sha", "manifest_sha", "payload_hash", "file_hash")):
+        return "provenance/hash identity handled by reconstruction and hash audit"
+    if isinstance(value, str) and HASH_RE.match(value):
+        return "hash identity handled by reconstruction and hash audit"
+    return None
+
+
 def _json_candidates(root: Path, path: str, register: dict[str, Any]) -> tuple[list[Candidate], list[Candidate]]:
     payload = json.loads((root / path).read_text(encoding="utf-8"))
     found: list[Candidate] = []
@@ -197,10 +229,10 @@ def _json_candidates(root: Path, path: str, register: dict[str, Any]) -> tuple[l
         if not isinstance(value, (str, int, float, bool)):
             continue
         material = bool(MATERIAL_RE.search(locator))
-        reason: str | None = None
-        if isinstance(value, str) and (not value or HASH_RE.match(value)):
-            reason = "empty/hash identity handled by provenance audit"
-        elif not material:
+        reason: str | None = _json_exclusion_reason(locator, value)
+        if reason is None and isinstance(value, str) and not value:
+            reason = "empty value"
+        elif reason is None and not material:
             reason = "JSON scalar key path does not match material semantic patterns"
         candidate = Candidate(
             path=path,
@@ -209,7 +241,7 @@ def _json_candidates(root: Path, path: str, register: dict[str, Any]) -> tuple[l
             value=value,
             source_kind="json",
             material_reason="semantic-key match" if material else "excluded",
-            registered_ids=_registered_ids(register, path, value) if material else (),
+            registered_ids=_registered_ids(register, path, locator, value) if material and reason is None else (),
             leverage=_leverage(locator, path),
             excluded=reason is not None,
             exclusion_reason=reason,
@@ -221,8 +253,22 @@ def _json_candidates(root: Path, path: str, register: dict[str, Any]) -> tuple[l
 def _markdown_candidates(root: Path, path: str, register: dict[str, Any]) -> tuple[list[Candidate], list[Candidate]]:
     found: list[Candidate] = []
     excluded: list[Candidate] = []
+    prescriptive = re.compile(
+        r"(freeze|frozen|must|required|primary|exact|threshold|latency|window|"
+        r"lambda|gate|detector|replay|seed|boundary|opportunit|bootstrap|"
+        r"support|precision|fidelity|stability|complexity|overlap|retire|demot)",
+        re.I,
+    )
     for lineno, line in enumerate((root / path).read_text(encoding="utf-8").splitlines(), start=1):
-        if not MATERIAL_RE.search(line):
+        if not MATERIAL_RE.search(line) or not prescriptive.search(line):
+            continue
+        if re.search(r"(observed|result|mean|median|confidence interval|approximately|workflow run|commit|sha-?256)", line, re.I):
+            excluded.append(Candidate(
+                path=path, line=lineno, locator=line.strip()[:180], value="<line>",
+                source_kind="markdown", material_reason="excluded",
+                registered_ids=(), leverage=_leverage(line, path), excluded=True,
+                exclusion_reason="historical outcome/provenance statement, not a prospective control declaration",
+            ))
             continue
         for match in NUMBER_RE.finditer(line):
             raw = match.group(0)
@@ -238,7 +284,7 @@ def _markdown_candidates(root: Path, path: str, register: dict[str, Any]) -> tup
                 value=value,
                 source_kind="markdown",
                 material_reason="material-keyword line",
-                registered_ids=_registered_ids(register, path, value),
+                registered_ids=_registered_ids(register, path, locator, value),
                 leverage=_leverage(locator, path),
             )
             found.append(candidate)
@@ -272,7 +318,7 @@ def run(root: Path, output_dir: Path, fail_on_unclassified_high: bool = True) ->
     high_unclassified = [c for c in unclassified if c.leverage == "high"]
 
     report = {
-        "audit_id": "stage9.5-0-parameter-control-completeness-v1",
+        "audit_id": "stage9.5-0-parameter-control-completeness-v1_1",
         "protocol_id": register["protocol_id"],
         "upstream_closure_head": register["upstream_closure_head"],
         "parameter_register_sha256": hashlib.sha256((root / REGISTER_PATH).read_bytes()).hexdigest(),
@@ -298,7 +344,7 @@ def run(root: Path, output_dir: Path, fail_on_unclassified_high: bool = True) ->
     json_path.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
     lines = [
-        "# Stage 9.5-0 Parameter/Control Completeness Scan",
+        "# Stage 9.5-0 Parameter/Control Completeness Scan v1.1",
         "",
         f"- protocol: `{report['protocol_id']}`",
         f"- upstream closure head: `{report['upstream_closure_head']}`",
@@ -336,7 +382,7 @@ def run(root: Path, output_dir: Path, fail_on_unclassified_high: bool = True) ->
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--root", type=Path, default=Path("."))
-    parser.add_argument("--output-dir", type=Path, default=Path("results/audits/stage9_5_v1"))
+    parser.add_argument("--output-dir", type=Path, default=Path("results/audits/stage9_5_v1_1"))
     parser.add_argument("--no-fail", action="store_true")
     args = parser.parse_args()
     run(args.root.resolve(), args.output_dir, fail_on_unclassified_high=not args.no_fail)

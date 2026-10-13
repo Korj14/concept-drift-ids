@@ -11,6 +11,9 @@ on:
       - "data/manifests/stage9_5_fresh_clone_reconstruction_v1.json"
       - "STAGE9_5_0_PARAMETER_CONTROL_COMPLETENESS_CLOSURE.md"
       - "STAGE9_5_1_FRESH_CLONE_RECONSTRUCTION_IMPLEMENTATION.md"
+      - "STAGE9_5_1_FRESH_CLONE_RECONSTRUCTION_BLOCKED.md"
+      - "data/manifests/stage9_5_statistical_oracle_v1.json"
+      - "STAGE9_5_2_INDEPENDENT_STATISTICAL_ORACLE_IMPLEMENTATION.md"
       - "tools/stage9_5/**"
       - "tests/stage9_5/**"
       - ".github/workflows/stage9-5-assurance.yml"
@@ -103,4 +106,52 @@ jobs:
         with:
           name: stage9-5-fresh-clone-reconstruction-v1-1
           path: artifacts/stage9_5_v1_1/fresh_clone_reconstruction/
+          if-no-files-found: error
+
+
+  statistical-oracle:
+    runs-on: windows-latest
+    env:
+      PYTHONHASHSEED: "0"
+      OMP_NUM_THREADS: "1"
+      MKL_NUM_THREADS: "1"
+      OPENBLAS_NUM_THREADS: "1"
+      NUMEXPR_NUM_THREADS: "1"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11.9"
+
+      - name: Install historical frozen runtime
+        shell: pwsh
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements-lock.txt
+
+      - name: Verify Stage 9.5-2 prospective freeze
+        shell: pwsh
+        run: |
+          python -c "from pathlib import Path; required=['data/manifests/stage9_5_statistical_oracle_v1.json','STAGE9_5_2_INDEPENDENT_STATISTICAL_ORACLE_IMPLEMENTATION.md']; missing=[p for p in required if not Path(p).is_file()]; assert not missing, missing"
+
+      - name: Run Stage 9.5-2 oracle tests
+        shell: pwsh
+        run: |
+          python -m pytest tests/stage9_5/test_statistical_oracle.py -q
+
+      - name: Run Stage 9.5-2 independent statistical oracle
+        shell: pwsh
+        run: |
+          python tools/stage9_5/statistical_oracle.py --output-dir artifacts/stage9_5_v1/statistical_oracle
+
+      - name: Upload Stage 9.5-2 oracle evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: stage9-5-statistical-oracle-v1
+          path: artifacts/stage9_5_v1/statistical_oracle/
           if-no-files-found: error

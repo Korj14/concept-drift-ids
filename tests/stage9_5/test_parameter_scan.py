@@ -67,7 +67,7 @@ def test_scan_blocks_unregistered_high_leverage_constant(tmp_path: Path) -> None
             ],
         },
     }
-    path = tmp_path / "data/manifests/stage9_5_parameter_register_v1_6.json"
+    path = tmp_path / "data/manifests/stage9_5_parameter_register_v1_7.json"
     path.write_text(json.dumps(register), encoding="utf-8")
 
     try:
@@ -101,7 +101,7 @@ def test_scan_passes_when_high_leverage_constant_is_registered(tmp_path: Path) -
             "protocols": [],
         },
     }
-    path = tmp_path / "data/manifests/stage9_5_parameter_register_v1_6.json"
+    path = tmp_path / "data/manifests/stage9_5_parameter_register_v1_7.json"
     path.write_text(json.dumps(register), encoding="utf-8")
 
     report = run(tmp_path, tmp_path / "out", fail_on_unclassified_high=True)
@@ -148,7 +148,7 @@ def test_v1_3_blocks_unclassified_material_even_when_not_high_leverage(tmp_path:
             "protocols": [],
         },
     }
-    path = tmp_path / "data/manifests/stage9_5_parameter_register_v1_6.json"
+    path = tmp_path / "data/manifests/stage9_5_parameter_register_v1_7.json"
     path.write_text(json.dumps(register), encoding="utf-8")
     try:
         run(tmp_path, tmp_path / "out", fail_on_unclassified_high=True)
@@ -224,7 +224,7 @@ def test_ambiguous_material_mapping_blocks_pass(tmp_path: Path) -> None:
         ],
         "scan_roots": {"scientific_source":["src/concept_drift_ids/example.py"],"manifests":[],"protocols":[]},
     }
-    (tmp_path / "data/manifests/stage9_5_parameter_register_v1_6.json").write_text(json.dumps(register), encoding="utf-8")
+    (tmp_path / "data/manifests/stage9_5_parameter_register_v1_7.json").write_text(json.dumps(register), encoding="utf-8")
     report = run(tmp_path, tmp_path / "out", fail_on_unclassified_high=False)
     assert report["pass"] is False
     assert report["counts"]["ambiguous_material_candidates"] == 1
@@ -290,3 +290,23 @@ def test_markdown_seed_range_is_not_parsed_as_decimal(tmp_path: Path) -> None:
     p.write_text("primary seeds <0..4> are frozen\n", encoding="utf-8")
     found, _ = _markdown_candidates(tmp_path, "protocol.md", {"entries":[]})
     assert not any(item.value == 0.4 for item in found)
+
+
+def test_runtime_state_sentinel_is_logged_exclusion(tmp_path: Path) -> None:
+    from tools.stage9_5.parameter_scan import _python_candidates
+    (tmp_path / "src/concept_drift_ids").mkdir(parents=True)
+    p = tmp_path / "src/concept_drift_ids/example.py"
+    p.write_text("drift_detected = False\nbest_epoch = -1\n", encoding="utf-8")
+    found, excluded = _python_candidates(tmp_path, "src/concept_drift_ids/example.py", {"entries":[]})
+    assert not any(item.locator in {"drift_detected","best_epoch"} for item in found)
+    assert sum("runtime state/sentinel" in str(item.exclusion_reason) for item in excluded) == 2
+
+
+def test_binary_file_mode_is_logged_exclusion(tmp_path: Path) -> None:
+    from tools.stage9_5.parameter_scan import _python_candidates
+    (tmp_path / "src/concept_drift_ids").mkdir(parents=True)
+    p = tmp_path / "src/concept_drift_ids/example.py"
+    p.write_text("mode = 'wb'\n", encoding="utf-8")
+    found, excluded = _python_candidates(tmp_path, "src/concept_drift_ids/example.py", {"entries":[]})
+    assert found == []
+    assert any("file I/O mode" in str(item.exclusion_reason) for item in excluded)

@@ -21,7 +21,7 @@ MATERIAL_RE = re.compile(
     re.I,
 )
 HASH_RE = re.compile(r"^[0-9a-f]{40,64}$", re.I)
-NUMBER_RE = re.compile(r"(?<![A-Za-z0-9_])[-+]?(?:\d+\.\d+|\d+)(?:[eE][-+]?\d+)?(?![A-Za-z0-9_])")
+NUMBER_RE = re.compile(r"(?<![A-Za-z0-9_])[-+]?(?:(?:\\d{1,3}(?:,\\d{3})+|\\d+)?\\.\\d+|\\d{1,3}(?:,\\d{3})+|\\d+)(?:[eE][-+]?\\d+)?(?![A-Za-z0-9_])")
 
 
 @dataclass(frozen=True)

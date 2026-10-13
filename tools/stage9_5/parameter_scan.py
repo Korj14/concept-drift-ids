@@ -187,9 +187,7 @@ def _expression_exclusion_reason(
     return None
 
 
-def _python_name_is_material(path: str, name: str) -> bool:
-    if MATERIAL_RE.search(name):
-        return True
+def _python_name_is_explicit_material(path: str, name: str) -> bool:
     if path == "src/concept_drift_ids/cd_stage9_shared_runner.py" and name in {
         "detector_family", "detector_signal"
     }:
@@ -200,6 +198,10 @@ def _python_name_is_material(path: str, name: str) -> bool:
     }:
         return True
     return False
+
+
+def _python_name_is_material(path: str, name: str) -> bool:
+    return bool(MATERIAL_RE.search(name)) or _python_name_is_explicit_material(path, name)
 
 
 def _python_candidates(root: Path, path: str, register: dict[str, Any]) -> tuple[list[Candidate], list[Candidate]]:
@@ -232,6 +234,12 @@ def _python_candidates(root: Path, path: str, register: dict[str, Any]) -> tuple
     def emit(name: str, node: ast.AST, value: Any) -> None:
         reason = _is_trivial_python_literal(name, value)
         material = _python_name_is_material(path, name)
+        if (
+            material
+            and _python_name_is_explicit_material(path, name)
+            and reason == "common indexing/control literal without material semantic name"
+        ):
+            reason = None
         if not material and reason is None:
             reason = "literal not attached to a material semantic name"
         candidate = Candidate(
@@ -552,7 +560,7 @@ def run(root: Path, output_dir: Path, fail_on_unclassified_high: bool = True) ->
     high_unclassified = [c for c in unclassified if c.leverage == "high"]
 
     report = {
-        "audit_id": "stage9.5-0-parameter-control-completeness-v1_10",
+        "audit_id": "stage9.5-0-parameter-control-completeness-v1_10_1",
         "protocol_id": register["protocol_id"],
         "upstream_closure_head": register["upstream_closure_head"],
         "parameter_register_sha256": hashlib.sha256((root / REGISTER_PATH).read_bytes()).hexdigest(),
@@ -581,7 +589,7 @@ def run(root: Path, output_dir: Path, fail_on_unclassified_high: bool = True) ->
     json_path.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
     lines = [
-        "# Stage 9.5-0 Parameter/Control Completeness Scan v1.10",
+        "# Stage 9.5-0 Parameter/Control Completeness Scan v1.10.1",
         "",
         f"- protocol: `{report['protocol_id']}`",
         f"- upstream closure head: `{report['upstream_closure_head']}`",
@@ -622,7 +630,7 @@ def run(root: Path, output_dir: Path, fail_on_unclassified_high: bool = True) ->
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--root", type=Path, default=Path("."))
-    parser.add_argument("--output-dir", type=Path, default=Path("results/audits/stage9_5_v1_10"))
+    parser.add_argument("--output-dir", type=Path, default=Path("results/audits/stage9_5_v1_10_1"))
     parser.add_argument("--no-fail", action="store_true")
     args = parser.parse_args()
     run(args.root.resolve(), args.output_dir, fail_on_unclassified_high=not args.no_fail)

@@ -67,7 +67,7 @@ def test_scan_blocks_unregistered_high_leverage_constant(tmp_path: Path) -> None
             ],
         },
     }
-    path = tmp_path / "data/manifests/stage9_5_parameter_register_v1_9.json"
+    path = tmp_path / "data/manifests/stage9_5_parameter_register_v1_10.json"
     path.write_text(json.dumps(register), encoding="utf-8")
 
     try:
@@ -101,7 +101,7 @@ def test_scan_passes_when_high_leverage_constant_is_registered(tmp_path: Path) -
             "protocols": [],
         },
     }
-    path = tmp_path / "data/manifests/stage9_5_parameter_register_v1_9.json"
+    path = tmp_path / "data/manifests/stage9_5_parameter_register_v1_10.json"
     path.write_text(json.dumps(register), encoding="utf-8")
 
     report = run(tmp_path, tmp_path / "out", fail_on_unclassified_high=True)
@@ -148,7 +148,7 @@ def test_v1_3_blocks_unclassified_material_even_when_not_high_leverage(tmp_path:
             "protocols": [],
         },
     }
-    path = tmp_path / "data/manifests/stage9_5_parameter_register_v1_9.json"
+    path = tmp_path / "data/manifests/stage9_5_parameter_register_v1_10.json"
     path.write_text(json.dumps(register), encoding="utf-8")
     try:
         run(tmp_path, tmp_path / "out", fail_on_unclassified_high=True)
@@ -224,7 +224,7 @@ def test_ambiguous_material_mapping_blocks_pass(tmp_path: Path) -> None:
         ],
         "scan_roots": {"scientific_source":["src/concept_drift_ids/example.py"],"manifests":[],"protocols":[]},
     }
-    (tmp_path / "data/manifests/stage9_5_parameter_register_v1_9.json").write_text(json.dumps(register), encoding="utf-8")
+    (tmp_path / "data/manifests/stage9_5_parameter_register_v1_10.json").write_text(json.dumps(register), encoding="utf-8")
     report = run(tmp_path, tmp_path / "out", fail_on_unclassified_high=False)
     assert report["pass"] is False
     assert report["counts"]["ambiguous_material_candidates"] == 1
@@ -380,3 +380,60 @@ def test_v1_9_1_literal_container_keys_are_not_expression_candidates(tmp_path: P
         item.source_kind == "python_expression" and item.value in {0,1,2,3,4}
         for item in found + excluded
     )
+
+
+def test_v1_10_source_specific_detector_and_lifecycle_controls_are_material(tmp_path: Path) -> None:
+    from tools.stage9_5.parameter_scan import _python_candidates
+
+    (tmp_path / "src/concept_drift_ids").mkdir(parents=True)
+
+    detector = tmp_path / "src/concept_drift_ids/cd_stage9_shared_runner.py"
+    detector.write_text(
+        "detector_family = 'adwin'\n"
+        "detector_signal = 'hard_error'\n",
+        encoding="utf-8",
+    )
+    detector_register = {
+        "entries": [{
+            "id":"primary_detector",
+            "source_locations":["src/concept_drift_ids/cd_stage9_shared_runner.py"],
+            "accepted_value":["adwin","hard_error"],
+            "scan_values":["adwin","hard_error"],
+            "locator_patterns":["^detector_(family|signal)$"],
+        }]
+    }
+    found, excluded = _python_candidates(
+        tmp_path, "src/concept_drift_ids/cd_stage9_shared_runner.py", detector_register
+    )
+    assert {(item.locator, item.value) for item in found} == {
+        ("detector_family","adwin"), ("detector_signal","hard_error")
+    }
+    assert all(item.registered_ids == ("primary_detector",) for item in found)
+    assert not excluded
+
+    lifecycle = tmp_path / "src/concept_drift_ids/cd_symbolic_lifecycle.py"
+    lifecycle.write_text(
+        "status = 'evidence_insufficient'\n"
+        "transition = 'demoted'\n"
+        "next_state = 'retired'\n"
+        "streak = 1\n",
+        encoding="utf-8",
+    )
+    lifecycle_register = {
+        "entries": [{
+            "id":"state_machine",
+            "source_locations":["src/concept_drift_ids/cd_symbolic_lifecycle.py"],
+            "accepted_value":["evidence_insufficient","demoted","retired",1],
+            "scan_values":["evidence_insufficient","demoted","retired",1],
+            "locator_patterns":["^(status|transition|next_state|streak)$"],
+        }]
+    }
+    found, excluded = _python_candidates(
+        tmp_path, "src/concept_drift_ids/cd_symbolic_lifecycle.py", lifecycle_register
+    )
+    assert {(item.locator, item.value) for item in found} == {
+        ("status","evidence_insufficient"), ("transition","demoted"),
+        ("next_state","retired"), ("streak",1)
+    }
+    assert all(item.registered_ids == ("state_machine",) for item in found)
+    assert not excluded

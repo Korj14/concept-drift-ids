@@ -9,17 +9,20 @@ from dataclasses import dataclass, asdict
 from pathlib import Path
 from typing import Any, Iterable
 
-REGISTER_PATH = Path("data/manifests/stage9_5_parameter_register_v1_5.json")
+REGISTER_PATH = Path("data/manifests/stage9_5_parameter_register_v1_6.json")
 
 MATERIAL_RE = re.compile(
-    r"(boundary|latenc|window|stride|remainder|threshold|lambda|fusion|seed|rng|"
+    r"(boundary|latenc|window|stride|remainder|threshold|fusion|seed|rng|"
     r"support|covered|precision|fidelity|stability|complexity|bootstrap|replay|"
-    r"anchor|reservoir|batch|learning.?rate|\blr\b|weight.?decay|epoch|patience|"
+    r"anchor|reservoir|batch|learning.?rate|\\blr\\b|weight.?decay|epoch|patience|"
     r"delta|clock|max.?bucket|min.?window|grace|top.?k|depth|leaf|opportun|periodic|"
-    r"feature|dropout|pos.?weight|wilson|\bz\b|cooldown|confirm|persistence|"
+    r"feature|dropout|pos.?weight|wilson|\\bz\\b|cooldown|confirm|persistence|"
     r"overlap|redundan|refinement|conflict|retire|demot|maturity|label|checkpoint|"
-    r"rows|arms?|phases?|conditions?|groups?|metrics?|primary.?weights?|neural.?weight|"
-    r"min.?instances|alpha|mode|(?:^|_)weight$)",
+    r"rows?|(?:^|[^a-z])arm(?:s)?(?:$|[^a-z])|phases?|conditions?|groups?|metrics?|"
+    r"primary.?weights?|neural.?weight|min.?instances|alpha|\\bmode\\b|(?:^|_)weight$|"
+    r"hidden|activation|initialization|optimizer|\\bloss\\b|calibration|workers?|"
+    r"background|attribution|selected.?features|min.?samples|source.?rows|"
+    r"train|development|post.?benign|drift|lambda)",
     re.I,
 )
 HASH_RE = re.compile(r"^[0-9a-f]{40,64}$", re.I)
@@ -149,7 +152,51 @@ def _is_trivial_python_literal(name: str, value: Any) -> str | None:
     return None
 
 
+def _expression_exclusion_reason(
+    *,
+    function_name: str,
+    line: str,
+    value: int | float,
+) -> str | None:
+    semantic_line = re.sub(
+        r"\\blambda\\s+[A-Za-z_][A-Za-z0-9_]*\\s*:",
+        "anonymous_function:",
+        line,
+    )
+    stripped = semantic_line.strip()
+    if re.search(r"\\belse\\s+[-+]?0(?:\\.0+)?\\b", stripped):
+        return "mathematical/probability zero fallback"
+    if re.search(r"np\\.clip\\([^)]*,\\s*0(?:\\.0+)?,\\s*1(?:\\.0+)?\\)", stripped):
+        return "probability-domain clipping bound"
+    if re.search(r"0(?:\\.0+)?\\s*<=.*<=\\s*1(?:\\.0+)?", stripped):
+        return "probability-domain validation bound"
+    if "2.0 * precision * recall" in stripped or "2 * precision * recall" in stripped:
+        return "F1 arithmetic identity"
+    if re.search(r"1(?:\\.0+)?\\s*-\\s*.*weight", stripped, re.I):
+        return "complementary fusion-weight arithmetic"
+    if "perf_counter_ns" in stripped and float(value) == 1_000_000_000.0:
+        return "nanosecond-to-second unit conversion"
+    if "historical" in function_name.lower():
+        return "historical failed-run/provenance identity check"
+    return None
+
+
 def _python_candidates(root: Path, path: str, register: dict[str, Any]) -> tuple[list[Candidate], list[Candidate]]:
+    if path.startswith("tests/"):
+        return [], [
+            Candidate(
+                path=path,
+                line=None,
+                locator="<verification-fixture-file>",
+                value="<file>",
+                source_kind="python_test_fixture",
+                material_reason="excluded",
+                registered_ids=(),
+                leverage="medium",
+                excluded=True,
+                exclusion_reason="hash-bound verification fixture; test literal values are not scientific parameter declarations",
+            )
+        ]
     source = (root / path).read_text(encoding="utf-8")
     source_lines = source.splitlines()
     tree = ast.parse(source, filename=path)
@@ -244,11 +291,37 @@ def _python_candidates(root: Path, path: str, register: dict[str, Any]) -> tuple
                 return
             line = source_lines[lineno - 1] if lineno and lineno <= len(source_lines) else ""
             function_name = self.functions[-1] if self.functions else ""
-            line_material = bool(MATERIAL_RE.search(line))
+            semantic_line = re.sub(
+                r"\\blambda\\s+[A-Za-z_][A-Za-z0-9_]*\\s*:",
+                "anonymous_function:",
+                line,
+            )
+            line_material = bool(MATERIAL_RE.search(semantic_line))
             context_material = bool(EXPRESSION_CONTEXT_RE.search(function_name))
             if not line_material and not (context_material and abs(float(value)) >= 3.0):
                 return
-            context = f"{function_name} {line}"
+            context = f"{function_name} {semantic_line}"
+            explicit_exclusion = _expression_exclusion_reason(
+                function_name=function_name,
+                line=line,
+                value=value,
+            )
+            if explicit_exclusion is not None:
+                excluded.append(
+                    Candidate(
+                        path=path,
+                        line=lineno,
+                        locator=f"{function_name or '<module>'} :: {line.strip()[:160]}",
+                        value=value,
+                        source_kind="python_expression",
+                        material_reason="excluded",
+                        registered_ids=(),
+                        leverage=_leverage(context, path),
+                        excluded=True,
+                        exclusion_reason=explicit_exclusion,
+                    )
+                )
+                return
             if abs(float(value)) <= 2.0 and not re.search(
                 r"(lambda|weight|threshold|support|precision|fidelity|stability|alpha|delta)",
                 context,
@@ -443,7 +516,7 @@ def run(root: Path, output_dir: Path, fail_on_unclassified_high: bool = True) ->
     high_unclassified = [c for c in unclassified if c.leverage == "high"]
 
     report = {
-        "audit_id": "stage9.5-0-parameter-control-completeness-v1_5",
+        "audit_id": "stage9.5-0-parameter-control-completeness-v1_6",
         "protocol_id": register["protocol_id"],
         "upstream_closure_head": register["upstream_closure_head"],
         "parameter_register_sha256": hashlib.sha256((root / REGISTER_PATH).read_bytes()).hexdigest(),
@@ -472,7 +545,7 @@ def run(root: Path, output_dir: Path, fail_on_unclassified_high: bool = True) ->
     json_path.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
     lines = [
-        "# Stage 9.5-0 Parameter/Control Completeness Scan v1.5",
+        "# Stage 9.5-0 Parameter/Control Completeness Scan v1.6",
         "",
         f"- protocol: `{report['protocol_id']}`",
         f"- upstream closure head: `{report['upstream_closure_head']}`",
@@ -513,7 +586,7 @@ def run(root: Path, output_dir: Path, fail_on_unclassified_high: bool = True) ->
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--root", type=Path, default=Path("."))
-    parser.add_argument("--output-dir", type=Path, default=Path("results/audits/stage9_5_v1_5"))
+    parser.add_argument("--output-dir", type=Path, default=Path("results/audits/stage9_5_v1_6"))
     parser.add_argument("--no-fail", action="store_true")
     args = parser.parse_args()
     run(args.root.resolve(), args.output_dir, fail_on_unclassified_high=not args.no_fail)

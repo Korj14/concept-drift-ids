@@ -14,7 +14,18 @@
     "requirements_lock_path": "requirements-lock.txt",
     "requirements_lock_sha256": "5ef6553f286b84c117cd67febaf20292baf9930e7f4b6cf57918e2e00f965dd4",
     "requirements_lock_normalized_text_sha256": "9f63cbe19dcb1b916c16603f5b7c01a2fa33ac11271ce2ef0014910158d6741d",
-    "installed_distributions_sha256": "8a928d5c9df8554f88ba80edd2918f5f6a18b382697f6f561dbe87a8ed9a0052"
+    "installed_distributions_sha256": "8a928d5c9df8554f88ba80edd2918f5f6a18b382697f6f561dbe87a8ed9a0052",
+    "thread_environment": {
+      "PYTHONHASHSEED": "0",
+      "OMP_NUM_THREADS": "1",
+      "MKL_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1",
+      "NUMEXPR_NUM_THREADS": "1"
+    },
+    "torch_version": "2.14.1+cpu",
+    "torch_num_threads": 1,
+    "torch_num_interop_threads": 1,
+    "torch_deterministic_algorithms": true
   },
   "scenario": {
     "manifest_path": "data/manifests/sudden_benign_v1.json",

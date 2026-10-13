@@ -75,6 +75,10 @@ def _verify_manifest_hash(
     expected: str,
 ) -> dict[str, Any]:
     payload = _load_json(path)
+    stored_payload = payload.pop("payload_sha256", None)
+    payload_hash_ok = (
+        stored_payload is None or stored_payload == _canonical_json_hash(payload)
+    )
     stored = payload.get(hash_field)
     core = dict(payload)
     core.pop(hash_field, None)
@@ -82,8 +86,15 @@ def _verify_manifest_hash(
     _check(
         report,
         name,
-        stored == expected and actual == expected,
-        {"path": str(path.relative_to(PROJECT_ROOT)), "stored": stored, "actual": actual, "expected": expected},
+        payload_hash_ok and stored == expected and actual == expected,
+        {
+            "path": str(path.relative_to(PROJECT_ROOT)),
+            "writer_payload_sha256": stored_payload,
+            "writer_payload_hash_ok": payload_hash_ok,
+            "stored": stored,
+            "actual": actual,
+            "expected": expected,
+        },
     )
     return payload
 
@@ -208,6 +219,10 @@ def _verify_stage9_compact(report: dict[str, Any], cfg: dict[str, Any]) -> None:
     aggregate_path = PROJECT_ROOT / cfg["aggregate_path"]
     raw = _sha256_file(aggregate_path)
     aggregate = _load_json(aggregate_path)
+    stored_payload = aggregate.pop("payload_sha256", None)
+    payload_hash_ok = (
+        stored_payload is None or stored_payload == _canonical_json_hash(aggregate)
+    )
     stored = aggregate.get("aggregate_sha256")
     core = dict(aggregate)
     core.pop("aggregate_sha256", None)
@@ -216,11 +231,14 @@ def _verify_stage9_compact(report: dict[str, Any], cfg: dict[str, Any]) -> None:
         report,
         "stage9_aggregate_identity",
         raw == cfg["aggregate_raw_sha256"]
+        and payload_hash_ok
         and stored == cfg["aggregate_canonical_sha256"]
         and canonical == cfg["aggregate_canonical_sha256"],
         {
             "raw": raw,
             "expected_raw": cfg["aggregate_raw_sha256"],
+            "writer_payload_sha256": stored_payload,
+            "writer_payload_hash_ok": payload_hash_ok,
             "stored_canonical": stored,
             "actual_canonical": canonical,
             "expected_canonical": cfg["aggregate_canonical_sha256"],
@@ -229,6 +247,10 @@ def _verify_stage9_compact(report: dict[str, Any], cfg: dict[str, Any]) -> None:
 
     plan_path = root / "execution_plan.json"
     plan = _load_json(plan_path)
+    stored_payload = plan.pop("payload_sha256", None)
+    payload_hash_ok = (
+        stored_payload is None or stored_payload == _canonical_json_hash(plan)
+    )
     stored_plan = plan.get("plan_sha256")
     plan_core = dict(plan)
     plan_core.pop("plan_sha256", None)
@@ -236,8 +258,16 @@ def _verify_stage9_compact(report: dict[str, Any], cfg: dict[str, Any]) -> None:
     _check(
         report,
         "stage9_execution_plan_identity",
-        stored_plan == cfg["execution_plan_sha256"] and actual_plan == cfg["execution_plan_sha256"],
-        {"stored": stored_plan, "actual": actual_plan, "expected": cfg["execution_plan_sha256"]},
+        payload_hash_ok
+        and stored_plan == cfg["execution_plan_sha256"]
+        and actual_plan == cfg["execution_plan_sha256"],
+        {
+            "writer_payload_sha256": stored_payload,
+            "writer_payload_hash_ok": payload_hash_ok,
+            "stored": stored_plan,
+            "actual": actual_plan,
+            "expected": cfg["execution_plan_sha256"],
+        },
     )
 
 
@@ -343,7 +373,7 @@ def _verify_system_a(
 def run(output_dir: Path, checkpoint_root: Path | None = None) -> dict[str, Any]:
     cfg = _load_json(IDENTITY_PATH)
     report: dict[str, Any] = {
-        "audit_id": "stage9.5-1-fresh-clone-reconstruction-v1",
+        "audit_id": "stage9.5-1-fresh-clone-reconstruction-v1_1",
         "identity_manifest": str(IDENTITY_PATH.relative_to(PROJECT_ROOT)),
         "checks": [],
         "failures": [],
@@ -400,18 +430,21 @@ def run(output_dir: Path, checkpoint_root: Path | None = None) -> dict[str, Any]
 
     scenario_cfg = cfg["scenario"]
     scenario_path = PROJECT_ROOT / scenario_cfg["manifest_path"]
-    scenario_raw = _sha256_file(scenario_path)
+    scenario_checkout_raw = _sha256_file(scenario_path)
+    scenario_repository_text = _normalized_text_sha256(scenario_path)
     scenario = _load_json(scenario_path)
     scenario_canonical = _canonical_json_hash(scenario)
     _check(
         report,
         "scenario_identity",
-        scenario_raw == scenario_cfg["raw_sha256"]
+        scenario_repository_text == scenario_cfg["raw_sha256"]
         and scenario_canonical == scenario_cfg["canonical_sha256"]
         and scenario.get("scenario_id") == scenario_cfg["scenario_id"]
         and int(scenario.get("scenario_version")) == int(scenario_cfg["scenario_version"]),
         {
-            "raw": scenario_raw,
+            "checkout_raw": scenario_checkout_raw,
+            "repository_lf_text_sha256": scenario_repository_text,
+            "expected_repository_lf_text_sha256": scenario_cfg["raw_sha256"],
             "canonical": scenario_canonical,
             "scenario_id": scenario.get("scenario_id"),
             "scenario_version": scenario.get("scenario_version"),

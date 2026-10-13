@@ -8,6 +8,7 @@ from tools.stage9_5.statistical_oracle import (
     _describe,
     _explanation_metric,
     _holm_adjust,
+    _compare_summary,
     _metric_from_counts,
     _sign_test_greater,
     _stage8_describe,
@@ -105,3 +106,13 @@ def test_oracle_does_not_import_production_modules() -> None:
         elif isinstance(node, ast.ImportFrom):
             imports.append(node.module or "")
     assert not any(name.startswith("concept_drift_ids") for name in imports)
+
+
+def test_stage8_summary_compares_oracle_values_to_accepted_effects() -> None:
+    report = {"comparison_count": 0, "mismatches": []}
+    actual = _stage8_describe([1, 2, 3, 4, 5])
+    expected = dict(actual)
+    expected["effects"] = expected.pop("values")
+    _compare_summary(report, "endpoint", actual, expected, stage8=True)
+    assert report["mismatches"] == []
+    assert report["comparison_count"] > 0

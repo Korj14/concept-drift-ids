@@ -1,0 +1,22 @@
+{
+  "audit_id": "stage9.5-0-parameter-control-completeness-v1",
+  "status": "failed_preserved",
+  "protocol_id": "stage9.5-q1-assurance-v1",
+  "head_sha": "3ca7a482ba3f71bd9c32863b033295492d112228",
+  "workflow_run_id": 38424890099,
+  "workflow_job_id": 115391558476,
+  "artifact_id": 11827898094,
+  "artifact_name": "stage9-5-parameter-scan",
+  "artifact_zip_sha256": "6744bca3a726981c328f4016a4666728a57ee7cc8ef1d10265c3f10a979f7848",
+  "counts": {
+    "registered_entries": 37,
+    "material_candidates": 1155,
+    "excluded_candidates": 1210,
+    "unclassified_material_candidates": 1109,
+    "unclassified_high_leverage_candidates": 956
+  },
+  "failure_reason": "v1 scanner conflated material design controls with historical outcome numbers, provenance/runtime mirrors, repeated corrected-manifest copies, and per-seed derived thresholds; it also exposed several genuine missing registry families.",
+  "scientific_outcome_accessed": false,
+  "stage8_or_stage9_evidence_modified": false,
+  "disposition": "preserve failure; issue smallest v1.1 measurement correction; do not weaken high-leverage completeness criterion"
+}

@@ -9,7 +9,7 @@ from dataclasses import dataclass, asdict
 from pathlib import Path
 from typing import Any, Iterable
 
-REGISTER_PATH = Path("data/manifests/stage9_5_parameter_register_v1_10.json")
+REGISTER_PATH = Path("data/manifests/stage9_5_parameter_register_v1_11.json")
 
 MATERIAL_RE = re.compile(
     r"(boundary|latenc|window|stride|remainder|threshold|fusion|seed|rng|"
@@ -317,6 +317,33 @@ def _python_candidates(root: Path, path: str, register: dict[str, Any]) -> tuple
             self.generic_visit(node)
             self.functions.pop()
 
+        def visit_Dict(self, node: ast.Dict) -> None:
+            for key_node, value_node in zip(node.keys, node.values):
+                if not isinstance(key_node, ast.Constant) or not isinstance(key_node.value, str):
+                    continue
+                key = key_node.value
+                if key != "replay_enabled":
+                    continue
+                try:
+                    value = ast.literal_eval(value_node)
+                except Exception:
+                    continue
+                if not isinstance(value, bool):
+                    continue
+                found.append(
+                    Candidate(
+                        path=path,
+                        line=getattr(value_node, "lineno", None),
+                        locator=key,
+                        value=value,
+                        source_kind="python_dict_value",
+                        material_reason="material dictionary-key literal",
+                        registered_ids=_registered_ids(register, path, key, value),
+                        leverage=_leverage(key, path),
+                    )
+                )
+            self.generic_visit(node)
+
         def visit_Constant(self, node: ast.Constant) -> None:
             if (getattr(node, "lineno", None), getattr(node, "col_offset", None)) in assigned_literal_constant_locations:
                 return
@@ -365,7 +392,8 @@ def _python_candidates(root: Path, path: str, register: dict[str, Any]) -> tuple
             if not line_material and not (context_material and abs(float(value)) >= 3.0):
                 return
             if abs(float(value)) <= 2.0 and not re.search(
-                r"(lambda|weight|threshold|support|precision|fidelity|stability|alpha|delta)",
+                r"(lambda|weight|threshold|support|precision|fidelity|stability|alpha|delta|"
+                r"latenc|overlap|redundan|refinement|conflict|streak|failure)",
                 context,
                 re.I,
             ):
@@ -560,7 +588,7 @@ def run(root: Path, output_dir: Path, fail_on_unclassified_high: bool = True) ->
     high_unclassified = [c for c in unclassified if c.leverage == "high"]
 
     report = {
-        "audit_id": "stage9.5-0-parameter-control-completeness-v1_10_1",
+        "audit_id": "stage9.5-0-parameter-control-completeness-v1_11",
         "protocol_id": register["protocol_id"],
         "upstream_closure_head": register["upstream_closure_head"],
         "parameter_register_sha256": hashlib.sha256((root / REGISTER_PATH).read_bytes()).hexdigest(),
@@ -589,7 +617,7 @@ def run(root: Path, output_dir: Path, fail_on_unclassified_high: bool = True) ->
     json_path.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
     lines = [
-        "# Stage 9.5-0 Parameter/Control Completeness Scan v1.10.1",
+        "# Stage 9.5-0 Parameter/Control Completeness Scan v1.11",
         "",
         f"- protocol: `{report['protocol_id']}`",
         f"- upstream closure head: `{report['upstream_closure_head']}`",
@@ -630,7 +658,7 @@ def run(root: Path, output_dir: Path, fail_on_unclassified_high: bool = True) ->
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--root", type=Path, default=Path("."))
-    parser.add_argument("--output-dir", type=Path, default=Path("results/audits/stage9_5_v1_10_1"))
+    parser.add_argument("--output-dir", type=Path, default=Path("results/audits/stage9_5_v1_11"))
     parser.add_argument("--no-fail", action="store_true")
     args = parser.parse_args()
     run(args.root.resolve(), args.output_dir, fail_on_unclassified_high=not args.no_fail)

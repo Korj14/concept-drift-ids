@@ -67,7 +67,7 @@ def test_scan_blocks_unregistered_high_leverage_constant(tmp_path: Path) -> None
             ],
         },
     }
-    path = tmp_path / "data/manifests/stage9_5_parameter_register_v1_2.json"
+    path = tmp_path / "data/manifests/stage9_5_parameter_register_v1_3.json"
     path.write_text(json.dumps(register), encoding="utf-8")
 
     try:
@@ -101,7 +101,7 @@ def test_scan_passes_when_high_leverage_constant_is_registered(tmp_path: Path) -
             "protocols": [],
         },
     }
-    path = tmp_path / "data/manifests/stage9_5_parameter_register_v1_2.json"
+    path = tmp_path / "data/manifests/stage9_5_parameter_register_v1_3.json"
     path.write_text(json.dumps(register), encoding="utf-8")
 
     report = run(tmp_path, tmp_path / "out", fail_on_unclassified_high=True)
@@ -132,3 +132,27 @@ def test_markdown_scanner_normalizes_comma_values_and_ignores_heading_numbers(tm
     assert [item.value for item in found] == [27706, 55412, 83118, 110824]
     assert all(item.registered_ids == ("trigger.periodic_clocks",) for item in found)
     assert not excluded
+
+
+def test_v1_3_blocks_unclassified_material_even_when_not_high_leverage(tmp_path: Path) -> None:
+    _minimal_repo(tmp_path)
+    source = tmp_path / "src/concept_drift_ids/example.py"
+    source.write_text("BATCH_SIZE = 4096\n", encoding="utf-8")
+    register = {
+        "protocol_id": "stage9.5-q1-assurance-v1",
+        "upstream_closure_head": "head",
+        "entries": [],
+        "scan_roots": {
+            "scientific_source": ["src/concept_drift_ids/example.py"],
+            "manifests": [],
+            "protocols": [],
+        },
+    }
+    path = tmp_path / "data/manifests/stage9_5_parameter_register_v1_3.json"
+    path.write_text(json.dumps(register), encoding="utf-8")
+    try:
+        run(tmp_path, tmp_path / "out", fail_on_unclassified_high=True)
+    except SystemExit as exc:
+        assert "unclassified material" in str(exc)
+    else:
+        raise AssertionError("v1.3 must block any unclassified material candidate")

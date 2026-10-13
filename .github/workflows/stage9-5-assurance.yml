@@ -1,0 +1,60 @@
+name: Stage 9.5 assurance
+
+on:
+  push:
+    branches:
+      - "stage9-5-*"
+  pull_request:
+    paths:
+      - "STAGE9_5_Q1_INDEPENDENT_ASSURANCE_PROTOCOL.md"
+      - "data/manifests/stage9_5_parameter_register_v1.json"
+      - "tools/stage9_5/**"
+      - "tests/stage9_5/**"
+      - ".github/workflows/stage9-5-assurance.yml"
+
+jobs:
+  assurance-contract:
+    runs-on: windows-latest
+    env:
+      PYTHONHASHSEED: "0"
+      OMP_NUM_THREADS: "1"
+      MKL_NUM_THREADS: "1"
+      OPENBLAS_NUM_THREADS: "1"
+      NUMEXPR_NUM_THREADS: "1"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11.9"
+
+      - name: Install historical frozen runtime
+        shell: pwsh
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements-lock.txt
+
+      - name: Verify prospective Stage 9.5 freeze artifacts
+        shell: pwsh
+        run: |
+          python -c "from pathlib import Path; required=['STAGE9_5_Q1_INDEPENDENT_ASSURANCE_PROTOCOL.md','data/manifests/stage9_5_parameter_register_v1.json']; missing=[p for p in required if not Path(p).is_file()]; assert not missing, missing"
+
+      - name: Run Stage 9.5 scanner unit tests
+        shell: pwsh
+        run: |
+          python -m pytest tests/stage9_5/test_parameter_scan.py -q
+
+      - name: Run Stage 9.5-0 parameter/control scan
+        shell: pwsh
+        run: |
+          python tools/stage9_5/parameter_scan.py --output-dir artifacts/stage9_5_v1/parameter_scan
+
+      - name: Upload Stage 9.5-0 scan evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: stage9-5-parameter-scan
+          path: artifacts/stage9_5_v1/parameter_scan/
+          if-no-files-found: error

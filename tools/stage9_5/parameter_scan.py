@@ -9,7 +9,7 @@ from dataclasses import dataclass, asdict
 from pathlib import Path
 from typing import Any, Iterable
 
-REGISTER_PATH = Path("data/manifests/stage9_5_parameter_register_v1_9.json")
+REGISTER_PATH = Path("data/manifests/stage9_5_parameter_register_v1_10.json")
 
 MATERIAL_RE = re.compile(
     r"(boundary|latenc|window|stride|remainder|threshold|fusion|seed|rng|"
@@ -187,6 +187,21 @@ def _expression_exclusion_reason(
     return None
 
 
+def _python_name_is_material(path: str, name: str) -> bool:
+    if MATERIAL_RE.search(name):
+        return True
+    if path == "src/concept_drift_ids/cd_stage9_shared_runner.py" and name in {
+        "detector_family", "detector_signal"
+    }:
+        return True
+    if path == "src/concept_drift_ids/cd_symbolic_lifecycle.py" and name in {
+        "status", "maintenance_status", "next_state", "state", "transition",
+        "lifecycle_state", "lifecycle_transition", "streak", "failure_streak"
+    }:
+        return True
+    return False
+
+
 def _python_candidates(root: Path, path: str, register: dict[str, Any]) -> tuple[list[Candidate], list[Candidate]]:
     if path.startswith("tests/"):
         return [], [
@@ -216,7 +231,7 @@ def _python_candidates(root: Path, path: str, register: dict[str, Any]) -> tuple
 
     def emit(name: str, node: ast.AST, value: Any) -> None:
         reason = _is_trivial_python_literal(name, value)
-        material = bool(MATERIAL_RE.search(name))
+        material = _python_name_is_material(path, name)
         if not material and reason is None:
             reason = "literal not attached to a material semantic name"
         candidate = Candidate(
@@ -311,6 +326,11 @@ def _python_candidates(root: Path, path: str, register: dict[str, Any]) -> tuple
                 line,
             )
             line_material = bool(MATERIAL_RE.search(semantic_line))
+            if (
+                path == "src/concept_drift_ids/cd_symbolic_lifecycle.py"
+                and re.search(r"\b(?:failure_streak|streak)\b", semantic_line)
+            ):
+                line_material = True
             context_material = bool(EXPRESSION_CONTEXT_RE.search(function_name))
             context = f"{function_name} {semantic_line}"
             explicit_exclusion = _expression_exclusion_reason(
@@ -532,7 +552,7 @@ def run(root: Path, output_dir: Path, fail_on_unclassified_high: bool = True) ->
     high_unclassified = [c for c in unclassified if c.leverage == "high"]
 
     report = {
-        "audit_id": "stage9.5-0-parameter-control-completeness-v1_9_1",
+        "audit_id": "stage9.5-0-parameter-control-completeness-v1_10",
         "protocol_id": register["protocol_id"],
         "upstream_closure_head": register["upstream_closure_head"],
         "parameter_register_sha256": hashlib.sha256((root / REGISTER_PATH).read_bytes()).hexdigest(),
@@ -561,7 +581,7 @@ def run(root: Path, output_dir: Path, fail_on_unclassified_high: bool = True) ->
     json_path.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
     lines = [
-        "# Stage 9.5-0 Parameter/Control Completeness Scan v1.7",
+        "# Stage 9.5-0 Parameter/Control Completeness Scan v1.10",
         "",
         f"- protocol: `{report['protocol_id']}`",
         f"- upstream closure head: `{report['upstream_closure_head']}`",
@@ -602,7 +622,7 @@ def run(root: Path, output_dir: Path, fail_on_unclassified_high: bool = True) ->
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--root", type=Path, default=Path("."))
-    parser.add_argument("--output-dir", type=Path, default=Path("results/audits/stage9_5_v1_9_1"))
+    parser.add_argument("--output-dir", type=Path, default=Path("results/audits/stage9_5_v1_10"))
     parser.add_argument("--no-fail", action="store_true")
     args = parser.parse_args()
     run(args.root.resolve(), args.output_dir, fail_on_unclassified_high=not args.no_fail)

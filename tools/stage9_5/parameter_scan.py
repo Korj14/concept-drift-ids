@@ -298,8 +298,6 @@ def _python_candidates(root: Path, path: str, register: dict[str, Any]) -> tuple
             )
             line_material = bool(MATERIAL_RE.search(semantic_line))
             context_material = bool(EXPRESSION_CONTEXT_RE.search(function_name))
-            if not line_material and not (context_material and abs(float(value)) >= 3.0):
-                return
             context = f"{function_name} {semantic_line}"
             explicit_exclusion = _expression_exclusion_reason(
                 function_name=function_name,
@@ -321,6 +319,8 @@ def _python_candidates(root: Path, path: str, register: dict[str, Any]) -> tuple
                         exclusion_reason=explicit_exclusion,
                     )
                 )
+                return
+            if not line_material and not (context_material and abs(float(value)) >= 3.0):
                 return
             if abs(float(value)) <= 2.0 and not re.search(
                 r"(lambda|weight|threshold|support|precision|fidelity|stability|alpha|delta)",
@@ -440,6 +440,8 @@ def _markdown_candidates(root: Path, path: str, register: dict[str, Any]) -> tup
         line = re.sub(r"^\s*(?:[-*+]\s+|\d+[.)]\s+)", "", raw_line)
         line = re.sub(r"\bStage[- ]?\d+(?:\.\d+)?(?:/\d+(?:\.\d+)?)?\b", "Stage", line, flags=re.I)
         line = re.sub(r"\bSection\s+\d+(?:\.\d+)?\b", "Section", line, flags=re.I)
+        line = re.sub(r"<\s*\d+\s*\.\.\s*\d+\s*>", "<range>", line)
+        line = re.sub(r"\b\d+\s*\.\.\s*\d+\b", "<range>", line)
         if not MATERIAL_RE.search(line) or not declaration.search(line):
             continue
         if re.search(

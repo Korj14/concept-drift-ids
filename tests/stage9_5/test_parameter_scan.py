@@ -36,8 +36,8 @@ def test_registered_value_matching_is_source_scoped() -> None:
             }
         ]
     }
-    assert _registered_ids(register, "a.py", 0.5) == ("x",)
-    assert _registered_ids(register, "b.py", 0.5) == ()
+    assert _registered_ids(register, "a.py", "threshold", 0.5) == ("x",)
+    assert _registered_ids(register, "b.py", "threshold", 0.5) == ()
 
 
 def test_canonical_hash_is_order_independent_for_mapping() -> None:
@@ -67,7 +67,7 @@ def test_scan_blocks_unregistered_high_leverage_constant(tmp_path: Path) -> None
             ],
         },
     }
-    path = tmp_path / "data/manifests/stage9_5_parameter_register_v1.json"
+    path = tmp_path / "data/manifests/stage9_5_parameter_register_v1_1.json"
     path.write_text(json.dumps(register), encoding="utf-8")
 
     try:

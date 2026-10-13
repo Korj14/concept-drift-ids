@@ -67,7 +67,7 @@ def test_scan_blocks_unregistered_high_leverage_constant(tmp_path: Path) -> None
             ],
         },
     }
-    path = tmp_path / "data/manifests/stage9_5_parameter_register_v1_3.json"
+    path = tmp_path / "data/manifests/stage9_5_parameter_register_v1_4.json"
     path.write_text(json.dumps(register), encoding="utf-8")
 
     try:
@@ -101,7 +101,7 @@ def test_scan_passes_when_high_leverage_constant_is_registered(tmp_path: Path) -
             "protocols": [],
         },
     }
-    path = tmp_path / "data/manifests/stage9_5_parameter_register_v1_3.json"
+    path = tmp_path / "data/manifests/stage9_5_parameter_register_v1_4.json"
     path.write_text(json.dumps(register), encoding="utf-8")
 
     report = run(tmp_path, tmp_path / "out", fail_on_unclassified_high=True)
@@ -148,7 +148,7 @@ def test_v1_3_blocks_unclassified_material_even_when_not_high_leverage(tmp_path:
             "protocols": [],
         },
     }
-    path = tmp_path / "data/manifests/stage9_5_parameter_register_v1_3.json"
+    path = tmp_path / "data/manifests/stage9_5_parameter_register_v1_4.json"
     path.write_text(json.dumps(register), encoding="utf-8")
     try:
         run(tmp_path, tmp_path / "out", fail_on_unclassified_high=True)
@@ -156,3 +156,31 @@ def test_v1_3_blocks_unclassified_material_even_when_not_high_leverage(tmp_path:
         assert "unclassified material" in str(exc)
     else:
         raise AssertionError("v1.3 must block any unclassified material candidate")
+
+
+def test_v1_4_scans_material_row_arm_phase_and_weight_constants(tmp_path: Path) -> None:
+    from tools.stage9_5.parameter_scan import _python_candidates
+
+    (tmp_path / "src/concept_drift_ids").mkdir(parents=True)
+    p = tmp_path / "src/concept_drift_ids/example.py"
+    p.write_text(
+        "EXPECTED_PRE_ROWS = 69260\n"
+        "EXPECTED_POST_ROWS = 69270\n"
+        "PRIMARY_PHASES = ('phase_a', 'phase_b', 'phase_c')\n"
+        "PRIMARY_ARMS = ('c', 'd_drift', 'd_periodic')\n"
+        "PRIMARY_WEIGHTS = (0.5, 0.7, 0.9, 1.0)\n"
+        "PRIMARY_NEURAL_WEIGHT = 0.5\n",
+        encoding="utf-8",
+    )
+    register = {
+        "entries": [
+            {"id":"rows","source_locations":["src/concept_drift_ids/example.py"],"accepted_value":[69260,69270]},
+            {"id":"phases","source_locations":["src/concept_drift_ids/example.py"],"accepted_value":["phase_a","phase_b","phase_c"]},
+            {"id":"arms","source_locations":["src/concept_drift_ids/example.py"],"accepted_value":["c","d_drift","d_periodic"]},
+            {"id":"weights","source_locations":["src/concept_drift_ids/example.py"],"accepted_value":[0.5,0.7,0.9,1.0]},
+        ]
+    }
+    found, _ = _python_candidates(tmp_path, "src/concept_drift_ids/example.py", register)
+    locators = {item.locator for item in found}
+    assert {"EXPECTED_PRE_ROWS","EXPECTED_POST_ROWS","PRIMARY_PHASES","PRIMARY_ARMS","PRIMARY_WEIGHTS","PRIMARY_NEURAL_WEIGHT"} <= locators
+    assert all(item.registered_ids for item in found)

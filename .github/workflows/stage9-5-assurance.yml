@@ -56,5 +56,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: stage9-5-parameter-scan-v1-1
-          path: artifacts/stage9_5_v1/parameter_scan/
+          path: artifacts/stage9_5_v1_1/parameter_scan/
           if-no-files-found: error

@@ -14,13 +14,13 @@ REGISTER_PATH = Path("data/manifests/stage9_5_parameter_register_v1_6.json")
 MATERIAL_RE = re.compile(
     r"(boundary|latenc|window|stride|remainder|threshold|fusion|seed|rng|"
     r"support|covered|precision|fidelity|stability|complexity|bootstrap|replay|"
-    r"anchor|reservoir|batch|learning.?rate|\\blr\\b|weight.?decay|epoch|patience|"
+    r"anchor|reservoir|batch|learning.?rate|\blr\b|weight.?decay|epoch|patience|"
     r"delta|clock|max.?bucket|min.?window|grace|top.?k|depth|leaf|opportun|periodic|"
-    r"feature|dropout|pos.?weight|wilson|\\bz\\b|cooldown|confirm|persistence|"
+    r"feature|dropout|pos.?weight|wilson|\bz\b|cooldown|confirm|persistence|"
     r"overlap|redundan|refinement|conflict|retire|demot|maturity|label|checkpoint|"
     r"rows?|(?:^|[^a-z])arm(?:s)?(?:$|[^a-z])|phases?|conditions?|groups?|metrics?|"
-    r"primary.?weights?|neural.?weight|min.?instances|alpha|\\bmode\\b|(?:^|_)weight$|"
-    r"hidden|activation|initialization|optimizer|\\bloss\\b|calibration|workers?|"
+    r"primary.?weights?|neural.?weight|min.?instances|alpha|\bmode\b|(?:^|_)weight$|"
+    r"hidden|activation|initialization|optimizer|\bloss\b|calibration|workers?|"
     r"background|attribution|selected.?features|min.?samples|source.?rows|"
     r"train|development|post.?benign|drift|lambda)",
     re.I,
@@ -159,20 +159,20 @@ def _expression_exclusion_reason(
     value: int | float,
 ) -> str | None:
     semantic_line = re.sub(
-        r"\\blambda\\s+[A-Za-z_][A-Za-z0-9_]*\\s*:",
+        r"\blambda\s+[A-Za-z_][A-Za-z0-9_]*\s*:",
         "anonymous_function:",
         line,
     )
     stripped = semantic_line.strip()
-    if re.search(r"\\belse\\s+[-+]?0(?:\\.0+)?\\b", stripped):
+    if re.search(r"\belse\s+[-+]?0(?:\.0+)?\b", stripped):
         return "mathematical/probability zero fallback"
-    if re.search(r"np\\.clip\\([^)]*,\\s*0(?:\\.0+)?,\\s*1(?:\\.0+)?\\)", stripped):
+    if re.search(r"np\.clip\([^)]*,\s*0(?:\.0+)?,\s*1(?:\.0+)?\)", stripped):
         return "probability-domain clipping bound"
-    if re.search(r"0(?:\\.0+)?\\s*<=.*<=\\s*1(?:\\.0+)?", stripped):
+    if re.search(r"0(?:\.0+)?\s*<=.*<=\s*1(?:\.0+)?", stripped):
         return "probability-domain validation bound"
     if "2.0 * precision * recall" in stripped or "2 * precision * recall" in stripped:
         return "F1 arithmetic identity"
-    if re.search(r"1(?:\\.0+)?\\s*-\\s*.*weight", stripped, re.I):
+    if re.search(r"1(?:\.0+)?\s*-\s*.*weight", stripped, re.I):
         return "complementary fusion-weight arithmetic"
     if "perf_counter_ns" in stripped and float(value) == 1_000_000_000.0:
         return "nanosecond-to-second unit conversion"
@@ -292,7 +292,7 @@ def _python_candidates(root: Path, path: str, register: dict[str, Any]) -> tuple
             line = source_lines[lineno - 1] if lineno and lineno <= len(source_lines) else ""
             function_name = self.functions[-1] if self.functions else ""
             semantic_line = re.sub(
-                r"\\blambda\\s+[A-Za-z_][A-Za-z0-9_]*\\s*:",
+                r"\blambda\s+[A-Za-z_][A-Za-z0-9_]*\s*:",
                 "anonymous_function:",
                 line,
             )

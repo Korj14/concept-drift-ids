@@ -1,0 +1,39 @@
+{
+  "audit_id": "stage9.5-0-parameter-control-completeness-v1_1",
+  "status": "failed_preserved",
+  "protocol_id": "stage9.5-q1-assurance-v1",
+  "head_sha": "abef5d1f63a7654365728e79e7144af6f95855db",
+  "workflow_run_id": 38426328817,
+  "workflow_job_id": 115396565856,
+  "artifact_id": 11828539442,
+  "artifact_name": "stage9-5-parameter-scan-v1-1",
+  "artifact_zip_sha256": "bfb9484b83f7bf3cbc18b218c4bdc2ef591b8893d43cddb320130d62decf964a",
+  "report_canonical_sha256": "35ff716e7d5103e645be9da40b765dec85a2e6ad648502c1e055b53b30a0915e",
+  "counts": {
+    "registered_entries": 53,
+    "material_candidates": 293,
+    "excluded_candidates": 1022,
+    "unclassified_material_candidates": 157,
+    "unclassified_high_leverage_candidates": 137
+  },
+  "scanner_unit_tests": "4 passed",
+  "stage9_regression_contract": "success on same head",
+  "finding_summary": {
+    "scanner_measurement_artifacts": [
+      "Markdown section/list/stage numerals treated as parameter values",
+      "comma-separated integer constants split into multiple numeric tokens",
+      "leading-dot decimal protocol values parsed incompletely",
+      "historical/requirement prose with Stage numbers interpreted as controls"
+    ],
+    "genuine_registry_mapping_gaps": [
+      "primary symbolic gate values mirrored under primary_symbolic_operator.config.gate",
+      "scenario boundary_role and Stage-9 boundary_index mirror",
+      "Stage-9 condition changed_factors/source/threshold_source declarations",
+      "Stage-9 unchanged primary detector family/signal/latency mirrors",
+      "PRIMARY_SEEDS source constant"
+    ]
+  },
+  "scientific_outcome_accessed": false,
+  "stage8_or_stage9_evidence_modified": false,
+  "disposition": "preserve v1.1 failure; issue smallest v1.2 audit-measurement and registry-mapping correction; do not weaken fail-closed treatment of genuinely unclassified high-leverage controls"
+}

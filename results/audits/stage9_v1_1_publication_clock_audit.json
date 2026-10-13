@@ -1,0 +1,904 @@
+{
+  "boundary_index": 69260,
+  "record_count": 60,
+  "rows": [
+    {
+      "condition": "latency_0",
+      "seed": 0,
+      "arm": "d_drift",
+      "publication_count": 2,
+      "pre_reference_publications": 2,
+      "post_reference_publications": 0,
+      "publication_clocks": [
+        20000,
+        58352
+      ],
+      "relative_to_boundary": [
+        -49260,
+        -10908
+      ]
+    },
+    {
+      "condition": "latency_0",
+      "seed": 0,
+      "arm": "d_periodic",
+      "publication_count": 3,
+      "pre_reference_publications": 2,
+      "post_reference_publications": 1,
+      "publication_clocks": [
+        37707,
+        65413,
+        120825
+      ],
+      "relative_to_boundary": [
+        -31553,
+        -3847,
+        51565
+      ]
+    },
+    {
+      "condition": "latency_0",
+      "seed": 1,
+      "arm": "d_drift",
+      "publication_count": 0,
+      "pre_reference_publications": 0,
+      "post_reference_publications": 0,
+      "publication_clocks": [],
+      "relative_to_boundary": []
+    },
+    {
+      "condition": "latency_0",
+      "seed": 1,
+      "arm": "d_periodic",
+      "publication_count": 2,
+      "pre_reference_publications": 1,
+      "post_reference_publications": 1,
+      "publication_clocks": [
+        65413,
+        120825
+      ],
+      "relative_to_boundary": [
+        -3847,
+        51565
+      ]
+    },
+    {
+      "condition": "latency_0",
+      "seed": 2,
+      "arm": "d_drift",
+      "publication_count": 2,
+      "pre_reference_publications": 2,
+      "post_reference_publications": 0,
+      "publication_clocks": [
+        20000,
+        60096
+      ],
+      "relative_to_boundary": [
+        -49260,
+        -9164
+      ]
+    },
+    {
+      "condition": "latency_0",
+      "seed": 2,
+      "arm": "d_periodic",
+      "publication_count": 2,
+      "pre_reference_publications": 1,
+      "post_reference_publications": 1,
+      "publication_clocks": [
+        65413,
+        120825
+      ],
+      "relative_to_boundary": [
+        -3847,
+        51565
+      ]
+    },
+    {
+      "condition": "latency_0",
+      "seed": 3,
+      "arm": "d_drift",
+      "publication_count": 0,
+      "pre_reference_publications": 0,
+      "post_reference_publications": 0,
+      "publication_clocks": [],
+      "relative_to_boundary": []
+    },
+    {
+      "condition": "latency_0",
+      "seed": 3,
+      "arm": "d_periodic",
+      "publication_count": 2,
+      "pre_reference_publications": 1,
+      "post_reference_publications": 1,
+      "publication_clocks": [
+        65413,
+        120825
+      ],
+      "relative_to_boundary": [
+        -3847,
+        51565
+      ]
+    },
+    {
+      "condition": "latency_0",
+      "seed": 4,
+      "arm": "d_drift",
+      "publication_count": 0,
+      "pre_reference_publications": 0,
+      "post_reference_publications": 0,
+      "publication_clocks": [],
+      "relative_to_boundary": []
+    },
+    {
+      "condition": "latency_0",
+      "seed": 4,
+      "arm": "d_periodic",
+      "publication_count": 2,
+      "pre_reference_publications": 1,
+      "post_reference_publications": 1,
+      "publication_clocks": [
+        65413,
+        120825
+      ],
+      "relative_to_boundary": [
+        -3847,
+        51565
+      ]
+    },
+    {
+      "condition": "latency_10000",
+      "seed": 0,
+      "arm": "d_drift",
+      "publication_count": 3,
+      "pre_reference_publications": 2,
+      "post_reference_publications": 1,
+      "publication_clocks": [
+        40000,
+        68368,
+        136096
+      ],
+      "relative_to_boundary": [
+        -29260,
+        -892,
+        66836
+      ]
+    },
+    {
+      "condition": "latency_10000",
+      "seed": 0,
+      "arm": "d_periodic",
+      "publication_count": 2,
+      "pre_reference_publications": 1,
+      "post_reference_publications": 1,
+      "publication_clocks": [
+        47707,
+        75413
+      ],
+      "relative_to_boundary": [
+        -21553,
+        6153
+      ]
+    },
+    {
+      "condition": "latency_10000",
+      "seed": 1,
+      "arm": "d_drift",
+      "publication_count": 1,
+      "pre_reference_publications": 0,
+      "post_reference_publications": 1,
+      "publication_clocks": [
+        80000
+      ],
+      "relative_to_boundary": [
+        10740
+      ]
+    },
+    {
+      "condition": "latency_10000",
+      "seed": 1,
+      "arm": "d_periodic",
+      "publication_count": 0,
+      "pre_reference_publications": 0,
+      "post_reference_publications": 0,
+      "publication_clocks": [],
+      "relative_to_boundary": []
+    },
+    {
+      "condition": "latency_10000",
+      "seed": 2,
+      "arm": "d_drift",
+      "publication_count": 3,
+      "pre_reference_publications": 1,
+      "post_reference_publications": 2,
+      "publication_clocks": [
+        40000,
+        80208,
+        117216
+      ],
+      "relative_to_boundary": [
+        -29260,
+        10948,
+        47956
+      ]
+    },
+    {
+      "condition": "latency_10000",
+      "seed": 2,
+      "arm": "d_periodic",
+      "publication_count": 1,
+      "pre_reference_publications": 0,
+      "post_reference_publications": 1,
+      "publication_clocks": [
+        130825
+      ],
+      "relative_to_boundary": [
+        61565
+      ]
+    },
+    {
+      "condition": "latency_10000",
+      "seed": 3,
+      "arm": "d_drift",
+      "publication_count": 0,
+      "pre_reference_publications": 0,
+      "post_reference_publications": 0,
+      "publication_clocks": [],
+      "relative_to_boundary": []
+    },
+    {
+      "condition": "latency_10000",
+      "seed": 3,
+      "arm": "d_periodic",
+      "publication_count": 0,
+      "pre_reference_publications": 0,
+      "post_reference_publications": 0,
+      "publication_clocks": [],
+      "relative_to_boundary": []
+    },
+    {
+      "condition": "latency_10000",
+      "seed": 4,
+      "arm": "d_drift",
+      "publication_count": 2,
+      "pre_reference_publications": 0,
+      "post_reference_publications": 2,
+      "publication_clocks": [
+        80000,
+        104848
+      ],
+      "relative_to_boundary": [
+        10740,
+        35588
+      ]
+    },
+    {
+      "condition": "latency_10000",
+      "seed": 4,
+      "arm": "d_periodic",
+      "publication_count": 1,
+      "pre_reference_publications": 0,
+      "post_reference_publications": 1,
+      "publication_clocks": [
+        130825
+      ],
+      "relative_to_boundary": [
+        61565
+      ]
+    },
+    {
+      "condition": "page_hinkley_hard_error",
+      "seed": 0,
+      "arm": "d_drift",
+      "publication_count": 3,
+      "pre_reference_publications": 2,
+      "post_reference_publications": 1,
+      "publication_clocks": [
+        30000,
+        59239,
+        123290
+      ],
+      "relative_to_boundary": [
+        -39260,
+        -10021,
+        54030
+      ]
+    },
+    {
+      "condition": "page_hinkley_hard_error",
+      "seed": 0,
+      "arm": "d_periodic",
+      "publication_count": 3,
+      "pre_reference_publications": 1,
+      "post_reference_publications": 2,
+      "publication_clocks": [
+        42707,
+        70413,
+        125825
+      ],
+      "relative_to_boundary": [
+        -26553,
+        1153,
+        56565
+      ]
+    },
+    {
+      "condition": "page_hinkley_hard_error",
+      "seed": 1,
+      "arm": "d_drift",
+      "publication_count": 2,
+      "pre_reference_publications": 1,
+      "post_reference_publications": 1,
+      "publication_clocks": [
+        60000,
+        101196
+      ],
+      "relative_to_boundary": [
+        -9260,
+        31936
+      ]
+    },
+    {
+      "condition": "page_hinkley_hard_error",
+      "seed": 1,
+      "arm": "d_periodic",
+      "publication_count": 2,
+      "pre_reference_publications": 0,
+      "post_reference_publications": 2,
+      "publication_clocks": [
+        70413,
+        125825
+      ],
+      "relative_to_boundary": [
+        1153,
+        56565
+      ]
+    },
+    {
+      "condition": "page_hinkley_hard_error",
+      "seed": 2,
+      "arm": "d_drift",
+      "publication_count": 2,
+      "pre_reference_publications": 1,
+      "post_reference_publications": 1,
+      "publication_clocks": [
+        30000,
+        70345
+      ],
+      "relative_to_boundary": [
+        -39260,
+        1085
+      ]
+    },
+    {
+      "condition": "page_hinkley_hard_error",
+      "seed": 2,
+      "arm": "d_periodic",
+      "publication_count": 2,
+      "pre_reference_publications": 0,
+      "post_reference_publications": 2,
+      "publication_clocks": [
+        70413,
+        125825
+      ],
+      "relative_to_boundary": [
+        1153,
+        56565
+      ]
+    },
+    {
+      "condition": "page_hinkley_hard_error",
+      "seed": 3,
+      "arm": "d_drift",
+      "publication_count": 1,
+      "pre_reference_publications": 1,
+      "post_reference_publications": 0,
+      "publication_clocks": [
+        60000
+      ],
+      "relative_to_boundary": [
+        -9260
+      ]
+    },
+    {
+      "condition": "page_hinkley_hard_error",
+      "seed": 3,
+      "arm": "d_periodic",
+      "publication_count": 3,
+      "pre_reference_publications": 0,
+      "post_reference_publications": 3,
+      "publication_clocks": [
+        70413,
+        98119,
+        125825
+      ],
+      "relative_to_boundary": [
+        1153,
+        28859,
+        56565
+      ]
+    },
+    {
+      "condition": "page_hinkley_hard_error",
+      "seed": 4,
+      "arm": "d_drift",
+      "publication_count": 2,
+      "pre_reference_publications": 1,
+      "post_reference_publications": 1,
+      "publication_clocks": [
+        60000,
+        101837
+      ],
+      "relative_to_boundary": [
+        -9260,
+        32577
+      ]
+    },
+    {
+      "condition": "page_hinkley_hard_error",
+      "seed": 4,
+      "arm": "d_periodic",
+      "publication_count": 2,
+      "pre_reference_publications": 0,
+      "post_reference_publications": 2,
+      "publication_clocks": [
+        70413,
+        125825
+      ],
+      "relative_to_boundary": [
+        1153,
+        56565
+      ]
+    },
+    {
+      "condition": "adwin_brier",
+      "seed": 0,
+      "arm": "d_drift",
+      "publication_count": 3,
+      "pre_reference_publications": 2,
+      "post_reference_publications": 1,
+      "publication_clocks": [
+        30000,
+        58904,
+        111064
+      ],
+      "relative_to_boundary": [
+        -39260,
+        -10356,
+        41804
+      ]
+    },
+    {
+      "condition": "adwin_brier",
+      "seed": 0,
+      "arm": "d_periodic",
+      "publication_count": 3,
+      "pre_reference_publications": 1,
+      "post_reference_publications": 2,
+      "publication_clocks": [
+        42707,
+        70413,
+        125825
+      ],
+      "relative_to_boundary": [
+        -26553,
+        1153,
+        56565
+      ]
+    },
+    {
+      "condition": "adwin_brier",
+      "seed": 1,
+      "arm": "d_drift",
+      "publication_count": 2,
+      "pre_reference_publications": 1,
+      "post_reference_publications": 1,
+      "publication_clocks": [
+        30000,
+        71280
+      ],
+      "relative_to_boundary": [
+        -39260,
+        2020
+      ]
+    },
+    {
+      "condition": "adwin_brier",
+      "seed": 1,
+      "arm": "d_periodic",
+      "publication_count": 0,
+      "pre_reference_publications": 0,
+      "post_reference_publications": 0,
+      "publication_clocks": [],
+      "relative_to_boundary": []
+    },
+    {
+      "condition": "adwin_brier",
+      "seed": 2,
+      "arm": "d_drift",
+      "publication_count": 3,
+      "pre_reference_publications": 2,
+      "post_reference_publications": 1,
+      "publication_clocks": [
+        30000,
+        59480,
+        107576
+      ],
+      "relative_to_boundary": [
+        -39260,
+        -9780,
+        38316
+      ]
+    },
+    {
+      "condition": "adwin_brier",
+      "seed": 2,
+      "arm": "d_periodic",
+      "publication_count": 2,
+      "pre_reference_publications": 1,
+      "post_reference_publications": 1,
+      "publication_clocks": [
+        42707,
+        70413
+      ],
+      "relative_to_boundary": [
+        -26553,
+        1153
+      ]
+    },
+    {
+      "condition": "adwin_brier",
+      "seed": 3,
+      "arm": "d_drift",
+      "publication_count": 3,
+      "pre_reference_publications": 2,
+      "post_reference_publications": 1,
+      "publication_clocks": [
+        30000,
+        58776,
+        111096
+      ],
+      "relative_to_boundary": [
+        -39260,
+        -10484,
+        41836
+      ]
+    },
+    {
+      "condition": "adwin_brier",
+      "seed": 3,
+      "arm": "d_periodic",
+      "publication_count": 1,
+      "pre_reference_publications": 1,
+      "post_reference_publications": 0,
+      "publication_clocks": [
+        42707
+      ],
+      "relative_to_boundary": [
+        -26553
+      ]
+    },
+    {
+      "condition": "adwin_brier",
+      "seed": 4,
+      "arm": "d_drift",
+      "publication_count": 2,
+      "pre_reference_publications": 2,
+      "post_reference_publications": 0,
+      "publication_clocks": [
+        30000,
+        66320
+      ],
+      "relative_to_boundary": [
+        -39260,
+        -2940
+      ]
+    },
+    {
+      "condition": "adwin_brier",
+      "seed": 4,
+      "arm": "d_periodic",
+      "publication_count": 1,
+      "pre_reference_publications": 0,
+      "post_reference_publications": 1,
+      "publication_clocks": [
+        70413
+      ],
+      "relative_to_boundary": [
+        1153
+      ]
+    },
+    {
+      "condition": "no_replay",
+      "seed": 0,
+      "arm": "d_drift",
+      "publication_count": 3,
+      "pre_reference_publications": 2,
+      "post_reference_publications": 1,
+      "publication_clocks": [
+        30000,
+        58360,
+        120696
+      ],
+      "relative_to_boundary": [
+        -39260,
+        -10900,
+        51436
+      ]
+    },
+    {
+      "condition": "no_replay",
+      "seed": 0,
+      "arm": "d_periodic",
+      "publication_count": 2,
+      "pre_reference_publications": 1,
+      "post_reference_publications": 1,
+      "publication_clocks": [
+        42707,
+        70413
+      ],
+      "relative_to_boundary": [
+        -26553,
+        1153
+      ]
+    },
+    {
+      "condition": "no_replay",
+      "seed": 1,
+      "arm": "d_drift",
+      "publication_count": 1,
+      "pre_reference_publications": 1,
+      "post_reference_publications": 0,
+      "publication_clocks": [
+        60000
+      ],
+      "relative_to_boundary": [
+        -9260
+      ]
+    },
+    {
+      "condition": "no_replay",
+      "seed": 1,
+      "arm": "d_periodic",
+      "publication_count": 1,
+      "pre_reference_publications": 0,
+      "post_reference_publications": 1,
+      "publication_clocks": [
+        70413
+      ],
+      "relative_to_boundary": [
+        1153
+      ]
+    },
+    {
+      "condition": "no_replay",
+      "seed": 2,
+      "arm": "d_drift",
+      "publication_count": 1,
+      "pre_reference_publications": 1,
+      "post_reference_publications": 0,
+      "publication_clocks": [
+        60000
+      ],
+      "relative_to_boundary": [
+        -9260
+      ]
+    },
+    {
+      "condition": "no_replay",
+      "seed": 2,
+      "arm": "d_periodic",
+      "publication_count": 1,
+      "pre_reference_publications": 0,
+      "post_reference_publications": 1,
+      "publication_clocks": [
+        70413
+      ],
+      "relative_to_boundary": [
+        1153
+      ]
+    },
+    {
+      "condition": "no_replay",
+      "seed": 3,
+      "arm": "d_drift",
+      "publication_count": 1,
+      "pre_reference_publications": 1,
+      "post_reference_publications": 0,
+      "publication_clocks": [
+        60000
+      ],
+      "relative_to_boundary": [
+        -9260
+      ]
+    },
+    {
+      "condition": "no_replay",
+      "seed": 3,
+      "arm": "d_periodic",
+      "publication_count": 0,
+      "pre_reference_publications": 0,
+      "post_reference_publications": 0,
+      "publication_clocks": [],
+      "relative_to_boundary": []
+    },
+    {
+      "condition": "no_replay",
+      "seed": 4,
+      "arm": "d_drift",
+      "publication_count": 1,
+      "pre_reference_publications": 1,
+      "post_reference_publications": 0,
+      "publication_clocks": [
+        60000
+      ],
+      "relative_to_boundary": [
+        -9260
+      ]
+    },
+    {
+      "condition": "no_replay",
+      "seed": 4,
+      "arm": "d_periodic",
+      "publication_count": 1,
+      "pre_reference_publications": 0,
+      "post_reference_publications": 1,
+      "publication_clocks": [
+        70413
+      ],
+      "relative_to_boundary": [
+        1153
+      ]
+    },
+    {
+      "condition": "static_symbolic_gate",
+      "seed": 0,
+      "arm": "d_drift",
+      "publication_count": 3,
+      "pre_reference_publications": 2,
+      "post_reference_publications": 1,
+      "publication_clocks": [
+        30000,
+        58360,
+        121112
+      ],
+      "relative_to_boundary": [
+        -39260,
+        -10900,
+        51852
+      ]
+    },
+    {
+      "condition": "static_symbolic_gate",
+      "seed": 0,
+      "arm": "d_periodic",
+      "publication_count": 3,
+      "pre_reference_publications": 1,
+      "post_reference_publications": 2,
+      "publication_clocks": [
+        42707,
+        70413,
+        125825
+      ],
+      "relative_to_boundary": [
+        -26553,
+        1153,
+        56565
+      ]
+    },
+    {
+      "condition": "static_symbolic_gate",
+      "seed": 1,
+      "arm": "d_drift",
+      "publication_count": 1,
+      "pre_reference_publications": 1,
+      "post_reference_publications": 0,
+      "publication_clocks": [
+        60000
+      ],
+      "relative_to_boundary": [
+        -9260
+      ]
+    },
+    {
+      "condition": "static_symbolic_gate",
+      "seed": 1,
+      "arm": "d_periodic",
+      "publication_count": 1,
+      "pre_reference_publications": 0,
+      "post_reference_publications": 1,
+      "publication_clocks": [
+        70413
+      ],
+      "relative_to_boundary": [
+        1153
+      ]
+    },
+    {
+      "condition": "static_symbolic_gate",
+      "seed": 2,
+      "arm": "d_drift",
+      "publication_count": 1,
+      "pre_reference_publications": 1,
+      "post_reference_publications": 0,
+      "publication_clocks": [
+        30000
+      ],
+      "relative_to_boundary": [
+        -39260
+      ]
+    },
+    {
+      "condition": "static_symbolic_gate",
+      "seed": 2,
+      "arm": "d_periodic",
+      "publication_count": 1,
+      "pre_reference_publications": 0,
+      "post_reference_publications": 1,
+      "publication_clocks": [
+        70413
+      ],
+      "relative_to_boundary": [
+        1153
+      ]
+    },
+    {
+      "condition": "static_symbolic_gate",
+      "seed": 3,
+      "arm": "d_drift",
+      "publication_count": 1,
+      "pre_reference_publications": 1,
+      "post_reference_publications": 0,
+      "publication_clocks": [
+        60000
+      ],
+      "relative_to_boundary": [
+        -9260
+      ]
+    },
+    {
+      "condition": "static_symbolic_gate",
+      "seed": 3,
+      "arm": "d_periodic",
+      "publication_count": 1,
+      "pre_reference_publications": 0,
+      "post_reference_publications": 1,
+      "publication_clocks": [
+        70413
+      ],
+      "relative_to_boundary": [
+        1153
+      ]
+    },
+    {
+      "condition": "static_symbolic_gate",
+      "seed": 4,
+      "arm": "d_drift",
+      "publication_count": 1,
+      "pre_reference_publications": 1,
+      "post_reference_publications": 0,
+      "publication_clocks": [
+        60000
+      ],
+      "relative_to_boundary": [
+        -9260
+      ]
+    },
+    {
+      "condition": "static_symbolic_gate",
+      "seed": 4,
+      "arm": "d_periodic",
+      "publication_count": 2,
+      "pre_reference_publications": 0,
+      "post_reference_publications": 2,
+      "publication_clocks": [
+        70413,
+        125825
+      ],
+      "relative_to_boundary": [
+        1153,
+        56565
+      ]
+    }
+  ]
+}

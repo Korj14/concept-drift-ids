@@ -1,0 +1,46 @@
+{
+  "arm": "c_frozen_symbolic",
+  "files": {
+    "final_state": {
+      "path": "final_state.json",
+      "sha256": "8f5dac1d1ed1e225a97f080c65dfe70d4a0c00bf61dbac9528b31a7e8cc39f63"
+    },
+    "initial_state": {
+      "path": "initial_state.json",
+      "sha256": "8f5dac1d1ed1e225a97f080c65dfe70d4a0c00bf61dbac9528b31a7e8cc39f63"
+    },
+    "maintenance": {
+      "path": "maintenance.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "final_history_sha256": "f52c2e9e1c276f5729f373181fcb7cb94df57c0c86fea284727f65a20f554d9c",
+  "final_rule_base_sha256": "c2451d8153862285a0fe60f88c6b9258101330dd28550b8ff906f73329dba08f",
+  "final_rule_base_version_id": "d-s2-r0v2",
+  "initial_rule_base_sha256": "c2451d8153862285a0fe60f88c6b9258101330dd28550b8ff906f73329dba08f",
+  "initial_rule_base_version_id": "d-s2-r0v2",
+  "maintenance_summary": {
+    "candidate_count": 0,
+    "censored_or_blocked_count": 0,
+    "completed_validation_count": 0,
+    "compute_seconds": 0.0,
+    "compute_seconds_per_opportunity": null,
+    "compute_seconds_per_publication": null,
+    "lifecycle_decision_counts": {},
+    "lifecycle_seconds": 0.0,
+    "mean_validation_wait_rows": null,
+    "no_op_count": 0,
+    "opportunity_count": 0,
+    "publication_count": 0,
+    "publication_per_opportunity": null,
+    "shap_seconds": 0.0,
+    "surrogate_seconds": 0.0
+  },
+  "manifest_sha256": "6c54e300587dd10cab8235908f5f5d0f633193abefb6637113d8c573bd99629f",
+  "operator_config_sha256": "197360bb33718f32d7aebeb60b5e5fe3ba0619941c4a38a4f4c6ba3b529b7532",
+  "payload_sha256": "f63539143926969d09e7f7611eadc54c730911474c943a734170c9d236ba37e5",
+  "publications": [],
+  "schema_version": 1,
+  "seed": 2,
+  "shared_identity_sha256": "3e7275eb4e5effddac28d89369245e3f90b08170a3727e16f48adac7ba3de525"
+}

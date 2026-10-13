@@ -67,6 +67,7 @@ class SymbolicMaintenanceRecord:
     surrogate_seconds: float = 0.0
     lifecycle_seconds: float = 0.0
     validation_wait_rows: int | None = None
+    generation_payload: Mapping[str, Any] | None = None
 
 
 @dataclass(frozen=True)
@@ -233,7 +234,13 @@ def _generation_result(
     opportunity_id: int,
     raw_affine: Mapping[str, tuple[float, float]] | None,
     operator_config: SymbolicOperatorConfig,
-) -> tuple[tuple[Any, ...], str, str, Mapping[str, float]]:
+) -> tuple[
+    tuple[Any, ...],
+    str,
+    str,
+    Mapping[str, float],
+    Mapping[str, Any],
+]:
     X, y = _generation_arrays(row_ids, lookup)
     if any(int(np.sum(y == value)) < 128 for value in (0, 1)):
         evidence_id = canonical_sha256(
@@ -250,6 +257,11 @@ def _generation_result(
             evidence_id,
             "candidate_generation_insufficient_class_evidence",
             {"shap": 0.0, "surrogate": 0.0},
+            {
+                "status": "candidate_generation_insufficient_class_evidence",
+                "generation_evidence_id": evidence_id,
+                "row_count": len(row_ids),
+            },
         )
 
     probabilities = _predict_probabilities(model, X)
@@ -271,6 +283,7 @@ def _generation_result(
         result.generation_evidence_id,
         "candidate_generation_complete",
         dict(result.timing_seconds),
+        result.to_dict(),
     )
 
 
@@ -318,6 +331,7 @@ def _complete_one(
         generation_evidence_id,
         generation_status,
         generation_timing,
+        generation_payload,
     ) = _generation_result(
         model=model,
         row_ids=generation_row_ids,
@@ -465,6 +479,7 @@ def _complete_one(
             if completion_clock is not None
             else None
         ),
+        generation_payload=dict(generation_payload),
     )
     pending_until = (
         int(completion_clock)
@@ -489,8 +504,6 @@ def run_drift_symbolic_arm(
     raw_affine: Mapping[str, tuple[float, float]] | None = None,
     operator_config: SymbolicOperatorConfig = SymbolicOperatorConfig(),
 ) -> SymbolicArmTrajectory:
-    if initial_state.seed != seed:
-        raise ValueError("Initial symbolic state seed mismatch.")
     if initial_state.seed != seed:
         raise ValueError("Initial symbolic state seed mismatch.")
     if not shared_identity_sha256:
@@ -604,6 +617,8 @@ def run_periodic_symbolic_arm(
     raw_affine: Mapping[str, tuple[float, float]] | None = None,
     operator_config: SymbolicOperatorConfig = SymbolicOperatorConfig(),
 ) -> SymbolicArmTrajectory:
+    if initial_state.seed != seed:
+        raise ValueError("Initial symbolic state seed mismatch.")
     if not shared_identity_sha256:
         raise ValueError("Shared control-plane identity is required.")
     verify_shared_symbolic_rows(rows, shared_predictions)

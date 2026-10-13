@@ -1,0 +1,254 @@
+{
+  "arm": "shared_control_plane",
+  "files": {
+    "checkpoint_chain": {
+      "path": "checkpoint_chain.jsonl",
+      "sha256": "969b1d8f5c3b5120baffa1af848d52048942cc96345ae4543860eeb9e9a0ddc0"
+    },
+    "child_checkpoint_0001": {
+      "path": "checkpoints/seed-1-event-1.pt",
+      "sha256": "f3e353ca167bfde45c55d94e27e9ab794557694fa209d9f9edd69ef7f2918a5f"
+    },
+    "child_checkpoint_0002": {
+      "path": "checkpoints/seed-1-event-2.pt",
+      "sha256": "4efda2303d3bbe56dd46034f565d8cc3a5a44b25039e895f55ce2dee589843cf"
+    },
+    "child_checkpoint_0003": {
+      "path": "checkpoints/seed-1-event-3.pt",
+      "sha256": "16a1480f5f0fb13849e4f49777579f644e19ff09957bb43341b572d461b34ca1"
+    },
+    "child_checkpoint_0004": {
+      "path": "checkpoints/seed-1-event-4.pt",
+      "sha256": "10884dbb03cd9d207d17608d0fa022ca1650858ede05cad78c6f190b16a29746"
+    },
+    "child_checkpoint_0005": {
+      "path": "checkpoints/seed-1-event-5.pt",
+      "sha256": "77d14afbd6b351bf351c033ded484e23476656137ebb067a9e4ba839dba1d114"
+    },
+    "child_checkpoint_0006": {
+      "path": "checkpoints/seed-1-event-6.pt",
+      "sha256": "88aa3b0624fc1b20a54c7705aae1b1ecda6f70e4224b48d6df84e5fee8b252a7"
+    },
+    "detector_observations": {
+      "path": "detector_observations.jsonl",
+      "sha256": "6120c82f3c30e832685c2d720203dea9ea9a240f40b3d6c057582cc36cbeab92"
+    },
+    "events": {
+      "path": "events.jsonl",
+      "sha256": "1cba78cb3bdec413d4cabfa383a2135517bc8c76f51aa4084523142aff4f6899"
+    },
+    "input_identity": {
+      "path": "input_identity.json",
+      "sha256": "55b516867eb08d7f5bbeccd7d36c9a7cbc3fffc6269d09a1ba059194250e916e"
+    },
+    "label_schedule": {
+      "path": "label_schedule.jsonl",
+      "sha256": "0c09da6966430dc160ac1bd2e0f9602aa2c39c0006147cf8f7371971e6c07674"
+    },
+    "predictions": {
+      "path": "predictions.jsonl",
+      "sha256": "92132bcc54398c4c19d3ac553732a5d42a77116aa67550bcf42269a481e45d3d"
+    },
+    "replay_transactions": {
+      "path": "replay_transactions.jsonl",
+      "sha256": "838a77ba91bddf153839bd5d71493c932d55ad6eb9f3466c69291548f6ca1793"
+    },
+    "shared_identity": {
+      "path": "shared_identity.json",
+      "sha256": "f32a1756ea93bfd2600a467ea053f6de558328de222439db2bb0d1211486716a"
+    }
+  },
+  "git_commit": "b882df355de7b865c5623b90604ee50438e4243d",
+  "initial_checkpoint_sha256": "07696c3f580645d9c96ac3e736cfb5eeaa8033f148bf64822e8ee105861cf552",
+  "manifest_sha256": "7b6948610393a8397f0b1653ece3a007db0389c560743f93baf3a81da1c6ca82",
+  "payload_sha256": "0a6e7c2c8bd82e9e426e2ec97a42b88e8f4fa97531eba3336f818ff5b3229cbe",
+  "preprocessing_sha256": "4527f77220f2cf6063108a7d71d80aaa0e82099ad282ff25408a2d9ce3488b1e",
+  "protocol_hashes": {
+    "STAGE9_PRESPECIFIED_ROBUSTNESS_PROTOCOL.md": "c254408a68cfa2281cd4e6c656376e248c6fcb68e4878c9538d4d7b8e61b87e6"
+  },
+  "run_id": "cd-robustness-v1_1-adwin_brier-phase-a-seed-1",
+  "runtime": {
+    "locked_distributions": {
+      "Jinja2": "3.1.6",
+      "MarkupSafe": "3.0.4",
+      "Pygments": "2.21.0",
+      "cloudpickle": "3.1.2",
+      "colorama": "0.4.6",
+      "contourpy": "1.3.3",
+      "cycler": "0.12.1",
+      "filelock": "4.0.12",
+      "fonttools": "4.66.1",
+      "fsspec": "2026.9.0",
+      "iniconfig": "2.3.0",
+      "joblib": "1.6.0",
+      "kiwisolver": "1.5.1",
+      "llvmlite": "0.50.0",
+      "matplotlib": "3.11.2",
+      "mpmath": "1.3.0",
+      "narwhals": "2.26.0",
+      "networkx": "3.6.1",
+      "numba": "0.68.0",
+      "numpy": "2.4.6",
+      "packaging": "26.3",
+      "pandas": "3.0.6",
+      "pillow": "12.3.0",
+      "pluggy": "1.6.0",
+      "pyparsing": "3.3.3",
+      "pytest": "9.1.1",
+      "python-dateutil": "2.9.0.post0",
+      "river": "0.26.1",
+      "scikit-learn": "1.9.1",
+      "scipy": "1.17.1",
+      "shap": "0.51.0",
+      "six": "1.17.0",
+      "slicer": "0.0.8",
+      "sympy": "1.14.0",
+      "threadpoolctl": "3.7.0",
+      "torch": "2.14.1",
+      "tqdm": "4.70.1",
+      "typing_extensions": "4.16.0",
+      "tzdata": "2026.5"
+    },
+    "locked_distributions_sha256": "8a928d5c9df8554f88ba80edd2918f5f6a18b382697f6f561dbe87a8ed9a0052",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "processor": "AMD64 Family 25 Model 80 Stepping 0, AuthenticAMD",
+    "python_implementation": "CPython",
+    "python_version": "3.11.9",
+    "thread_environment": {
+      "MKL_NUM_THREADS": "1",
+      "NUMEXPR_NUM_THREADS": "1",
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1",
+      "PYTHONHASHSEED": "0"
+    },
+    "threadpool_info": [
+      {
+        "architecture": "Haswell",
+        "filepath": "C:\\Dev\\concept-drift-ids\\.venv\\Lib\\site-packages\\numpy.libs\\libscipy_openblas64_-63c857e738469261263c764a36be9436.dll",
+        "internal_api": "openblas",
+        "num_threads": 1,
+        "prefix": "libscipy_openblas",
+        "threading_layer": "pthreads",
+        "user_api": "blas",
+        "version": "0.3.31.188.0"
+      },
+      {
+        "filepath": "C:\\Dev\\concept-drift-ids\\.venv\\Lib\\site-packages\\torch\\lib\\libiomp5md.dll",
+        "internal_api": "openmp",
+        "num_threads": 1,
+        "prefix": "libiomp",
+        "user_api": "openmp",
+        "version": null
+      },
+      {
+        "filepath": "C:\\Dev\\concept-drift-ids\\.venv\\Lib\\site-packages\\torch\\lib\\libiompstubs5md.dll",
+        "internal_api": "openmp",
+        "num_threads": 1,
+        "prefix": "libiomp",
+        "user_api": "openmp",
+        "version": null
+      },
+      {
+        "architecture": "Haswell",
+        "filepath": "C:\\Dev\\concept-drift-ids\\.venv\\Lib\\site-packages\\scipy.libs\\libscipy_openblas-64eda39e79589aedb16f58e5547eb599.dll",
+        "internal_api": "openblas",
+        "num_threads": 1,
+        "prefix": "libscipy_openblas",
+        "threading_layer": "pthreads",
+        "user_api": "blas",
+        "version": "0.3.30"
+      },
+      {
+        "filepath": "C:\\Dev\\concept-drift-ids\\.venv\\Lib\\site-packages\\sklearn\\.libs\\vcomp140.dll",
+        "internal_api": "openmp",
+        "num_threads": 1,
+        "prefix": "vcomp",
+        "user_api": "openmp",
+        "version": null
+      }
+    ],
+    "torch_deterministic_algorithms": true,
+    "torch_num_interop_threads": 1,
+    "torch_num_threads": 1,
+    "torch_version": "2.14.1+cpu"
+  },
+  "scenario_identity": {
+    "adaptive_runner_received_boundary_metadata": false,
+    "artifact_identity_context": {
+      "condition_id": "adwin_brier",
+      "condition_spec_sha256": "c63435fa42c99901e82aca29dabdca9de02dc150cd134b4e81afeadb5a3d7537",
+      "frozen_primary_contract_sha256": "4bd0d2d2cb3b33b12286f19fcbae0c823e67c50a9c690f797d07a333fc6c9dc7",
+      "fusion_contract_sha256": "acb2ba17bad35700cfc2f6d539548c31cf86f944eb1aa2aea566828278bbde69",
+      "preprocessing_state_hash": "4527f77220f2cf6063108a7d71d80aaa0e82099ad282ff25408a2d9ce3488b1e",
+      "primary_control_plane_config_sha256": "7491733fe4bb7524eb38960b78067df44081fd4513055664985f3fd0d9841384",
+      "primary_symbolic_operator_config_sha256": "197360bb33718f32d7aebeb60b5e5fe3ba0619941c4a38a4f4c6ba3b529b7532",
+      "r0_v2_manifest_sha256": "131027d2f136494eb388183f18dcb7eb0e9d7e9fe786f22dba25f4e1624c1483",
+      "runtime_identity_sha256": "2c8058035fcb66ad7fa99559de9a8611f81a954f4f9055a832b59ec01d3bfa3b",
+      "scenario_manifest_canonical_sha256": "3d1c3f9775ac5c8a73053634784be513bb1714ef7f26fa9db406ccd78c4344e3",
+      "seed": 1,
+      "stage8_closure_commit": "f8a424389056a048a6ad6be0b744bf6d12b69df2",
+      "stage8_parent_evidence_commit": "c2ded83b8195b9321e715626c1f305f9627936e8",
+      "stage9_config_manifest_sha256": "b72fc0dce0df46974737cd0c33714cc17b23f31ce188e92d318b1787c0ae027e",
+      "system_a_checkpoint_sha256": "07696c3f580645d9c96ac3e736cfb5eeaa8033f148bf64822e8ee105861cf552",
+      "system_a_manifest_sha256": "42004b5ed100b690023b9998bdc959fac41ab947b996fb7c58e44cee5e8dc6de"
+    },
+    "condition_id": "adwin_brier",
+    "condition_spec": {
+      "base_primary_contract_sha256": "4bd0d2d2cb3b33b12286f19fcbae0c823e67c50a9c690f797d07a333fc6c9dc7",
+      "changed_factors": [
+        "detector_signal"
+      ],
+      "detector_config": {
+        "clock": 32,
+        "delta": 0.002,
+        "grace_period": 10,
+        "max_buckets": 5,
+        "min_window_length": 5
+      },
+      "detector_family": "adwin",
+      "detector_signal": "brier",
+      "label_latency": 5000,
+      "replay_enabled": true
+    },
+    "input_identity": {
+      "feature_count": 77,
+      "identity_sha256": "1d8d9ada1ef76174089d5c3e719f5e0307af512e4945b439de7a9d5100852553",
+      "initial_checkpoint_sha256": "07696c3f580645d9c96ac3e736cfb5eeaa8033f148bf64822e8ee105861cf552",
+      "monitor_threshold": 0.9333740472793579,
+      "preprocessing_state_hash": "4527f77220f2cf6063108a7d71d80aaa0e82099ad282ff25408a2d9ce3488b1e",
+      "seed": 1,
+      "stream_layout": {
+        "boundary_index": 69260,
+        "boundary_visibility_to_adaptive_runner": false,
+        "post_reference_rows": 69270,
+        "pre_reference_rows": 69260
+      },
+      "stream_row_ids_sha256": "ab3bcc4a32a8a6172a09a3825cbbb2723ff97bcbd57984165c7d29b0d2b01327",
+      "stream_rows": 138530,
+      "training_anchor_row_ids_sha256": "a4fdaea3a5aef501c72c11a8593e80eab3ea7981adbd1c53841d3cb445708a8e",
+      "training_anchor_rows": 10000
+    },
+    "scenario": {
+      "boundary_index": 69260,
+      "boundary_role": "offline_scoring_and_diagnostics_only",
+      "boundary_visibility_to_adaptive_runner": false,
+      "post_reference_rows": 69270,
+      "pre_reference_rows": 69260,
+      "random_reshuffle_allowed": false,
+      "scenario_id": "cicids2017_sudden_benign_v1",
+      "stream_rows": 138530
+    },
+    "stage8_parent": {
+      "closure_commit": "f8a424389056a048a6ad6be0b744bf6d12b69df2",
+      "compact_export_manifest_sha256": "409b516d75cbc5e71d3633019008432ea6088d1d923b4e4a95570263528ed523",
+      "confirmatory_aggregate_sha256": "1be77ce4be9f3faad021a3f3bfd636488e5de6aa1b2a6e7c596e48feb41bb54d",
+      "corrected_config_manifest_sha256": "d380fce5f9db8f0b639dc999298a263b10a10a3d02e35def226a121d098e2222",
+      "evidence_commit": "c2ded83b8195b9321e715626c1f305f9627936e8",
+      "reused_stage8_scientific_source_tree_sha256": "7c45387f04568300a4e2d1c9cfae5a70b69120359ee4426664bca61bbe8e8e2a"
+    },
+    "stage9_config_manifest_sha256": "b72fc0dce0df46974737cd0c33714cc17b23f31ce188e92d318b1787c0ae027e"
+  },
+  "schema_version": 1,
+  "seed": 1,
+  "status": "complete_unscored_stage9_shared_trajectory"
+}

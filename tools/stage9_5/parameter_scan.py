@@ -9,7 +9,7 @@ from dataclasses import dataclass, asdict
 from pathlib import Path
 from typing import Any, Iterable
 
-REGISTER_PATH = Path("data/manifests/stage9_5_parameter_register_v1_8.json")
+REGISTER_PATH = Path("data/manifests/stage9_5_parameter_register_v1_9.json")
 
 MATERIAL_RE = re.compile(
     r"(boundary|latenc|window|stride|remainder|threshold|fusion|seed|rng|"
@@ -22,7 +22,7 @@ MATERIAL_RE = re.compile(
     r"primary.?weights?|neural.?weight|min.?instances|alpha|\bmode\b|(?:^|_)weight$|"
     r"hidden|activation|initialization|optimizer|\bloss\b|calibration|workers?|"
     r"background|attribution|selected.?features|min.?samples|source.?rows|"
-    r"train|development|post.?benign|drift|lambda)",
+    r"train|development|post.?benign|drift|adwin|page.?hinkley|active.?counts|lambda)",
     re.I,
 )
 HASH_RE = re.compile(r"^[0-9a-f]{40,64}$", re.I)
@@ -524,7 +524,7 @@ def run(root: Path, output_dir: Path, fail_on_unclassified_high: bool = True) ->
     high_unclassified = [c for c in unclassified if c.leverage == "high"]
 
     report = {
-        "audit_id": "stage9.5-0-parameter-control-completeness-v1_8",
+        "audit_id": "stage9.5-0-parameter-control-completeness-v1_9",
         "protocol_id": register["protocol_id"],
         "upstream_closure_head": register["upstream_closure_head"],
         "parameter_register_sha256": hashlib.sha256((root / REGISTER_PATH).read_bytes()).hexdigest(),
@@ -594,7 +594,7 @@ def run(root: Path, output_dir: Path, fail_on_unclassified_high: bool = True) ->
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--root", type=Path, default=Path("."))
-    parser.add_argument("--output-dir", type=Path, default=Path("results/audits/stage9_5_v1_8"))
+    parser.add_argument("--output-dir", type=Path, default=Path("results/audits/stage9_5_v1_9"))
     parser.add_argument("--no-fail", action="store_true")
     args = parser.parse_args()
     run(args.root.resolve(), args.output_dir, fail_on_unclassified_high=not args.no_fail)

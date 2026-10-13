@@ -1054,7 +1054,7 @@
         "data/manifests/cd_stage9_run_config_v1_1.json"
       ],
       "locator_patterns": [
-        "^conditions\\..*\\.changed_factors\\."
+        "^conditions\\..*\\.changed_factors(?:\\[|$)"
       ],
       "freeze_provenance": "Stage-9 robustness contract",
       "rationale": "Prevents accidental multi-factor perturbations.",

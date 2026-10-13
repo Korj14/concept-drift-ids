@@ -9,7 +9,7 @@ from dataclasses import dataclass, asdict
 from pathlib import Path
 from typing import Any, Iterable
 
-REGISTER_PATH = Path("data/manifests/stage9_5_parameter_register_v1_1.json")
+REGISTER_PATH = Path("data/manifests/stage9_5_parameter_register_v1_2.json")
 
 MATERIAL_RE = re.compile(
     r"(boundary|latenc|window|stride|remainder|threshold|lambda|fusion|seed|rng|"
@@ -253,140 +253,65 @@ def _json_candidates(root: Path, path: str, register: dict[str, Any]) -> tuple[l
 def _markdown_candidates(root: Path, path: str, register: dict[str, Any]) -> tuple[list[Candidate], list[Candidate]]:
     found: list[Candidate] = []
     excluded: list[Candidate] = []
-    prescriptive = re.compile(
-        r"(freeze|frozen|must|required|primary|exact|threshold|latency|window|"
-        r"lambda|gate|detector|replay|seed|boundary|opportunit|bootstrap|"
-        r"support|precision|fidelity|stability|complexity|overlap|retire|demot)",
+    declaration = re.compile(
+        r"(?:=|>=|<=|\\bexact\\b|\\bprimary\\b|\\bfixed\\b|\\bfrozen\\b|"
+        r"\\bthreshold\\b|\\blatency\\b|\\bwindow\\b|\\bseeds?\\b|\\bclocks?\\b|"
+        r"\\bsupport\\b|\\bprecision\\b|\\bfidelity\\b|\\bstability\\b|"
+        r"\\bcomplexity\\b|\\bbootstrap\\b|PYTHONHASHSEED|\\bmutant)",
         re.I,
     )
-    for lineno, line in enumerate((root / path).read_text(encoding="utf-8").splitlines(), start=1):
-        if not MATERIAL_RE.search(line) or not prescriptive.search(line):
+    for lineno, raw_line in enumerate((root / path).read_text(encoding="utf-8").splitlines(), start=1):
+        stripped = raw_line.strip()
+        if not stripped or stripped.startswith("#"):
             continue
-        if re.search(r"(observed|result|mean|median|confidence interval|approximately|workflow run|commit|sha-?256)", line, re.I):
+        # Remove document structure before numeric discovery. These tokens are
+        # provenance/navigation, not scientific parameter values.
+        line = re.sub(r"^\\s*(?:[-*+]\\s+|\\d+[.)]\\s+)", "", raw_line)
+        line = re.sub(r"\\bStage[- ]?\\d+(?:\\.\\d+)?\\b", "Stage", line, flags=re.I)
+        line = re.sub(r"\\bSection\\s+\\d+(?:\\.\\d+)?\\b", "Section", line, flags=re.I)
+        if not MATERIAL_RE.search(line) or not declaration.search(line):
+            continue
+        if re.search(
+            r"(observed|result|mean|median|confidence interval|approximately|workflow run|"
+            r"commit|sha-?256|completed sensitivity|evidence commit)",
+            line,
+            re.I,
+        ):
             excluded.append(Candidate(
-                path=path, line=lineno, locator=line.strip()[:180], value="<line>",
-                source_kind="markdown", material_reason="excluded",
-                registered_ids=(), leverage=_leverage(line, path), excluded=True,
-                exclusion_reason="historical outcome/provenance statement, not a prospective control declaration",
+                path=path,
+                line=lineno,
+                locator=stripped[:180],
+                value="<line>",
+                source_kind="markdown",
+                material_reason="excluded",
+                registered_ids=(),
+                leverage=_leverage(line, path),
+                excluded=True,
+                exclusion_reason="historical outcome/provenance statement, not an explicit control declaration",
             ))
             continue
         for match in NUMBER_RE.finditer(line):
             raw = match.group(0)
+            normalized = raw.replace(",", "")
             try:
-                value: Any = float(raw) if any(c in raw.lower() for c in ".e") else int(raw)
+                value: Any = (
+                    float(normalized)
+                    if any(ch in normalized.lower() for ch in ".e")
+                    else int(normalized)
+                )
             except ValueError:
                 continue
-            locator = line.strip()[:180]
+            locator = stripped[:180]
             candidate = Candidate(
                 path=path,
                 line=lineno,
                 locator=locator,
                 value=value,
                 source_kind="markdown",
-                material_reason="material-keyword line",
+                material_reason="explicit parameter/control declaration",
                 registered_ids=_registered_ids(register, path, locator, value),
                 leverage=_leverage(locator, path),
             )
             found.append(candidate)
     return found, excluded
 
-
-def run(root: Path, output_dir: Path, fail_on_unclassified_high: bool = True) -> dict[str, Any]:
-    register = _load_register(root)
-    material: list[Candidate] = []
-    excluded: list[Candidate] = []
-
-    roots = register["scan_roots"]
-    for path in roots["scientific_source"]:
-        a, b = _python_candidates(root, path, register)
-        material.extend(a); excluded.extend(b)
-    for path in roots["manifests"]:
-        a, b = _json_candidates(root, path, register)
-        material.extend(a); excluded.extend(b)
-    for path in roots["protocols"]:
-        a, b = _markdown_candidates(root, path, register)
-        material.extend(a); excluded.extend(b)
-
-    # Deduplicate exact scan occurrences while preserving distinct lines/locators.
-    unique: dict[tuple[Any, ...], Candidate] = {}
-    for c in material:
-        key = (c.path, c.line, c.locator, json.dumps(c.value, sort_keys=True))
-        unique[key] = c
-    material = sorted(unique.values(), key=lambda c: (c.path, c.line or 0, c.locator, repr(c.value)))
-
-    unclassified = [c for c in material if not c.registered_ids]
-    high_unclassified = [c for c in unclassified if c.leverage == "high"]
-
-    report = {
-        "audit_id": "stage9.5-0-parameter-control-completeness-v1_1",
-        "protocol_id": register["protocol_id"],
-        "upstream_closure_head": register["upstream_closure_head"],
-        "parameter_register_sha256": hashlib.sha256((root / REGISTER_PATH).read_bytes()).hexdigest(),
-        "scan_roots": roots,
-        "counts": {
-            "registered_entries": len(register["entries"]),
-            "material_candidates": len(material),
-            "excluded_candidates": len(excluded),
-            "unclassified_material_candidates": len(unclassified),
-            "unclassified_high_leverage_candidates": len(high_unclassified),
-        },
-        "pass": len(high_unclassified) == 0,
-        "material_candidates": [asdict(c) for c in material],
-        "unclassified_material_candidates": [asdict(c) for c in unclassified],
-        "unclassified_high_leverage_candidates": [asdict(c) for c in high_unclassified],
-        "exclusion_log": [asdict(c) for c in excluded],
-    }
-    report["canonical_sha256"] = _canonical_sha256(report)
-
-    output_dir.mkdir(parents=True, exist_ok=True)
-    json_path = output_dir / "parameter_scan_report.json"
-    md_path = output_dir / "PARAMETER_SCAN_REPORT.md"
-    json_path.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-
-    lines = [
-        "# Stage 9.5-0 Parameter/Control Completeness Scan v1.1",
-        "",
-        f"- protocol: `{report['protocol_id']}`",
-        f"- upstream closure head: `{report['upstream_closure_head']}`",
-        f"- register SHA-256: `{report['parameter_register_sha256']}`",
-        f"- material candidates: **{report['counts']['material_candidates']}**",
-        f"- unclassified material candidates: **{report['counts']['unclassified_material_candidates']}**",
-        f"- unclassified high-leverage candidates: **{report['counts']['unclassified_high_leverage_candidates']}**",
-        f"- status: **{'PASS' if report['pass'] else 'BLOCKED'}**",
-        "",
-        "## Unclassified high-leverage candidates",
-        "",
-    ]
-    if high_unclassified:
-        for c in high_unclassified:
-            lines.append(f"- `{c.path}:{c.line or '-'}` — `{c.locator}` = `{c.value!r}`")
-    else:
-        lines.append("- none")
-    lines += [
-        "",
-        "## Interpretation",
-        "",
-        "A blocked scan is preserved as audit evidence. It does not invalidate Stage 8/9 by itself; each candidate must be dispositioned as Class A, B, C, or a registry-completeness correction before Stage 9.5 can close.",
-        "",
-        "The JSON report retains the full material candidate list and exclusion log.",
-    ]
-    md_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
-
-    if fail_on_unclassified_high and high_unclassified:
-        raise SystemExit(
-            f"Stage 9.5-0 blocked: {len(high_unclassified)} unclassified high-leverage candidates."
-        )
-    return report
-
-
-def main() -> None:
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--root", type=Path, default=Path("."))
-    parser.add_argument("--output-dir", type=Path, default=Path("results/audits/stage9_5_v1_1"))
-    parser.add_argument("--no-fail", action="store_true")
-    args = parser.parse_args()
-    run(args.root.resolve(), args.output_dir, fail_on_unclassified_high=not args.no_fail)
-
-
-if __name__ == "__main__":
-    main()

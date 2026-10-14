@@ -23,6 +23,9 @@ on:
       - "STAGE9_5_5_STATIC_SOFTWARE_ASSURANCE_IMPLEMENTATION.md"
       - "STAGE9_5_5_V1_1_SELF_SCOPE_CORRECTION.md"
       - "data/manifests/stage9_5_static_assurance_v1_4.json"
+      - "data/manifests/stage9_5_claim_reporting_v1.json"
+      - "data/manifests/stage9_5_claim_definitions_v1.json"
+      - "STAGE9_5_7_8_CLAIM_REPORTING_IMPLEMENTATION.md"
       - "tools/stage9_5/**"
       - "tests/stage9_5/**"
       - ".github/workflows/stage9-5-assurance.yml"
@@ -308,4 +311,52 @@ jobs:
         with:
           name: stage9-5-static-assurance-v1-4
           path: artifacts/stage9_5_static_v1_4/
+          if-no-files-found: error
+
+
+  claim-traceability:
+    runs-on: windows-latest
+    env:
+      PYTHONHASHSEED: "0"
+      OMP_NUM_THREADS: "1"
+      MKL_NUM_THREADS: "1"
+      OPENBLAS_NUM_THREADS: "1"
+      NUMEXPR_NUM_THREADS: "1"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11.9"
+
+      - name: Install historical frozen runtime
+        shell: pwsh
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements-lock.txt
+
+      - name: Verify Stage 9.5-7 prospective freeze
+        shell: pwsh
+        run: |
+          python -c "from pathlib import Path; required=['data/manifests/stage9_5_claim_reporting_v1.json','data/manifests/stage9_5_claim_definitions_v1.json','STAGE9_5_7_8_CLAIM_REPORTING_IMPLEMENTATION.md']; missing=[p for p in required if not Path(p).is_file()]; assert not missing, missing"
+
+      - name: Run Stage 9.5-7 claim-traceability tests
+        shell: pwsh
+        run: |
+          python -m pytest tests/stage9_5/test_claim_traceability.py -q
+
+      - name: Run Stage 9.5-7 claim ledger
+        shell: pwsh
+        run: |
+          python tools/stage9_5/claim_traceability.py --output-dir artifacts/stage9_5_claims_v1
+
+      - name: Upload Stage 9.5-7 claim evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: stage9-5-claim-traceability-v1
+          path: artifacts/stage9_5_claims_v1/
           if-no-files-found: error

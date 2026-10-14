@@ -236,12 +236,12 @@ jobs:
       - name: Run Stage 9.5-4 targeted mutation assurance
         shell: pwsh
         run: |
-          python tools/stage9_5/targeted_mutation_assurance.py --output-dir artifacts/stage9_5_v1/targeted_mutations
+          python tools/stage9_5/targeted_mutation_assurance.py --output-dir artifacts/stage9_5_mutation_v1_1/targeted_mutations
 
       - name: Upload Stage 9.5-4 mutation evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: stage9-5-targeted-mutations-v1
-          path: artifacts/stage9_5_v1/targeted_mutations/
+          name: stage9-5-targeted-mutations-v1-1
+          path: artifacts/stage9_5_mutation_v1_1/targeted_mutations/
           if-no-files-found: error

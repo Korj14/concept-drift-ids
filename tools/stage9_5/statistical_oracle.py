@@ -49,16 +49,16 @@ def _metric_from_counts(metric: str, counts: Mapping[str, Any]) -> float:
     fp = int(counts["fp"])
     fn = int(counts["fn"])
     if metric == "f1":
-        denom = 2 * tp + fp + fn
-        return (2.0 * tp / denom) if denom else 0.0
+        f1_denom = 2 * tp + fp + fn
+        return (2.0 * tp / f1_denom) if f1_denom else 0.0
     if metric == "fpr":
-        denom = fp + tn
-        return (fp / denom) if denom else 0.0
+        fpr_denom = fp + tn
+        return (fp / fpr_denom) if fpr_denom else 0.0
     if metric == "mcc":
-        denom = math.sqrt(
+        mcc_denom = math.sqrt(
             (tp + fp) * (tp + fn) * (tn + fp) * (tn + fn)
         )
-        return ((tp * tn - fp * fn) / denom) if denom else 0.0
+        return ((tp * tn - fp * fn) / mcc_denom) if mcc_denom else 0.0
     raise ValueError(f"Unsupported count-derived metric: {metric}")
 
 
@@ -350,7 +350,10 @@ def _stage9_scored_values(
     contract: Mapping[str, Any],
     condition: str,
 ) -> dict[str, dict[str, list[float]]]:
-    values = {arm: {metric: [] for metric in METRICS} for arm in ARMS}
+    values: dict[str, dict[str, list[float]]] = {
+        arm: {metric: [] for metric in METRICS}
+        for arm in ARMS
+    }
     for seed in contract["seeds"]:
         for arm in ARMS:
             path = PROJECT_ROOT / contract["stage9"]["scored_pattern"].format(
@@ -383,7 +386,10 @@ def _stage9_offline_lambda_values(
     contract: Mapping[str, Any],
     condition: str,
 ) -> dict[str, dict[str, list[float]]]:
-    values = {arm: {metric: [] for metric in METRICS} for arm in ARMS}
+    values: dict[str, dict[str, list[float]]] = {
+        arm: {metric: [] for metric in METRICS}
+        for arm in ARMS
+    }
     for seed in contract["seeds"]:
         path = PROJECT_ROOT / contract["stage9"]["offline_pattern"].format(
             condition=condition, seed=seed

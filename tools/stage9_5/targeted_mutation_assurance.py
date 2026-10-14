@@ -73,7 +73,7 @@ def run(output_dir: Path) -> dict[str, Any]:
     required = int(contract["mutation_closure_rule"]["defined_mutants"])
     killed_count = sum(bool(item["killed"]) for item in results)
     report: dict[str, Any] = {
-        "audit_id": "stage9.5-4-targeted-mutation-assurance-v1",
+        "audit_id": "stage9.5-4-targeted-mutation-assurance-v1_1",
         "contract": str(CONTRACT_PATH.relative_to(PROJECT_ROOT)),
         "test_file": str(TEST_PATH.relative_to(PROJECT_ROOT)),
         "defined_mutants": required,
@@ -148,7 +148,7 @@ def main() -> None:
     parser.add_argument(
         "--output-dir",
         type=Path,
-        default=Path("artifacts/stage9_5_v1/targeted_mutations"),
+        default=Path("artifacts/stage9_5_mutation_v1_1/targeted_mutations"),
     )
     args = parser.parse_args()
     run(args.output_dir)

@@ -3,7 +3,7 @@ from __future__ import annotations
 import inspect
 import textwrap
 from pathlib import Path
-from typing import Any, Callable
+from collections.abc import Callable\nfrom typing import Any
 
 import numpy as np
 import pytest
@@ -13,7 +13,7 @@ import concept_drift_ids.cd_evidence as evidence
 import concept_drift_ids.cd_shared_runner as shared_runner
 import concept_drift_ids.cd_symbolic_arms as arms
 import concept_drift_ids.cd_symbolic_runner as symbolic_runner
-import concept_drift_ids.symbolic as symbolic
+from concept_drift_ids import symbolic
 from concept_drift_ids.cd_shared_runner import ControlPlaneConfig
 from concept_drift_ids.cd_symbolic_arms import (
     SymbolicOpportunity,

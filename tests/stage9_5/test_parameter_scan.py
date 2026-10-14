@@ -1,9 +1,19 @@
 from __future__ import annotations
 
+import ast
 import json
 from pathlib import Path
 
-from tools.stage9_5.parameter_scan import _canonical_sha256, _registered_ids, run
+import pytest
+
+import tools.stage9_5.parameter_scan as parameter_scan
+from tools.stage9_5.parameter_scan import (
+    _LITERAL_EVAL_FAILED,
+    _canonical_sha256,
+    _literal_eval_or_failed,
+    _registered_ids,
+    run,
+)
 
 
 def _minimal_repo(tmp_path: Path) -> None:
@@ -565,3 +575,19 @@ def test_v1_11_1_validation_guards_excluded_but_latency_zero_treatment_material(
     }
     found, _ = _python_candidates(tmp_path, "src/concept_drift_ids/cd_stage9_config.py", register)
     assert any(item.value == 0 and item.registered_ids == ("latency",) for item in found)
+
+
+def test_literal_eval_expected_nonliteral_is_skipped() -> None:
+    node = ast.Name(id="runtime_value", ctx=ast.Load())
+    assert _literal_eval_or_failed(node) is _LITERAL_EVAL_FAILED
+
+
+def test_literal_eval_unexpected_exception_propagates(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    def unexpected(_: ast.AST) -> object:
+        raise RuntimeError("unexpected scanner defect")
+
+    monkeypatch.setattr(parameter_scan.ast, "literal_eval", unexpected)
+    with pytest.raises(RuntimeError, match="unexpected scanner defect"):
+        _literal_eval_or_failed(ast.Constant(value=1))

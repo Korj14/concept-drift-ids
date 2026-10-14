@@ -1,0 +1,29 @@
+{
+  "audit_id": "stage9.5-4-targeted-mutation-assurance-v1_1-success",
+  "status": "accepted_stage9_5_4_closure_evidence",
+  "audited_head": "f20d0bf2b122b263d27d966700bfbdee209d3287",
+  "workflow_run_id": 38546139132,
+  "mutation_job_id": 115792552457,
+  "same_head_stage9": {
+    "workflow_run_id": 38546139100,
+    "run_number": 432,
+    "conclusion": "success"
+  },
+  "artifact": {
+    "id": 11884388614,
+    "name": "stage9-5-targeted-mutations-v1-1",
+    "zip_sha256": "8d02cd659be84de34efd7fc271db035cfb8ac9e72129bc939203c0a316aaf603",
+    "report_canonical_sha256": "c2729d7a5e20e6ed1c54d233085b909d2a1c273b71a28ab52f1b59cdbf07fc9a"
+  },
+  "defined_mutants": 11,
+  "executed_mutants": 11,
+  "killed_mutants": 11,
+  "kill_rate": 1,
+  "required_kill_rate": 1,
+  "survivors": [],
+  "mutation_method": "actual production function source extracted with inspect.getsource; exact mutation substrate occurrence asserted; mutated function compiled in test-only memory; behavior compared with unmutated production function",
+  "scientific_source_files_modified": false,
+  "stage10_outcomes_accessed": false,
+  "stage9_5_1_status": "open_blocked_system_a_checkpoint_bytes_missing",
+  "closure_scope": "Stage 9.5-4 only"
+}

@@ -13,7 +13,7 @@ def test_static_assurance_contract_has_unique_frozen_scope() -> None:
             root
             / "data"
             / "manifests"
-            / "stage9_5_static_assurance_v1.json"
+            / "stage9_5_static_assurance_v1_1.json"
         ).read_text(encoding="utf-8")
     )
     ruff_files = contract["scope"]["ruff_files"]
@@ -32,7 +32,7 @@ def test_historical_lock_is_not_a_developer_tool_target() -> None:
             root
             / "data"
             / "manifests"
-            / "stage9_5_static_assurance_v1.json"
+            / "stage9_5_static_assurance_v1_1.json"
         ).read_text(encoding="utf-8")
     )
     specs = {
@@ -62,3 +62,18 @@ def test_mypy_finding_parser_handles_line_and_column() -> None:
             "message": "Missing annotation [var-annotated]",
         },
     ]
+
+
+def test_static_assurance_scope_includes_itself() -> None:
+    root = Path(__file__).resolve().parents[2]
+    contract = json.loads(
+        (
+            root
+            / "data"
+            / "manifests"
+            / "stage9_5_static_assurance_v1_1.json"
+        ).read_text(encoding="utf-8")
+    )
+    assert "tools/stage9_5/static_assurance.py" in contract["scope"]["ruff_files"]
+    assert "tools/stage9_5/static_assurance.py" in contract["scope"]["mypy_files"]
+    assert "tests/stage9_5/test_static_assurance.py" in contract["scope"]["ruff_files"]

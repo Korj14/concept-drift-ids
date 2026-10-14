@@ -5,16 +5,24 @@ import json
 import math
 import statistics
 import tempfile
+from collections.abc import Mapping
 from pathlib import Path
-from typing import Any, Mapping
+from typing import Any
 
-from tools.stage9_5.claim_traceability import PROJECT_ROOT, run as run_claim_traceability
+from tools.stage9_5.claim_traceability import PROJECT_ROOT
+from tools.stage9_5.claim_traceability import run as run_claim_traceability
 from tools.stage9_5.statistical_oracle import (
     CONTRACT_PATH as ORACLE_CONTRACT_PATH,
+)
+from tools.stage9_5.statistical_oracle import (
     _explanation_metric,
-    _load_json as load_oracle_json,
     _metric_from_counts,
     _stage8_eval,
+)
+from tools.stage9_5.statistical_oracle import (
+    _load_json as load_oracle_json,
+)
+from tools.stage9_5.statistical_oracle import (
     run as run_statistical_oracle,
 )
 
@@ -115,7 +123,7 @@ def _primary_arm_oracle_means() -> dict[str, dict[str, float]]:
     contract = load_oracle_json(ORACLE_CONTRACT_PATH)
     result: dict[str, dict[str, float]] = {}
     for arm in ("c_frozen_symbolic", "d_drift", "d_periodic"):
-        series = {key: [] for key in ("mcc", "f1", "fpr", "mcsc", "resolved_coverage")}
+        series: dict[str, list[float]] = {\n            key: []\n            for key in ("mcc", "f1", "fpr", "mcsc", "resolved_coverage")\n        }
         for seed in contract["seeds"]:
             payload = _stage8_eval(contract, int(seed), arm)
             post = payload["metrics_by_neural_weight"]["0.5"]["post"]

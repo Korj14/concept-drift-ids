@@ -7,7 +7,8 @@ import json
 import re
 from dataclasses import asdict, dataclass
 from pathlib import Path
-from collections.abc import Iterable\nfrom typing import Any
+from collections.abc import Iterable
+from typing import Any
 
 REGISTER_PATH = Path("data/manifests/stage9_5_parameter_register_v1_11.json")
 

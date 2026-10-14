@@ -9,7 +9,7 @@ from typing import Any
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
-CONTRACT_PATH = PROJECT_ROOT / "data" / "manifests" / "stage9_5_static_assurance_v1_2.json"
+CONTRACT_PATH = PROJECT_ROOT / "data" / "manifests" / "stage9_5_static_assurance_v1_3.json"
 
 
 def _load_json(path: Path) -> dict[str, Any]:
@@ -157,7 +157,7 @@ def run(output_dir: Path) -> dict[str, Any]:
     mypy_findings = _parse_mypy_findings(mypy.stdout)
 
     report: dict[str, Any] = {
-        "audit_id": "stage9.5-5-static-software-assurance-v1_2-discovery",
+        "audit_id": "stage9.5-5-static-software-assurance-v1_3-discovery",
         "contract": str(CONTRACT_PATH.relative_to(PROJECT_ROOT)),
         "historical_runtime_lock": {
             "path": str(lock.relative_to(PROJECT_ROOT)),
@@ -261,7 +261,7 @@ def main() -> None:
     parser.add_argument(
         "--output-dir",
         type=Path,
-        default=Path("artifacts/stage9_5_static_v1_2"),
+        default=Path("artifacts/stage9_5_static_v1_3"),
     )
     args = parser.parse_args()
     run(args.output_dir)

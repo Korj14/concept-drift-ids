@@ -5,9 +5,9 @@ import ast
 import hashlib
 import json
 import re
-from dataclasses import dataclass, asdict
+from dataclasses import asdict, dataclass
 from pathlib import Path
-from typing import Any, Iterable
+from collections.abc import Iterable\nfrom typing import Any
 
 REGISTER_PATH = Path("data/manifests/stage9_5_parameter_register_v1_11.json")
 
@@ -25,7 +25,7 @@ MATERIAL_RE = re.compile(
     r"train|development|post.?benign|drift|adwin|page.?hinkley|active.?counts|lambda)",
     re.I,
 )
-HASH_RE = re.compile(r"^[0-9a-f]{40,64}$", re.I)
+HASH_RE = re.compile(r"^[0-9a-f]{40,64}$", re.IGNORECASE)
 NUMBER_RE = re.compile(r"(?<![A-Za-z0-9_])[-+]?(?:(?:\d{1,3}(?:,\d{3})+|\d+)?\.\d+|\d{1,3}(?:,\d{3})+|\d+)(?:[eE][-+]?\d+)?(?![A-Za-z0-9_])")
 EXPRESSION_CONTEXT_RE = re.compile(
     r"(generation|validation|replay|latenc|window|threshold|fusion|lambda|periodic|"
@@ -88,6 +88,16 @@ def _verify_scan_scope(root: Path, register: dict[str, Any]) -> dict[str, Any]:
         "expected_python_sources": expected_list,
         "actual_python_sources": actual_list,
     }
+
+
+_LITERAL_EVAL_FAILED = object()
+
+
+def _literal_eval_or_failed(node: ast.AST) -> Any:
+    try:
+        return ast.literal_eval(node)
+    except (ValueError, TypeError, SyntaxError, MemoryError, RecursionError):
+        return _LITERAL_EVAL_FAILED
 
 
 def _flatten_values(value: Any) -> list[Any]:
@@ -179,7 +189,7 @@ def _expression_exclusion_reason(
         return "safe division zero fallback/guard"
     if "2.0 * precision * recall" in stripped or "2 * precision * recall" in stripped:
         return "F1 arithmetic identity"
-    if re.search(r"1(?:\.0+)?\s*-\s*.*weight", stripped, re.I):
+    if re.search(r"1(?:\.0+)?\s*-\s*.*weight", stripped, re.IGNORECASE):
         return "complementary fusion-weight arithmetic"
     if "perf_counter_ns" in stripped and float(value) == 1_000_000_000.0:
         return "nanosecond-to-second unit conversion"
@@ -279,9 +289,8 @@ def _python_candidates(root: Path, path: str, register: dict[str, Any]) -> tuple
                 value_node = node.value
             if value_node is None:
                 continue
-            try:
-                value = ast.literal_eval(value_node)
-            except Exception:
+            value = _literal_eval_or_failed(value_node)
+            if value is _LITERAL_EVAL_FAILED:
                 continue
             for literal_node in ast.walk(value_node):
                 if isinstance(literal_node, ast.Constant):
@@ -306,9 +315,8 @@ def _python_candidates(root: Path, path: str, register: dict[str, Any]) -> tuple
             for kw in node.keywords:
                 if not kw.arg:
                     continue
-                try:
-                    value = ast.literal_eval(kw.value)
-                except Exception:
+                value = _literal_eval_or_failed(kw.value)
+                if value is _LITERAL_EVAL_FAILED:
                     continue
                 if isinstance(value, (str, int, float, bool)):
                     emit(kw.arg, kw, value)
@@ -334,9 +342,8 @@ def _python_candidates(root: Path, path: str, register: dict[str, Any]) -> tuple
                 key = key_node.value
                 if key != "replay_enabled":
                     continue
-                try:
-                    value = ast.literal_eval(value_node)
-                except Exception:
+                value = _literal_eval_or_failed(value_node)
+                if value is _LITERAL_EVAL_FAILED:
                     continue
                 if not isinstance(value, bool):
                     continue

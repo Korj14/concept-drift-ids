@@ -388,6 +388,7 @@ def run(output_dir: Path, checkpoint_root: Path | None = None) -> dict[str, Any]
     ancestor = subprocess.run(
         ["git", "merge-base", "--is-ancestor", cfg["prerequisite"]["stage9_5_0_closure_commit"], head],
         cwd=PROJECT_ROOT,
+        check=False,
     ).returncode == 0
     _check(report, "git_worktree_clean", status == "", {"head": head, "status": status})
     _check(
@@ -434,13 +435,15 @@ def run(output_dir: Path, checkpoint_root: Path | None = None) -> dict[str, Any]
     scenario_repository_text = _normalized_text_sha256(scenario_path)
     scenario = _load_json(scenario_path)
     scenario_canonical = _canonical_json_hash(scenario)
+    scenario_version = scenario.get("scenario_version")
     _check(
         report,
         "scenario_identity",
         scenario_repository_text == scenario_cfg["raw_sha256"]
         and scenario_canonical == scenario_cfg["canonical_sha256"]
         and scenario.get("scenario_id") == scenario_cfg["scenario_id"]
-        and int(scenario.get("scenario_version")) == int(scenario_cfg["scenario_version"]),
+        and scenario_version is not None
+        and int(scenario_version) == int(scenario_cfg["scenario_version"]),
         {
             "checkout_raw": scenario_checkout_raw,
             "repository_lf_text_sha256": scenario_repository_text,

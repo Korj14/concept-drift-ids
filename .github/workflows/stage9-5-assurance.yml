@@ -19,14 +19,16 @@ on:
       - "STAGE9_5_3_4_CAUSAL_MUTATION_ASSURANCE_IMPLEMENTATION.md"
       - "STAGE9_5_3_CAUSAL_PROPERTY_ASSURANCE_CLOSURE.md"
       - "STAGE9_5_4_TARGETED_MUTATION_ASSURANCE_CLOSURE.md"
-      - "data/manifests/stage9_5_static_assurance_v1_5.json"
+      - "data/manifests/stage9_5_static_assurance_v1_6.json"
       - "STAGE9_5_5_STATIC_SOFTWARE_ASSURANCE_IMPLEMENTATION.md"
       - "STAGE9_5_5_V1_1_SELF_SCOPE_CORRECTION.md"
-      - "data/manifests/stage9_5_static_assurance_v1_5.json"
+      - "data/manifests/stage9_5_static_assurance_v1_6.json"
       - "data/manifests/stage9_5_claim_reporting_v1.json"
       - "data/manifests/stage9_5_claim_definitions_v1.json"
       - "STAGE9_5_7_8_CLAIM_REPORTING_IMPLEMENTATION.md"
       - "STAGE9_5_5_SUPPLEMENTAL_7_8_STATIC_ASSURANCE.md"
+      - "STAGE9_5_5_SUPPLEMENTAL_V1_6_MYPY_PACKAGE_BASE_CORRECTION.md"
+      - "data/manifests/stage9_5_static_assurance_v1_6.json"
       - "STAGE9_5_8_V1_1_MODULE_INVOCATION_CORRECTION.md"
       - "tools/stage9_5/**"
       - "tests/stage9_5/**"
@@ -305,14 +307,14 @@ jobs:
       - name: Run Stage 9.5-5 static assurance discovery
         shell: pwsh
         run: |
-          python tools/stage9_5/static_assurance.py --output-dir artifacts/stage9_5_static_v1_5
+          python tools/stage9_5/static_assurance.py --output-dir artifacts/stage9_5_static_v1_6
 
       - name: Upload Stage 9.5-5 static evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: stage9-5-static-assurance-v1-5
-          path: artifacts/stage9_5_static_v1_5/
+          name: stage9-5-static-assurance-v1-6
+          path: artifacts/stage9_5_static_v1_6/
           if-no-files-found: error
 
 

@@ -5,8 +5,9 @@ import hashlib
 import json
 import statistics
 import subprocess
+from collections.abc import Mapping
 from pathlib import Path
-from typing import Any, Mapping
+from typing import Any
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 CONTRACT_PATH = PROJECT_ROOT / "data" / "manifests" / "stage9_5_claim_reporting_v1.json"
@@ -116,13 +117,13 @@ def _resolve(spec: Mapping[str, Any], cache: dict[str, Any]) -> Any:
         return result
     if kind == "filtered_group_sum":
         rows = _pointer(_data(cache, spec["path"]), spec["pointer"])
-        result: dict[str, Any] = {}
+        grouped: dict[str, Any] = {}
         for row in rows:
             if any(row.get(key) != expected for key, expected in spec["filters"].items()):
                 continue
             group = str(row[spec["group_by"]])
-            result[group] = result.get(group, 0) + row[spec["field"]]
-        return dict(sorted(result.items()))
+            grouped[group] = grouped.get(group, 0) + row[spec["field"]]
+        return dict(sorted(grouped.items()))
     raise ValueError(f"Unsupported selector type: {kind}")
 
 

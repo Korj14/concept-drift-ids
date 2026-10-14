@@ -156,7 +156,7 @@ def _claim_source_sha(contract: Mapping[str, Any], path: str) -> str:
     frozen = {item["path"]: item["blob_sha"] for item in contract["claim_source_freeze"]}
     expected = frozen[path]
     observed = subprocess.run(
-        ["git", "hash-object", path],
+        ["git", "rev-parse", f"HEAD:{path}"],
         cwd=PROJECT_ROOT,
         text=True,
         capture_output=True,

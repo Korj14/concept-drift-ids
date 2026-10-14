@@ -7,7 +7,7 @@
     {
       "claim_id": "method_scenario_partition_feature_seed_counts",
       "family": "method.scenario_partition_feature_seed_counts",
-      "claim_text_template": "method scenario partition feature seed counts",
+      "claim_text_template": "The controlled scenario uses the frozen training, development, pre-reference, and post-reference partitions, fixed feature schema, and fixed stochastic seed set.",
       "claim_status": "current",
       "interpretation_status": "methodology",
       "source_interpretation_path": "METHODOLOGY_LEDGER.md",
@@ -60,7 +60,7 @@
     {
       "claim_id": "method_preprocessing",
       "family": "method.preprocessing_and_system_a_training",
-      "claim_text_template": "method preprocessing",
+      "claim_text_template": "Preprocessing is fit only on the frozen training partition and then reused unchanged for development and evaluation partitions.",
       "claim_status": "current",
       "interpretation_status": "methodology",
       "source_interpretation_path": "METHODOLOGY_LEDGER.md",
@@ -113,7 +113,7 @@
     {
       "claim_id": "method_system_a_training",
       "family": "method.preprocessing_and_system_a_training",
-      "claim_text_template": "method system a training",
+      "claim_text_template": "System A is the frozen neural-only baseline trained and threshold-selected using only the prespecified training/development information set.",
       "claim_status": "current",
       "interpretation_status": "methodology",
       "source_interpretation_path": "METHODOLOGY_LEDGER.md",
@@ -161,7 +161,7 @@
     {
       "claim_id": "method_shared_control_plane",
       "family": "method.shared_control_plane_timing_replay_detector",
-      "claim_text_template": "method shared control plane",
+      "claim_text_template": "Matched adaptive arms share the same delayed-label detector and neural adaptation control plane, replay policy, RNG policy, and primary fusion authority.",
       "claim_status": "current",
       "interpretation_status": "methodology",
       "source_interpretation_path": "METHODOLOGY_LEDGER.md",
@@ -204,7 +204,7 @@
     {
       "claim_id": "method_symbolic_operator",
       "family": "method.symbolic_generation_validation_gate_lifecycle",
-      "claim_text_template": "method symbolic operator",
+      "claim_text_template": "Drift-triggered and periodic symbolic arms use the same frozen generation, validation, gate, lifecycle, and opportunity-budget operator.",
       "claim_status": "current",
       "interpretation_status": "methodology",
       "source_interpretation_path": "METHODOLOGY_LEDGER.md",
@@ -242,7 +242,7 @@
     {
       "claim_id": "primary_E1_post_mcc_d_drift_minus_c",
       "family": "primary.confirmatory_E1_E2_E3",
-      "claim_text_template": "primary E1 post mcc d drift minus c",
+      "claim_text_template": "Within the fixed primary scenario, D-drift has a consistently positive post-reference MCC effect relative to frozen-symbolic C, subject to the prespecified familywise inference boundary.",
       "claim_status": "current",
       "interpretation_status": "confirmatory",
       "source_interpretation_path": "STAGE8_PRIMARY_RESULTS_INTERPRETATION.md",
@@ -281,7 +281,7 @@
     {
       "claim_id": "primary_E2_post_mcsc_d_drift_minus_c",
       "family": "primary.confirmatory_E1_E2_E3",
-      "claim_text_template": "primary E2 post mcsc d drift minus c",
+      "claim_text_template": "The primary evidence does not support improved post-reference MCSC for D-drift relative to frozen-symbolic C.",
       "claim_status": "current",
       "interpretation_status": "confirmatory",
       "source_interpretation_path": "STAGE8_PRIMARY_RESULTS_INTERPRETATION.md",
@@ -320,7 +320,7 @@
     {
       "claim_id": "primary_E3_post_mcsc_d_drift_minus_d_periodic",
       "family": "primary.confirmatory_E1_E2_E3",
-      "claim_text_template": "primary E3 post mcsc d drift minus d periodic",
+      "claim_text_template": "The primary evidence does not support superior post-reference MCSC for drift-triggered maintenance relative to matched periodic maintenance.",
       "claim_status": "current",
       "interpretation_status": "confirmatory",
       "source_interpretation_path": "STAGE8_PRIMARY_RESULTS_INTERPRETATION.md",
@@ -359,7 +359,7 @@
     {
       "claim_id": "primary_operating_tradeoff",
       "family": "primary.descriptive_operating_tradeoff",
-      "claim_text_template": "primary operating tradeoff",
+      "claim_text_template": "Primary post-reference operating summaries show a prediction-versus-symbolic-explanation trade-off across the three matched arms.",
       "claim_status": "current",
       "interpretation_status": "secondary",
       "source_interpretation_path": "STAGE8_PRIMARY_RESULTS_INTERPRETATION.md",
@@ -593,7 +593,7 @@
     {
       "claim_id": "primary_publication_timing",
       "family": "primary.trigger_timing_and_publication_timing",
-      "claim_text_template": "primary publication timing",
+      "claim_text_template": "Most realized primary drift-gated symbolic publications are not cleanly post-boundary, constraining any boundary-detect-then-repair narrative.",
       "claim_status": "current",
       "interpretation_status": "secondary",
       "source_interpretation_path": "STAGE8_PRIMARY_RESULTS_INTERPRETATION.md",
@@ -654,7 +654,7 @@
     {
       "claim_id": "primary_maintenance_budget_compute_wait",
       "family": "primary.maintenance_budget_compute_wait",
-      "claim_text_template": "primary maintenance budget compute wait",
+      "claim_text_template": "Drift and periodic trigger arms operate under the same opportunity budget, with realized maintenance, publication, compute, and validation-wait quantities treated descriptively.",
       "claim_status": "current",
       "interpretation_status": "secondary",
       "source_interpretation_path": "STAGE8_PRIMARY_RESULTS_INTERPRETATION.md",
@@ -778,7 +778,7 @@
     {
       "claim_id": "primary_recovery",
       "family": "primary.recovery_secondary",
-      "claim_text_template": "primary recovery",
+      "claim_text_template": "Recovery summaries are secondary window-defined diagnostics and retain right-censoring rather than creating additional inferential replicates.",
       "claim_status": "current",
       "interpretation_status": "secondary",
       "source_interpretation_path": "STAGE8_PRIMARY_RESULTS_INTERPRETATION.md",
@@ -862,7 +862,7 @@
     {
       "claim_id": "primary_lambda1_isolation",
       "family": "primary.lambda1_and_neural_control",
-      "claim_text_template": "primary lambda1 isolation",
+      "claim_text_template": "At full neural authority, matched-arm predictive differences collapse to the shared neural stream, supporting causal isolation of symbolic-state/fusion effects.",
       "claim_status": "current",
       "interpretation_status": "negative",
       "source_interpretation_path": "STAGE8_PRIMARY_RESULTS_INTERPRETATION.md",
@@ -906,7 +906,7 @@
     {
       "claim_id": "mechanism_decomposition",
       "family": "mechanism.withdrawal_addition_retained_allocation",
-      "claim_text_template": "mechanism decomposition",
+      "claim_text_template": "The post-primary mechanism audit attributes most of the D-drift-versus-C predictive difference to withdrawal of stale symbolic authority, with a smaller addition component.",
       "claim_status": "current",
       "interpretation_status": "exploratory",
       "source_interpretation_path": "STAGE8_SYMBOLIC_MECHANISM_AUDIT_INTERPRETATION.md",
@@ -950,7 +950,7 @@
     {
       "claim_id": "mechanism_rescue_harm_counts",
       "family": "mechanism.rescue_harm_decision_counts",
-      "claim_text_template": "mechanism rescue harm counts",
+      "claim_text_template": "Withdrawal and addition mechanism strata can be audited through immutable rescue and harm decision counts without treating rows as inferential replicates.",
       "claim_status": "current",
       "interpretation_status": "exploratory",
       "source_interpretation_path": "STAGE8_SYMBOLIC_MECHANISM_AUDIT_INTERPRETATION.md",
@@ -1014,7 +1014,7 @@
     {
       "claim_id": "mechanism_periodic_context",
       "family": "mechanism.timing_and_periodic_comparator",
-      "claim_text_template": "mechanism periodic context",
+      "claim_text_template": "Matched periodic maintenance exhibits the same broad withdrawal-dominant mechanism family, limiting claims of drift-trigger-specific mechanism superiority.",
       "claim_status": "current",
       "interpretation_status": "exploratory",
       "source_interpretation_path": "STAGE8_SYMBOLIC_MECHANISM_AUDIT_INTERPRETATION.md",
@@ -1058,7 +1058,7 @@
     {
       "claim_id": "robustness_conditionwise_d_drift_minus_c",
       "family": "robustness.conditionwise_D_drift_minus_C",
-      "claim_text_template": "robustness conditionwise d drift minus c",
+      "claim_text_template": "The positive D-drift-versus-C predictive effect persists across the major prespecified same-scenario robustness conditions, with condition-specific variation.",
       "claim_status": "current",
       "interpretation_status": "secondary",
       "source_interpretation_path": "STAGE9_ROBUSTNESS_INTERPRETATION.md",
@@ -1096,7 +1096,7 @@
     {
       "claim_id": "robustness_lambda1_neural_only",
       "family": "robustness.lambda1_and_neural_only",
-      "claim_text_template": "robustness lambda1 neural only",
+      "claim_text_template": "The lambda-one analysis confirms predictive arm equality and bounds claims relative to the shared neural-only stream.",
       "claim_status": "current",
       "interpretation_status": "negative",
       "source_interpretation_path": "STAGE9_ROBUSTNESS_INTERPRETATION.md",
@@ -1134,7 +1134,7 @@
     {
       "claim_id": "robustness_detector_replay_gate",
       "family": "robustness.detector_replay_gate_sensitivities",
-      "claim_text_template": "robustness detector replay gate",
+      "claim_text_template": "The primary predictive contrast is not dependent on one detector construction, replay setting, symbolic gate, or label-latency setting.",
       "claim_status": "current",
       "interpretation_status": "secondary",
       "source_interpretation_path": "STAGE9_ROBUSTNESS_INTERPRETATION.md",
@@ -1188,7 +1188,7 @@
     {
       "claim_id": "robustness_d_drift_minus_periodic",
       "family": "robustness.D_drift_minus_periodic",
-      "claim_text_template": "robustness d drift minus periodic",
+      "claim_text_template": "Across robustness conditions, drift-triggered versus periodic predictive contrasts are mixed and do not establish categorical trigger superiority.",
       "claim_status": "current",
       "interpretation_status": "secondary",
       "source_interpretation_path": "STAGE9_ROBUSTNESS_INTERPRETATION.md",
@@ -1225,7 +1225,7 @@
     {
       "claim_id": "robustness_explanation_coverage_tradeoff",
       "family": "robustness.explanation_and_coverage_tradeoff",
-      "claim_text_template": "robustness explanation coverage tradeoff",
+      "claim_text_template": "Robustness evidence does not remove the explanation-quality and symbolic-coverage trade-off seen in the primary experiment.",
       "claim_status": "current",
       "interpretation_status": "secondary",
       "source_interpretation_path": "STAGE9_ROBUSTNESS_INTERPRETATION.md",
@@ -1262,7 +1262,7 @@
     {
       "claim_id": "robustness_publication_timing",
       "family": "robustness.publication_clock_timing",
-      "claim_text_template": "robustness publication timing",
+      "claim_text_template": "Stage-9 publication timing remains mixed before and after the controlled boundary, reinforcing the whole-stream endogenous-lifecycle estimand.",
       "claim_status": "current",
       "interpretation_status": "secondary",
       "source_interpretation_path": "STAGE9_ROBUSTNESS_INTERPRETATION.md",
@@ -1310,7 +1310,7 @@
     {
       "claim_id": "scope_fixed_scenario_external_validity",
       "family": "scope.fixed_scenario_and_external_validity_limitations",
-      "claim_text_template": "scope fixed scenario external validity",
+      "claim_text_template": "All Stage-8/9 causal and robustness conclusions remain conditional on the single controlled pseudo-chronological CICIDS2017 scenario and do not establish deployment or cross-dataset generalization.",
       "claim_status": "current",
       "interpretation_status": "limitation",
       "source_interpretation_path": "STAGE9_ROBUSTNESS_INTERPRETATION.md",

@@ -9,7 +9,7 @@ from typing import Any
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
-CONTRACT_PATH = PROJECT_ROOT / "data" / "manifests" / "stage9_5_static_assurance_v1_5.json"
+CONTRACT_PATH = PROJECT_ROOT / "data" / "manifests" / "stage9_5_static_assurance_v1_6.json"
 
 
 def _load_json(path: Path) -> dict[str, Any]:
@@ -149,6 +149,7 @@ def run(output_dir: Path) -> dict[str, Any]:
             "3.11",
             "--ignore-missing-imports",
             "--follow-imports=silent",
+            "--explicit-package-bases",
             "--show-error-codes",
             "--no-color-output",
             *mypy_files,
@@ -157,7 +158,7 @@ def run(output_dir: Path) -> dict[str, Any]:
     mypy_findings = _parse_mypy_findings(mypy.stdout)
 
     report: dict[str, Any] = {
-        "audit_id": "stage9.5-5-static-software-assurance-v1_5-supplemental-discovery",
+        "audit_id": "stage9.5-5-static-software-assurance-v1_6-supplemental-discovery",
         "contract": str(CONTRACT_PATH.relative_to(PROJECT_ROOT)),
         "historical_runtime_lock": {
             "path": str(lock.relative_to(PROJECT_ROOT)),
@@ -261,7 +262,7 @@ def main() -> None:
     parser.add_argument(
         "--output-dir",
         type=Path,
-        default=Path("artifacts/stage9_5_static_v1_5"),
+        default=Path("artifacts/stage9_5_static_v1_6"),
     )
     args = parser.parse_args()
     run(args.output_dir)

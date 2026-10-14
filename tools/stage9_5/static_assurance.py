@@ -127,14 +127,20 @@ def run(output_dir: Path) -> dict[str, Any]:
             *ruff_files,
         ]
     )
-    try:
-        ruff_findings = json.loads(ruff.stdout) if ruff.stdout.strip() else []
-        if not isinstance(ruff_findings, list):
-            raise ValueError("Ruff JSON output was not a list.")
-        ruff_parse_error = None
-    except Exception as exc:
-        ruff_findings = []
-        ruff_parse_error = f"{type(exc).__name__}: {exc}"
+    ruff_findings: list[dict[str, Any]] = []
+    ruff_parse_error: str | None = None
+    if ruff.stdout.strip():
+        try:
+            parsed_ruff = json.loads(ruff.stdout)
+        except json.JSONDecodeError as exc:
+            ruff_parse_error = f"JSONDecodeError: {exc}"
+        else:
+            if isinstance(parsed_ruff, list):
+                ruff_findings = parsed_ruff
+            else:
+                ruff_parse_error = (
+                    "TypeError: Ruff JSON output was not a list."
+                )
 
     mypy = _run(
         [

@@ -5,9 +5,10 @@ on:
     branches:
       - "stage9-5-q1-assurance"
     paths:
-      - "data/manifests/stage9_5_static_assurance_v1_6.json"
+      - "data/manifests/stage9_5_static_assurance_v1_7.json"
       - "STAGE9_5_5_SUPPLEMENTAL_7_8_STATIC_ASSURANCE.md"
       - "STAGE9_5_5_SUPPLEMENTAL_V1_6_MYPY_PACKAGE_BASE_CORRECTION.md"
+      - "STAGE9_5_5_SUPPLEMENTAL_V1_7_DELTA_STATIC_FREEZE.md"
       - "tools/stage9_5/**"
       - "tests/stage9_5/**"
       - ".github/workflows/stage9-5-supplemental-static.yml"
@@ -62,12 +63,12 @@ jobs:
       - name: Run supplemental static assurance v1.6
         shell: pwsh
         run: |
-          python tools/stage9_5/static_assurance.py --output-dir artifacts/stage9_5_static_v1_6
+          python tools/stage9_5/static_assurance.py --output-dir artifacts/stage9_5_static_v1_7
 
       - name: Upload supplemental static evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: stage9-5-static-assurance-v1-6-supplemental
-          path: artifacts/stage9_5_static_v1_6/
+          name: stage9-5-static-assurance-v1-7-delta
+          path: artifacts/stage9_5_static_v1_7/
           if-no-files-found: error

@@ -21,6 +21,7 @@ from concept_drift_ids.cd_symbolic_arms import (
 )
 from concept_drift_ids.cd_symbolic_lifecycle import migrate_r0_v2_rules
 from concept_drift_ids.cd_symbolic_runner import SymbolicArmTrajectory
+from concept_drift_ids.symbolic import Condition, Rule
 
 
 def _mutated_function(
@@ -183,10 +184,28 @@ def test_m06_seed_r0_threshold_bypass_mutant_killed() -> None:
         rules=[],
         neural_checkpoint_sha256="checkpoint-a",
     )
+    divergent_rule = Rule(
+        rule_id="r0",
+        lineage_id="r0",
+        rule_base_version="R0.v2",
+        seed=0,
+        conditions=(Condition("x", "<=", 0.5),),
+        consequent=0,
+        confidence=1.0,
+        support=0.5,
+        covered_count=50,
+        class_precision=1.0,
+        neural_fidelity=1.0,
+        stability=1.0,
+        complexity=1,
+        lifecycle_state="active",
+        source_candidate_id="source",
+        validation_evidence_id="r0-validation",
+    )
     state_b = migrate_r0_v2_rules(
         seed=0,
-        rules=[],
-        neural_checkpoint_sha256="checkpoint-b",
+        rules=[divergent_rule],
+        neural_checkpoint_sha256="checkpoint-a",
     )
 
     seed_mutant = _mutated_function(

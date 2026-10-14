@@ -77,3 +77,22 @@ def test_static_assurance_scope_includes_itself() -> None:
     assert "tools/stage9_5/static_assurance.py" in contract["scope"]["ruff_files"]
     assert "tools/stage9_5/static_assurance.py" in contract["scope"]["mypy_files"]
     assert "tests/stage9_5/test_static_assurance.py" in contract["scope"]["ruff_files"]
+
+
+def test_stage9_5_assurance_python_scope_compiles() -> None:
+    root = Path(__file__).resolve().parents[2]
+    contract = json.loads(
+        (
+            root
+            / "data"
+            / "manifests"
+            / "stage9_5_static_assurance_v1_2.json"
+        ).read_text(encoding="utf-8")
+    )
+    paths = sorted(
+        set(contract["scope"]["assurance_tool_files"])
+        | set(contract["scope"]["assurance_test_files"])
+    )
+    for relative in paths:
+        source = (root / relative).read_text(encoding="utf-8")
+        compile(source, relative, "exec")

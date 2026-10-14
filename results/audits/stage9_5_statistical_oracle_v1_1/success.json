@@ -1,0 +1,98 @@
+{
+  "audit_id": "stage9.5-2-independent-statistical-oracle-v1_1-success",
+  "status": "accepted_stage9_5_2_closure_evidence",
+  "audited_head": "57648fd670bfe6117bbcdf06d1e1536599439c79",
+  "governing_contract": "data/manifests/stage9_5_statistical_oracle_v1.json",
+  "workflow_run_id": 38457351694,
+  "oracle_job_id": 115503380475,
+  "oracle_artifact": {
+    "id": 11844092522,
+    "name": "stage9-5-statistical-oracle-v1-1",
+    "zip_sha256": "a8c9de0e66e8c3fe577df278ba3c9562c1667ab0c981e30c9f2a63fc41f7e967",
+    "report_canonical_sha256": "b36f8f9b2cf2237762298d139139bd5160c0805054b1540c3c56e6acf915819d"
+  },
+  "same_head_stage9": {
+    "workflow_run_id": 38457351772,
+    "run_number": 404,
+    "conclusion": "success"
+  },
+  "stage9_5_0_job_conclusion": "success",
+  "stage9_5_1_status": "open_blocked_system_a_checkpoint_bytes_missing",
+  "oracle_tests": {
+    "passed": 9,
+    "failed": 0
+  },
+  "oracle_execution": {
+    "pass": true,
+    "comparison_count": 8285,
+    "mismatch_count": 0,
+    "production_aggregation_imports_used": false,
+    "stage8_endpoints": [
+      "E1_post_mcc_d_drift_minus_c",
+      "E2_post_mcsc_d_drift_minus_c",
+      "E3_post_mcsc_d_drift_minus_d_periodic"
+    ],
+    "stage9_conditions": [
+      "adwin_brier",
+      "lambda_0_7",
+      "lambda_0_9",
+      "lambda_1_0",
+      "latency_0",
+      "latency_10000",
+      "no_replay",
+      "page_hinkley_hard_error",
+      "static_symbolic_gate",
+      "window_10000",
+      "window_2500"
+    ]
+  },
+  "stage8_confirmatory_spot_checks": {
+    "E1": {
+      "effects": [
+        0.048420827244952336,
+        0.06331523927252902,
+        0.07004419703990727,
+        0.06008466317941408,
+        0.0568933489745701
+      ],
+      "mean": 0.05975165514227456,
+      "sample_sd": 0.007989117909816433,
+      "ci95": [
+        0.04983185505625059,
+        0.06967145522829853
+      ],
+      "sign_test_p_one_sided": 0.03125,
+      "holm_adjusted_p": 0.09375
+    },
+    "E2": {
+      "mean": -0.06310305816233135,
+      "sign_test_p_one_sided": 0.96875,
+      "holm_adjusted_p": 1
+    },
+    "E3": {
+      "mean": -0.012999429344654279,
+      "sign_test_p_one_sided": 0.8125,
+      "holm_adjusted_p": 1
+    }
+  },
+  "lambda_1_negative_control": {
+    "d_drift_minus_c": {
+      "mcc_all_zero": true,
+      "f1_all_zero": true,
+      "fpr_all_zero": true
+    },
+    "d_drift_minus_d_periodic": {
+      "mcc_all_zero": true,
+      "f1_all_zero": true,
+      "fpr_all_zero": true
+    },
+    "d_periodic_minus_c": {
+      "mcc_all_zero": true,
+      "f1_all_zero": true,
+      "fpr_all_zero": true
+    }
+  },
+  "scientific_objects_modified": false,
+  "stage10_outcomes_accessed": false,
+  "closure_scope": "Stage 9.5-2 only; Stage 9.5 remains open because Stage 9.5-1 is blocked."
+}

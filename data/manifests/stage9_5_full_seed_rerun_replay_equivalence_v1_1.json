@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "protocol_id": "stage9.5-6-replay-equivalence-correction-v1_1",
+  "status": "prospectively_frozen_execution_blocked",
+  "supersedes": "stage9.5-6-replay-equivalence-correction-v1",
+  "historical_v1_preserved": true,
+  "required_external_artifacts": [
+    {
+      "id": "system_a_initial_checkpoints",
+      "count": 5,
+      "status": "missing"
+    },
+    {
+      "id": "accepted_stage8_large_artifact_archive",
+      "root": "artifacts/cd_primary_v1",
+      "status": "missing"
+    }
+  ],
+  "archive_contract": {
+    "accepted_compact_manifest": "results/frozen/cd_primary_v1/compact_export_manifest.json",
+    "adaptive_checkpoint_bytes_in_git": false,
+    "large_prediction_traces_in_git": false,
+    "large_artifact_archive_required_for_publication": true,
+    "recovery_must_precede_fresh_comparison": true,
+    "regenerated_archive_is_not_original_archive": true
+  },
+  "no_summary_only_fallback": true,
+  "accepted_maintenance_records_required_for_timing_stripped_projection": true,
+  "phase_a_diagnostic_projection": [
+    "runtime.platform",
+    "runtime.processor",
+    "runtime.threadpool_info[*].filepath"
+  ],
+  "phase_b_diagnostic_projection": [
+    "maintenance[*].shap_seconds",
+    "maintenance[*].surrogate_seconds",
+    "maintenance[*].lifecycle_seconds",
+    "maintenance[*].generation_payload.timing_seconds",
+    "maintenance_summary.compute_seconds",
+    "maintenance_summary.shap_seconds",
+    "maintenance_summary.surrogate_seconds",
+    "maintenance_summary.lifecycle_seconds",
+    "maintenance_summary.compute_seconds_per_opportunity",
+    "maintenance_summary.compute_seconds_per_publication"
+  ],
+  "new_post_outcome_exclusions_permitted": false,
+  "stage8_9_replacement": false,
+  "stage10_execution_permitted": false
+}

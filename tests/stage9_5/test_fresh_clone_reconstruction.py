@@ -49,7 +49,6 @@ def test_sha256_file_uses_raw_bytes(tmp_path: Path) -> None:
 
 
 def test_identity_manifest_declares_checkpoint_blocker() -> None:
-    root = Path(__file__).resolve().parents[2]
     payload = json.loads(
         IDENTITY_PATH.read_text(
             encoding="utf-8"
@@ -62,7 +61,6 @@ def test_identity_manifest_declares_checkpoint_blocker() -> None:
 
 
 def test_external_raw_inventory_is_complete() -> None:
-    root = Path(__file__).resolve().parents[2]
     payload = json.loads(
         IDENTITY_PATH.read_text(
             encoding="utf-8"

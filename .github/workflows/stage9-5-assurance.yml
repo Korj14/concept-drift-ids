@@ -407,3 +407,53 @@ jobs:
           name: stage9-5-independent-reporting-v1
           path: artifacts/stage9_5_reporting_v1/
           if-no-files-found: error
+
+
+  hostile-review-audit:
+    runs-on: windows-latest
+    env:
+      PYTHONHASHSEED: "0"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11.9"
+
+      - name: Install historical frozen runtime
+        shell: pwsh
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements-lock.txt
+
+      - name: Install developer-only audit tools
+        shell: pwsh
+        run: |
+          python -m pip install "ruff==0.17.0" "mypy==2.4.0"
+
+      - name: Run Stage 9.5-9 auditor tests
+        shell: pwsh
+        run: |
+          python -m pytest tests/stage9_5/test_hostile_review_audit.py -q
+
+      - name: Static-check Stage 9.5-9 auditor
+        shell: pwsh
+        run: |
+          ruff check tools/stage9_5/hostile_review_audit.py tests/stage9_5/test_hostile_review_audit.py
+          mypy --python-version 3.11 --ignore-missing-imports --follow-imports=silent --explicit-package-bases --show-error-codes --no-color-output tools/stage9_5/hostile_review_audit.py
+
+      - name: Run Stage 9.5-9 hostile-review audit
+        shell: pwsh
+        run: |
+          python -m tools.stage9_5.hostile_review_audit --output-dir artifacts/stage9_5_hostile_review_v1
+
+      - name: Upload Stage 9.5-9 hostile-review evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: stage9-5-hostile-review-v1
+          path: artifacts/stage9_5_hostile_review_v1/
+          if-no-files-found: error

@@ -1,0 +1,19 @@
+{
+  "audit_id": "stage9.5-5-supplemental-static-v1_7-failed",
+  "status": "failed_harness_iteration_preserved",
+  "classification": "assurance_syntax_and_baseline_wiring_defect",
+  "scientific_class": "not_Class_A",
+  "exact_head": "5f0912b242da1f4c410324445aa42ed7332bfd7a",
+  "workflow_run_id": 38653083066,
+  "job_id": 116156307021,
+  "artifact_created": false,
+  "failure": {
+    "compile_guard": "tools/stage9_5/independent_reporting.py line 126 contained literal backslash-n sequences in a typed dictionary-comprehension block",
+    "baseline_wiring": "shared static_assurance.py was repointed to the v1.7 delta contract, so the already accepted v1.4 baseline no longer remained the default core invocation"
+  },
+  "correction": "v1.8 repairs only the reporting syntax; restores v1.4 as the default core static contract; adds explicit --contract supplemental mode; keeps supplemental delta separate.",
+  "scientific_source_changes": false,
+  "accepted_evidence_changes": false,
+  "historical_runtime_lock_changes": false,
+  "stage10_outcomes_accessed": false
+}

@@ -8,7 +8,7 @@ from pathlib import Path
 from typing import Any
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
-CONTRACT_PATH = PROJECT_ROOT / "data" / "manifests" / "stage9_5_static_assurance_v1_7.json"
+CONTRACT_PATH = PROJECT_ROOT / "data" / "manifests" / "stage9_5_static_assurance_v1_4.json"
 
 
 def _load_json(path: Path) -> dict[str, Any]:
@@ -94,8 +94,14 @@ def _parse_mypy_findings(stdout: str) -> list[dict[str, Any]]:
     return findings
 
 
-def run(output_dir: Path) -> dict[str, Any]:
-    contract = _load_json(CONTRACT_PATH)
+def run(
+    output_dir: Path,
+    *,
+    contract_path: Path = CONTRACT_PATH,
+) -> dict[str, Any]:
+    if not contract_path.is_absolute():
+        contract_path = PROJECT_ROOT / contract_path
+    contract = _load_json(contract_path)
     lock = PROJECT_ROOT / contract["historical_runtime_lock"]["path"]
     lock_sha = _sha256_file(lock)
 
@@ -141,24 +147,33 @@ def run(output_dir: Path) -> dict[str, Any]:
                     "TypeError: Ruff JSON output was not a list."
                 )
 
-    mypy = _run(
+    mypy_args = [
+        "mypy",
+        "--python-version",
+        "3.11",
+        "--ignore-missing-imports",
+        "--follow-imports=silent",
+    ]
+    if bool(contract["mypy"].get("explicit_package_bases", False)):
+        mypy_args.append("--explicit-package-bases")
+    mypy_args.extend(
         [
-            "mypy",
-            "--python-version",
-            "3.11",
-            "--ignore-missing-imports",
-            "--follow-imports=silent",
-            "--explicit-package-bases",
             "--show-error-codes",
             "--no-color-output",
             *mypy_files,
         ]
     )
+    mypy = _run(mypy_args)
     mypy_findings = _parse_mypy_findings(mypy.stdout)
 
     report: dict[str, Any] = {
-        "audit_id": "stage9.5-5-static-software-assurance-v1_7-delta-discovery",
-        "contract": str(CONTRACT_PATH.relative_to(PROJECT_ROOT)),
+        "audit_id": str(
+            contract.get(
+                "audit_id",
+                "stage9.5-5-static-software-assurance-v1_4-discovery",
+            )
+        ),
+        "contract": str(contract_path.relative_to(PROJECT_ROOT)),
         "historical_runtime_lock": {
             "path": str(lock.relative_to(PROJECT_ROOT)),
             "expected_raw_sha256": contract["historical_runtime_lock"]["raw_sha256"],
@@ -261,10 +276,15 @@ def main() -> None:
     parser.add_argument(
         "--output-dir",
         type=Path,
-        default=Path("artifacts/stage9_5_static_v1_7"),
+        default=Path("artifacts/stage9_5_static_v1_4"),
+    )
+    parser.add_argument(
+        "--contract",
+        type=Path,
+        default=CONTRACT_PATH,
     )
     args = parser.parse_args()
-    run(args.output_dir)
+    run(args.output_dir, contract_path=args.contract)
 
 
 if __name__ == "__main__":

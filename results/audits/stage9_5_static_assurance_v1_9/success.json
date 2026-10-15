@@ -1,0 +1,33 @@
+{
+  "audit_id": "stage9.5-5-supplemental-static-v1_9-success",
+  "status": "accepted_supplemental_static_evidence_for_stage9_5_7_8",
+  "audited_head": "e2db8b7fab8c184707280cea1045809c1b26ec13",
+  "workflow_run_id": 38661225998,
+  "job_id": 116182692629,
+  "artifact": {
+    "id": 11939056706,
+    "name": "stage9-5-static-assurance-v1-9-delta",
+    "zip_sha256": "0635f924b2b64fba3bdf99ca685fd986601c42247097b08cc12eb530a3871706",
+    "report_canonical_sha256": "50c0107d5cdacd0dcc6d0a842421ea662fa84a842574b2b381091a591bc65775"
+  },
+  "toolchain": {
+    "ruff": "0.17.0",
+    "mypy": "2.4.0"
+  },
+  "result": {
+    "pass": true,
+    "tool_execution_valid": true,
+    "ruff_findings": 0,
+    "mypy_findings": 0,
+    "ruff_files": 6,
+    "mypy_files": 3,
+    "missing_files": 0,
+    "historical_runtime_lock_identity_match": true
+  },
+  "accepted_baseline": {
+    "stage9_5_5_v1_4_closure_commit": "6bd3511a395b1e2db39e9370c94b3a099328c9e8",
+    "scientific_fingerprint_set_sha256": "268693732ad427a3e21482634b75b7c0d72bf61d70847340bf14cc45678754df"
+  },
+  "scientific_source_changes": false,
+  "stage10_outcomes_accessed": false
+}

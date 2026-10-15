@@ -318,7 +318,34 @@ jobs:
           if-no-files-found: error
 
 
+  work-package-order-gate:
+    runs-on: ubuntu-latest
+    outputs:
+      later_packages_unlocked: ${{ steps.gate.outputs.later_packages_unlocked }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      - name: Evaluate Stage 9.5-6 predecessor closure
+        id: gate
+        shell: bash
+        run: |
+          closure_doc="STAGE9_5_6_CLEAN_DETERMINISTIC_FULL_SEED_RERUN_CLOSURE.md"
+          success_json="results/audits/stage9_5_full_seed_rerun_v1/success.json"
+          if [[ -f "$closure_doc" && -f "$success_json" ]]; then
+            echo "later_packages_unlocked=true" >> "$GITHUB_OUTPUT"
+            echo "Stage 9.5-6 closure evidence is present; later work packages may execute in sequence."
+          else
+            echo "later_packages_unlocked=false" >> "$GITHUB_OUTPUT"
+            echo "Stage 9.5-7/8/9 remain locked: valid Stage 9.5-6 closure evidence is absent."
+          fi
+
+
   claim-traceability:
+    needs: work-package-order-gate
+    if: ${{ needs.work-package-order-gate.outputs.later_packages_unlocked == 'true' }}
     runs-on: windows-latest
     env:
       PYTHONHASHSEED: "0"
@@ -367,6 +394,7 @@ jobs:
 
 
   independent-reporting:
+    needs: claim-traceability
     runs-on: windows-latest
     env:
       PYTHONHASHSEED: "0"
@@ -410,6 +438,7 @@ jobs:
 
 
   hostile-review-audit:
+    needs: independent-reporting
     runs-on: windows-latest
     env:
       PYTHONHASHSEED: "0"

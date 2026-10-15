@@ -77,3 +77,16 @@ If the exact checkpoint bytes remain unavailable, 9.5-6 and therefore protocol-v
 - Stage 10: **PROHIBITED**.
 
 This correction narrows assurance-status claims only. It does not modify accepted Stage-8/9 evidence or authorize any Stage-10 outcome access.
+
+## Prospective CI order enforcement
+
+The assurance workflow must not continue generating Stage 9.5-7/8/9 executions while the binding Stage 9.5-6 predecessor is blocked.
+
+Prospectively, the workflow order gate requires both of the following before Stage 9.5-7 may execute:
+
+- `STAGE9_5_6_CLEAN_DETERMINISTIC_FULL_SEED_RERUN_CLOSURE.md`;
+- `results/audits/stage9_5_full_seed_rerun_v1/success.json`.
+
+If either is absent, the order-gate job records the later packages as locked and Stage 9.5-7/8/9 are skipped. After a valid 9.5-6 closure, Stage 9.5-7 runs first; Stage 9.5-8 depends on successful 9.5-7 completion; Stage 9.5-9 depends on successful 9.5-8 completion.
+
+This is prospective workflow enforcement only. It does not delete, rewrite, or retroactively relabel the preserved out-of-order historical artifacts beyond the provisional status already recorded above. It does not modify scientific source, accepted Stage-8/9 evidence, or the historical runtime lock.

@@ -1,0 +1,198 @@
+{
+  "schema_version": 1,
+  "status": "prospectively_frozen_before_stage9_5_9_execution",
+  "protocol_id": "stage9.5-q1-assurance-v1",
+  "package": "stage9.5-9-hostile-review-closure-audit",
+  "freeze_head": "4c3c74bb708f9fdd67d05c33b6a8c556a63d8438",
+  "source_identities": {
+    "q1_adversarial_register": {
+      "path": "Q1_ADVERSARIAL_AUDIT_REGISTER.md",
+      "git_blob_sha": "e1db2f5d9031e502668ec3960bac4a16d710fd57"
+    },
+    "stage9_5_protocol": {
+      "path": "STAGE9_5_Q1_INDEPENDENT_ASSURANCE_PROTOCOL.md",
+      "git_blob_sha": "01b4cf8e47afa4ca8ffec3b9c203db72f86283ab"
+    }
+  },
+  "package_state_before_audit": {
+    "9.5-0": "closed",
+    "9.5-1": "open_blocked_Class_A_system_a_checkpoint_bytes_missing",
+    "9.5-2": "closed",
+    "9.5-3": "closed",
+    "9.5-4": "closed",
+    "9.5-5": "closed",
+    "9.5-6": "open_blocked_by_9.5-1",
+    "9.5-7": "closed",
+    "9.5-8": "closed"
+  },
+  "unresolved_class_a": [
+    {
+      "id": "A-PROV-01",
+      "title": "Exact frozen System-A checkpoint bytes are unrecovered",
+      "classification": "Class A",
+      "status": "open_blocked",
+      "blocks_stage9_5_closure": true,
+      "blocks_stage10": true,
+      "valid_resolution": "recover original five checkpoint files from authoritative archive and verify frozen SHA-256 identities",
+      "invalid_resolutions": [
+        "retrain or regenerate substitutes",
+        "accept numerical equivalence as byte identity without prior equivalence rule",
+        "execute historical rerun from current Stage-9.5 head"
+      ]
+    }
+  ],
+  "reviewer_attacks": [
+    {
+      "id": "A",
+      "title": "Primary shift is not a clean real-concept-drift experiment",
+      "classification": "Class C",
+      "kind": "scope_external_validity",
+      "disposition": "Keep primary claim fixed-scenario/source-regime bounded; Stage-10+ requires direct attack-pattern/conditional-label-change, gradual/unseen where defensible, and second dataset."
+    },
+    {
+      "id": "B",
+      "title": "Controlled boundary is not metaphysical drift ground truth",
+      "classification": "Class C",
+      "kind": "claim_boundary",
+      "disposition": "Use designated controlled boundary/reference; pre-reference detector event; no true-natural-drift-point claim."
+    },
+    {
+      "id": "C",
+      "title": "Pre-reference detector events consumed D-drift symbolic budget",
+      "classification": "Class B",
+      "kind": "robustness_and_interpretation",
+      "disposition": "Stage-9 detector/latency robustness completed; report clocks/budget centrally; Stage-10+ includes cleaner post-change opportunity structure."
+    },
+    {
+      "id": "D",
+      "title": "E1 does not prove evolved symbolic knowledge beats neural-only adaptation",
+      "classification": "Class B",
+      "kind": "mechanism_interpretation",
+      "disposition": "Mechanism decomposition completed as secondary/exploratory; retain withdrawal-dominant interpretation; Stage-10+ prospectively tests lifecycle-authority semantics."
+    },
+    {
+      "id": "E",
+      "title": "Explanation endpoint deteriorates",
+      "classification": "Class C",
+      "kind": "negative_result_claim_boundary",
+      "disposition": "Report negative MCSC without euphemism; no explanation-recovery primary success claim."
+    },
+    {
+      "id": "F",
+      "title": "MCSC construct validity is limited",
+      "classification": "Class C",
+      "kind": "construct_validity",
+      "disposition": "Define MCSC narrowly as class-balanced correct symbolic coverage; triangulate explanation constructs; no analyst-usefulness claim without separate evaluation."
+    },
+    {
+      "id": "G",
+      "title": "Candidate selection/common-validation winner's curse",
+      "classification": "Class B",
+      "kind": "robustness_selection",
+      "disposition": "Do not treat accepted rules as independently hypothesis-tested discoveries; Stage-10+ requires independent/nested candidate confirmation and gate sensitivity."
+    },
+    {
+      "id": "H",
+      "title": "CICIDS2017 quality/artifact dependence",
+      "classification": "Class C",
+      "kind": "data_external_validity",
+      "disposition": "Dataset-bounded claims; corrected-CICIDS sensitivity where useful plus truly independent second dataset."
+    },
+    {
+      "id": "I",
+      "title": "Shortcut learning/source-regime cues",
+      "classification": "Class C",
+      "kind": "external_validity",
+      "disposition": "Retain feature/duplicate diagnostics; cross-dataset/scenario replication is decisive."
+    },
+    {
+      "id": "J",
+      "title": "Five seeds are not five environments",
+      "classification": "Class C",
+      "kind": "inferential_scope",
+      "disposition": "No environmental-population interpretation; no pseudo-replication; replicate scenarios/datasets instead."
+    },
+    {
+      "id": "K",
+      "title": "Sign-test/Holm power is intrinsically coarse",
+      "classification": "Class C",
+      "kind": "inferential_limit",
+      "disposition": "Emphasize magnitude/raw pairs/uncertainty; no p-value headline; no post-hoc test switching."
+    },
+    {
+      "id": "L",
+      "title": "Replay assumptions and poisoning",
+      "classification": "Class B",
+      "kind": "operational_robustness",
+      "disposition": "No-replay ablation completed; trusted-label/replay-integrity assumption disclosed; poisoning/noise stress required only for operational-robustness claim."
+    },
+    {
+      "id": "M",
+      "title": "Complete delayed labels are optimistic",
+      "classification": "Class B",
+      "kind": "label_latency_robustness",
+      "disposition": "L=0 and L=10000 completed; fixed-row delay disclosed; partial/noisy/missing labels prospectively tested if operational claims are made."
+    },
+    {
+      "id": "N",
+      "title": "Supervised hard-error detector is only one monitor class",
+      "classification": "Class B",
+      "kind": "monitor_robustness",
+      "disposition": "Page-Hinkley hard-error and ADWIN-Brier completed; label-free monitor may be added only as separately frozen diagnostic/replication."
+    },
+    {
+      "id": "O",
+      "title": "Periodic comparator cadence",
+      "classification": "Class C",
+      "kind": "comparator_scope",
+      "disposition": "State cadence is one matched comparator; no trigger-superiority claim; random/alternative clocks only if superiority is claimed."
+    },
+    {
+      "id": "P",
+      "title": "Neural architecture specificity",
+      "classification": "Class C",
+      "kind": "model_external_validity",
+      "disposition": "MLP is controlled backbone, not novelty; second materially different backbone required for architecture-invariant claim."
+    },
+    {
+      "id": "Q",
+      "title": "Neuro-symbolic terminology can be challenged",
+      "classification": "Class C",
+      "kind": "terminology_claim_boundary",
+      "disposition": "Define teacher-derived, true-label-validated symbolic lifecycle operationally; no expert-knowledge/theorem-reasoning claim."
+    },
+    {
+      "id": "R",
+      "title": "Real-time/deployment claims unsupported",
+      "classification": "Class C",
+      "kind": "deployment_claim_boundary",
+      "disposition": "No throughput/backlog/real-time production claim from logical-row-time evidence."
+    },
+    {
+      "id": "S",
+      "title": "Adversarial robustness untested",
+      "classification": "Class C",
+      "kind": "security_claim_boundary",
+      "disposition": "No adversarial-robustness claim; separately frozen adversarial evaluation only if operational security robustness is claimed."
+    },
+    {
+      "id": "T",
+      "title": "Novelty is crowded and moving",
+      "classification": "Class C",
+      "kind": "novelty_claim_boundary",
+      "disposition": "Retain narrow gap; no first-ever claim; adversarial literature refresh before major replication milestones and submission."
+    }
+  ],
+  "class_b_closure_rule": "Every Class B attack must have either completed frozen robustness/mechanism evidence or a prospectively frozen Stage-10+ sensitivity obligation; primary Stage-8/9 result is never replaced.",
+  "class_c_closure_rule": "Every Class C attack must carry an explicit claim boundary and/or replication obligation.",
+  "closure_rule": {
+    "zero_unresolved_class_a_required": true,
+    "all_class_b_dispositioned": true,
+    "all_class_c_dispositioned": true,
+    "no_hidden_failed_audit_attempt": true,
+    "no_stage10_outcome_access": true,
+    "stage10_plus_master_protocol_frozen": true
+  },
+  "expected_audit_outcome_if_checkpoint_blocker_persists": "open_blocked_not_closed",
+  "stage10_outcomes_accessed": false
+}

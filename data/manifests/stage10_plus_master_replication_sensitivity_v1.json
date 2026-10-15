@@ -1,0 +1,168 @@
+{
+  "schema_version": 1,
+  "status": "prospectively_frozen_before_any_stage10_treatment_execution",
+  "protocol_id": "stage10-plus-master-replication-sensitivity-v1",
+  "governing_stage9_5_protocol": "STAGE9_5_Q1_INDEPENDENT_ASSURANCE_PROTOCOL.md",
+  "freeze_basis": "Predeclared Stage-9.5 protocol obligations plus Q1 adversarial register; no Stage-10 treatment outcomes accessed.",
+  "hard_gate": {
+    "stage10_execution_permitted": false,
+    "prerequisite": "Resolve Stage 9.5-1/9.5-6 exact System-A checkpoint provenance blocker and complete Stage 9.5-9 with zero unresolved Class-A defects."
+  },
+  "immutable_stage8_9_objects": [
+    "primary scenario row ranges/boundary/source assembly",
+    "original preprocessing state",
+    "System-A accepted checkpoints/seeds/threshold procedure",
+    "Stage-8/9 primary lambda=0.50",
+    "primary five seeds",
+    "E1/E2/E3 definitions",
+    "MCSC definition",
+    "5000-row primary reporting window",
+    "t interval/sign/Holm definitions",
+    "primary periodic schedule",
+    "accepted ADWIN primary defaults",
+    "primary replay policy",
+    "accepted lifecycle result"
+  ],
+  "master_obligations": [
+    {
+      "id": "S10-01",
+      "type": "replication",
+      "requirement": "Direct attack-pattern / conditional-label-change scenario frozen before outcomes.",
+      "supports": [
+        "A",
+        "C"
+      ]
+    },
+    {
+      "id": "S10-02",
+      "type": "replication",
+      "requirement": "Gradual drift and unseen/evolving-attack designs frozen where scientifically defensible.",
+      "supports": [
+        "A"
+      ]
+    },
+    {
+      "id": "S10-03",
+      "type": "external_replication",
+      "requirement": "Second flow-oriented dataset inclusion/exclusion criteria frozen before outcomes.",
+      "supports": [
+        "A",
+        "H",
+        "I",
+        "J"
+      ]
+    },
+    {
+      "id": "S10-04",
+      "type": "data_sensitivity",
+      "requirement": "Corrected-CICIDS/LYCOS or improved-reconstruction sensitivity frozen where scientifically useful; does not substitute for second dataset.",
+      "supports": [
+        "H"
+      ]
+    },
+    {
+      "id": "S10-05",
+      "type": "selection_assurance",
+      "requirement": "Candidate selection strengthened using independent confirmation or nested equivalent.",
+      "supports": [
+        "G"
+      ]
+    },
+    {
+      "id": "S10-06",
+      "type": "mechanism_sensitivity",
+      "requirement": "Prospectively test withdrawal/lifecycle authority semantics because accepted mechanism is withdrawal-dominant.",
+      "supports": [
+        "D"
+      ]
+    },
+    {
+      "id": "S10-07",
+      "type": "symbolic_horizon_sensitivity",
+      "requirement": "Test a defensible alternative symbolic evidence horizon.",
+      "supports": [
+        "G"
+      ]
+    },
+    {
+      "id": "S10-08",
+      "type": "explanation_triangulation",
+      "requirement": "Retain MCSC unchanged while triangulating coverage, class correctness, neural fidelity, conflict, stability, complexity, churn/version persistence, and temporal continuity.",
+      "supports": [
+        "E",
+        "F"
+      ]
+    },
+    {
+      "id": "S10-09",
+      "type": "bootstrap_sensitivity",
+      "requirement": "Quantify 100-bootstrap gate granularity and include higher-replicate sensitivity where feasible.",
+      "supports": [
+        "G"
+      ]
+    },
+    {
+      "id": "S10-10",
+      "type": "comparator_sensitivity_conditional",
+      "requirement": "Alternative periodic/random-clock schedules are required before any trigger-superiority claim.",
+      "supports": [
+        "O"
+      ]
+    },
+    {
+      "id": "S10-11",
+      "type": "operational_robustness_conditional",
+      "requirement": "Label-noise, missing-label, and replay-poisoning stress is required before operational robustness claims.",
+      "supports": [
+        "L",
+        "M",
+        "S"
+      ]
+    },
+    {
+      "id": "S10-12",
+      "type": "architecture_replication_conditional",
+      "requirement": "Second materially different neural backbone required before architecture-invariant claims.",
+      "supports": [
+        "P"
+      ]
+    },
+    {
+      "id": "S10-13",
+      "type": "monitor_replication",
+      "requirement": "Label-free monitor may be added as separately frozen diagnostic/replication; primary monitor is not retrospectively replaced.",
+      "supports": [
+        "N"
+      ]
+    },
+    {
+      "id": "S10-14",
+      "type": "novelty_refresh",
+      "requirement": "Refresh literature adversarially before each major replication milestone and immediately before submission.",
+      "supports": [
+        "T"
+      ]
+    },
+    {
+      "id": "S10-15",
+      "type": "claim_boundaries",
+      "requirement": "Preserve no-natural-drift-ground-truth, no real-time/deployment, no adversarial-robustness, no analyst-usefulness, and no first-ever claim boundaries unless separately evidenced.",
+      "supports": [
+        "B",
+        "F",
+        "Q",
+        "R",
+        "S",
+        "T"
+      ]
+    }
+  ],
+  "inferential_rules": [
+    "No robustness or replication result may replace an inconvenient accepted primary result.",
+    "No new test chosen after outcome access may be described as prospectively confirmatory.",
+    "Primary n=5 is not extended after outcome inspection to chase significance.",
+    "Trigger superiority requires separately frozen comparator-clock sensitivity.",
+    "Architecture-invariant or operational-security claims activate their conditional obligations before claim use."
+  ],
+  "stage10_treatment_outcomes_accessed": false
+}

@@ -9,6 +9,8 @@ on:
       - "STAGE9_5_Q1_INDEPENDENT_ASSURANCE_PROTOCOL.md"
       - "data/manifests/stage9_5_parameter_register_v1_11.json"
       - "data/manifests/stage9_5_fresh_clone_reconstruction_v1.json"
+      - "data/manifests/stage9_5_fresh_clone_reconstruction_v1_2.json"
+      - "STAGE9_5_1_V1_2_HEAVY_ARTIFACT_INVENTORY_CORRECTION.md"
       - "STAGE9_5_0_PARAMETER_CONTROL_COMPLETENESS_CLOSURE.md"
       - "STAGE9_5_1_FRESH_CLONE_RECONSTRUCTION_IMPLEMENTATION.md"
       - "STAGE9_5_1_FRESH_CLONE_RECONSTRUCTION_BLOCKED.md"
@@ -114,14 +116,14 @@ jobs:
       - name: Run Stage 9.5-1 fresh-clone reconstruction
         shell: pwsh
         run: |
-          python tools/stage9_5/fresh_clone_reconstruction.py --output-dir artifacts/stage9_5_v1_1/fresh_clone_reconstruction
+          python tools/stage9_5/fresh_clone_reconstruction.py --output-dir artifacts/stage9_5_v1_2/fresh_clone_reconstruction
 
       - name: Upload Stage 9.5-1 reconstruction evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: stage9-5-fresh-clone-reconstruction-v1-1
-          path: artifacts/stage9_5_v1_1/fresh_clone_reconstruction/
+          name: stage9-5-fresh-clone-reconstruction-v1-2
+          path: artifacts/stage9_5_v1_2/fresh_clone_reconstruction/
           if-no-files-found: error
 
 

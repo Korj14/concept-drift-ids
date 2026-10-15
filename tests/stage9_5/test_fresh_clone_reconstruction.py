@@ -5,10 +5,13 @@ import json
 from pathlib import Path
 
 from tools.stage9_5.fresh_clone_reconstruction import (
+    IDENTITY_PATH,
     _canonical_json_hash,
     _collect_path_hash_entries,
     _normalized_text_sha256,
     _sha256_file,
+    _stage8_archive_requirements,
+    _verify_stage8_large_archive,
 )
 
 
@@ -48,7 +51,7 @@ def test_sha256_file_uses_raw_bytes(tmp_path: Path) -> None:
 def test_identity_manifest_declares_checkpoint_blocker() -> None:
     root = Path(__file__).resolve().parents[2]
     payload = json.loads(
-        (root / "data/manifests/stage9_5_fresh_clone_reconstruction_v1.json").read_text(
+        IDENTITY_PATH.read_text(
             encoding="utf-8"
         )
     )
@@ -61,7 +64,7 @@ def test_identity_manifest_declares_checkpoint_blocker() -> None:
 def test_external_raw_inventory_is_complete() -> None:
     root = Path(__file__).resolve().parents[2]
     payload = json.loads(
-        (root / "data/manifests/stage9_5_fresh_clone_reconstruction_v1.json").read_text(
+        IDENTITY_PATH.read_text(
             encoding="utf-8"
         )
     )
@@ -99,3 +102,53 @@ def test_repository_lf_identity_survives_windows_crlf_checkout(tmp_path: Path) -
     expected_repository_lf_hash = hashlib.sha256(lf).hexdigest()
     assert _sha256_file(path) != expected_repository_lf_hash
     assert _normalized_text_sha256(path) == expected_repository_lf_hash
+
+
+def test_identity_manifest_declares_stage8_large_archive_blocker() -> None:
+    payload = json.loads(IDENTITY_PATH.read_text(encoding="utf-8"))
+    archive = payload["stage8_large_artifact_archive"]
+    assert archive["required_for_stage9_5_1"] is True
+    assert archive["required_for_publication"] is True
+    assert archive["default_external_root"] == "artifacts/cd_primary_v1"
+    assert archive["retrieval"]["repository_committed"] is False
+    assert archive["retrieval"]["accepted_stage8_actions_artifact_found"] is False
+    assert payload["closure_rule"][
+        "fail_on_missing_or_mismatched_stage8_large_artifact_archive"
+    ] is True
+
+
+def test_stage8_archive_requirements_cover_omitted_heavy_evidence() -> None:
+    payload = json.loads(IDENTITY_PATH.read_text(encoding="utf-8"))
+    requirements = _stage8_archive_requirements(payload["stage8_compact"])
+    paths = {item["path"] for item in requirements}
+    assert "phase_a_shared_control_plane/seed-0/predictions.jsonl" in paths
+    assert (
+        "phase_a_shared_control_plane/seed-0/checkpoints/"
+        "seed-0-event-1.pt"
+    ) in paths
+    assert (
+        "phase_b_symbolic_arms/seed-0/d_drift/maintenance.jsonl"
+    ) in paths
+    assert (
+        "phase_c_offline_evaluation_v1_1/seed-0/"
+        "d_drift_prediction_trace.jsonl.gz"
+    ) in paths
+
+
+def test_missing_stage8_archive_is_external_blocker(
+    tmp_path: Path,
+) -> None:
+    payload = json.loads(IDENTITY_PATH.read_text(encoding="utf-8"))
+    report: dict[str, object] = {
+        "external_artifacts": {},
+        "blockers": [],
+        "failures": [],
+    }
+    _verify_stage8_large_archive(
+        report,
+        payload["stage8_compact"],
+        payload["stage8_large_artifact_archive"],
+        tmp_path / "missing",
+    )
+    assert report["blockers"] == ["stage8_large_artifact_archive_missing"]
+    assert report["failures"] == []

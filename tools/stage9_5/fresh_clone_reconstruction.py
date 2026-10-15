@@ -12,7 +12,7 @@ from typing import Any
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
-IDENTITY_PATH = PROJECT_ROOT / "data" / "manifests" / "stage9_5_fresh_clone_reconstruction_v1.json"
+IDENTITY_PATH = PROJECT_ROOT / "data" / "manifests" / "stage9_5_fresh_clone_reconstruction_v1_2.json"
 
 
 def _canonical_json_hash(payload: object) -> str:
@@ -137,6 +137,153 @@ def _collect_path_hash_entries(node: Any) -> list[dict[str, str]]:
             found.extend(_collect_path_hash_entries(value))
     return found
 
+
+
+def _stage8_archive_requirements(
+    cfg: dict[str, Any],
+) -> list[dict[str, str]]:
+    root = PROJECT_ROOT / str(cfg["root"])
+    requirements: dict[str, dict[str, str]] = {}
+
+    def add(
+        relative: Path,
+        descriptor: dict[str, Any],
+        source: str,
+    ) -> None:
+        path = relative.as_posix()
+        sha256 = str(descriptor["sha256"])
+        existing = requirements.get(path)
+        if existing is not None and existing["sha256"] != sha256:
+            raise ValueError(
+                f"Conflicting accepted Stage-8 archive hash for {path}."
+            )
+        requirements[path] = {
+            "path": path,
+            "sha256": sha256,
+            "source": source,
+        }
+
+    for seed in range(5):
+        phase_a_relative = (
+            Path("phase_a_shared_control_plane") / f"seed-{seed}"
+        )
+        phase_a = _load_json(root / phase_a_relative / "run_manifest.json")
+        for name, descriptor in phase_a.get("files", {}).items():
+            add(
+                phase_a_relative / str(descriptor["path"]),
+                descriptor,
+                f"phase_a:{seed}:{name}",
+            )
+
+        phase_b_relative = (
+            Path("phase_b_symbolic_arms") / f"seed-{seed}"
+        )
+        phase_b = _load_json(root / phase_b_relative / "phase_b_manifest.json")
+        for arm, arm_descriptor in phase_b.get("arms", {}).items():
+            arm_manifest_relative = Path(str(arm_descriptor["path"]))
+            arm_manifest = _load_json(
+                root / phase_b_relative / arm_manifest_relative
+            )
+            arm_directory = arm_manifest_relative.parent
+            for name, descriptor in arm_manifest.get("files", {}).items():
+                add(
+                    phase_b_relative
+                    / arm_directory
+                    / str(descriptor["path"]),
+                    descriptor,
+                    f"phase_b:{seed}:{arm}:{name}",
+                )
+
+        phase_c_relative = (
+            Path("phase_c_offline_evaluation_v1_1") / f"seed-{seed}"
+        )
+        phase_c_dir = root / phase_c_relative
+        for evaluation_path in sorted(
+            phase_c_dir.glob("*_evaluation.json")
+        ):
+            evaluation = _load_json(evaluation_path)
+            descriptor = evaluation.get("prediction_trace")
+            if not isinstance(descriptor, dict):
+                raise TypeError(
+                    f"Missing prediction-trace descriptor: {evaluation_path}"
+                )
+            if not isinstance(descriptor.get("path"), str):
+                raise TypeError(
+                    f"Invalid prediction-trace path: {evaluation_path}"
+                )
+            if not isinstance(descriptor.get("sha256"), str):
+                raise TypeError(
+                    f"Invalid prediction-trace hash: {evaluation_path}"
+                )
+            add(
+                phase_c_relative / descriptor["path"],
+                descriptor,
+                f"phase_c:{seed}:{evaluation_path.name}",
+            )
+
+    return sorted(requirements.values(), key=lambda item: item["path"])
+
+
+def _verify_stage8_large_archive(
+    report: dict[str, Any],
+    stage8_cfg: dict[str, Any],
+    archive_cfg: dict[str, Any],
+    archive_root: Path | None,
+) -> None:
+    requirements = _stage8_archive_requirements(stage8_cfg)
+    root = (
+        Path(archive_root)
+        if archive_root is not None
+        else PROJECT_ROOT / str(archive_cfg["default_external_root"])
+    )
+    detail: dict[str, Any] = {
+        "required": True,
+        "root": str(root),
+        "requirement_count": len(requirements),
+        "verified_count": 0,
+        "missing": [],
+        "mismatches": [],
+        "retrieval": archive_cfg["retrieval"],
+    }
+    report["external_artifacts"]["stage8_large_artifact_archive"] = detail
+
+    if not root.is_dir():
+        report["blockers"].append("stage8_large_artifact_archive_missing")
+        return
+
+    missing: list[dict[str, str]] = []
+    mismatches: list[dict[str, str]] = []
+    verified = 0
+    for item in requirements:
+        path = root / item["path"]
+        if not path.is_file():
+            missing.append(
+                {
+                    "path": item["path"],
+                    "source": item["source"],
+                }
+            )
+            continue
+        actual = _sha256_file(path)
+        if actual != item["sha256"]:
+            mismatches.append(
+                {
+                    "path": item["path"],
+                    "expected": item["sha256"],
+                    "actual": actual,
+                    "source": item["source"],
+                }
+            )
+            continue
+        verified += 1
+
+    detail["verified_count"] = verified
+    detail["missing"] = missing
+    detail["mismatches"] = mismatches
+    if missing or mismatches:
+        report["failures"].append(
+            "stage8_large_artifact_archive_incomplete_or_mismatched"
+        )
 
 def _verify_stage8_compact(report: dict[str, Any], cfg: dict[str, Any]) -> None:
     root = PROJECT_ROOT / cfg["root"]
@@ -370,10 +517,14 @@ def _verify_system_a(
         report["failures"].append("system_a_checkpoint_bytes_mismatch")
 
 
-def run(output_dir: Path, checkpoint_root: Path | None = None) -> dict[str, Any]:
+def run(
+    output_dir: Path,
+    checkpoint_root: Path | None = None,
+    stage8_archive_root: Path | None = None,
+) -> dict[str, Any]:
     cfg = _load_json(IDENTITY_PATH)
     report: dict[str, Any] = {
-        "audit_id": "stage9.5-1-fresh-clone-reconstruction-v1_1",
+        "audit_id": "stage9.5-1-fresh-clone-reconstruction-v1_2",
         "identity_manifest": str(IDENTITY_PATH.relative_to(PROJECT_ROOT)),
         "checks": [],
         "failures": [],
@@ -474,6 +625,12 @@ def run(output_dir: Path, checkpoint_root: Path | None = None) -> dict[str, Any]
     _verify_system_a(report, cfg["system_a"], prep_cfg["core_state_sha256"], checkpoint_root)
     _verify_r0(report, cfg["r0_v2"])
     _verify_stage8_compact(report, cfg["stage8_compact"])
+    _verify_stage8_large_archive(
+        report,
+        cfg["stage8_compact"],
+        cfg["stage8_large_artifact_archive"],
+        stage8_archive_root,
+    )
     _verify_stage9_compact(report, cfg["stage9_compact"])
 
     report["status"] = "pass" if not report["failures"] and not report["blockers"] else "blocked"
@@ -515,7 +672,7 @@ def main() -> None:
     parser.add_argument(
         "--output-dir",
         type=Path,
-        default=Path("artifacts/stage9_5_v1/fresh_clone_reconstruction"),
+        default=Path("artifacts/stage9_5_v1_2/fresh_clone_reconstruction"),
     )
     parser.add_argument(
         "--checkpoint-root",
@@ -523,8 +680,20 @@ def main() -> None:
         default=None,
         help="Optional external directory containing seed_0.pt ... seed_4.pt.",
     )
+    parser.add_argument(
+        "--stage8-archive-root",
+        type=Path,
+        default=None,
+        help=(
+            "Optional recovered root corresponding to artifacts/cd_primary_v1."
+        ),
+    )
     args = parser.parse_args()
-    run(args.output_dir, checkpoint_root=args.checkpoint_root)
+    run(
+        args.output_dir,
+        checkpoint_root=args.checkpoint_root,
+        stage8_archive_root=args.stage8_archive_root,
+    )
 
 
 if __name__ == "__main__":

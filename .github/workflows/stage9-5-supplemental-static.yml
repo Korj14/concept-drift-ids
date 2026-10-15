@@ -5,10 +5,10 @@ on:
     branches:
       - "stage9-5-q1-assurance"
     paths:
-      - "data/manifests/stage9_5_static_assurance_v1_8.json"
+      - "data/manifests/stage9_5_static_assurance_v1_9.json"
       - "STAGE9_5_5_SUPPLEMENTAL_7_8_STATIC_ASSURANCE.md"
       - "STAGE9_5_5_SUPPLEMENTAL_V1_6_MYPY_PACKAGE_BASE_CORRECTION.md"
-      - "STAGE9_5_5_SUPPLEMENTAL_V1_8_BASELINE_ISOLATION_CORRECTION.md"
+      - "STAGE9_5_5_SUPPLEMENTAL_V1_9_IMPORT_NORMALIZATION.md"
       - "tools/stage9_5/**"
       - "tests/stage9_5/**"
       - ".github/workflows/stage9-5-supplemental-static.yml"
@@ -60,15 +60,15 @@ jobs:
         run: |
           python -m pytest tests/stage9_5/test_supplemental_static_assurance.py -q
 
-      - name: Run supplemental static assurance v1.8
+      - name: Run supplemental static assurance v1.9
         shell: pwsh
         run: |
-          python tools/stage9_5/static_assurance.py --contract data/manifests/stage9_5_static_assurance_v1_8.json --output-dir artifacts/stage9_5_static_v1_8
+          python tools/stage9_5/static_assurance.py --contract data/manifests/stage9_5_static_assurance_v1_9.json --output-dir artifacts/stage9_5_static_v1_9
 
       - name: Upload supplemental static evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: stage9-5-static-assurance-v1-8-delta
-          path: artifacts/stage9_5_static_v1_8/
+          name: stage9-5-static-assurance-v1-9-delta
+          path: artifacts/stage9_5_static_v1_9/
           if-no-files-found: error

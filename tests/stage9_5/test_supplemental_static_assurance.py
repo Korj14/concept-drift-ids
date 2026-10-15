@@ -5,8 +5,7 @@ from pathlib import Path
 
 from tools.stage9_5 import static_assurance
 
-
-CONTRACT = "stage9_5_static_assurance_v1_8.json"
+CONTRACT = "stage9_5_static_assurance_v1_9.json"
 
 
 def _contract() -> dict[str, object]:

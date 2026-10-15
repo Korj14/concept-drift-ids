@@ -448,12 +448,12 @@ jobs:
       - name: Run Stage 9.5-9 hostile-review audit
         shell: pwsh
         run: |
-          python -m tools.stage9_5.hostile_review_audit --output-dir artifacts/stage9_5_hostile_review_v1
+          python -m tools.stage9_5.hostile_review_audit --output-dir artifacts/stage9_5_hostile_review_v1_1
 
       - name: Upload Stage 9.5-9 hostile-review evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: stage9-5-hostile-review-v1
-          path: artifacts/stage9_5_hostile_review_v1/
+          name: stage9-5-hostile-review-v1-1
+          path: artifacts/stage9_5_hostile_review_v1_1/
           if-no-files-found: error

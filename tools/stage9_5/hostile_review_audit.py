@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import subprocess
 from pathlib import Path
 from typing import Any
 
@@ -56,9 +57,15 @@ def _canonical_sha256(payload: Any) -> str:
 
 
 def _git_blob_sha(path: Path) -> str:
-    raw = path.read_bytes()
-    header = f"blob {len(raw)}\0".encode()
-    return hashlib.sha1(header + raw).hexdigest()  # noqa: S324
+    relative = path.relative_to(PROJECT_ROOT).as_posix()
+    result = subprocess.run(  # noqa: S603
+        ["git", "rev-parse", f"HEAD:{relative}"],  # noqa: S607
+        cwd=PROJECT_ROOT,
+        text=True,
+        capture_output=True,
+        check=True,
+    )
+    return result.stdout.strip()
 
 
 def _failure_artifacts() -> list[str]:
@@ -170,7 +177,7 @@ def run(output_dir: Path) -> dict[str, Any]:
     status = "closed" if closure_eligible else "open_blocked"
 
     report: dict[str, Any] = {
-        "audit_id": "stage9.5-9-hostile-review-audit-v1",
+        "audit_id": "stage9.5-9-hostile-review-audit-v1_1",
         "status": status,
         "audit_execution_pass": audit_execution_pass,
         "stage9_5_closure_eligible": closure_eligible,
@@ -245,7 +252,7 @@ def main() -> None:
     parser.add_argument(
         "--output-dir",
         type=Path,
-        default=Path("artifacts/stage9_5_hostile_review_v1"),
+        default=Path("artifacts/stage9_5_hostile_review_v1_1"),
     )
     args = parser.parse_args()
     run(args.output_dir)

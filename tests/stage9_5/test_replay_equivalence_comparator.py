@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import copy
 import hashlib
 import json
 from pathlib import Path
@@ -12,6 +13,7 @@ from tools.stage9_5.replay_equivalence_comparator import (
     compare_phase_a_seed,
     compare_phase_b_arm,
     compare_phase_b_seed,
+    compare_phase_c_preconditions,
 )
 
 
@@ -531,4 +533,193 @@ def test_phase_b_seed_rejects_redirected_arm_descriptor_path(
 
     assert result["pass"] is False
     assert "phase_b_manifest.arms.d_drift.path" in result["mismatches"]
+
+REPO_ROOT = Path(__file__).resolve().parents[2]
+ACCEPTED_CORRECTION_CONFIG = (
+    REPO_ROOT / "data" / "manifests" / "cd_primary_run_config_v1_1.json"
+)
+ACCEPTED_FAILED_PHASE_C = (
+    REPO_ROOT
+    / "results"
+    / "frozen"
+    / "cd_primary_v1"
+    / "phase_c_failed_v1"
+    / "seed-0"
+)
+
+
+def _rewrite_hashed_json(path: Path, payload: dict[str, Any]) -> None:
+    body = copy.deepcopy(payload)
+    body.pop("payload_sha256", None)
+    body.pop("manifest_sha256", None)
+    body["manifest_sha256"] = _canonical_sha256(body)
+    body["payload_sha256"] = _canonical_sha256(body)
+    path.write_text(
+        json.dumps(body, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+
+
+def _fresh_correction_config() -> dict[str, Any]:
+    payload = json.loads(ACCEPTED_CORRECTION_CONFIG.read_text(encoding="utf-8"))
+    reused = payload["correction"]["reused_upstream_artifacts"]
+    for seed in range(5):
+        key = str(seed)
+        reused["phase_a"][key]["run_manifest_sha256"] = hashlib.sha256(
+            f"fresh-phase-a-{seed}".encode()
+        ).hexdigest()
+        reused["phase_b"][key]["phase_b_manifest_sha256"] = hashlib.sha256(
+            f"fresh-phase-b-{seed}".encode()
+        ).hexdigest()
+    return payload
+
+
+def _write_phase_c_upstream_bindings(
+    root: Path,
+    config: dict[str, Any],
+) -> None:
+    reused = config["correction"]["reused_upstream_artifacts"]
+    for seed in range(5):
+        key = str(seed)
+        a_root = root / "phase_a_shared_control_plane" / f"seed-{seed}"
+        b_root = root / "phase_b_symbolic_arms" / f"seed-{seed}"
+        a_root.mkdir(parents=True, exist_ok=True)
+        b_root.mkdir(parents=True, exist_ok=True)
+        (a_root / "run_manifest.json").write_text(
+            json.dumps(
+                {
+                    "manifest_sha256": reused["phase_a"][key][
+                        "run_manifest_sha256"
+                    ]
+                }
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+        (b_root / "phase_b_manifest.json").write_text(
+            json.dumps(
+                {
+                    "manifest_sha256": reused["phase_b"][key][
+                        "phase_b_manifest_sha256"
+                    ]
+                }
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+
+
+def _copy_failed_phase_c_lineage(root: Path) -> None:
+    target = root / "phase_c_offline_evaluation" / "seed-0"
+    target.mkdir(parents=True, exist_ok=True)
+    for name in ("attempt.json", "failure.json"):
+        (target / name).write_bytes((ACCEPTED_FAILED_PHASE_C / name).read_bytes())
+
+
+def _phase_c_precondition_fixture(
+    tmp_path: Path,
+) -> tuple[Path, Path, Path]:
+    accepted = json.loads(
+        ACCEPTED_CORRECTION_CONFIG.read_text(encoding="utf-8")
+    )
+    fresh = _fresh_correction_config()
+
+    accepted_root = tmp_path / "accepted"
+    fresh_root = tmp_path / "fresh"
+    _write_phase_c_upstream_bindings(accepted_root, accepted)
+    _write_phase_c_upstream_bindings(fresh_root, fresh)
+    _copy_failed_phase_c_lineage(accepted_root)
+    _copy_failed_phase_c_lineage(fresh_root)
+
+    fresh_config_path = tmp_path / "fresh_config.json"
+    _rewrite_hashed_json(fresh_config_path, fresh)
+    return accepted_root, fresh_root, fresh_config_path
+
+
+def test_phase_c_preconditions_accept_only_rebound_upstream_manifest_hashes(
+    tmp_path: Path,
+) -> None:
+    accepted_root, fresh_root, fresh_config_path = _phase_c_precondition_fixture(
+        tmp_path
+    )
+
+    result = compare_phase_c_preconditions(
+        accepted_root=accepted_root,
+        fresh_root=fresh_root,
+        accepted_config_path=ACCEPTED_CORRECTION_CONFIG,
+        fresh_config_path=fresh_config_path,
+    )
+
+    assert result["pass"] is True
+    assert result["failures"] == []
+    assert result["mismatch_count"] == 0
+    assert result["failed_lineage_preserved"] is True
+    assert result["scientific_blocks_equal"] is True
+
+
+def test_phase_c_preconditions_reject_scientific_block_change(
+    tmp_path: Path,
+) -> None:
+    accepted_root, fresh_root, fresh_config_path = _phase_c_precondition_fixture(
+        tmp_path
+    )
+    fresh = json.loads(fresh_config_path.read_text(encoding="utf-8"))
+    fresh["fusion"]["primary_neural_weight"] = 0.7
+    _rewrite_hashed_json(fresh_config_path, fresh)
+
+    result = compare_phase_c_preconditions(
+        accepted_root=accepted_root,
+        fresh_root=fresh_root,
+        accepted_config_path=ACCEPTED_CORRECTION_CONFIG,
+        fresh_config_path=fresh_config_path,
+    )
+
+    assert result["pass"] is False
+    assert "scientific_block_mismatch:fusion" in result["failures"]
+
+
+def test_phase_c_preconditions_reject_unbound_fresh_upstream_hash(
+    tmp_path: Path,
+) -> None:
+    accepted_root, fresh_root, fresh_config_path = _phase_c_precondition_fixture(
+        tmp_path
+    )
+    wrong = fresh_root / "phase_a_shared_control_plane" / "seed-2" / "run_manifest.json"
+    wrong.write_text(
+        json.dumps({"manifest_sha256": "f" * 64}) + "\n",
+        encoding="utf-8",
+    )
+
+    result = compare_phase_c_preconditions(
+        accepted_root=accepted_root,
+        fresh_root=fresh_root,
+        accepted_config_path=ACCEPTED_CORRECTION_CONFIG,
+        fresh_config_path=fresh_config_path,
+    )
+
+    assert result["pass"] is False
+    assert (
+        "fresh_correction:phase_a_upstream_manifest_mismatch:2"
+        in result["failures"]
+    )
+
+
+def test_phase_c_preconditions_reject_extra_failed_lineage_file(
+    tmp_path: Path,
+) -> None:
+    accepted_root, fresh_root, fresh_config_path = _phase_c_precondition_fixture(
+        tmp_path
+    )
+    extra = fresh_root / "phase_c_offline_evaluation" / "seed-0" / "extra.json"
+    extra.write_text("{}\n", encoding="utf-8")
+
+    result = compare_phase_c_preconditions(
+        accepted_root=accepted_root,
+        fresh_root=fresh_root,
+        accepted_config_path=ACCEPTED_CORRECTION_CONFIG,
+        fresh_config_path=fresh_config_path,
+    )
+
+    assert result["pass"] is False
+    assert "fresh:failed_lineage_entries_mismatch" in result["failures"]
 

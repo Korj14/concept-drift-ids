@@ -216,6 +216,38 @@ def evaluate(
                     f"required_report_value_mismatch:{relative}:{dotted}"
                 )
 
+        for pair in binding.get("required_equal_success_fields", []):
+            if not isinstance(pair, list) or len(pair) != 2:
+                report["failures"].append(
+                    f"invalid_report_success_equal_field_pair:{relative}"
+                )
+                continue
+            report_field, success_field = pair
+            if not isinstance(report_field, str) or not isinstance(success_field, str):
+                report["failures"].append(
+                    f"invalid_report_success_equal_field_pair:{relative}"
+                )
+                continue
+            try:
+                report_value = _get_path(report_payload, report_field)
+            except KeyError:
+                report["failures"].append(
+                    f"required_report_missing_field:{relative}:{report_field}"
+                )
+                continue
+            try:
+                success_value = _get_path(success_payload, success_field)
+            except KeyError:
+                report["failures"].append(
+                    f"missing_success_field:{success_field}"
+                )
+                continue
+            if report_value != success_value:
+                report["failures"].append(
+                    f"report_success_field_mismatch:{relative}:"
+                    f"{report_field}!={success_field}"
+                )
+
     try:
         closure_text = closure.read_text(encoding="utf-8")
     except (OSError, UnicodeDecodeError) as exc:

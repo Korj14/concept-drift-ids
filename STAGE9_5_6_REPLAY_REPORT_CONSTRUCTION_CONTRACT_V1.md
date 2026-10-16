@@ -17,11 +17,11 @@ frozen before recovered-artifact replay outcomes are inspected.
 
 ## Current blocker
 
-The deterministic replay comparator/producer is not yet implemented.
+The deterministic replay-report finalizer is implemented and prospectively frozen as `stage9.5-6-replay-report-finalizer-v1`. It validates the frozen machine-comparison evidence schema, derives the replay report fields, and computes the canonical report hash. It does **not** compare Phase-A/B/C replay artifacts.
 
-Therefore the current additional assurance blocker is:
+The remaining additional assurance blocker is therefore:
 
-`replay_report_deterministic_producer_not_implemented`
+`replay_equivalence_comparator_not_implemented`
 
 This blocker is separate from the two external artifact blockers:
 
@@ -37,9 +37,13 @@ The future deterministic producer is frozen to the identity:
 
 `stage9.5-6-replay-equivalence-assurance-v1`
 
-Before execution, its implementation and dedicated tests must be committed and
-frozen. The producer must derive the final report from comparison evidence; it
-must not expose a manual override that can set `pass=true`.
+The report-construction pipeline is split into the frozen comparator identity
+`stage9.5-6-replay-equivalence-comparator-v1` and finalizer identity
+`stage9.5-6-replay-report-finalizer-v1`. The finalizer implementation and
+dedicated tests are now committed. The comparator implementation and its
+dedicated projection tests must still be committed and frozen before any replay
+outcomes are inspected. Neither layer may expose a manual override that can set
+`pass=true`.
 
 The successful report must carry, at minimum:
 
@@ -85,7 +89,7 @@ mismatch is observed.
 
 ## Fail-closed rules
 
-Until the deterministic producer is implemented and frozen:
+Until the deterministic comparator is implemented, tested, and frozen:
 
 - do not create a successful `replay_equivalence_report.json` manually;
 - do not treat aggregate agreement as a substitute for record-level comparison;

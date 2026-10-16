@@ -1,5 +1,7 @@
 # Stage 9.5-6 Clean Deterministic Full-Seed Rerun — BLOCKED
 
+> **Historical initial blocker disposition — not the current execution protocol.** This file preserves the first 9.5-6 stopping condition when the missing System-A checkpoints were the known dependency. Current 9.5-6 requirements are governed by `STAGE9_5_6_HISTORICAL_RERUN_IDENTITY_REPLAY_BLOCKER.md`, `STAGE9_5_6_LARGE_ARTIFACT_ARCHIVE_BLOCKER.md`, and `STAGE9_5_6_REPLAY_EQUIVALENCE_CORRECTION_PROTOCOL_V1_1.md`. The current procedure requires recovery of both external artifact sets, reconstruction of **all five Phase-A seeds and all five Phase-B seeds**, preservation/reproduction of the original failed Phase-C v1 seed-0 lineage, regeneration/verification of the correction config under the frozen scientific blocks, and then the frozen corrected Phase-C rerun target. This historical file must not be used to infer that one seed can now be rerun independently or that checkpoint recovery alone closes 9.5-6.
+
 **Status:** OPEN / BLOCKED  
 **Dependency:** existing Stage 9.5-1 Class-A provenance/reconstructibility blocker  
 **Stage 10:** prohibited

@@ -27,6 +27,9 @@ def _contract(tmp_path: Path) -> Path:
                     "stage9_5_1.stage8_archive_requirement_count": 145,
                     "stage9_5_1.stage8_archive_verified_count": 145,
                     "same_head_stage9.conclusion": "success",
+                    "same_head_stage9.workflow_name": "Stage 9 robustness contract",
+                    "artifact.name": "stage9-5-full-seed-rerun-v1",
+                    "stage9_5_1.artifact.name": "stage9-5-fresh-clone-reconstruction-v1-2",
                     "replay_equivalence.protocol_id": "stage9.5-6-replay-equivalence-correction-v1_1",
                     "replay_equivalence.rerun_seed": 0,
                     "replay_equivalence.historical_heads.phase_a_b": "bfa14b942e4a5b2fbfa8aa3c43728a7f1cd81645",
@@ -48,6 +51,25 @@ def _contract(tmp_path: Path) -> Path:
                 "required_success_hash_fields": [
                     "artifact.report_canonical_sha256",
                     "stage9_5_1.report_canonical_sha256",
+                    "artifact.zip_sha256",
+                    "stage9_5_1.artifact.zip_sha256",
+                ],
+                "required_positive_integer_fields": [
+                    "workflow_run_id",
+                    "rerun_job_id",
+                    "artifact.id",
+                    "same_head_stage9.workflow_run_id",
+                    "same_head_stage9.run_number",
+                    "stage9_5_1.workflow_run_id",
+                    "stage9_5_1.job_id",
+                    "stage9_5_1.artifact.id",
+                ],
+                "closure_doc_must_contain_fields": [
+                    "workflow_run_id",
+                    "artifact.id",
+                    "same_head_stage9.workflow_run_id",
+                    "stage9_5_1.workflow_run_id",
+                    "stage9_5_1.artifact.id",
                 ],
                 "required_sha40_fields": [
                     "audited_head",
@@ -76,6 +98,8 @@ def _success() -> dict[str, object]:
         "audit_id": "stage9.5-6-clean-deterministic-full-seed-rerun-v1-success",
         "status": "accepted_stage9_5_6_closure_evidence",
         "audited_head": "b" * 40,
+        "workflow_run_id": 1001,
+        "rerun_job_id": 1002,
         "stage9_5_1": {
             "status": "closed",
             "identity_failures": 0,
@@ -86,8 +110,21 @@ def _success() -> dict[str, object]:
             "stage8_archive_requirement_count": 145,
             "stage8_archive_verified_count": 145,
             "report_canonical_sha256": "a" * 64,
+            "workflow_run_id": 2001,
+            "job_id": 2002,
+            "artifact": {
+                "id": 2003,
+                "name": "stage9-5-fresh-clone-reconstruction-v1-2",
+                "zip_sha256": "a" * 64,
+            },
         },
-        "same_head_stage9": {"conclusion": "success", "head_sha": "b" * 40},
+        "same_head_stage9": {
+            "conclusion": "success",
+            "head_sha": "b" * 40,
+            "workflow_name": "Stage 9 robustness contract",
+            "workflow_run_id": 3001,
+            "run_number": 3002,
+        },
         "replay_equivalence": {
             "protocol_id": "stage9.5-6-replay-equivalence-correction-v1_1",
             "rerun_seed": 0,
@@ -106,11 +143,62 @@ def _success() -> dict[str, object]:
             "corrected_phase_c_seed0_rerun_complete": True,
             "accepted_maintenance_archive_verified": True,
         },
-        "artifact": {"report_canonical_sha256": "a" * 64},
+        "artifact": {
+            "id": 1003,
+            "name": "stage9-5-full-seed-rerun-v1",
+            "zip_sha256": "a" * 64,
+            "report_canonical_sha256": "a" * 64,
+        },
         "unresolved_class_a": [],
         "scientific_objects_modified": False,
         "stage10_outcomes_accessed": False,
     }
+
+
+def _closure_text(
+    payload: dict[str, object],
+    *,
+    include_dynamic_fields: bool = True,
+    include_hashes: bool = True,
+) -> str:
+    parts = [
+        "success.json",
+        "stage9.5-6-replay-equivalence-correction-v1_1",
+    ]
+    if include_dynamic_fields:
+        stage9_5_1 = payload["stage9_5_1"]
+        same_head = payload["same_head_stage9"]
+        artifact = payload["artifact"]
+        assert isinstance(stage9_5_1, dict)
+        assert isinstance(same_head, dict)
+        assert isinstance(artifact, dict)
+        stage9_5_1_artifact = stage9_5_1["artifact"]
+        assert isinstance(stage9_5_1_artifact, dict)
+        parts.extend(
+            [
+                str(payload["workflow_run_id"]),
+                str(artifact["id"]),
+                str(same_head["workflow_run_id"]),
+                str(stage9_5_1["workflow_run_id"]),
+                str(stage9_5_1_artifact["id"]),
+            ]
+        )
+    if include_hashes:
+        stage9_5_1 = payload["stage9_5_1"]
+        artifact = payload["artifact"]
+        assert isinstance(stage9_5_1, dict)
+        assert isinstance(artifact, dict)
+        stage9_5_1_artifact = stage9_5_1["artifact"]
+        assert isinstance(stage9_5_1_artifact, dict)
+        parts.extend(
+            [
+                str(artifact["report_canonical_sha256"]),
+                str(artifact["zip_sha256"]),
+                str(stage9_5_1["report_canonical_sha256"]),
+                str(stage9_5_1_artifact["zip_sha256"]),
+            ]
+        )
+    return "\n".join(parts) + "\n"
 
 
 def test_missing_files_remain_locked(tmp_path: Path) -> None:
@@ -165,12 +253,7 @@ def test_complete_linked_success_evidence_unlocks(tmp_path: Path) -> None:
     success_path = tmp_path / "success.json"
     payload = _success()
     success_path.write_text(json.dumps(payload), encoding="utf-8")
-    closure.write_text(
-        "success.json\nstage9.5-6-replay-equivalence-correction-v1_1\n"
-        + "a" * 64
-        + "\n",
-        encoding="utf-8",
-    )
+    closure.write_text(_closure_text(payload), encoding="utf-8")
 
     report = evaluate(
         contract_path=_contract(tmp_path),
@@ -274,12 +357,7 @@ def test_git_ancestor_binding_accepts_current_head(tmp_path: Path) -> None:
     assert isinstance(same_head, dict)
     same_head["head_sha"] = head
     success_path.write_text(json.dumps(payload), encoding="utf-8")
-    closure.write_text(
-        "success.json\nstage9.5-6-replay-equivalence-correction-v1_1\n"
-        + "a" * 64
-        + "\n",
-        encoding="utf-8",
-    )
+    closure.write_text(_closure_text(payload), encoding="utf-8")
 
     report = evaluate(
         contract_path=contract_path,
@@ -373,4 +451,44 @@ def test_unlinked_stage9_5_1_recovery_report_hash_remains_locked(
     )
     assert report["later_packages_unlocked"] is False
     assert "closure_doc_missing_report_canonical_sha256" in report["failures"]
+
+def test_invalid_ci_artifact_id_remains_locked(tmp_path: Path) -> None:
+    closure = tmp_path / "closure.md"
+    success_path = tmp_path / "success.json"
+    payload = _success()
+    artifact = payload["artifact"]
+    assert isinstance(artifact, dict)
+    artifact["id"] = 0
+    success_path.write_text(json.dumps(payload), encoding="utf-8")
+    closure.write_text(_closure_text(payload), encoding="utf-8")
+
+    report = evaluate(
+        contract_path=_contract(tmp_path),
+        closure_doc=closure,
+        success_json=success_path,
+    )
+    assert report["later_packages_unlocked"] is False
+    assert "invalid_positive_integer_field:artifact.id" in report["failures"]
+
+
+def test_unlinked_stage9_workflow_id_remains_locked(tmp_path: Path) -> None:
+    closure = tmp_path / "closure.md"
+    success_path = tmp_path / "success.json"
+    payload = _success()
+    success_path.write_text(json.dumps(payload), encoding="utf-8")
+    closure.write_text(
+        _closure_text(payload).replace("3001\n", ""),
+        encoding="utf-8",
+    )
+
+    report = evaluate(
+        contract_path=_contract(tmp_path),
+        closure_doc=closure,
+        success_json=success_path,
+    )
+    assert report["later_packages_unlocked"] is False
+    assert (
+        "closure_doc_missing_field_value:same_head_stage9.workflow_run_id"
+        in report["failures"]
+    )
 

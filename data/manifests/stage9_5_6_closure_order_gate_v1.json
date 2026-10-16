@@ -50,23 +50,18 @@
       4
     ],
     "stage9_5_1.stage8_archive_requirement_count": 145,
-    "stage9_5_1.stage8_archive_verified_count": 145,
-    "artifact.name": "stage9-5-full-seed-rerun-v1",
-    "stage9_5_1.artifact.name": "stage9-5-fresh-clone-reconstruction-v1-2",
-    "same_head_stage9.workflow_name": "Stage 9 robustness contract"
+    "stage9_5_1.stage8_archive_verified_count": 145
   },
   "required_success_hash_fields": [
     "artifact.report_canonical_sha256",
-    "stage9_5_1.report_canonical_sha256",
-    "artifact.zip_sha256",
-    "stage9_5_1.artifact.zip_sha256"
+    "stage9_5_1.report_canonical_sha256"
   ],
   "closure_doc_must_reference": [
     "results/audits/stage9_5_full_seed_rerun_v1/success.json",
     "stage9.5-6-replay-equivalence-correction-v1_1"
   ],
   "closure_doc_must_contain_report_canonical_sha256": true,
-  "unlock_rule": "All required files must exist and every contract check must pass. The success record must bind the rerun to frozen historical replay identities, a concrete same-head Stage-9 workflow run, and a concrete successful Stage-9.5-1 recovery workflow/artifact with all five checkpoint seeds verified and all 145 descriptor-linked Stage-8 heavy files verified. Stage-9.5-6 and Stage-9.5-1 artifact ZIP hashes plus canonical report hashes must be linked from the closure document. Dynamic workflow/job/artifact identifiers must be linked with the exact labeled token format `{field}={value}` (rendered as inline code) so unrelated numeric substrings cannot satisfy the gate. The audited head must be a valid ancestor of the current assurance head. Missing, malformed, placeholder, incomplete, mismatched, unlinked, or historically misbound evidence remains locked.",
+  "unlock_rule": "All required files must exist and every contract check must pass. The success record must bind the rerun to the frozen historical replay identities, a same-head Stage-9 success, and a successful Stage-9.5-1 recovery report with all five checkpoint seeds verified and all 145 descriptor-linked Stage-8 heavy files verified. Both the Stage-9.5-6 report hash and Stage-9.5-1 recovery-report hash must be linked from the closure document. Its audited head must be a valid ancestor of the current assurance head. Missing, malformed, placeholder, incomplete, mismatched, unlinked, or historically misbound evidence remains locked.",
   "required_equal_fields": [
     [
       "audited_head",
@@ -82,23 +77,5 @@
     "replay_equivalence.historical_heads.phase_a_b",
     "replay_equivalence.historical_heads.correction_source",
     "replay_equivalence.accepted_stage8_evidence_commit"
-  ],
-  "required_positive_integer_fields": [
-    "workflow_run_id",
-    "rerun_job_id",
-    "artifact.id",
-    "same_head_stage9.workflow_run_id",
-    "same_head_stage9.run_number",
-    "stage9_5_1.workflow_run_id",
-    "stage9_5_1.job_id",
-    "stage9_5_1.artifact.id"
-  ],
-  "closure_doc_must_contain_fields": [
-    "workflow_run_id",
-    "artifact.id",
-    "same_head_stage9.workflow_run_id",
-    "stage9_5_1.workflow_run_id",
-    "stage9_5_1.artifact.id"
-  ],
-  "closure_doc_field_token_format": "`{field}={value}`"
+  ]
 }

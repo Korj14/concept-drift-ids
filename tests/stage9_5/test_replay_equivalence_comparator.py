@@ -468,3 +468,67 @@ def test_phase_b_seed_keeps_arm_isolation_identity_exact(
     assert result["pass"] is False
     assert "phase_b_manifest.arm_isolation_sha256" in result["mismatches"]
 
+def _rewrite_phase_b_seed_manifest(
+    root: Path,
+    payload: dict[str, Any],
+) -> None:
+    body = dict(payload)
+    body.pop("payload_sha256", None)
+    body.pop("manifest_sha256", None)
+    body["manifest_sha256"] = _canonical_sha256(body)
+    body["payload_sha256"] = _canonical_sha256(body)
+    _write_json_bytes(root / "phase_b_manifest.json", body)
+
+
+def test_phase_b_seed_rejects_forged_arm_manifest_identity(
+    tmp_path: Path,
+) -> None:
+    _write_phase_b_seed_fixture(tmp_path / "accepted")
+    fresh = _write_phase_b_seed_fixture(tmp_path / "fresh")
+    arms = fresh["arms"]
+    assert isinstance(arms, dict)
+    descriptor = arms["d_drift"]
+    assert isinstance(descriptor, dict)
+    descriptor["manifest_sha256"] = "9" * 64
+    _rewrite_phase_b_seed_manifest(tmp_path / "fresh", fresh)
+
+    result = compare_phase_b_seed(
+        accepted_seed_root=tmp_path / "accepted",
+        fresh_seed_root=tmp_path / "fresh",
+        seed=0,
+    )
+
+    assert result["pass"] is False
+    assert (
+        "fresh:d_drift:arm_manifest_identity_mismatch"
+        in result["failures"]
+    )
+
+
+def test_phase_b_seed_rejects_redirected_arm_descriptor_path(
+    tmp_path: Path,
+) -> None:
+    _write_phase_b_seed_fixture(tmp_path / "accepted")
+    fresh = _write_phase_b_seed_fixture(tmp_path / "fresh")
+    arms = fresh["arms"]
+    assert isinstance(arms, dict)
+    descriptor = arms["d_drift"]
+    assert isinstance(descriptor, dict)
+    redirected = tmp_path / "fresh" / "d_periodic" / "arm_manifest.json"
+    redirected_payload = json.loads(redirected.read_text(encoding="utf-8"))
+    descriptor["path"] = "d_periodic/arm_manifest.json"
+    descriptor["sha256"] = _sha256_file(redirected)
+    descriptor["manifest_sha256"] = str(
+        redirected_payload["manifest_sha256"]
+    )
+    _rewrite_phase_b_seed_manifest(tmp_path / "fresh", fresh)
+
+    result = compare_phase_b_seed(
+        accepted_seed_root=tmp_path / "accepted",
+        fresh_seed_root=tmp_path / "fresh",
+        seed=0,
+    )
+
+    assert result["pass"] is False
+    assert "phase_b_manifest.arms.d_drift.path" in result["mismatches"]
+

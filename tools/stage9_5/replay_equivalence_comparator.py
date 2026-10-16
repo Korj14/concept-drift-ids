@@ -1139,6 +1139,48 @@ def _load_required_manifest_hash(
     return value, []
 
 
+def _load_phase_a_shared_identity_sha256(
+    artifact_root: Path,
+    *,
+    label: str,
+) -> tuple[str | None, list[str]]:
+    path = (
+        artifact_root
+        / PHASE_A_SUBDIR
+        / "seed-0"
+        / "shared_identity.json"
+    )
+    try:
+        payload = _load_json(path)
+    except (OSError, json.JSONDecodeError, TypeError, ValueError) as exc:
+        return None, [f"{label}:shared_identity_invalid:{type(exc).__name__}"]
+
+    failures: list[str] = []
+    payload_hash = payload.get("payload_sha256")
+    core = dict(payload)
+    core.pop("payload_sha256", None)
+    if (
+        not isinstance(payload_hash, str)
+        or SHA256_RE.fullmatch(payload_hash) is None
+        or _canonical_sha256(core) != payload_hash
+    ):
+        failures.append(f"{label}:shared_identity_payload_sha256_mismatch")
+
+    shared = payload.get("shared_identity")
+    identity_sha = (
+        shared.get("identity_sha256")
+        if isinstance(shared, dict)
+        else None
+    )
+    if (
+        not isinstance(identity_sha, str)
+        or SHA256_RE.fullmatch(identity_sha) is None
+    ):
+        failures.append(f"{label}:shared_identity_sha256_invalid")
+        identity_sha = None
+    return identity_sha, failures
+
+
 def compare_phase_c_arm_output(
     *,
     artifact_root: Path,
@@ -1199,13 +1241,33 @@ def compare_phase_c_arm_output(
     ):
         failures.append(f"{label}:{arm}:maintenance_summary_binding_mismatch")
 
+    shared_identity_sha, shared_failures = _load_phase_a_shared_identity_sha256(
+        artifact_root,
+        label=label,
+    )
+    failures.extend(shared_failures)
+    if summary.get("shared_identity_sha256") != shared_identity_sha:
+        failures.append(f"{label}:{arm}:shared_identity_binding_mismatch")
+
+    trace = summary.get("prediction_trace")
     failures.extend(
         _verify_phase_c_prediction_trace(
             output_root,
-            summary.get("prediction_trace"),
+            trace,
             label=f"{label}:{arm}",
         )
     )
+    scenario = correction_config.get("scenario")
+    expected_rows = (
+        scenario.get("stream_rows")
+        if isinstance(scenario, dict)
+        else None
+    )
+    if (
+        not isinstance(trace, dict)
+        or trace.get("row_count") != expected_rows
+    ):
+        failures.append(f"{label}:{arm}:prediction_trace_stream_rows_mismatch")
 
     projected: dict[str, Any] | None = None
     try:
@@ -1369,6 +1431,13 @@ def compare_phase_c_corrected_output(
             failures.append(f"{label}:phase_c_seed_mismatch")
         if seed_manifest.get("status") != "complete_offline_evaluation":
             failures.append(f"{label}:phase_c_status_mismatch")
+        if seed_manifest.get("lambda_one_predictive_equality") is not True:
+            failures.append(f"{label}:phase_c_lambda_one_control_failed")
+        if (
+            seed_manifest.get("adaptive_components_received_boundary")
+            is not False
+        ):
+            failures.append(f"{label}:phase_c_boundary_contamination_flag")
         if (
             seed_manifest.get("primary_config_manifest_sha256")
             != config.get("manifest_sha256")

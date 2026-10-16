@@ -21,7 +21,7 @@ The deterministic replay-report finalizer is implemented and prospectively froze
 
 The remaining additional assurance blocker is therefore:
 
-`replay_equivalence_comparator_phase_c_not_implemented`
+`replay_equivalence_comparator_phase_c_corrected_output_not_implemented`
 
 This blocker is separate from the two external artifact blockers:
 
@@ -40,9 +40,12 @@ The future deterministic producer is frozen to the identity:
 The report-construction pipeline is split into the frozen comparator identity
 `stage9.5-6-replay-equivalence-comparator-v1` and finalizer identity
 `stage9.5-6-replay-report-finalizer-v1`. The finalizer implementation and
-dedicated tests are committed. The comparator now has prospectively frozen Phase-A and Phase-B
-implementations with dedicated tests; Phase-C comparison remains unimplemented
-and must be frozen before any replay outcomes are inspected. Neither layer may expose a manual override that can set `pass=true`.
+dedicated tests are committed. The comparator now has prospectively frozen
+Phase-A and Phase-B implementations plus the Phase-C failure-lineage and
+regenerated-correction-config precondition layer. Corrected Phase-C seed-0
+output comparison remains unimplemented and must be frozen before any replay
+outcomes are inspected. Neither layer may expose a manual override that can set
+`pass=true`.
 
 The successful report must carry, at minimum:
 
@@ -125,10 +128,37 @@ remain exact, including `git_commit`, configuration identities, all shared
 Phase-A identities, operator identity, descriptor paths,
 `primary_boundary_scored`, and `arm_isolation_sha256`.
 
-For Phase C, the frozen rerun seed is seed 0. The original failed-v1 seed-0
-lineage, regenerated correction-config scientific-block equality, corrected
-Phase-C execution, predictions, metrics, explanations, diagnostics, retention
-probes, and other non-diagnostic scientific fields remain fail-closed.
+For Phase C, the frozen rerun seed is seed 0. The precondition layer is now
+implemented and prospectively frozen.
+
+The original failed-v1 seed-0 directory must contain exactly
+`attempt.json` and `failure.json`. Both accepted and replayed copies must
+match the file and payload SHA-256 identities frozen inside the accepted
+correction config; equality merely between the two copies is not sufficient.
+
+The accepted and regenerated correction configs are each raw-hash verified.
+The accepted config must retain manifest identity
+`d380fce5f9db8f0b639dc999298a263b10a10a3d02e35def226a121d098e2222`,
+and both configs must bind `prepared_from_git_commit` to historical correction
+source `79ddc4c6d6dea52c7cabc55a6d082448fc24fcf9`. All eight frozen scientific
+blocks remain exact.
+
+Before projection, each correction config's five Phase-A
+`run_manifest_sha256` values and five Phase-B
+`phase_b_manifest_sha256` values must match the actual corresponding replay
+artifact manifests. Only those ten already-proven diagnostic-transitive raw
+identities are then normalized. After raw self-hash verification,
+`payload_sha256` and `manifest_sha256` are removed, and the accepted and
+regenerated configs must otherwise match exactly under canonical recursive
+comparison.
+
+Corrected Phase-C execution outputs remain fail-closed. In particular,
+predictions, metrics, explanations, windows, recovery diagnostics, trigger
+diagnostics, retention probes, boundary/contamination controls, and lambda-one
+negative-control evidence remain exact. The prediction-trace writer uses an
+empty gzip filename, `mtime=0`, and compression level 9, so both the raw
+compressed trace SHA-256 and the canonical decompressed JSONL SHA-256 remain
+exact identities; there is no compression-diagnostic exclusion.
 
 ## Derived-hash implementation boundary
 
@@ -137,14 +167,19 @@ change when only predeclared diagnostic fields change. Phase-A and Phase-B
 handling are now explicitly frozen as described above and are no longer
 implementation blockers.
 
-Phase-C still requires its own deterministic self-/transitive-hash projection
-rules. Those implementation details must be frozen in code and tests **before**
-replay outcomes are inspected. They must not be inferred, relaxed, or expanded
-after a mismatch is observed.
+Phase-C correction-config and failure-lineage handling are now explicitly
+frozen and implemented. The remaining implementation boundary is the corrected
+seed-0 output layer: the comparator must remove only identities transitively
+dependent on the already-approved Phase-A/Phase-B diagnostic projections while
+keeping all scientific output and deterministic trace identities exact.
+
+Those remaining output-projection details must be frozen in code and tests
+**before** replay outcomes are inspected. They must not be inferred, relaxed,
+or expanded after a mismatch is observed.
 
 ## Fail-closed rules
 
-Until the remaining deterministic Phase-C comparator logic is implemented, tested, and frozen:
+Until the remaining corrected Phase-C seed-0 output comparator logic is implemented, tested, and frozen:
 
 - do not create a successful `replay_equivalence_report.json` manually;
 - do not treat aggregate agreement as a substitute for record-level comparison;

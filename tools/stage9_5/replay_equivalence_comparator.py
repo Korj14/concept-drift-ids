@@ -34,6 +34,22 @@ PHASE_B_SUMMARY_TIMING_FIELDS = (
     "compute_seconds_per_opportunity",
     "compute_seconds_per_publication",
 )
+PHASE_C_FAILED_SUBDIR = "phase_c_offline_evaluation"
+PHASE_C_CORRECTION_MANIFEST_SHA256 = (
+    "d380fce5f9db8f0b639dc999298a263b10a10a3d02e35def226a121d098e2222"
+)
+PHASE_C_CORRECTION_SOURCE_HEAD = "79ddc4c6d6dea52c7cabc55a6d082448fc24fcf9"
+PHASE_C_TRANSITIVE_IDENTITY = "<stage9.5-6-upstream-identity-normalized>"
+PHASE_C_FROZEN_SCIENTIFIC_BLOCKS = (
+    "governing_source_hashes",
+    "scenario",
+    "system_a",
+    "r0_v2",
+    "primary_control_plane",
+    "primary_symbolic_operator",
+    "fusion",
+    "analysis",
+)
 SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
 
 
@@ -668,6 +684,262 @@ def compare_phase_b(
         "mismatch_count": mismatch_count,
         "failures": failures,
         "seed_results": results,
+    }
+
+
+def _project_phase_c_correction_config(
+    config: dict[str, Any],
+) -> dict[str, Any]:
+    projected = copy.deepcopy(config)
+    projected.pop("payload_sha256", None)
+    projected.pop("manifest_sha256", None)
+
+    correction = projected.get("correction")
+    if not isinstance(correction, dict):
+        raise TypeError("Correction config correction block must be an object")
+    reused = correction.get("reused_upstream_artifacts")
+    if not isinstance(reused, dict):
+        raise TypeError("Correction config reused_upstream_artifacts must be an object")
+    phase_a = reused.get("phase_a")
+    phase_b = reused.get("phase_b")
+    if not isinstance(phase_a, dict) or not isinstance(phase_b, dict):
+        raise TypeError("Correction config upstream Phase-A/B maps must be objects")
+
+    for seed in SEEDS:
+        key = str(seed)
+        a = phase_a.get(key)
+        b = phase_b.get(key)
+        if not isinstance(a, dict) or not isinstance(b, dict):
+            raise TypeError(f"Correction config lacks upstream seed {seed}")
+        if "run_manifest_sha256" not in a:
+            raise KeyError(f"phase_a.{key}.run_manifest_sha256")
+        if "phase_b_manifest_sha256" not in b:
+            raise KeyError(f"phase_b.{key}.phase_b_manifest_sha256")
+        a["run_manifest_sha256"] = PHASE_C_TRANSITIVE_IDENTITY
+        b["phase_b_manifest_sha256"] = PHASE_C_TRANSITIVE_IDENTITY
+    return projected
+
+
+def _verify_phase_c_config_upstream_bindings(
+    config: dict[str, Any],
+    *,
+    artifact_root: Path,
+    label: str,
+) -> list[str]:
+    failures: list[str] = []
+    correction = config.get("correction")
+    reused = correction.get("reused_upstream_artifacts") if isinstance(correction, dict) else None
+    if not isinstance(reused, dict):
+        return [f"{label}:invalid_reused_upstream_artifacts"]
+    phase_a = reused.get("phase_a")
+    phase_b = reused.get("phase_b")
+    if not isinstance(phase_a, dict) or not isinstance(phase_b, dict):
+        return [f"{label}:invalid_upstream_phase_maps"]
+
+    for seed in SEEDS:
+        key = str(seed)
+        a = phase_a.get(key)
+        b = phase_b.get(key)
+        if not isinstance(a, dict):
+            failures.append(f"{label}:missing_phase_a_upstream_seed:{seed}")
+        else:
+            try:
+                manifest = _load_json(
+                    artifact_root / PHASE_A_SUBDIR / f"seed-{seed}" / "run_manifest.json"
+                )
+            except (OSError, json.JSONDecodeError, TypeError, ValueError) as exc:
+                failures.append(
+                    f"{label}:phase_a_manifest_invalid:{seed}:{type(exc).__name__}"
+                )
+            else:
+                if a.get("run_manifest_sha256") != manifest.get("manifest_sha256"):
+                    failures.append(
+                        f"{label}:phase_a_upstream_manifest_mismatch:{seed}"
+                    )
+
+        if not isinstance(b, dict):
+            failures.append(f"{label}:missing_phase_b_upstream_seed:{seed}")
+        else:
+            try:
+                manifest = _load_json(
+                    artifact_root / PHASE_B_SUBDIR / f"seed-{seed}" / "phase_b_manifest.json"
+                )
+            except (OSError, json.JSONDecodeError, TypeError, ValueError) as exc:
+                failures.append(
+                    f"{label}:phase_b_manifest_invalid:{seed}:{type(exc).__name__}"
+                )
+            else:
+                if b.get("phase_b_manifest_sha256") != manifest.get("manifest_sha256"):
+                    failures.append(
+                        f"{label}:phase_b_upstream_manifest_mismatch:{seed}"
+                    )
+    return failures
+
+
+def _verify_phase_c_failed_lineage(
+    *,
+    accepted_root: Path,
+    fresh_root: Path,
+) -> dict[str, Any]:
+    accepted_dir = accepted_root / PHASE_C_FAILED_SUBDIR / "seed-0"
+    fresh_dir = fresh_root / PHASE_C_FAILED_SUBDIR / "seed-0"
+    expected_entries = ["attempt.json", "failure.json"]
+    failures: list[str] = []
+
+    for label, root in (("accepted", accepted_dir), ("fresh", fresh_dir)):
+        if not root.is_dir():
+            failures.append(f"{label}:failed_lineage_directory_missing")
+            continue
+        entries = sorted(path.name for path in root.iterdir())
+        if entries != expected_entries:
+            failures.append(f"{label}:failed_lineage_entries_mismatch")
+            continue
+        for name in expected_entries:
+            path = root / name
+            try:
+                payload = _load_json(path)
+            except (OSError, json.JSONDecodeError, TypeError, ValueError) as exc:
+                failures.append(
+                    f"{label}:{name}:invalid:{type(exc).__name__}"
+                )
+                continue
+            payload_hash = payload.get("payload_sha256")
+            core = dict(payload)
+            core.pop("payload_sha256", None)
+            if (
+                not isinstance(payload_hash, str)
+                or SHA256_RE.fullmatch(payload_hash) is None
+                or _canonical_sha256(core) != payload_hash
+            ):
+                failures.append(f"{label}:{name}:payload_sha256_mismatch")
+
+    if not failures:
+        for name in expected_entries:
+            accepted_path = accepted_dir / name
+            fresh_path = fresh_dir / name
+            if _sha256_file(accepted_path) != _sha256_file(fresh_path):
+                failures.append(f"failed_lineage_file_mismatch:{name}")
+
+    return {
+        "pass": not failures,
+        "failures": failures,
+        "entries": expected_entries,
+    }
+
+
+def compare_phase_c_preconditions(
+    *,
+    accepted_root: Path,
+    fresh_root: Path,
+    accepted_config_path: Path,
+    fresh_config_path: Path,
+) -> dict[str, Any]:
+    failures: list[str] = []
+    try:
+        accepted = _load_json(accepted_config_path)
+    except (OSError, json.JSONDecodeError, TypeError, ValueError) as exc:
+        return {
+            "pass": False,
+            "failures": [f"accepted_correction_config_invalid:{type(exc).__name__}"],
+            "mismatch_count": 0,
+            "mismatches": [],
+        }
+    try:
+        fresh = _load_json(fresh_config_path)
+    except (OSError, json.JSONDecodeError, TypeError, ValueError) as exc:
+        return {
+            "pass": False,
+            "failures": [f"fresh_correction_config_invalid:{type(exc).__name__}"],
+            "mismatch_count": 0,
+            "mismatches": [],
+        }
+
+    failures.extend(_verify_run_manifest_hashes(accepted, label="accepted_correction"))
+    failures.extend(_verify_run_manifest_hashes(fresh, label="fresh_correction"))
+    if accepted.get("manifest_sha256") != PHASE_C_CORRECTION_MANIFEST_SHA256:
+        failures.append("accepted_correction_manifest_identity_mismatch")
+
+    accepted_ready = accepted.get("implementation_ready")
+    fresh_ready = fresh.get("implementation_ready")
+    if (
+        not isinstance(accepted_ready, dict)
+        or accepted_ready.get("prepared_from_git_commit") != PHASE_C_CORRECTION_SOURCE_HEAD
+    ):
+        failures.append("accepted_correction_source_head_mismatch")
+    if (
+        not isinstance(fresh_ready, dict)
+        or fresh_ready.get("prepared_from_git_commit") != PHASE_C_CORRECTION_SOURCE_HEAD
+    ):
+        failures.append("fresh_correction_source_head_mismatch")
+
+    for block in PHASE_C_FROZEN_SCIENTIFIC_BLOCKS:
+        if accepted.get(block) != fresh.get(block):
+            failures.append(f"scientific_block_mismatch:{block}")
+
+    failures.extend(
+        _verify_phase_c_config_upstream_bindings(
+            accepted,
+            artifact_root=accepted_root,
+            label="accepted_correction",
+        )
+    )
+    failures.extend(
+        _verify_phase_c_config_upstream_bindings(
+            fresh,
+            artifact_root=fresh_root,
+            label="fresh_correction",
+        )
+    )
+
+    lineage = _verify_phase_c_failed_lineage(
+        accepted_root=accepted_root,
+        fresh_root=fresh_root,
+    )
+    failures.extend(lineage["failures"])
+
+    mismatches: list[str] = []
+    accepted_projected_sha256: str | None = None
+    fresh_projected_sha256: str | None = None
+    try:
+        accepted_projection = _project_phase_c_correction_config(accepted)
+        fresh_projection = _project_phase_c_correction_config(fresh)
+        accepted_projected_sha256 = _canonical_sha256(accepted_projection)
+        fresh_projected_sha256 = _canonical_sha256(fresh_projection)
+        if accepted_projected_sha256 != fresh_projected_sha256:
+            mismatches = _difference_paths(
+                accepted_projection,
+                fresh_projection,
+                "correction_config",
+            )
+    except (KeyError, TypeError, ValueError) as exc:
+        failures.append(
+            f"correction_projection_invalid:{type(exc).__name__}:{exc}"
+        )
+
+    return {
+        "pass": not failures and not mismatches,
+        "failures": failures,
+        "mismatch_count": len(mismatches),
+        "mismatches": mismatches,
+        "failed_lineage_preserved": lineage["pass"],
+        "scientific_blocks_equal": not any(
+            item.startswith("scientific_block_mismatch:") for item in failures
+        ),
+        "accepted_projected_sha256": accepted_projected_sha256,
+        "fresh_projected_sha256": fresh_projected_sha256,
+        "projection": {
+            "normalized_upstream_fields": [
+                "correction.reused_upstream_artifacts.phase_a.*.run_manifest_sha256",
+                "correction.reused_upstream_artifacts.phase_b.*.phase_b_manifest_sha256",
+            ],
+            "derived_hash_fields_removed_after_verification": [
+                "payload_sha256",
+                "manifest_sha256",
+            ],
+            "accepted_manifest_sha256": PHASE_C_CORRECTION_MANIFEST_SHA256,
+            "correction_source_head": PHASE_C_CORRECTION_SOURCE_HEAD,
+            "frozen_scientific_blocks": list(PHASE_C_FROZEN_SCIENTIFIC_BLOCKS),
+        },
     }
 
 

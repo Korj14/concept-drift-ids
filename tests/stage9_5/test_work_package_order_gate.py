@@ -71,6 +71,7 @@ def _contract(tmp_path: Path) -> Path:
                     "stage9_5_1.workflow_run_id",
                     "stage9_5_1.artifact.id",
                 ],
+                "closure_doc_field_token_format": "`{field}={value}`",
                 "required_sha40_fields": [
                     "audited_head",
                     "same_head_stage9.head_sha",
@@ -176,11 +177,20 @@ def _closure_text(
         assert isinstance(stage9_5_1_artifact, dict)
         parts.extend(
             [
-                str(payload["workflow_run_id"]),
-                str(artifact["id"]),
-                str(same_head["workflow_run_id"]),
-                str(stage9_5_1["workflow_run_id"]),
-                str(stage9_5_1_artifact["id"]),
+                f"`workflow_run_id={payload['workflow_run_id']}`",
+                f"`artifact.id={artifact['id']}`",
+                (
+                    "`same_head_stage9.workflow_run_id="
+                    f"{same_head['workflow_run_id']}`"
+                ),
+                (
+                    "`stage9_5_1.workflow_run_id="
+                    f"{stage9_5_1['workflow_run_id']}`"
+                ),
+                (
+                    "`stage9_5_1.artifact.id="
+                    f"{stage9_5_1_artifact['id']}`"
+                ),
             ]
         )
     if include_hashes:
@@ -477,7 +487,10 @@ def test_unlinked_stage9_workflow_id_remains_locked(tmp_path: Path) -> None:
     payload = _success()
     success_path.write_text(json.dumps(payload), encoding="utf-8")
     closure.write_text(
-        _closure_text(payload).replace("3001\n", ""),
+        _closure_text(payload).replace(
+            "`same_head_stage9.workflow_run_id=3001`\n",
+            "",
+        ),
         encoding="utf-8",
     )
 
@@ -491,4 +504,25 @@ def test_unlinked_stage9_workflow_id_remains_locked(tmp_path: Path) -> None:
         "closure_doc_missing_field_value:same_head_stage9.workflow_run_id"
         in report["failures"]
     )
+
+def test_numeric_substring_does_not_satisfy_labeled_id_link(
+    tmp_path: Path,
+) -> None:
+    closure = tmp_path / "closure.md"
+    success_path = tmp_path / "success.json"
+    payload = _success()
+    success_path.write_text(json.dumps(payload), encoding="utf-8")
+    text_value = _closure_text(payload).replace(
+        "`artifact.id=1003`\n",
+        "`unrelated=10030`\n",
+    )
+    closure.write_text(text_value, encoding="utf-8")
+
+    report = evaluate(
+        contract_path=_contract(tmp_path),
+        closure_doc=closure,
+        success_json=success_path,
+    )
+    assert report["later_packages_unlocked"] is False
+    assert "closure_doc_missing_field_value:artifact.id" in report["failures"]
 

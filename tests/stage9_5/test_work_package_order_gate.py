@@ -939,3 +939,41 @@ def test_missing_required_contract_path_returns_locked_decision(
     assert report["later_packages_unlocked"] is False
     assert report["failures"] == ["contract_missing_field:success_json_path"]
 
+def test_contract_required_mapping_wrong_type_returns_locked_decision(
+    tmp_path: Path,
+) -> None:
+    contract_path = _contract(tmp_path)
+    contract = json.loads(contract_path.read_text(encoding="utf-8"))
+    contract["required_success_values"] = []
+    contract_path.write_text(json.dumps(contract), encoding="utf-8")
+
+    report = evaluate(
+        contract_path=contract_path,
+        evidence_root=tmp_path,
+    )
+    assert report["later_packages_unlocked"] is False
+    assert report["failures"] == [
+        "contract_invalid_field_type:required_success_values"
+    ]
+
+
+def test_contract_string_list_rejects_non_string_item(
+    tmp_path: Path,
+) -> None:
+    contract_path = _contract(tmp_path)
+    contract = json.loads(contract_path.read_text(encoding="utf-8"))
+    contract["required_success_hash_fields"] = [
+        "artifact.report_canonical_sha256",
+        7,
+    ]
+    contract_path.write_text(json.dumps(contract), encoding="utf-8")
+
+    report = evaluate(
+        contract_path=contract_path,
+        evidence_root=tmp_path,
+    )
+    assert report["later_packages_unlocked"] is False
+    assert report["failures"] == [
+        "contract_invalid_list_item:required_success_hash_fields"
+    ]
+

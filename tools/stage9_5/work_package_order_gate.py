@@ -27,8 +27,20 @@ def _canonical_json_hash(payload: object) -> str:
     return hashlib.sha256(data).hexdigest()
 
 
+def _reject_duplicate_pairs(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+    payload: dict[str, Any] = {}
+    for key, value in pairs:
+        if key in payload:
+            raise ValueError(f"Duplicate JSON object key: {key}")
+        payload[key] = value
+    return payload
+
+
 def _load_json(path: Path) -> dict[str, Any]:
-    payload = json.loads(path.read_text(encoding="utf-8"))
+    payload = json.loads(
+        path.read_text(encoding="utf-8"),
+        object_pairs_hook=_reject_duplicate_pairs,
+    )
     if not isinstance(payload, dict):
         raise TypeError(f"Expected JSON object: {path}")
     return payload
@@ -79,7 +91,7 @@ def evaluate(
 
     try:
         success_payload = _load_json(success)
-    except (OSError, json.JSONDecodeError, TypeError) as exc:
+    except (OSError, json.JSONDecodeError, TypeError, ValueError) as exc:
         report["failures"].append(f"success_json_invalid:{type(exc).__name__}")
         return report
 

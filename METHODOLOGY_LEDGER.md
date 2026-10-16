@@ -2648,3 +2648,27 @@ The binding post-primary interpretation is recorded in
 `STAGE8_SYMBOLIC_MECHANISM_AUDIT_INTERPRETATION.md`.
 
 Stage 9 remains prospectively frozen and is not modified in response to this result.
+
+---
+
+## 16 October 2026 — Stage 9.5 independent-assurance reconstructibility gate remains open
+
+The Stage-9.5 independent assurance program is not closed and Stage-10 treatment execution remains prohibited.
+
+At assurance head `f3108917a481e4e3d6786b83750403f206fd56c6`, fresh-clone reconstruction v1.2 reaches the intended fail-closed state:
+
+- repository/runtime/compact-evidence identity failures: **0**;
+- external-artifact blockers: **2**:
+  1. `system_a_checkpoint_bytes_missing`;
+  2. `stage8_large_artifact_archive_missing`.
+
+The checkpoint blocker concerns the exact original five System-A checkpoint files whose accepted SHA-256 identities were frozen before downstream evaluation. Those bytes were intentionally local/ignored before the System-A manifest freeze; Git path history, active branches/tags, retained checked Actions artifacts, releases, Project/session storage, repository discussions, Git LFS configuration, and committed Stage-9 provenance do not provide the original files. Retraining, regenerating, reserializing, or substituting numerically equivalent checkpoints is not a provenance-equivalent recovery.
+
+The Stage-8 archive blocker concerns the original heavy artifact tree declared at `artifacts/cd_primary_v1`. Fresh-clone v1.2 derives **145 descriptor-linked required files** from accepted Phase-A, Phase-B, and Phase-C evidence. The original archive is absent from Git history, branches/tags, checked retained Actions artifacts/releases, Project/session storage, and committed Stage-9 provenance. The committed compact Stage-8 evidence remains authoritative for accepted reported results but does not contain all original heavy prediction/checkpoint/maintenance/trace bytes.
+
+A separate historical replay defect is also preserved for Stage 9.5-6: exact corrected Phase-C execution was bound to upstream Phase-A/B manifest hashes that include machine/runtime diagnostics and measured timing metadata. The prospectively frozen replay-equivalence correction v1.1 therefore predeclares a narrowly bounded diagnostic projection while retaining fail-closed scientific identities. It does not authorize a summary-only substitute and cannot execute until both external artifact sets are recovered and verified.
+
+This assurance state does **not** establish that accepted Stage-8/9 numerical results are wrong. The independent statistical oracle, causal-property assurance, and targeted mutation assurance remain closed; the targeted mutation package still kills **11/11** frozen mutants. The defect is external reconstructibility/provenance of the historical execution package.
+
+Binding consequence: do not describe the project as fully externally reconstructible, do not mark Stage 9.5 closed, and do not access Stage-10 treatment outcomes until the Stage-9.5 hard gate is legitimately satisfied.
+

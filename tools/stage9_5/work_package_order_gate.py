@@ -62,25 +62,49 @@ def evaluate(
     success_json: Path | None = None,
     evidence_root: Path = PROJECT_ROOT,
 ) -> dict[str, Any]:
-    contract = _load_json(contract_path)
+    report: dict[str, Any] = {
+        "contract_id": None,
+        "closure_doc": str(closure_doc) if closure_doc is not None else None,
+        "success_json": str(success_json) if success_json is not None else None,
+        "later_packages_unlocked": False,
+        "failures": [],
+    }
+
+    try:
+        contract = _load_json(contract_path)
+    except (OSError, json.JSONDecodeError, TypeError, ValueError) as exc:
+        report["failures"].append(f"contract_invalid:{type(exc).__name__}")
+        return report
+
+    try:
+        contract_id = contract["contract_id"]
+        closure_path = contract["closure_doc_path"]
+        success_path = contract["success_json_path"]
+    except KeyError as exc:
+        report["failures"].append(f"contract_missing_field:{exc.args[0]}")
+        return report
+
+    if (
+        not isinstance(contract_id, str)
+        or not isinstance(closure_path, str)
+        or not isinstance(success_path, str)
+    ):
+        report["failures"].append("contract_invalid_required_field_type")
+        return report
+
     closure = (
         closure_doc
         if closure_doc is not None
-        else PROJECT_ROOT / str(contract["closure_doc_path"])
+        else PROJECT_ROOT / closure_path
     )
     success = (
         success_json
         if success_json is not None
-        else PROJECT_ROOT / str(contract["success_json_path"])
+        else PROJECT_ROOT / success_path
     )
-
-    report: dict[str, Any] = {
-        "contract_id": contract["contract_id"],
-        "closure_doc": str(closure),
-        "success_json": str(success),
-        "later_packages_unlocked": False,
-        "failures": [],
-    }
+    report["contract_id"] = contract_id
+    report["closure_doc"] = str(closure)
+    report["success_json"] = str(success)
 
     if not closure.is_file():
         report["failures"].append("closure_doc_missing")

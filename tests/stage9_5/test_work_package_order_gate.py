@@ -64,6 +64,8 @@ def _contract(tmp_path: Path) -> Path:
                     "stage9.5-6-replay-equivalence-correction-v1_1",
                     "recovery_report.json",
                     "replay_report.json",
+                    "construction_contract.md",
+                    "construction_contract.json",
                 ],
                 "closure_doc_must_contain_report_canonical_sha256": True,
                 "required_canonical_json_reports": [
@@ -107,6 +109,12 @@ def _contract(tmp_path: Path) -> Path:
                             "stage10_outcomes_accessed": False,
                             "failures": [],
                             "blockers": [],
+                            "construction.contract_id": "stage9.5-6-replay-report-construction-v1",
+                            "construction.producer_id": "stage9.5-6-replay-equivalence-assurance-v1",
+                            "construction.manual_success_report_permitted": False,
+                            "construction.deterministic_comparison_complete": True,
+                            "construction.source_evidence_complete": True,
+                            "construction.mismatch_count": 0,
                         },
                         "required_equal_success_fields": [
                             ["audited_head", "audited_head"]
@@ -213,6 +221,14 @@ def _write_replay_report(tmp_path: Path, payload: dict[str, object]) -> str:
         "audited_head": payload["audited_head"],
         "failures": [],
         "blockers": [],
+        "construction": {
+            "contract_id": "stage9.5-6-replay-report-construction-v1",
+            "producer_id": "stage9.5-6-replay-equivalence-assurance-v1",
+            "manual_success_report_permitted": False,
+            "deterministic_comparison_complete": True,
+            "source_evidence_complete": True,
+            "mismatch_count": 0,
+        },
         "replay_equivalence": json.loads(json.dumps(replay)),
         "unresolved_class_a": [],
         "scientific_objects_modified": False,
@@ -289,6 +305,8 @@ def test_complete_linked_success_evidence_unlocks(tmp_path: Path) -> None:
         "stage9.5-6-replay-equivalence-correction-v1_1\n"
         "recovery_report.json\n"
         "replay_report.json\n"
+        "construction_contract.md\n"
+        "construction_contract.json\n"
         + replay_hash
         + "\n"
         + recovery_hash
@@ -406,6 +424,8 @@ def test_git_ancestor_binding_accepts_current_head(tmp_path: Path) -> None:
         "stage9.5-6-replay-equivalence-correction-v1_1\n"
         "recovery_report.json\n"
         "replay_report.json\n"
+        "construction_contract.md\n"
+        "construction_contract.json\n"
         + replay_hash
         + "\n"
         + recovery_hash
@@ -620,6 +640,8 @@ def test_tampered_replay_report_hash_remains_locked(tmp_path: Path) -> None:
         "stage9.5-6-replay-equivalence-correction-v1_1\n"
         "recovery_report.json\n"
         "replay_report.json\n"
+        "construction_contract.md\n"
+        "construction_contract.json\n"
         + replay_hash
         + "\n"
         + recovery_hash
@@ -790,6 +812,8 @@ def test_noncanonical_nan_replay_report_remains_locked(
         "stage9.5-6-replay-equivalence-correction-v1_1\n"
         "recovery_report.json\n"
         "replay_report.json\n"
+        "construction_contract.md\n"
+        "construction_contract.json\n"
         + replay_hash
         + "\n"
         + recovery_hash
@@ -833,6 +857,8 @@ def test_duplicate_json_key_replay_report_remains_locked(
         "stage9.5-6-replay-equivalence-correction-v1_1\n"
         "recovery_report.json\n"
         "replay_report.json\n"
+        "construction_contract.md\n"
+        "construction_contract.json\n"
         + replay_hash
         + "\n"
         + recovery_hash
@@ -881,6 +907,8 @@ def test_recovery_report_head_not_in_replay_lineage_remains_locked(
         "stage9.5-6-replay-equivalence-correction-v1_1\n"
         "recovery_report.json\n"
         "replay_report.json\n"
+        "construction_contract.md\n"
+        "construction_contract.json\n"
         + replay_hash
         + "\n"
         + tampered_hash
@@ -976,4 +1004,107 @@ def test_contract_string_list_rejects_non_string_item(
     assert report["failures"] == [
         "contract_invalid_list_item:required_success_hash_fields"
     ]
+
+def test_manual_replay_success_override_remains_locked(tmp_path: Path) -> None:
+    closure = tmp_path / "closure.md"
+    success_path = tmp_path / "success.json"
+    payload = _success()
+    recovery_hash = _write_recovery_report(tmp_path, payload)
+    _write_replay_report(tmp_path, payload)
+
+    report_path = tmp_path / "replay_report.json"
+    report_payload = json.loads(report_path.read_text(encoding="utf-8"))
+    construction = report_payload["construction"]
+    assert isinstance(construction, dict)
+    construction["manual_success_report_permitted"] = True
+    core = dict(report_payload)
+    core.pop("canonical_sha256", None)
+    tampered_hash = _canonical_json_hash(core)
+    report_payload["canonical_sha256"] = tampered_hash
+    report_path.write_text(
+        json.dumps(report_payload, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+    artifact = payload["artifact"]
+    assert isinstance(artifact, dict)
+    artifact["report_canonical_sha256"] = tampered_hash
+    success_path.write_text(json.dumps(payload), encoding="utf-8")
+    closure.write_text(
+        "success.json\n"
+        "stage9.5-6-replay-equivalence-correction-v1_1\n"
+        "recovery_report.json\n"
+        "replay_report.json\n"
+        "construction_contract.md\n"
+        "construction_contract.json\n"
+        + tampered_hash
+        + "\n"
+        + recovery_hash
+        + "\n",
+        encoding="utf-8",
+    )
+
+    report = evaluate(
+        contract_path=_contract(tmp_path),
+        closure_doc=closure,
+        success_json=success_path,
+        evidence_root=tmp_path,
+    )
+    assert report["later_packages_unlocked"] is False
+    assert (
+        "required_report_value_mismatch:replay_report.json:"
+        "construction.manual_success_report_permitted"
+        in report["failures"]
+    )
+
+
+def test_nonzero_replay_mismatch_count_remains_locked(tmp_path: Path) -> None:
+    closure = tmp_path / "closure.md"
+    success_path = tmp_path / "success.json"
+    payload = _success()
+    recovery_hash = _write_recovery_report(tmp_path, payload)
+    _write_replay_report(tmp_path, payload)
+
+    report_path = tmp_path / "replay_report.json"
+    report_payload = json.loads(report_path.read_text(encoding="utf-8"))
+    construction = report_payload["construction"]
+    assert isinstance(construction, dict)
+    construction["mismatch_count"] = 1
+    core = dict(report_payload)
+    core.pop("canonical_sha256", None)
+    tampered_hash = _canonical_json_hash(core)
+    report_payload["canonical_sha256"] = tampered_hash
+    report_path.write_text(
+        json.dumps(report_payload, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+    artifact = payload["artifact"]
+    assert isinstance(artifact, dict)
+    artifact["report_canonical_sha256"] = tampered_hash
+    success_path.write_text(json.dumps(payload), encoding="utf-8")
+    closure.write_text(
+        "success.json\n"
+        "stage9.5-6-replay-equivalence-correction-v1_1\n"
+        "recovery_report.json\n"
+        "replay_report.json\n"
+        "construction_contract.md\n"
+        "construction_contract.json\n"
+        + tampered_hash
+        + "\n"
+        + recovery_hash
+        + "\n",
+        encoding="utf-8",
+    )
+
+    report = evaluate(
+        contract_path=_contract(tmp_path),
+        closure_doc=closure,
+        success_json=success_path,
+        evidence_root=tmp_path,
+    )
+    assert report["later_packages_unlocked"] is False
+    assert (
+        "required_report_value_mismatch:replay_report.json:"
+        "construction.mismatch_count"
+        in report["failures"]
+    )
 

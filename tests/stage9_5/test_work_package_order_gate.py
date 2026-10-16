@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import subprocess
 from pathlib import Path
 
 from tools.stage9_5.work_package_order_gate import evaluate
@@ -240,4 +241,70 @@ def test_historical_replay_identity_mismatch_remains_locked(tmp_path: Path) -> N
         "replay_equivalence.accepted_stage8_evidence_commit"
         in report["failures"]
     )
+
+def test_git_ancestor_binding_accepts_current_head(tmp_path: Path) -> None:
+    head = subprocess.run(
+        ["git", "rev-parse", "HEAD"],
+        check=True,
+        capture_output=True,
+        text=True,
+    ).stdout.strip()
+    contract_path = _contract(tmp_path)
+    contract = json.loads(contract_path.read_text(encoding="utf-8"))
+    contract["required_git_ancestor_fields"] = ["audited_head"]
+    contract_path.write_text(json.dumps(contract), encoding="utf-8")
+
+    closure = tmp_path / "closure.md"
+    success_path = tmp_path / "success.json"
+    payload = _success()
+    payload["audited_head"] = head
+    same_head = payload["same_head_stage9"]
+    assert isinstance(same_head, dict)
+    same_head["head_sha"] = head
+    success_path.write_text(json.dumps(payload), encoding="utf-8")
+    closure.write_text(
+        "success.json\nstage9.5-6-replay-equivalence-correction-v1_1\n"
+        + "a" * 64
+        + "\n",
+        encoding="utf-8",
+    )
+
+    report = evaluate(
+        contract_path=contract_path,
+        closure_doc=closure,
+        success_json=success_path,
+    )
+    assert report["later_packages_unlocked"] is True
+    assert report["failures"] == []
+
+
+def test_git_ancestor_binding_rejects_unknown_sha(tmp_path: Path) -> None:
+    contract_path = _contract(tmp_path)
+    contract = json.loads(contract_path.read_text(encoding="utf-8"))
+    contract["required_git_ancestor_fields"] = ["audited_head"]
+    contract_path.write_text(json.dumps(contract), encoding="utf-8")
+
+    closure = tmp_path / "closure.md"
+    success_path = tmp_path / "success.json"
+    payload = _success()
+    unknown = "f" * 40
+    payload["audited_head"] = unknown
+    same_head = payload["same_head_stage9"]
+    assert isinstance(same_head, dict)
+    same_head["head_sha"] = unknown
+    success_path.write_text(json.dumps(payload), encoding="utf-8")
+    closure.write_text(
+        "success.json\nstage9.5-6-replay-equivalence-correction-v1_1\n"
+        + "a" * 64
+        + "\n",
+        encoding="utf-8",
+    )
+
+    report = evaluate(
+        contract_path=contract_path,
+        closure_doc=closure,
+        success_json=success_path,
+    )
+    assert report["later_packages_unlocked"] is False
+    assert "audited_head_not_ancestor:audited_head" in report["failures"]
 

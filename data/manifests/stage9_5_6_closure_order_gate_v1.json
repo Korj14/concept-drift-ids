@@ -59,10 +59,11 @@
   "closure_doc_must_reference": [
     "results/audits/stage9_5_full_seed_rerun_v1/success.json",
     "stage9.5-6-replay-equivalence-correction-v1_1",
-    "results/audits/stage9_5_full_seed_rerun_v1/fresh_clone_reconstruction_report.json"
+    "results/audits/stage9_5_full_seed_rerun_v1/fresh_clone_reconstruction_report.json",
+    "results/audits/stage9_5_full_seed_rerun_v1/replay_equivalence_report.json"
   ],
   "closure_doc_must_contain_report_canonical_sha256": true,
-  "unlock_rule": "All required files must exist and every contract check must pass. The success record must bind the rerun to the frozen historical replay identities, a same-head Stage-9 success, and a successful Stage-9.5-1 recovery report with all five checkpoint seeds verified and all 145 descriptor-linked Stage-8 heavy files verified. The preserved small Stage-9.5-1 recovery JSON must be committed unchanged at the verifier-native frozen report path, its embedded canonical hash must recompute exactly and equal the hash in success.json, and its audit/status/seed/archive fields must satisfy the frozen contract. Both the Stage-9.5-6 report hash and Stage-9.5-1 recovery-report hash must be linked from the closure document. Its audited head must be a valid ancestor of the current assurance head. Missing, malformed, placeholder, incomplete, mismatched, unlinked, or historically misbound evidence remains locked.",
+  "unlock_rule": "All required files must exist and every contract check must pass. The success record must bind the rerun to the frozen historical replay identities, a same-head Stage-9 success, and a successful Stage-9.5-1 recovery report with all five checkpoint seeds verified and all 145 descriptor-linked Stage-8 heavy files verified. The preserved small Stage-9.5-1 recovery JSON and Stage-9.5-6 replay-equivalence JSON must be committed unchanged at their frozen audit paths; the gate recomputes each embedded canonical hash and verifies its frozen fields directly. Their hashes must equal the corresponding hashes in success.json and be linked from the closure document. The audited head must be a valid ancestor of the current assurance head. Missing, malformed, placeholder, incomplete, mismatched, unlinked, or historically misbound evidence remains locked.",
   "required_equal_fields": [
     [
       "audited_head",
@@ -99,6 +100,44 @@
         ],
         "external_artifacts.stage8_large_artifact_archive.requirement_count": 145,
         "external_artifacts.stage8_large_artifact_archive.verified_count": 145
+      }
+    },
+    {
+      "path": "results/audits/stage9_5_full_seed_rerun_v1/replay_equivalence_report.json",
+      "success_hash_field": "artifact.report_canonical_sha256",
+      "embedded_hash_field": "canonical_sha256",
+      "required_values": {
+        "audit_id": "stage9.5-6-clean-deterministic-full-seed-rerun-v1",
+        "status": "pass",
+        "pass": true,
+        "replay_equivalence.protocol_id": "stage9.5-6-replay-equivalence-correction-v1_1",
+        "replay_equivalence.rerun_seed": 0,
+        "replay_equivalence.phase_a_complete_seeds": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "replay_equivalence.phase_b_complete_seeds": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "replay_equivalence.original_phase_c_v1_seed0_failure_lineage_preserved": true,
+        "replay_equivalence.corrected_phase_c_seed0_rerun_complete": true,
+        "replay_equivalence.accepted_maintenance_archive_verified": true,
+        "replay_equivalence.stage1_reconstructed_under_historical_environment": true,
+        "replay_equivalence.regenerated_correction_config_all_scientific_blocks_equal": true,
+        "replay_equivalence.historical_heads.phase_a_b": "bfa14b942e4a5b2fbfa8aa3c43728a7f1cd81645",
+        "replay_equivalence.historical_heads.correction_source": "79ddc4c6d6dea52c7cabc55a6d082448fc24fcf9",
+        "replay_equivalence.accepted_correction_manifest_sha256": "d380fce5f9db8f0b639dc999298a263b10a10a3d02e35def226a121d098e2222",
+        "replay_equivalence.accepted_stage8_evidence_commit": "c2ded83b8195b9321e715626c1f305f9627936e8",
+        "unresolved_class_a": [],
+        "scientific_objects_modified": false,
+        "stage10_outcomes_accessed": false
       }
     }
   ]

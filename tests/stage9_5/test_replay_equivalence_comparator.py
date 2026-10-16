@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import copy
+import gzip
 import hashlib
 import json
 from pathlib import Path
@@ -13,6 +14,7 @@ from tools.stage9_5.replay_equivalence_comparator import (
     compare_phase_a_seed,
     compare_phase_b_arm,
     compare_phase_b_seed,
+    compare_phase_c_corrected_output,
     compare_phase_c_preconditions,
 )
 
@@ -722,4 +724,422 @@ def test_phase_c_preconditions_reject_extra_failed_lineage_file(
 
     assert result["pass"] is False
     assert "fresh:failed_lineage_entries_mismatch" in result["failures"]
+
+def _write_phase_a_shared_identity_fixture(
+    root: Path,
+    *,
+    identity_sha256: str = "1" * 64,
+) -> None:
+    core: dict[str, Any] = {
+        "schema_version": 1,
+        "seed": 0,
+        "shared_identity": {
+            "identity_sha256": identity_sha256,
+        },
+    }
+    body = dict(core)
+    body["payload_sha256"] = _canonical_sha256(core)
+    _write_json_bytes(root / "shared_identity.json", body)
+
+
+def _write_correction_config_fixture(
+    path: Path,
+    *,
+    tag: str,
+    stream_rows: int = 2,
+) -> dict[str, Any]:
+    core: dict[str, Any] = {
+        "schema_version": 1,
+        "tag": tag,
+        "scenario": {
+            "stream_rows": stream_rows,
+        },
+    }
+    body = dict(core)
+    body["manifest_sha256"] = _canonical_sha256(core)
+    body["payload_sha256"] = _canonical_sha256(body)
+    _write_json_bytes(path, body)
+    return body
+
+
+def _write_phase_c_trace(path: Path) -> dict[str, Any]:
+    raw = (
+        b'{"row_id":"r0","decision":0}\n'
+        b'{"row_id":"r1","decision":1}\n'
+    )
+    compressed = gzip.compress(raw, compresslevel=9, mtime=0)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_bytes(compressed)
+    return {
+        "path": path.name,
+        "row_count": 2,
+        "sha256": hashlib.sha256(compressed).hexdigest(),
+        "canonical_jsonl_sha256": hashlib.sha256(raw).hexdigest(),
+    }
+
+
+def _write_phase_c_evaluation_fixture(
+    output_root: Path,
+    *,
+    arm: str,
+    config_sha256: str,
+    phase_b_arm_manifest: dict[str, Any],
+    metric_value: float = 0.9,
+) -> dict[str, Any]:
+    trace = _write_phase_c_trace(
+        output_root / f"{arm}_prediction_trace.jsonl.gz"
+    )
+    core: dict[str, Any] = {
+        "seed": 0,
+        "arm": arm,
+        "primary_config_manifest_sha256": config_sha256,
+        "phase_b_arm_manifest_sha256": phase_b_arm_manifest[
+            "manifest_sha256"
+        ],
+        "shared_identity_sha256": "1" * 64,
+        "metrics_by_neural_weight": {
+            "0.5": {
+                "post": {
+                    "mcc": metric_value,
+                }
+            }
+        },
+        "explanation": {
+            "mcsc": 0.7,
+        },
+        "primary_windows": {
+            "post": [],
+        },
+        "primary_recovery": {
+            "mcc": {
+                "recovery_rows_from_boundary": 0,
+            }
+        },
+        "maintenance_summary": copy.deepcopy(
+            phase_b_arm_manifest["maintenance_summary"]
+        ),
+        "prediction_trace": trace,
+    }
+    body = dict(core)
+    body["summary_sha256"] = _canonical_sha256(core)
+    body["payload_sha256"] = _canonical_sha256(body)
+    _write_json_bytes(
+        output_root / f"{arm}_evaluation.json",
+        body,
+    )
+    return body
+
+
+def _write_phase_c_seed_manifest_fixture(
+    output_root: Path,
+    *,
+    config_sha256: str,
+    phase_a_manifest_sha256: str,
+    phase_b_manifest_sha256: str,
+    arm_summaries: dict[str, dict[str, Any]],
+) -> dict[str, Any]:
+    core: dict[str, Any] = {
+        "schema_version": 1,
+        "seed": 0,
+        "status": "complete_offline_evaluation",
+        "primary_config_manifest_sha256": config_sha256,
+        "phase_a_run_manifest_sha256": phase_a_manifest_sha256,
+        "phase_b_seed_manifest_sha256": phase_b_manifest_sha256,
+        "arm_summary_sha256": {
+            arm: summary["summary_sha256"]
+            for arm, summary in arm_summaries.items()
+        },
+        "lambda_one_predictive_equality": True,
+        "trigger_diagnostics": {
+            "publication_count": 3,
+        },
+        "neural_retention_probes": {
+            "pre_mcc": 0.8,
+        },
+        "boundary_index": 69260,
+        "adaptive_components_received_boundary": False,
+    }
+    body = dict(core)
+    body["manifest_sha256"] = _canonical_sha256(core)
+    body["payload_sha256"] = _canonical_sha256(body)
+    _write_json_bytes(output_root / "phase_c_seed_manifest.json", body)
+    return body
+
+
+def _rewrite_phase_c_evaluation(
+    path: Path,
+    payload: dict[str, Any],
+) -> dict[str, Any]:
+    body = copy.deepcopy(payload)
+    body.pop("payload_sha256", None)
+    body.pop("summary_sha256", None)
+    body["summary_sha256"] = _canonical_sha256(body)
+    body["payload_sha256"] = _canonical_sha256(body)
+    _write_json_bytes(path, body)
+    return body
+
+
+def _rewrite_phase_c_seed_manifest(
+    path: Path,
+    payload: dict[str, Any],
+) -> dict[str, Any]:
+    body = copy.deepcopy(payload)
+    body.pop("payload_sha256", None)
+    body.pop("manifest_sha256", None)
+    body["manifest_sha256"] = _canonical_sha256(body)
+    body["payload_sha256"] = _canonical_sha256(body)
+    _write_json_bytes(path, body)
+    return body
+
+
+def _phase_c_corrected_output_fixture(
+    tmp_path: Path,
+) -> tuple[Path, Path, Path, Path]:
+    accepted_root = tmp_path / "accepted"
+    fresh_root = tmp_path / "fresh"
+
+    accepted_phase_a = _write_phase_a_fixture(
+        accepted_root / "phase_a_shared_control_plane" / "seed-0",
+        platform="accepted-platform",
+        processor="accepted-cpu",
+        filepath="C:/accepted/lib.dll",
+    )
+    fresh_phase_a = _write_phase_a_fixture(
+        fresh_root / "phase_a_shared_control_plane" / "seed-0",
+        platform="fresh-platform",
+        processor="fresh-cpu",
+        filepath="D:/fresh/lib.dll",
+    )
+    _write_phase_a_shared_identity_fixture(
+        accepted_root / "phase_a_shared_control_plane" / "seed-0"
+    )
+    _write_phase_a_shared_identity_fixture(
+        fresh_root / "phase_a_shared_control_plane" / "seed-0"
+    )
+
+    accepted_phase_b = _write_phase_b_seed_fixture(
+        accepted_root / "phase_b_symbolic_arms" / "seed-0",
+        timing_scale=1.0,
+    )
+    fresh_phase_b = _write_phase_b_seed_fixture(
+        fresh_root / "phase_b_symbolic_arms" / "seed-0",
+        timing_scale=9.0,
+    )
+
+    accepted_config_path = tmp_path / "accepted_phase_c_config.json"
+    fresh_config_path = tmp_path / "fresh_phase_c_config.json"
+    accepted_config = _write_correction_config_fixture(
+        accepted_config_path,
+        tag="accepted",
+    )
+    fresh_config = _write_correction_config_fixture(
+        fresh_config_path,
+        tag="fresh",
+    )
+
+    for root, config, phase_a, phase_b in (
+        (
+            accepted_root,
+            accepted_config,
+            accepted_phase_a,
+            accepted_phase_b,
+        ),
+        (
+            fresh_root,
+            fresh_config,
+            fresh_phase_a,
+            fresh_phase_b,
+        ),
+    ):
+        output_root = (
+            root / "phase_c_offline_evaluation_v1_1" / "seed-0"
+        )
+        output_root.mkdir(parents=True, exist_ok=True)
+        summaries: dict[str, dict[str, Any]] = {}
+        for arm in ("c_frozen_symbolic", "d_drift", "d_periodic"):
+            arm_manifest = json.loads(
+                (
+                    root
+                    / "phase_b_symbolic_arms"
+                    / "seed-0"
+                    / arm
+                    / "arm_manifest.json"
+                ).read_text(encoding="utf-8")
+            )
+            summaries[arm] = _write_phase_c_evaluation_fixture(
+                output_root,
+                arm=arm,
+                config_sha256=str(config["manifest_sha256"]),
+                phase_b_arm_manifest=arm_manifest,
+            )
+        _write_phase_c_seed_manifest_fixture(
+            output_root,
+            config_sha256=str(config["manifest_sha256"]),
+            phase_a_manifest_sha256=str(phase_a["manifest_sha256"]),
+            phase_b_manifest_sha256=str(phase_b["manifest_sha256"]),
+            arm_summaries=summaries,
+        )
+
+    return (
+        accepted_root,
+        fresh_root,
+        accepted_config_path,
+        fresh_config_path,
+    )
+
+
+def test_phase_c_corrected_output_accepts_only_transitive_identity_and_timing(
+    tmp_path: Path,
+) -> None:
+    (
+        accepted_root,
+        fresh_root,
+        accepted_config_path,
+        fresh_config_path,
+    ) = _phase_c_corrected_output_fixture(tmp_path)
+
+    result = compare_phase_c_corrected_output(
+        accepted_root=accepted_root,
+        fresh_root=fresh_root,
+        accepted_config_path=accepted_config_path,
+        fresh_config_path=fresh_config_path,
+    )
+
+    assert result["pass"] is True
+    assert result["failures"] == []
+    assert result["mismatch_count"] == 0
+
+
+def test_phase_c_corrected_output_rejects_scientific_metric_change(
+    tmp_path: Path,
+) -> None:
+    (
+        accepted_root,
+        fresh_root,
+        accepted_config_path,
+        fresh_config_path,
+    ) = _phase_c_corrected_output_fixture(tmp_path)
+    output_root = (
+        fresh_root / "phase_c_offline_evaluation_v1_1" / "seed-0"
+    )
+    path = output_root / "d_drift_evaluation.json"
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    payload["metrics_by_neural_weight"]["0.5"]["post"]["mcc"] = 0.1
+    rewritten = _rewrite_phase_c_evaluation(path, payload)
+
+    seed_path = output_root / "phase_c_seed_manifest.json"
+    seed_payload = json.loads(seed_path.read_text(encoding="utf-8"))
+    seed_payload["arm_summary_sha256"]["d_drift"] = rewritten[
+        "summary_sha256"
+    ]
+    _rewrite_phase_c_seed_manifest(seed_path, seed_payload)
+
+    result = compare_phase_c_corrected_output(
+        accepted_root=accepted_root,
+        fresh_root=fresh_root,
+        accepted_config_path=accepted_config_path,
+        fresh_config_path=fresh_config_path,
+    )
+
+    assert result["pass"] is False
+    assert any(
+        "metrics_by_neural_weight" in path
+        for path in result["mismatches"]
+    )
+
+
+def test_phase_c_corrected_output_rejects_prediction_trace_byte_tamper(
+    tmp_path: Path,
+) -> None:
+    (
+        accepted_root,
+        fresh_root,
+        accepted_config_path,
+        fresh_config_path,
+    ) = _phase_c_corrected_output_fixture(tmp_path)
+    trace = (
+        fresh_root
+        / "phase_c_offline_evaluation_v1_1"
+        / "seed-0"
+        / "d_drift_prediction_trace.jsonl.gz"
+    )
+    trace.write_bytes(trace.read_bytes() + b"tamper")
+
+    result = compare_phase_c_corrected_output(
+        accepted_root=accepted_root,
+        fresh_root=fresh_root,
+        accepted_config_path=accepted_config_path,
+        fresh_config_path=fresh_config_path,
+    )
+
+    assert result["pass"] is False
+    assert (
+        "fresh:d_drift:prediction_trace_file_sha256_mismatch"
+        in result["failures"]
+    )
+
+
+def test_phase_c_corrected_output_rejects_shared_identity_rebinding(
+    tmp_path: Path,
+) -> None:
+    (
+        accepted_root,
+        fresh_root,
+        accepted_config_path,
+        fresh_config_path,
+    ) = _phase_c_corrected_output_fixture(tmp_path)
+    shared_path = (
+        fresh_root
+        / "phase_a_shared_control_plane"
+        / "seed-0"
+        / "shared_identity.json"
+    )
+    shared = json.loads(shared_path.read_text(encoding="utf-8"))
+    shared["shared_identity"]["identity_sha256"] = "9" * 64
+    shared.pop("payload_sha256", None)
+    shared["payload_sha256"] = _canonical_sha256(shared)
+    _write_json_bytes(shared_path, shared)
+
+    result = compare_phase_c_corrected_output(
+        accepted_root=accepted_root,
+        fresh_root=fresh_root,
+        accepted_config_path=accepted_config_path,
+        fresh_config_path=fresh_config_path,
+    )
+
+    assert result["pass"] is False
+    assert (
+        "fresh:d_drift:shared_identity_binding_mismatch"
+        in result["failures"]
+    )
+
+
+def test_phase_c_corrected_output_rejects_seed_control_change(
+    tmp_path: Path,
+) -> None:
+    (
+        accepted_root,
+        fresh_root,
+        accepted_config_path,
+        fresh_config_path,
+    ) = _phase_c_corrected_output_fixture(tmp_path)
+    seed_path = (
+        fresh_root
+        / "phase_c_offline_evaluation_v1_1"
+        / "seed-0"
+        / "phase_c_seed_manifest.json"
+    )
+    seed_payload = json.loads(seed_path.read_text(encoding="utf-8"))
+    seed_payload["lambda_one_predictive_equality"] = False
+    _rewrite_phase_c_seed_manifest(seed_path, seed_payload)
+
+    result = compare_phase_c_corrected_output(
+        accepted_root=accepted_root,
+        fresh_root=fresh_root,
+        accepted_config_path=accepted_config_path,
+        fresh_config_path=fresh_config_path,
+    )
+
+    assert result["pass"] is False
+    assert "fresh:phase_c_lambda_one_control_failed" in result["failures"]
 

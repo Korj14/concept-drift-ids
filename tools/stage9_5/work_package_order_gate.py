@@ -194,7 +194,14 @@ def evaluate(
         embedded_hash = report_payload.get(embedded_hash_field)
         core = dict(report_payload)
         core.pop(embedded_hash_field, None)
-        actual_hash = _canonical_json_hash(core)
+        try:
+            actual_hash = _canonical_json_hash(core)
+        except (TypeError, ValueError) as exc:
+            report["failures"].append(
+                f"required_report_not_canonicalizable:{relative}:"
+                f"{type(exc).__name__}"
+            )
+            actual_hash = None
         if (
             not isinstance(expected_hash, str)
             or SHA256_RE.fullmatch(expected_hash) is None

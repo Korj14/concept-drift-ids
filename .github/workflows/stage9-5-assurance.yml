@@ -333,6 +333,10 @@ jobs:
           fetch-depth: 0
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
 
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11.9"
+
       - name: Evaluate Stage 9.5-6 predecessor closure
         id: gate
         shell: bash

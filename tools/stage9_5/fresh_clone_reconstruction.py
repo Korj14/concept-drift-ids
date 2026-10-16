@@ -484,6 +484,9 @@ def _verify_system_a(
     missing: list[dict[str, Any]] = []
     mismatches: list[dict[str, Any]] = []
     verified: list[int] = []
+    repository_checkpoint_bytes_present = any(
+        (PROJECT_ROOT / item["path"]).is_file() for item in cfg["checkpoints"]
+    )
     for item in cfg["checkpoints"]:
         seed = int(item["seed"])
         record = records.get(seed)
@@ -512,7 +515,10 @@ def _verify_system_a(
         "retrieval": cfg["checkpoint_retrieval"],
     }
     if missing:
-        report["blockers"].append("system_a_checkpoint_bytes_missing")
+        if checkpoint_root is not None or repository_checkpoint_bytes_present:
+            report["failures"].append("system_a_checkpoint_recovery_incomplete")
+        else:
+            report["blockers"].append("system_a_checkpoint_bytes_missing")
     if mismatches:
         report["failures"].append("system_a_checkpoint_bytes_mismatch")
 

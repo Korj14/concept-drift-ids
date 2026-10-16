@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import copy
+import gzip
 import hashlib
 import json
 import re
@@ -35,6 +36,7 @@ PHASE_B_SUMMARY_TIMING_FIELDS = (
     "compute_seconds_per_publication",
 )
 PHASE_C_FAILED_SUBDIR = "phase_c_offline_evaluation"
+PHASE_C_CORRECTED_SUBDIR = "phase_c_offline_evaluation_v1_1"
 PHASE_C_CORRECTION_MANIFEST_SHA256 = (
     "d380fce5f9db8f0b639dc999298a263b10a10a3d02e35def226a121d098e2222"
 )
@@ -973,6 +975,487 @@ def compare_phase_c_preconditions(
     }
 
 
+
+def _verify_phase_c_evaluation_hashes(
+    summary: dict[str, Any],
+    *,
+    label: str,
+) -> list[str]:
+    failures: list[str] = []
+    payload_hash = summary.get("payload_sha256")
+    summary_hash = summary.get("summary_sha256")
+    if not isinstance(payload_hash, str) or SHA256_RE.fullmatch(payload_hash) is None:
+        failures.append(f"{label}:invalid_payload_sha256")
+    if not isinstance(summary_hash, str) or SHA256_RE.fullmatch(summary_hash) is None:
+        failures.append(f"{label}:invalid_summary_sha256")
+
+    payload_core = dict(summary)
+    payload_core.pop("payload_sha256", None)
+    if (
+        isinstance(payload_hash, str)
+        and SHA256_RE.fullmatch(payload_hash) is not None
+        and _canonical_sha256(payload_core) != payload_hash
+    ):
+        failures.append(f"{label}:payload_sha256_mismatch")
+
+    summary_core = dict(payload_core)
+    summary_core.pop("summary_sha256", None)
+    if (
+        isinstance(summary_hash, str)
+        and SHA256_RE.fullmatch(summary_hash) is not None
+        and _canonical_sha256(summary_core) != summary_hash
+    ):
+        failures.append(f"{label}:summary_sha256_mismatch")
+    return failures
+
+
+def _verify_phase_c_prediction_trace(
+    output_root: Path,
+    trace: Any,
+    *,
+    label: str,
+) -> list[str]:
+    failures: list[str] = []
+    if not isinstance(trace, dict):
+        return [f"{label}:prediction_trace_not_object"]
+
+    raw_sha = trace.get("sha256")
+    content_sha = trace.get("canonical_jsonl_sha256")
+    row_count = trace.get("row_count")
+    if not isinstance(raw_sha, str) or SHA256_RE.fullmatch(raw_sha) is None:
+        failures.append(f"{label}:prediction_trace_invalid_sha256")
+    if not isinstance(content_sha, str) or SHA256_RE.fullmatch(content_sha) is None:
+        failures.append(f"{label}:prediction_trace_invalid_content_sha256")
+    if not isinstance(row_count, int) or isinstance(row_count, bool) or row_count < 0:
+        failures.append(f"{label}:prediction_trace_invalid_row_count")
+
+    try:
+        path = _safe_descriptor_path(output_root, trace)
+    except (TypeError, ValueError) as exc:
+        failures.append(
+            f"{label}:prediction_trace_invalid_path:{type(exc).__name__}"
+        )
+        return failures
+    if not path.is_file():
+        failures.append(f"{label}:prediction_trace_missing")
+        return failures
+
+    if (
+        isinstance(raw_sha, str)
+        and SHA256_RE.fullmatch(raw_sha) is not None
+        and _sha256_file(path) != raw_sha
+    ):
+        failures.append(f"{label}:prediction_trace_file_sha256_mismatch")
+
+    digest = hashlib.sha256()
+    observed_rows = 0
+    try:
+        with gzip.open(path, "rb") as handle:
+            for line in handle:
+                digest.update(line)
+                if line.strip():
+                    observed_rows += 1
+    except (OSError, EOFError) as exc:
+        failures.append(
+            f"{label}:prediction_trace_gzip_invalid:{type(exc).__name__}"
+        )
+        return failures
+
+    if (
+        isinstance(content_sha, str)
+        and SHA256_RE.fullmatch(content_sha) is not None
+        and digest.hexdigest() != content_sha
+    ):
+        failures.append(f"{label}:prediction_trace_content_sha256_mismatch")
+    if (
+        isinstance(row_count, int)
+        and not isinstance(row_count, bool)
+        and observed_rows != row_count
+    ):
+        failures.append(f"{label}:prediction_trace_row_count_mismatch")
+    return failures
+
+
+def _project_phase_c_evaluation(
+    summary: dict[str, Any],
+) -> dict[str, Any]:
+    projected = copy.deepcopy(summary)
+    projected.pop("payload_sha256", None)
+    projected.pop("summary_sha256", None)
+
+    if "primary_config_manifest_sha256" not in projected:
+        raise KeyError("primary_config_manifest_sha256")
+    if "phase_b_arm_manifest_sha256" not in projected:
+        raise KeyError("phase_b_arm_manifest_sha256")
+    projected["primary_config_manifest_sha256"] = PHASE_C_TRANSITIVE_IDENTITY
+    projected["phase_b_arm_manifest_sha256"] = PHASE_C_TRANSITIVE_IDENTITY
+
+    maintenance = projected.get("maintenance_summary")
+    if not isinstance(maintenance, dict):
+        raise TypeError("Phase-C maintenance_summary must be an object")
+    for field in PHASE_B_SUMMARY_TIMING_FIELDS:
+        maintenance.pop(field, None)
+    return projected
+
+
+def _project_phase_c_seed_manifest(
+    manifest: dict[str, Any],
+) -> dict[str, Any]:
+    projected = copy.deepcopy(manifest)
+    projected.pop("payload_sha256", None)
+    projected.pop("manifest_sha256", None)
+
+    for field in (
+        "primary_config_manifest_sha256",
+        "phase_a_run_manifest_sha256",
+        "phase_b_seed_manifest_sha256",
+    ):
+        if field not in projected:
+            raise KeyError(field)
+        projected[field] = PHASE_C_TRANSITIVE_IDENTITY
+
+    summaries = projected.get("arm_summary_sha256")
+    if not isinstance(summaries, dict):
+        raise TypeError("Phase-C arm_summary_sha256 must be an object")
+    if set(summaries) != set(ARM_NAMES):
+        raise ValueError("Phase-C arm summary keys differ from frozen arms")
+    for arm in ARM_NAMES:
+        summaries[arm] = PHASE_C_TRANSITIVE_IDENTITY
+    return projected
+
+
+def _load_required_manifest_hash(
+    path: Path,
+    *,
+    label: str,
+) -> tuple[str | None, list[str]]:
+    try:
+        payload = _load_json(path)
+    except (OSError, json.JSONDecodeError, TypeError, ValueError) as exc:
+        return None, [f"{label}:invalid:{type(exc).__name__}"]
+    value = payload.get("manifest_sha256")
+    if not isinstance(value, str) or SHA256_RE.fullmatch(value) is None:
+        return None, [f"{label}:invalid_manifest_sha256"]
+    return value, []
+
+
+def compare_phase_c_arm_output(
+    *,
+    artifact_root: Path,
+    correction_config: dict[str, Any],
+    arm: str,
+    label: str,
+) -> dict[str, Any]:
+    output_root = artifact_root / PHASE_C_CORRECTED_SUBDIR / "seed-0"
+    summary_path = output_root / f"{arm}_evaluation.json"
+    failures: list[str] = []
+    try:
+        summary = _load_json(summary_path)
+    except (OSError, json.JSONDecodeError, TypeError, ValueError) as exc:
+        return {
+            "arm": arm,
+            "pass": False,
+            "failures": [f"{label}:evaluation_invalid:{type(exc).__name__}"],
+            "mismatch_count": 0,
+            "mismatches": [],
+            "summary": None,
+            "projected": None,
+        }
+
+    failures.extend(
+        _verify_phase_c_evaluation_hashes(
+            summary,
+            label=f"{label}:{arm}",
+        )
+    )
+    if summary.get("seed") != 0:
+        failures.append(f"{label}:{arm}:seed_mismatch")
+    if summary.get("arm") != arm:
+        failures.append(f"{label}:{arm}:arm_mismatch")
+
+    config_hash = correction_config.get("manifest_sha256")
+    if summary.get("primary_config_manifest_sha256") != config_hash:
+        failures.append(f"{label}:{arm}:correction_config_binding_mismatch")
+
+    arm_manifest_path = (
+        artifact_root
+        / PHASE_B_SUBDIR
+        / "seed-0"
+        / arm
+        / "arm_manifest.json"
+    )
+    try:
+        arm_manifest = _load_json(arm_manifest_path)
+    except (OSError, json.JSONDecodeError, TypeError, ValueError) as exc:
+        failures.append(
+            f"{label}:{arm}:phase_b_arm_manifest_invalid:{type(exc).__name__}"
+        )
+        arm_manifest = {}
+    arm_manifest_hash = arm_manifest.get("manifest_sha256")
+    if summary.get("phase_b_arm_manifest_sha256") != arm_manifest_hash:
+        failures.append(f"{label}:{arm}:phase_b_arm_binding_mismatch")
+    if summary.get("maintenance_summary") != arm_manifest.get(
+        "maintenance_summary"
+    ):
+        failures.append(f"{label}:{arm}:maintenance_summary_binding_mismatch")
+
+    failures.extend(
+        _verify_phase_c_prediction_trace(
+            output_root,
+            summary.get("prediction_trace"),
+            label=f"{label}:{arm}",
+        )
+    )
+
+    projected: dict[str, Any] | None = None
+    try:
+        projected = _project_phase_c_evaluation(summary)
+    except (KeyError, TypeError, ValueError) as exc:
+        failures.append(
+            f"{label}:{arm}:evaluation_projection_invalid:"
+            f"{type(exc).__name__}:{exc}"
+        )
+    return {
+        "arm": arm,
+        "pass": not failures,
+        "failures": failures,
+        "mismatch_count": 0,
+        "mismatches": [],
+        "summary": summary,
+        "projected": projected,
+    }
+
+
+def compare_phase_c_corrected_output(
+    *,
+    accepted_root: Path,
+    fresh_root: Path,
+    accepted_config_path: Path,
+    fresh_config_path: Path,
+) -> dict[str, Any]:
+    failures: list[str] = []
+    try:
+        accepted_config = _load_json(accepted_config_path)
+    except (OSError, json.JSONDecodeError, TypeError, ValueError) as exc:
+        return {
+            "pass": False,
+            "failures": [f"accepted_correction_config_invalid:{type(exc).__name__}"],
+            "mismatch_count": 0,
+            "mismatches": [],
+            "arm_results": [],
+        }
+    try:
+        fresh_config = _load_json(fresh_config_path)
+    except (OSError, json.JSONDecodeError, TypeError, ValueError) as exc:
+        return {
+            "pass": False,
+            "failures": [f"fresh_correction_config_invalid:{type(exc).__name__}"],
+            "mismatch_count": 0,
+            "mismatches": [],
+            "arm_results": [],
+        }
+
+    accepted_arm_results = {
+        arm: compare_phase_c_arm_output(
+            artifact_root=accepted_root,
+            correction_config=accepted_config,
+            arm=arm,
+            label="accepted",
+        )
+        for arm in ARM_NAMES
+    }
+    fresh_arm_results = {
+        arm: compare_phase_c_arm_output(
+            artifact_root=fresh_root,
+            correction_config=fresh_config,
+            arm=arm,
+            label="fresh",
+        )
+        for arm in ARM_NAMES
+    }
+    failures.extend(
+        failure
+        for result in accepted_arm_results.values()
+        for failure in result["failures"]
+    )
+    failures.extend(
+        failure
+        for result in fresh_arm_results.values()
+        for failure in result["failures"]
+    )
+
+    arm_mismatches: list[str] = []
+    arm_summary_hashes: dict[str, dict[str, str | None]] = {}
+    for arm in ARM_NAMES:
+        accepted_result = accepted_arm_results[arm]
+        fresh_result = fresh_arm_results[arm]
+        accepted_projection = accepted_result["projected"]
+        fresh_projection = fresh_result["projected"]
+        if isinstance(accepted_projection, dict) and isinstance(
+            fresh_projection,
+            dict,
+        ):
+            accepted_sha = _canonical_sha256(accepted_projection)
+            fresh_sha = _canonical_sha256(fresh_projection)
+            if accepted_sha != fresh_sha:
+                arm_mismatches.extend(
+                    f"{arm}:{path}"
+                    for path in _difference_paths(
+                        accepted_projection,
+                        fresh_projection,
+                        f"{arm}_evaluation",
+                    )
+                )
+        accepted_summary = accepted_result["summary"]
+        fresh_summary = fresh_result["summary"]
+        arm_summary_hashes[arm] = {
+            "accepted": (
+                accepted_summary.get("summary_sha256")
+                if isinstance(accepted_summary, dict)
+                else None
+            ),
+            "fresh": (
+                fresh_summary.get("summary_sha256")
+                if isinstance(fresh_summary, dict)
+                else None
+            ),
+        }
+
+    accepted_output_root = (
+        accepted_root / PHASE_C_CORRECTED_SUBDIR / "seed-0"
+    )
+    fresh_output_root = fresh_root / PHASE_C_CORRECTED_SUBDIR / "seed-0"
+    try:
+        accepted_seed = _load_json(
+            accepted_output_root / "phase_c_seed_manifest.json"
+        )
+    except (OSError, json.JSONDecodeError, TypeError, ValueError) as exc:
+        failures.append(
+            f"accepted:phase_c_seed_manifest_invalid:{type(exc).__name__}"
+        )
+        accepted_seed = {}
+    try:
+        fresh_seed = _load_json(
+            fresh_output_root / "phase_c_seed_manifest.json"
+        )
+    except (OSError, json.JSONDecodeError, TypeError, ValueError) as exc:
+        failures.append(
+            f"fresh:phase_c_seed_manifest_invalid:{type(exc).__name__}"
+        )
+        fresh_seed = {}
+
+    if accepted_seed:
+        failures.extend(
+            _verify_run_manifest_hashes(
+                accepted_seed,
+                label="accepted_phase_c_seed",
+            )
+        )
+    if fresh_seed:
+        failures.extend(
+            _verify_run_manifest_hashes(
+                fresh_seed,
+                label="fresh_phase_c_seed",
+            )
+        )
+
+    for label, root, config, seed_manifest in (
+        ("accepted", accepted_root, accepted_config, accepted_seed),
+        ("fresh", fresh_root, fresh_config, fresh_seed),
+    ):
+        if not seed_manifest:
+            continue
+        if seed_manifest.get("seed") != 0:
+            failures.append(f"{label}:phase_c_seed_mismatch")
+        if seed_manifest.get("status") != "complete_offline_evaluation":
+            failures.append(f"{label}:phase_c_status_mismatch")
+        if (
+            seed_manifest.get("primary_config_manifest_sha256")
+            != config.get("manifest_sha256")
+        ):
+            failures.append(f"{label}:phase_c_config_binding_mismatch")
+
+        phase_a_hash, phase_a_failures = _load_required_manifest_hash(
+            root / PHASE_A_SUBDIR / "seed-0" / "run_manifest.json",
+            label=f"{label}:phase_a_seed0",
+        )
+        failures.extend(phase_a_failures)
+        if seed_manifest.get("phase_a_run_manifest_sha256") != phase_a_hash:
+            failures.append(f"{label}:phase_c_phase_a_binding_mismatch")
+
+        phase_b_hash, phase_b_failures = _load_required_manifest_hash(
+            root / PHASE_B_SUBDIR / "seed-0" / "phase_b_manifest.json",
+            label=f"{label}:phase_b_seed0",
+        )
+        failures.extend(phase_b_failures)
+        if seed_manifest.get("phase_b_seed_manifest_sha256") != phase_b_hash:
+            failures.append(f"{label}:phase_c_phase_b_binding_mismatch")
+
+        summaries = seed_manifest.get("arm_summary_sha256")
+        if not isinstance(summaries, dict) or set(summaries) != set(ARM_NAMES):
+            failures.append(f"{label}:phase_c_arm_summary_map_invalid")
+        else:
+            for arm in ARM_NAMES:
+                if summaries.get(arm) != arm_summary_hashes[arm][label]:
+                    failures.append(
+                        f"{label}:phase_c_arm_summary_binding_mismatch:{arm}"
+                    )
+
+    seed_mismatches: list[str] = []
+    try:
+        accepted_seed_projection = _project_phase_c_seed_manifest(
+            accepted_seed
+        )
+        fresh_seed_projection = _project_phase_c_seed_manifest(fresh_seed)
+        if _canonical_sha256(accepted_seed_projection) != _canonical_sha256(
+            fresh_seed_projection
+        ):
+            seed_mismatches = _difference_paths(
+                accepted_seed_projection,
+                fresh_seed_projection,
+                "phase_c_seed_manifest",
+            )
+    except (KeyError, TypeError, ValueError) as exc:
+        failures.append(
+            f"phase_c_seed_projection_invalid:{type(exc).__name__}:{exc}"
+        )
+
+    mismatches = arm_mismatches + seed_mismatches
+    arm_results = [
+        {
+            "arm": arm,
+            "accepted_pass": accepted_arm_results[arm]["pass"],
+            "fresh_pass": fresh_arm_results[arm]["pass"],
+            "mismatch_count": sum(
+                1
+                for item in arm_mismatches
+                if item.startswith(f"{arm}:")
+            ),
+        }
+        for arm in ARM_NAMES
+    ]
+    return {
+        "pass": not failures and not mismatches,
+        "failures": failures,
+        "mismatch_count": len(mismatches),
+        "mismatches": mismatches,
+        "arm_results": arm_results,
+        "projection": {
+            "normalized_fields": [
+                "evaluations.*.primary_config_manifest_sha256",
+                "evaluations.*.phase_b_arm_manifest_sha256",
+                "evaluations.*.maintenance_summary timing fields",
+                "phase_c_seed_manifest.primary_config_manifest_sha256",
+                "phase_c_seed_manifest.phase_a_run_manifest_sha256",
+                "phase_c_seed_manifest.phase_b_seed_manifest_sha256",
+                "phase_c_seed_manifest.arm_summary_sha256.*",
+            ],
+            "prediction_trace_identity_exact": True,
+            "scientific_output_exact": True,
+        },
+    }
+
+
 def compare_phase_a_seed(
     *,
     accepted_seed_root: Path,
@@ -1104,6 +1587,12 @@ def run(
         accepted_config_path=accepted_correction_config_path,
         fresh_config_path=fresh_correction_config_path,
     )
+    phase_c_output = compare_phase_c_corrected_output(
+        accepted_root=accepted_root,
+        fresh_root=fresh_root,
+        accepted_config_path=accepted_correction_config_path,
+        fresh_config_path=fresh_correction_config_path,
+    )
     mismatches = [
         {
             "phase": "phase_a",
@@ -1130,14 +1619,25 @@ def run(
                 "paths": phase_c_preconditions["mismatches"],
             }
         )
+    if phase_c_output["mismatches"]:
+        mismatches.append(
+            {
+                "phase": "phase_c_corrected_output",
+                "seed": 0,
+                "paths": phase_c_output["mismatches"],
+            }
+        )
     failures = (
         list(phase_a["failures"])
         + list(phase_b["failures"])
         + list(phase_c_preconditions["failures"])
+        + list(phase_c_output["failures"])
     )
-    blockers = ["phase_c_corrected_output_comparator_not_implemented"]
+    blockers = ["stage1_reconstruction_evidence_not_verified"]
     if not phase_c_preconditions["pass"]:
         blockers.append("phase_c_preconditions_failed")
+    if not phase_c_output["pass"]:
+        blockers.append("phase_c_corrected_output_failed")
 
     evidence: dict[str, Any] = {
         "audit_id": "stage9.5-6-replay-equivalence-comparison-v1",
@@ -1151,6 +1651,7 @@ def run(
             phase_a["mismatch_count"]
             + phase_b["mismatch_count"]
             + phase_c_preconditions["mismatch_count"]
+            + phase_c_output["mismatch_count"]
         ),
         "mismatches": mismatches,
         "failures": failures,
@@ -1169,15 +1670,22 @@ def run(
             "rerun_seed": 0,
             "preconditions_pass": phase_c_preconditions["pass"],
             "preconditions": phase_c_preconditions,
+            "corrected_output": phase_c_output,
             "original_failure_lineage_preserved": phase_c_preconditions[
                 "failed_lineage_preserved"
             ],
-            "corrected_rerun_complete": False,
-            "pass": False,
+            "corrected_rerun_complete": phase_c_output["pass"],
+            "pass": (
+                phase_c_preconditions["pass"]
+                and phase_c_output["pass"]
+            ),
             "status": (
-                "preconditions_verified_corrected_output_not_implemented"
-                if phase_c_preconditions["pass"]
-                else "preconditions_failed"
+                "corrected_output_verified_stage1_evidence_blocked"
+                if (
+                    phase_c_preconditions["pass"]
+                    and phase_c_output["pass"]
+                )
+                else "phase_c_comparison_failed"
             ),
         },
         "accepted_maintenance_archive_verified": phase_b["pass"],
@@ -1196,11 +1704,14 @@ def run(
             "c2ded83b8195b9321e715626c1f305f9627936e8"
         ),
         "unresolved_class_a": (
-            ["replay_equivalence_comparator_phase_c_corrected_output_not_implemented"]
-            if phase_c_preconditions["pass"]
+            ["stage1_reconstruction_evidence_not_verified"]
+            if (
+                phase_c_preconditions["pass"]
+                and phase_c_output["pass"]
+            )
             else [
-                "replay_equivalence_comparator_phase_c_preconditions_failed",
-                "replay_equivalence_comparator_phase_c_corrected_output_not_implemented",
+                "replay_equivalence_phase_c_comparison_failed",
+                "stage1_reconstruction_evidence_not_verified",
             ]
         ),
         "scientific_objects_modified": False,
@@ -1256,9 +1767,11 @@ def main() -> None:
         raise SystemExit("Stage 9.5-6 Phase-B replay comparison failed.")
     if not evidence["phase_c"]["preconditions_pass"]:
         raise SystemExit("Stage 9.5-6 Phase-C replay preconditions failed.")
+    if not evidence["phase_c"]["corrected_rerun_complete"]:
+        raise SystemExit("Stage 9.5-6 corrected Phase-C output comparison failed.")
     raise SystemExit(
-        "Stage 9.5-6 remains blocked: corrected Phase-C seed-0 output "
-        "comparator implementation is not yet frozen."
+        "Stage 9.5-6 remains blocked: Stage-1 historical-environment "
+        "reconstruction evidence is not yet machine-verified."
     )
 
 

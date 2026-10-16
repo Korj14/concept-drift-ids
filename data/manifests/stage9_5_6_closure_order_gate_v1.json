@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "contract_id": "stage9.5-6-closure-order-gate-v1",
+  "status": "prospectively_frozen_before_stage9_5_6_execution",
+  "closure_doc_path": "STAGE9_5_6_CLEAN_DETERMINISTIC_FULL_SEED_RERUN_CLOSURE.md",
+  "success_json_path": "results/audits/stage9_5_full_seed_rerun_v1/success.json",
+  "required_success_values": {
+    "audit_id": "stage9.5-6-clean-deterministic-full-seed-rerun-v1-success",
+    "status": "accepted_stage9_5_6_closure_evidence",
+    "stage9_5_1.status": "closed",
+    "stage9_5_1.identity_failures": 0,
+    "stage9_5_1.external_artifact_blockers": 0,
+    "same_head_stage9.conclusion": "success",
+    "replay_equivalence.protocol_id": "stage9.5-6-replay-equivalence-correction-v1_1",
+    "replay_equivalence.pass": true,
+    "replay_equivalence.phase_a_complete_seeds": [0, 1, 2, 3, 4],
+    "replay_equivalence.phase_b_complete_seeds": [0, 1, 2, 3, 4],
+    "replay_equivalence.original_phase_c_v1_seed0_failure_lineage_preserved": true,
+    "replay_equivalence.corrected_phase_c_seed0_rerun_complete": true,
+    "replay_equivalence.accepted_maintenance_archive_verified": true,
+    "unresolved_class_a": [],
+    "scientific_objects_modified": false,
+    "stage10_outcomes_accessed": false
+  },
+  "required_success_hash_fields": [
+    "artifact.report_canonical_sha256"
+  ],
+  "closure_doc_must_reference": [
+    "results/audits/stage9_5_full_seed_rerun_v1/success.json",
+    "stage9.5-6-replay-equivalence-correction-v1_1"
+  ],
+  "closure_doc_must_contain_report_canonical_sha256": true,
+  "unlock_rule": "All required files must exist and every contract check must pass. Missing, malformed, placeholder, incomplete, mismatched, or unlinked evidence remains locked."
+}

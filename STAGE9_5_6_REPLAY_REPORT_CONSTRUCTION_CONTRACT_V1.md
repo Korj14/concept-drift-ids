@@ -21,15 +21,19 @@ The deterministic replay-report finalizer is implemented and prospectively froze
 
 The remaining additional assurance blocker is therefore:
 
-`replay_equivalence_comparator_phase_c_corrected_output_not_implemented`
+`stage1_reconstruction_evidence_not_verified`
 
 This blocker is separate from the two external artifact blockers:
 
 - `system_a_checkpoint_bytes_missing`;
 - `stage8_large_artifact_archive_missing`.
 
-Recovery of those external artifacts does not by itself authorize Stage-9.5-6
-execution or closure.
+The Stage-1 blocker exists because replay protocol v1.1 requires reconstruction
+of the interim tables under the frozen historical environment before Phase A.
+No dedicated machine-verifiable Stage-1 reconstruction record is presently
+frozen. Downstream replay success must not be used as a substitute for that
+step. Recovery of the two external artifact families therefore does not by
+itself authorize Stage-9.5-6 execution or closure.
 
 ## Required producer identity
 
@@ -41,11 +45,9 @@ The report-construction pipeline is split into the frozen comparator identity
 `stage9.5-6-replay-equivalence-comparator-v1` and finalizer identity
 `stage9.5-6-replay-report-finalizer-v1`. The finalizer implementation and
 dedicated tests are committed. The comparator now has prospectively frozen
-Phase-A and Phase-B implementations plus the Phase-C failure-lineage and
-regenerated-correction-config precondition layer. Corrected Phase-C seed-0
-output comparison remains unimplemented and must be frozen before any replay
-outcomes are inspected. Neither layer may expose a manual override that can set
-`pass=true`.
+Phase-A, Phase-B, Phase-C failure-lineage/correction-config, and corrected
+Phase-C seed-0 output comparison layers. Neither layer may expose a manual
+override that can set `pass=true`.
 
 The successful report must carry, at minimum:
 
@@ -152,13 +154,33 @@ identities are then normalized. After raw self-hash verification,
 regenerated configs must otherwise match exactly under canonical recursive
 comparison.
 
-Corrected Phase-C execution outputs remain fail-closed. In particular,
-predictions, metrics, explanations, windows, recovery diagnostics, trigger
-diagnostics, retention probes, boundary/contamination controls, and lambda-one
-negative-control evidence remain exact. The prediction-trace writer uses an
-empty gzip filename, `mtime=0`, and compression level 9, so both the raw
-compressed trace SHA-256 and the canonical decompressed JSONL SHA-256 remain
-exact identities; there is no compression-diagnostic exclusion.
+Corrected Phase-C seed-0 output comparison is now implemented and
+prospectively frozen. Each arm evaluation first passes raw
+`payload_sha256` / `summary_sha256` verification and is rebound to its
+actual correction config, Phase-B arm manifest, copied Phase-B maintenance
+summary, and Phase-A `shared_identity.identity_sha256`. Prediction traces
+must remain path-contained and exact for compressed-file SHA-256,
+decompressed canonical JSONL SHA-256, row count, and the frozen scenario
+stream-row count.
+
+Only identities already proven to be downstream of the approved Phase-A /
+Phase-B diagnostic projections may be normalized:
+
+- arm-evaluation `primary_config_manifest_sha256`;
+- arm-evaluation `phase_b_arm_manifest_sha256`;
+- the six already-approved Phase-B maintenance-summary timing fields;
+- seed-manifest correction-config, Phase-A, Phase-B, and arm-summary raw hash
+  identities.
+
+After raw integrity and upstream binding checks, derived
+`payload_sha256`, `summary_sha256`, and seed `manifest_sha256` fields
+are removed from the comparison projection. Predictions, metrics,
+explanations, windows, recovery diagnostics, trigger diagnostics, retention
+probes, shared identity, boundary/contamination controls, lambda-one
+negative-control evidence, all non-timing maintenance content, and both
+prediction-trace identities remain exact. The prediction-trace writer uses an
+empty gzip filename, `mtime=0`, and compression level 9, so there is no
+compression-diagnostic exclusion.
 
 ## Derived-hash implementation boundary
 
@@ -167,19 +189,20 @@ change when only predeclared diagnostic fields change. Phase-A and Phase-B
 handling are now explicitly frozen as described above and are no longer
 implementation blockers.
 
-Phase-C correction-config and failure-lineage handling are now explicitly
-frozen and implemented. The remaining implementation boundary is the corrected
-seed-0 output layer: the comparator must remove only identities transitively
-dependent on the already-approved Phase-A/Phase-B diagnostic projections while
-keeping all scientific output and deterministic trace identities exact.
+Phase-C correction-config, failure-lineage, and corrected seed-0 output
+handling are now explicitly frozen and implemented. The replay comparator and
+report finalizer therefore no longer have an unimplemented Phase-A/B/C
+projection layer.
 
-Those remaining output-projection details must be frozen in code and tests
-**before** replay outcomes are inspected. They must not be inferred, relaxed,
-or expanded after a mismatch is observed.
+The remaining non-external execution boundary is replay step 1 from the v1.1
+protocol: Stage-1 interim tables must be reconstructed under the frozen
+historical environment and represented by machine-verifiable assurance
+evidence. That evidence must be frozen prospectively and may not be inferred
+from downstream Phase-A/B/C success alone.
 
 ## Fail-closed rules
 
-Until the remaining corrected Phase-C seed-0 output comparator logic is implemented, tested, and frozen:
+Until Stage-1 historical-environment reconstruction is represented by machine-verifiable evidence and the two external artifact prerequisites are recovered:
 
 - do not create a successful `replay_equivalence_report.json` manually;
 - do not treat aggregate agreement as a substitute for record-level comparison;

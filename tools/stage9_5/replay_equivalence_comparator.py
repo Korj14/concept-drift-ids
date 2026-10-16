@@ -1091,11 +1091,19 @@ def run(
     *,
     accepted_root: Path,
     fresh_root: Path,
+    accepted_correction_config_path: Path,
+    fresh_correction_config_path: Path,
     output_path: Path,
 ) -> dict[str, Any]:
     contract = _load_json(CONSTRUCTION_CONTRACT_PATH)
     phase_a = compare_phase_a(accepted_root=accepted_root, fresh_root=fresh_root)
     phase_b = compare_phase_b(accepted_root=accepted_root, fresh_root=fresh_root)
+    phase_c_preconditions = compare_phase_c_preconditions(
+        accepted_root=accepted_root,
+        fresh_root=fresh_root,
+        accepted_config_path=accepted_correction_config_path,
+        fresh_config_path=fresh_correction_config_path,
+    )
     mismatches = [
         {
             "phase": "phase_a",
@@ -1114,8 +1122,22 @@ def run(
         for item in phase_b["seed_results"]
         if item["mismatches"]
     )
-    failures = list(phase_a["failures"]) + list(phase_b["failures"])
-    blockers = ["phase_c_comparator_not_implemented"]
+    if phase_c_preconditions["mismatches"]:
+        mismatches.append(
+            {
+                "phase": "phase_c_preconditions",
+                "seed": 0,
+                "paths": phase_c_preconditions["mismatches"],
+            }
+        )
+    failures = (
+        list(phase_a["failures"])
+        + list(phase_b["failures"])
+        + list(phase_c_preconditions["failures"])
+    )
+    blockers = ["phase_c_corrected_output_comparator_not_implemented"]
+    if not phase_c_preconditions["pass"]:
+        blockers.append("phase_c_preconditions_failed")
 
     evidence: dict[str, Any] = {
         "audit_id": "stage9.5-6-replay-equivalence-comparison-v1",
@@ -1126,7 +1148,9 @@ def run(
         "comparison_complete": False,
         "source_evidence_complete": False,
         "mismatch_count": int(
-            phase_a["mismatch_count"] + phase_b["mismatch_count"]
+            phase_a["mismatch_count"]
+            + phase_b["mismatch_count"]
+            + phase_c_preconditions["mismatch_count"]
         ),
         "mismatches": mismatches,
         "failures": failures,
@@ -1143,14 +1167,24 @@ def run(
         },
         "phase_c": {
             "rerun_seed": 0,
-            "original_failure_lineage_preserved": False,
+            "preconditions_pass": phase_c_preconditions["pass"],
+            "preconditions": phase_c_preconditions,
+            "original_failure_lineage_preserved": phase_c_preconditions[
+                "failed_lineage_preserved"
+            ],
             "corrected_rerun_complete": False,
             "pass": False,
-            "status": "not_implemented_blocked",
+            "status": (
+                "preconditions_verified_corrected_output_not_implemented"
+                if phase_c_preconditions["pass"]
+                else "preconditions_failed"
+            ),
         },
         "accepted_maintenance_archive_verified": phase_b["pass"],
         "stage1_reconstructed_under_historical_environment": False,
-        "regenerated_correction_config_all_scientific_blocks_equal": False,
+        "regenerated_correction_config_all_scientific_blocks_equal": (
+            phase_c_preconditions["scientific_blocks_equal"]
+        ),
         "historical_heads": {
             "phase_a_b": "bfa14b942e4a5b2fbfa8aa3c43728a7f1cd81645",
             "correction_source": "79ddc4c6d6dea52c7cabc55a6d082448fc24fcf9",
@@ -1161,9 +1195,14 @@ def run(
         "accepted_stage8_evidence_commit": (
             "c2ded83b8195b9321e715626c1f305f9627936e8"
         ),
-        "unresolved_class_a": [
-            "replay_equivalence_comparator_phase_c_not_implemented",
-        ],
+        "unresolved_class_a": (
+            ["replay_equivalence_comparator_phase_c_corrected_output_not_implemented"]
+            if phase_c_preconditions["pass"]
+            else [
+                "replay_equivalence_comparator_phase_c_preconditions_failed",
+                "replay_equivalence_comparator_phase_c_corrected_output_not_implemented",
+            ]
+        ),
         "scientific_objects_modified": False,
         "stage10_outcomes_accessed": False,
         "construction_contract_id": contract["contract_id"],
@@ -1185,6 +1224,16 @@ def main() -> None:
     parser.add_argument("--accepted-root", type=Path, required=True)
     parser.add_argument("--fresh-root", type=Path, required=True)
     parser.add_argument(
+        "--accepted-correction-config",
+        type=Path,
+        required=True,
+    )
+    parser.add_argument(
+        "--fresh-correction-config",
+        type=Path,
+        required=True,
+    )
+    parser.add_argument(
         "--output",
         type=Path,
         default=Path(
@@ -1197,15 +1246,19 @@ def main() -> None:
     evidence = run(
         accepted_root=args.accepted_root,
         fresh_root=args.fresh_root,
+        accepted_correction_config_path=args.accepted_correction_config,
+        fresh_correction_config_path=args.fresh_correction_config,
         output_path=args.output,
     )
     if not evidence["phase_a"]["pass"]:
         raise SystemExit("Stage 9.5-6 Phase-A replay comparison failed.")
     if not evidence["phase_b"]["pass"]:
         raise SystemExit("Stage 9.5-6 Phase-B replay comparison failed.")
+    if not evidence["phase_c"]["preconditions_pass"]:
+        raise SystemExit("Stage 9.5-6 Phase-C replay preconditions failed.")
     raise SystemExit(
-        "Stage 9.5-6 remains blocked: Phase-C comparator implementation "
-        "is not yet frozen."
+        "Stage 9.5-6 remains blocked: corrected Phase-C seed-0 output "
+        "comparator implementation is not yet frozen."
     )
 
 

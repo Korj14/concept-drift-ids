@@ -243,3 +243,27 @@ This overlay records the present state after completion of the mandatory retrosp
 No unresolved System-B implementation defect blocks transition to C/D design freeze.
 
 All material primary C/D design controls affecting treatment definition, causal isolation, confirmatory analysis, runtime, and held-out access are now prospectively frozen. Any residual historical wording elsewhere in this register is superseded only where an explicit later accepted/frozen row records completion; it is not permission to reopen accepted System B.
+
+## Stage 9.5 independent-assurance gate overlay — 16 October 2026
+
+This overlay records the current assurance state without reopening accepted Stage-8/9 scientific evidence or earlier control rows.
+
+| Control | Current state |
+| --- | --- |
+| Stage 9.5 overall | **OPEN / BLOCKED** |
+| Stage 9.5-1 fresh-clone reconstruction | **0 repository/runtime/compact-evidence identity failures; 2 external-artifact blockers** |
+| External blocker 1 | `system_a_checkpoint_bytes_missing` — recover and SHA-256 verify the five original System-A checkpoint files; no retraining/regeneration/substitution |
+| External blocker 2 | `stage8_large_artifact_archive_missing` — recover and verify the original `artifacts/cd_primary_v1` archive; compact summaries are not a substitute for the frozen replay-equivalence target |
+| Stage 9.5-2 statistical oracle | **CLOSED** |
+| Stage 9.5-3 causal/information properties | **CLOSED** |
+| Stage 9.5-4 targeted mutations | **CLOSED — 11/11 frozen mutants killed** |
+| Stage 9.5-5 static assurance | **CLOSED; current discovery baseline 154 Ruff / 55 mypy remains triage-only and does not reopen the accepted scientific fingerprint set** |
+| Stage 9.5-6 historical rerun | **OPEN / BLOCKED** — also subject to the prospectively frozen replay-equivalence correction because historical upstream manifest hashes include non-replay-invariant runtime/timing diagnostics |
+| Stage 9.5-7 claim traceability | **HISTORICALLY EXECUTED / PROVISIONAL; NOT PROTOCOL-CLOSED** |
+| Stage 9.5-8 independent reporting | **HISTORICALLY EXECUTED / PROVISIONAL; NOT PROTOCOL-CLOSED** |
+| Stage 9.5-9 hostile review | **HISTORICALLY EXECUTED / PROVISIONAL; NOT PROTOCOL-CLOSED** |
+| Work-package order | **ENFORCED PROSPECTIVELY IN CI: 9.5-7/8/9 remain locked until valid 9.5-6 closure evidence exists** |
+| Stage 10 | **PROHIBITED until Stage 9.5 legitimately closes with zero unresolved Class-A defects** |
+
+Interpretation boundary: these assurance blockers concern reconstructibility/provenance and the literal historical replay gate. They do not by themselves establish that accepted Stage-8/9 numerical results are wrong, and they do not authorize replacement of accepted evidence with regenerated artifacts or summary-only approximations.
+

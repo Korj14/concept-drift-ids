@@ -81,6 +81,9 @@ def _contract(tmp_path: Path) -> Path:
                             "external_artifacts.stage8_large_artifact_archive.requirement_count": 145,
                             "external_artifacts.stage8_large_artifact_archive.verified_count": 145,
                         },
+                        "required_report_ancestor_success_fields": [
+                            ["repository_head", "audited_head"]
+                        ],
                     },
                     {
                         "path": "replay_report.json",
@@ -118,10 +121,16 @@ def _contract(tmp_path: Path) -> Path:
 
 
 def _success() -> dict[str, object]:
+    head = subprocess.run(
+        ["git", "rev-parse", "HEAD"],
+        check=True,
+        capture_output=True,
+        text=True,
+    ).stdout.strip()
     return {
         "audit_id": "stage9.5-6-clean-deterministic-full-seed-rerun-v1-success",
         "status": "accepted_stage9_5_6_closure_evidence",
-        "audited_head": "b" * 40,
+        "audited_head": head,
         "stage9_5_1": {
             "status": "closed",
             "identity_failures": 0,
@@ -133,7 +142,7 @@ def _success() -> dict[str, object]:
             "stage8_archive_verified_count": 145,
             "report_canonical_sha256": "a" * 64,
         },
-        "same_head_stage9": {"conclusion": "success", "head_sha": "b" * 40},
+        "same_head_stage9": {"conclusion": "success", "head_sha": head},
         "replay_equivalence": {
             "protocol_id": "stage9.5-6-replay-equivalence-correction-v1_1",
             "rerun_seed": 0,
@@ -169,6 +178,7 @@ def _write_recovery_report(
         "audit_id": "stage9.5-1-fresh-clone-reconstruction-v1_2",
         "status": "pass",
         "pass": True,
+        "repository_head": payload["audited_head"],
         "failures": [],
         "blockers": [],
         "external_artifacts": {
@@ -839,6 +849,55 @@ def test_duplicate_json_key_replay_report_remains_locked(
     assert report["later_packages_unlocked"] is False
     assert (
         "required_report_invalid:replay_report.json:ValueError"
+        in report["failures"]
+    )
+
+def test_recovery_report_head_not_in_replay_lineage_remains_locked(
+    tmp_path: Path,
+) -> None:
+    closure = tmp_path / "closure.md"
+    success_path = tmp_path / "success.json"
+    payload = _success()
+    recovery_hash = _write_recovery_report(tmp_path, payload)
+    replay_hash = _write_replay_report(tmp_path, payload)
+
+    report_path = tmp_path / "recovery_report.json"
+    report_payload = json.loads(report_path.read_text(encoding="utf-8"))
+    report_payload["repository_head"] = "f" * 40
+    core = dict(report_payload)
+    core.pop("canonical_sha256", None)
+    tampered_hash = _canonical_json_hash(core)
+    report_payload["canonical_sha256"] = tampered_hash
+    report_path.write_text(
+        json.dumps(report_payload, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+    stage9_5_1 = payload["stage9_5_1"]
+    assert isinstance(stage9_5_1, dict)
+    stage9_5_1["report_canonical_sha256"] = tampered_hash
+    success_path.write_text(json.dumps(payload), encoding="utf-8")
+    closure.write_text(
+        "success.json\n"
+        "stage9.5-6-replay-equivalence-correction-v1_1\n"
+        "recovery_report.json\n"
+        "replay_report.json\n"
+        + replay_hash
+        + "\n"
+        + tampered_hash
+        + "\n",
+        encoding="utf-8",
+    )
+
+    report = evaluate(
+        contract_path=_contract(tmp_path),
+        closure_doc=closure,
+        success_json=success_path,
+        evidence_root=tmp_path,
+    )
+    assert report["later_packages_unlocked"] is False
+    assert (
+        "report_head_not_ancestor:recovery_report.json:"
+        "repository_head->audited_head"
         in report["failures"]
     )
 

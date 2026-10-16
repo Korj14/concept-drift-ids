@@ -8,8 +8,11 @@
   "deterministic_comparator_required": true,
   "deterministic_producer": {
     "producer_id": "stage9.5-6-replay-equivalence-assurance-v1",
-    "implementation_status": "not_implemented_blocked",
-    "implementation_must_be_frozen_before_replay_outcomes": true,
+    "comparator_id": "stage9.5-6-replay-equivalence-comparator-v1",
+    "finalizer_id": "stage9.5-6-replay-report-finalizer-v1",
+    "comparator_status": "not_implemented_blocked",
+    "finalizer_status": "implemented_prospectively_frozen",
+    "comparator_and_finalizer_must_be_frozen_before_replay_outcomes": true,
     "post_outcome_projection_changes_permitted": false
   },
   "external_prerequisites": {
@@ -102,10 +105,49 @@
     "manual_boolean_override_permitted": false
   },
   "current_blocker": {
-    "id": "replay_report_deterministic_producer_not_implemented",
-    "effect": "Stage 9.5-6 success report construction remains blocked even if external artifacts are recovered until the deterministic comparator/producer and tests are prospectively frozen."
+    "id": "replay_equivalence_comparator_not_implemented",
+    "effect": "Stage 9.5-6 remains blocked after finalizer implementation until the deterministic Phase-A/B/C comparator, including explicit self-/transitive-hash projection handling and dedicated tests, is prospectively frozen before recovered-artifact replay outcomes are inspected."
   },
   "scientific_objects_modified": false,
   "stage8_9_replacement": false,
-  "stage10_execution_permitted": false
+  "stage10_execution_permitted": false,
+  "comparison_evidence_contract": {
+    "audit_id": "stage9.5-6-replay-equivalence-comparison-v1",
+    "schema_version": 1,
+    "producer_id": "stage9.5-6-replay-equivalence-comparator-v1",
+    "manual_override_used": false,
+    "comparison_complete": true,
+    "source_evidence_complete": true,
+    "mismatch_count": 0,
+    "mismatches": [],
+    "failures": [],
+    "blockers": [],
+    "phase_a.complete_seeds": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "phase_b.complete_seeds": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "phase_c.rerun_seed": 0,
+    "phase_c.original_failure_lineage_preserved": true,
+    "phase_c.corrected_rerun_complete": true,
+    "accepted_maintenance_archive_verified": true,
+    "stage1_reconstructed_under_historical_environment": true,
+    "regenerated_correction_config_all_scientific_blocks_equal": true,
+    "historical_heads.phase_a_b": "bfa14b942e4a5b2fbfa8aa3c43728a7f1cd81645",
+    "historical_heads.correction_source": "79ddc4c6d6dea52c7cabc55a6d082448fc24fcf9",
+    "accepted_correction_manifest_sha256": "d380fce5f9db8f0b639dc999298a263b10a10a3d02e35def226a121d098e2222",
+    "accepted_stage8_evidence_commit": "c2ded83b8195b9321e715626c1f305f9627936e8",
+    "unresolved_class_a": [],
+    "scientific_objects_modified": false,
+    "stage10_outcomes_accessed": false
+  }
 }

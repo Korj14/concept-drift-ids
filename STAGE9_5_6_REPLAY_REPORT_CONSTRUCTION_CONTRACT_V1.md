@@ -21,7 +21,7 @@ The deterministic replay-report finalizer is implemented and prospectively froze
 
 The remaining additional assurance blocker is therefore:
 
-`replay_equivalence_comparator_phase_b_c_not_implemented`
+`replay_equivalence_comparator_phase_c_not_implemented`
 
 This blocker is separate from the two external artifact blockers:
 
@@ -40,10 +40,9 @@ The future deterministic producer is frozen to the identity:
 The report-construction pipeline is split into the frozen comparator identity
 `stage9.5-6-replay-equivalence-comparator-v1` and finalizer identity
 `stage9.5-6-replay-report-finalizer-v1`. The finalizer implementation and
-dedicated tests are committed. The comparator now has a prospectively frozen
-Phase-A implementation and dedicated tests; Phase-B and Phase-C comparison
-remain unimplemented and must be frozen before any replay outcomes are
-inspected. Neither layer may expose a manual override that can set `pass=true`.
+dedicated tests are committed. The comparator now has prospectively frozen Phase-A and Phase-B
+implementations with dedicated tests; Phase-C comparison remains unimplemented
+and must be frozen before any replay outcomes are inspected. Neither layer may expose a manual override that can set `pass=true`.
 
 The successful report must carry, at minimum:
 
@@ -86,9 +85,45 @@ equality. All descriptor hashes, checkpoint identities, runtime fields other
 than the three above, protocol/configuration fields, and scientific content
 remain exact.
 
-For Phase B, all five seeds and all three arms are required. The original
-accepted `maintenance.jsonl` records are required. Only the predeclared
-timing fields in the v1.1 protocol may be projected away.
+For Phase B, all five seeds and all three arms are required. The comparator
+is now implemented and prospectively frozen in the same comparator module and
+test file. The original accepted `maintenance.jsonl` records remain mandatory.
+
+For each arm, raw `payload_sha256` and `manifest_sha256` values are verified
+first, every file descriptor is constrained to the arm root, and every
+descriptor SHA-256 is checked against the referenced bytes. Initial state,
+final state, and all version-file descriptors remain exact.
+
+The ordered maintenance records are then compared after removing only the
+predeclared timing fields:
+
+- `shap_seconds`;
+- `surrogate_seconds`;
+- `lifecycle_seconds`;
+- `generation_payload.timing_seconds`.
+
+The arm-level maintenance summary removes only:
+
+- `compute_seconds`;
+- `shap_seconds`;
+- `surrogate_seconds`;
+- `lifecycle_seconds`;
+- `compute_seconds_per_opportunity`;
+- `compute_seconds_per_publication`.
+
+After raw integrity verification, the arm projection removes the raw
+`files.maintenance.sha256`, `manifest_sha256`, and `payload_sha256`
+identities because those hashes are transitively timing-dependent. No other
+arm-level fields are relaxed.
+
+At the seed-level Phase-B manifest, each arm descriptor's raw
+`sha256` and `manifest_sha256` values are likewise removed only after the
+referenced arm manifest has passed raw integrity verification and projected
+arm equality. The seed manifest's own `payload_sha256` and
+`manifest_sha256` are then removed for projected equality. All other fields
+remain exact, including `git_commit`, configuration identities, all shared
+Phase-A identities, operator identity, descriptor paths,
+`primary_boundary_scored`, and `arm_isolation_sha256`.
 
 For Phase C, the frozen rerun seed is seed 0. The original failed-v1 seed-0
 lineage, regenerated correction-config scientific-block equality, corrected
@@ -98,18 +133,18 @@ probes, and other non-diagnostic scientific fields remain fail-closed.
 ## Derived-hash implementation boundary
 
 The accepted manifests contain self-hashes and transitive hashes that can
-change when only predeclared diagnostic fields change. Phase-A handling is now
-explicitly frozen as described above and is no longer an implementation
-blocker.
+change when only predeclared diagnostic fields change. Phase-A and Phase-B
+handling are now explicitly frozen as described above and are no longer
+implementation blockers.
 
-Phase-B and Phase-C still require their own deterministic self-/transitive-hash
-projection rules. Those implementation details must be frozen in code and tests
-**before** replay outcomes are inspected. They must not be inferred, relaxed,
-or expanded after a mismatch is observed.
+Phase-C still requires its own deterministic self-/transitive-hash projection
+rules. Those implementation details must be frozen in code and tests **before**
+replay outcomes are inspected. They must not be inferred, relaxed, or expanded
+after a mismatch is observed.
 
 ## Fail-closed rules
 
-Until the remaining deterministic Phase-B and Phase-C comparator logic is implemented, tested, and frozen:
+Until the remaining deterministic Phase-C comparator logic is implemented, tested, and frozen:
 
 - do not create a successful `replay_equivalence_report.json` manually;
 - do not treat aggregate agreement as a substitute for record-level comparison;

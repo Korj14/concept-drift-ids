@@ -267,6 +267,56 @@ def evaluate(
                     f"{report_field}!={success_field}"
                 )
 
+        for pair in binding.get("required_report_ancestor_success_fields", []):
+            if not isinstance(pair, list) or len(pair) != 2:
+                report["failures"].append(
+                    f"invalid_report_success_ancestor_field_pair:{relative}"
+                )
+                continue
+            report_field, success_field = pair
+            if not isinstance(report_field, str) or not isinstance(success_field, str):
+                report["failures"].append(
+                    f"invalid_report_success_ancestor_field_pair:{relative}"
+                )
+                continue
+            try:
+                report_value = _get_path(report_payload, report_field)
+            except KeyError:
+                report["failures"].append(
+                    f"required_report_missing_field:{relative}:{report_field}"
+                )
+                continue
+            try:
+                success_value = _get_path(success_payload, success_field)
+            except KeyError:
+                report["failures"].append(
+                    f"missing_success_field:{success_field}"
+                )
+                continue
+            if (
+                not isinstance(report_value, str)
+                or SHA40_RE.fullmatch(report_value) is None
+                or not isinstance(success_value, str)
+                or SHA40_RE.fullmatch(success_value) is None
+            ):
+                report["failures"].append(
+                    f"invalid_report_success_ancestor_sha:{relative}:"
+                    f"{report_field}->{success_field}"
+                )
+                continue
+            result = subprocess.run(
+                ["git", "merge-base", "--is-ancestor", report_value, success_value],
+                cwd=PROJECT_ROOT,
+                check=False,
+                capture_output=True,
+                text=True,
+            )
+            if result.returncode != 0:
+                report["failures"].append(
+                    f"report_head_not_ancestor:{relative}:"
+                    f"{report_field}->{success_field}"
+                )
+
     try:
         closure_text = closure.read_text(encoding="utf-8")
     except (OSError, UnicodeDecodeError) as exc:

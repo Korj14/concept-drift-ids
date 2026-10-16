@@ -36,3 +36,19 @@ Because 9.5-1 explicitly requires System-A identity verification, missing checkp
 Recovery classification is fail-closed: when no checkpoint recovery is supplied and no checkpoint bytes are present, absence remains the external blocker `system_a_checkpoint_bytes_missing`; once a checkpoint root is supplied (or partial local checkpoint bytes are present), any missing seed is a recovery/identity failure, and any hash mismatch is likewise a failure. The Stage-8 large archive follows the same distinction: absent root is an external blocker, while a supplied incomplete or mismatched root is an identity failure.
 
 This is an assurance/retrievability finding, not a scientific retuning opportunity. Checkpoints may not be regenerated and substituted merely because regenerated weights appear similar; the frozen byte identities remain authoritative unless a prospectively documented assurance disposition establishes a different verification object.
+
+## Authoritative recovery verification
+
+When the original external bytes are recovered, verify them from a clean historical-runtime environment with the existing fail-closed CLI rather than copying them into Git:
+
+```bash
+python tools/stage9_5/fresh_clone_reconstruction.py \
+  --output-dir artifacts/stage9_5_v1_2/fresh_clone_reconstruction \
+  --checkpoint-root <directory-containing-seed_0.pt-through-seed_4.pt> \
+  --stage8-archive-root <recovered-artifacts-cd_primary_v1-root>
+```
+
+The command verifies the five checkpoint SHA-256 identities and every descriptor-linked required Stage-8 heavy file, then writes `fresh_clone_reconstruction_report.json` and the companion Markdown report under the selected output directory. Preserve those outputs unchanged as assurance evidence. Do not commit recovered heavy bytes merely to satisfy the verifier.
+
+A successful Stage 9.5-1 recovery verification removes the external-artifact blockers only. It does not itself close Stage 9.5-6, does not replace the accepted Stage-8/9 evidence, and does not authorize Stage-10 treatment execution; the frozen replay-equivalence v1.1 procedure and work-package ordering still apply.
+

@@ -102,7 +102,12 @@ def _contract(tmp_path: Path) -> Path:
                             "unresolved_class_a": [],
                             "scientific_objects_modified": False,
                             "stage10_outcomes_accessed": False,
+                            "failures": [],
+                            "blockers": [],
                         },
+                        "required_equal_success_fields": [
+                            ["audited_head", "audited_head"]
+                        ],
                     },
                 ],
             }
@@ -195,6 +200,9 @@ def _write_replay_report(tmp_path: Path, payload: dict[str, object]) -> str:
         "audit_id": "stage9.5-6-clean-deterministic-full-seed-rerun-v1",
         "status": "pass",
         "pass": True,
+        "audited_head": payload["audited_head"],
+        "failures": [],
+        "blockers": [],
         "replay_equivalence": json.loads(json.dumps(replay)),
         "unresolved_class_a": [],
         "scientific_objects_modified": False,
@@ -617,4 +625,98 @@ def test_tampered_replay_report_hash_remains_locked(tmp_path: Path) -> None:
     )
     assert report["later_packages_unlocked"] is False
     assert "required_report_hash_mismatch:replay_report.json" in report["failures"]
+
+def test_replay_report_audited_head_mismatch_remains_locked(
+    tmp_path: Path,
+) -> None:
+    closure = tmp_path / "closure.md"
+    success_path = tmp_path / "success.json"
+    payload = _success()
+    recovery_hash = _write_recovery_report(tmp_path, payload)
+    replay_hash = _write_replay_report(tmp_path, payload)
+    report_path = tmp_path / "replay_report.json"
+    report_payload = json.loads(report_path.read_text(encoding="utf-8"))
+    report_payload["audited_head"] = "c" * 40
+    core = dict(report_payload)
+    core.pop("canonical_sha256", None)
+    tampered_hash = _canonical_json_hash(core)
+    report_payload["canonical_sha256"] = tampered_hash
+    report_path.write_text(
+        json.dumps(report_payload, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+    artifact = payload["artifact"]
+    assert isinstance(artifact, dict)
+    artifact["report_canonical_sha256"] = tampered_hash
+    success_path.write_text(json.dumps(payload), encoding="utf-8")
+    closure.write_text(
+        "success.json\n"
+        "stage9.5-6-replay-equivalence-correction-v1_1\n"
+        "recovery_report.json\n"
+        "replay_report.json\n"
+        + tampered_hash
+        + "\n"
+        + recovery_hash
+        + "\n",
+        encoding="utf-8",
+    )
+
+    report = evaluate(
+        contract_path=_contract(tmp_path),
+        closure_doc=closure,
+        success_json=success_path,
+        evidence_root=tmp_path,
+    )
+    assert report["later_packages_unlocked"] is False
+    assert (
+        "report_success_field_mismatch:replay_report.json:"
+        "audited_head!=audited_head"
+        in report["failures"]
+    )
+
+
+def test_replay_report_hidden_failure_remains_locked(tmp_path: Path) -> None:
+    closure = tmp_path / "closure.md"
+    success_path = tmp_path / "success.json"
+    payload = _success()
+    recovery_hash = _write_recovery_report(tmp_path, payload)
+    _write_replay_report(tmp_path, payload)
+    report_path = tmp_path / "replay_report.json"
+    report_payload = json.loads(report_path.read_text(encoding="utf-8"))
+    report_payload["failures"] = ["unexpected_replay_mismatch"]
+    core = dict(report_payload)
+    core.pop("canonical_sha256", None)
+    tampered_hash = _canonical_json_hash(core)
+    report_payload["canonical_sha256"] = tampered_hash
+    report_path.write_text(
+        json.dumps(report_payload, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+    artifact = payload["artifact"]
+    assert isinstance(artifact, dict)
+    artifact["report_canonical_sha256"] = tampered_hash
+    success_path.write_text(json.dumps(payload), encoding="utf-8")
+    closure.write_text(
+        "success.json\n"
+        "stage9.5-6-replay-equivalence-correction-v1_1\n"
+        "recovery_report.json\n"
+        "replay_report.json\n"
+        + tampered_hash
+        + "\n"
+        + recovery_hash
+        + "\n",
+        encoding="utf-8",
+    )
+
+    report = evaluate(
+        contract_path=_contract(tmp_path),
+        closure_doc=closure,
+        success_json=success_path,
+        evidence_root=tmp_path,
+    )
+    assert report["later_packages_unlocked"] is False
+    assert (
+        "required_report_value_mismatch:replay_report.json:failures"
+        in report["failures"]
+    )
 

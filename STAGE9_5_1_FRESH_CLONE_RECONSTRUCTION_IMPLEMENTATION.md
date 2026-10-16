@@ -33,4 +33,6 @@ The five frozen System-A checkpoint files are also outside Git. Their paths and 
 
 Because 9.5-1 explicitly requires System-A identity verification, missing checkpoint bytes are a blocking reconstruction finding. The first clean-clone execution is therefore expected to fail closed unless an external checkpoint root containing the exact five frozen files is supplied.
 
+Recovery classification is fail-closed: when no checkpoint recovery is supplied and no checkpoint bytes are present, absence remains the external blocker `system_a_checkpoint_bytes_missing`; once a checkpoint root is supplied (or partial local checkpoint bytes are present), any missing seed is a recovery/identity failure, and any hash mismatch is likewise a failure. The Stage-8 large archive follows the same distinction: absent root is an external blocker, while a supplied incomplete or mismatched root is an identity failure.
+
 This is an assurance/retrievability finding, not a scientific retuning opportunity. Checkpoints may not be regenerated and substituted merely because regenerated weights appear similar; the frozen byte identities remain authoritative unless a prospectively documented assurance disposition establishes a different verification object.

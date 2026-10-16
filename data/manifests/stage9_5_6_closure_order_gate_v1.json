@@ -58,10 +58,11 @@
   ],
   "closure_doc_must_reference": [
     "results/audits/stage9_5_full_seed_rerun_v1/success.json",
-    "stage9.5-6-replay-equivalence-correction-v1_1"
+    "stage9.5-6-replay-equivalence-correction-v1_1",
+    "results/audits/stage9_5_full_seed_rerun_v1/stage9_5_1_recovery_report.json"
   ],
   "closure_doc_must_contain_report_canonical_sha256": true,
-  "unlock_rule": "All required files must exist and every contract check must pass. The success record must bind the rerun to the frozen historical replay identities, a same-head Stage-9 success, and a successful Stage-9.5-1 recovery report with all five checkpoint seeds verified and all 145 descriptor-linked Stage-8 heavy files verified. Both the Stage-9.5-6 report hash and Stage-9.5-1 recovery-report hash must be linked from the closure document. Its audited head must be a valid ancestor of the current assurance head. Missing, malformed, placeholder, incomplete, mismatched, unlinked, or historically misbound evidence remains locked.",
+  "unlock_rule": "All required files must exist and every contract check must pass. The success record must bind the rerun to the frozen historical replay identities, a same-head Stage-9 success, and a successful Stage-9.5-1 recovery report with all five checkpoint seeds verified and all 145 descriptor-linked Stage-8 heavy files verified. The preserved small Stage-9.5-1 recovery JSON must be committed at the frozen report path, its embedded canonical hash must recompute exactly and equal the hash in success.json, and its audit/status/seed/archive fields must satisfy the frozen contract. Both the Stage-9.5-6 report hash and Stage-9.5-1 recovery-report hash must be linked from the closure document. Its audited head must be a valid ancestor of the current assurance head. Missing, malformed, placeholder, incomplete, mismatched, unlinked, or historically misbound evidence remains locked.",
   "required_equal_fields": [
     [
       "audited_head",
@@ -77,5 +78,28 @@
     "replay_equivalence.historical_heads.phase_a_b",
     "replay_equivalence.historical_heads.correction_source",
     "replay_equivalence.accepted_stage8_evidence_commit"
+  ],
+  "required_canonical_json_reports": [
+    {
+      "path": "results/audits/stage9_5_full_seed_rerun_v1/stage9_5_1_recovery_report.json",
+      "success_hash_field": "stage9_5_1.report_canonical_sha256",
+      "embedded_hash_field": "canonical_sha256",
+      "required_values": {
+        "audit_id": "stage9.5-1-fresh-clone-reconstruction-v1_2",
+        "status": "pass",
+        "pass": true,
+        "failures": [],
+        "blockers": [],
+        "external_artifacts.system_a_checkpoints.verified_seeds": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "external_artifacts.stage8_large_artifact_archive.requirement_count": 145,
+        "external_artifacts.stage8_large_artifact_archive.verified_count": 145
+      }
+    }
   ]
 }

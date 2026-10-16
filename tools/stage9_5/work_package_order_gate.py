@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import json
 import re
+import subprocess
 from pathlib import Path
 from typing import Any
 
@@ -11,6 +12,7 @@ CONTRACT_PATH = (
     PROJECT_ROOT / "data" / "manifests" / "stage9_5_6_closure_order_gate_v1.json"
 )
 SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
+SHA40_RE = re.compile(r"^[0-9a-f]{40}$")
 
 
 def _load_json(path: Path) -> dict[str, Any]:
@@ -76,6 +78,50 @@ def evaluate(
             continue
         if actual != expected:
             report["failures"].append(f"success_value_mismatch:{dotted}")
+
+    for dotted in contract.get("required_sha40_fields", []):
+        try:
+            value = _get_path(success_payload, dotted)
+        except KeyError:
+            report["failures"].append(f"missing_success_sha40_field:{dotted}")
+            continue
+        if not isinstance(value, str) or SHA40_RE.fullmatch(value) is None:
+            report["failures"].append(f"invalid_success_sha40:{dotted}")
+
+    for pair in contract.get("required_equal_fields", []):
+        if not isinstance(pair, list) or len(pair) != 2:
+            report["failures"].append("invalid_contract_equal_field_pair")
+            continue
+        left_name, right_name = pair
+        try:
+            left = _get_path(success_payload, left_name)
+            right = _get_path(success_payload, right_name)
+        except KeyError as exc:
+            report["failures"].append(f"missing_equal_field:{exc.args[0]}")
+            continue
+        if left != right:
+            report["failures"].append(
+                f"success_field_mismatch:{left_name}!={right_name}"
+            )
+
+    for dotted in contract.get("required_git_ancestor_fields", []):
+        try:
+            value = _get_path(success_payload, dotted)
+        except KeyError:
+            report["failures"].append(f"missing_git_ancestor_field:{dotted}")
+            continue
+        if not isinstance(value, str) or SHA40_RE.fullmatch(value) is None:
+            report["failures"].append(f"invalid_git_ancestor_sha:{dotted}")
+            continue
+        result = subprocess.run(
+            ["git", "merge-base", "--is-ancestor", value, "HEAD"],
+            cwd=PROJECT_ROOT,
+            check=False,
+            capture_output=True,
+            text=True,
+        )
+        if result.returncode != 0:
+            report["failures"].append(f"audited_head_not_ancestor:{dotted}")
 
     report_hashes: list[str] = []
     for dotted in contract["required_success_hash_fields"]:

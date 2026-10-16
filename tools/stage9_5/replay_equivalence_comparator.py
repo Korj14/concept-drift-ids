@@ -780,11 +780,23 @@ def _verify_phase_c_failed_lineage(
     *,
     accepted_root: Path,
     fresh_root: Path,
+    expected_identity: dict[str, Any],
 ) -> dict[str, Any]:
     accepted_dir = accepted_root / PHASE_C_FAILED_SUBDIR / "seed-0"
     fresh_dir = fresh_root / PHASE_C_FAILED_SUBDIR / "seed-0"
     expected_entries = ["attempt.json", "failure.json"]
     failures: list[str] = []
+
+    expected_files = {
+        "attempt.json": (
+            expected_identity.get("attempt_file_sha256"),
+            expected_identity.get("attempt_payload_sha256"),
+        ),
+        "failure.json": (
+            expected_identity.get("failure_file_sha256"),
+            expected_identity.get("failure_payload_sha256"),
+        ),
+    }
 
     for label, root in (("accepted", accepted_dir), ("fresh", fresh_dir)):
         if not root.is_dir():
@@ -796,6 +808,13 @@ def _verify_phase_c_failed_lineage(
             continue
         for name in expected_entries:
             path = root / name
+            expected_file_sha, expected_payload_sha = expected_files[name]
+            if (
+                not isinstance(expected_file_sha, str)
+                or SHA256_RE.fullmatch(expected_file_sha) is None
+                or _sha256_file(path) != expected_file_sha
+            ):
+                failures.append(f"{label}:{name}:accepted_file_identity_mismatch")
             try:
                 payload = _load_json(path)
             except (OSError, json.JSONDecodeError, TypeError, ValueError) as exc:
@@ -806,19 +825,19 @@ def _verify_phase_c_failed_lineage(
             payload_hash = payload.get("payload_sha256")
             core = dict(payload)
             core.pop("payload_sha256", None)
+            actual_payload_sha = _canonical_sha256(core)
             if (
                 not isinstance(payload_hash, str)
                 or SHA256_RE.fullmatch(payload_hash) is None
-                or _canonical_sha256(core) != payload_hash
+                or actual_payload_sha != payload_hash
             ):
                 failures.append(f"{label}:{name}:payload_sha256_mismatch")
-
-    if not failures:
-        for name in expected_entries:
-            accepted_path = accepted_dir / name
-            fresh_path = fresh_dir / name
-            if _sha256_file(accepted_path) != _sha256_file(fresh_path):
-                failures.append(f"failed_lineage_file_mismatch:{name}")
+            if (
+                not isinstance(expected_payload_sha, str)
+                or SHA256_RE.fullmatch(expected_payload_sha) is None
+                or actual_payload_sha != expected_payload_sha
+            ):
+                failures.append(f"{label}:{name}:accepted_payload_identity_mismatch")
 
     return {
         "pass": not failures,
@@ -891,9 +910,20 @@ def compare_phase_c_preconditions(
         )
     )
 
+    accepted_correction = accepted.get("correction")
+    expected_failed = (
+        accepted_correction.get("failed_phase_c_v1")
+        if isinstance(accepted_correction, dict)
+        else None
+    )
+    if not isinstance(expected_failed, dict):
+        failures.append("accepted_correction_failed_lineage_identity_missing")
+        expected_failed = {}
+
     lineage = _verify_phase_c_failed_lineage(
         accepted_root=accepted_root,
         fresh_root=fresh_root,
+        expected_identity=expected_failed,
     )
     failures.extend(lineage["failures"])
 

@@ -63,7 +63,7 @@
     "results/audits/stage9_5_full_seed_rerun_v1/replay_equivalence_report.json"
   ],
   "closure_doc_must_contain_report_canonical_sha256": true,
-  "unlock_rule": "All required files must exist and every contract check must pass. The success record must bind the rerun to the frozen historical replay identities, a same-head Stage-9 success, and a successful Stage-9.5-1 recovery report with all five checkpoint seeds verified and all 145 descriptor-linked Stage-8 heavy files verified. The preserved small Stage-9.5-1 recovery JSON and Stage-9.5-6 replay-equivalence JSON must be committed unchanged at their frozen audit paths; the gate recomputes each embedded canonical hash and verifies its frozen fields directly. Their hashes must equal the corresponding hashes in success.json and be linked from the closure document. The audited head must be a valid ancestor of the current assurance head. Missing, malformed, placeholder, incomplete, mismatched, unlinked, or historically misbound evidence remains locked.",
+  "unlock_rule": "All required files must exist and every contract check must pass. The success record must bind the rerun to the frozen historical replay identities, a same-head Stage-9 success, and a successful Stage-9.5-1 recovery report with all five checkpoint seeds verified and all 145 descriptor-linked Stage-8 heavy files verified. The preserved small Stage-9.5-1 recovery JSON and Stage-9.5-6 replay-equivalence JSON must be committed unchanged at their frozen audit paths; the gate recomputes each embedded canonical hash and verifies its frozen fields directly. The replay report must also carry the same audited_head as success.json and explicitly contain zero failures and zero blockers. Their hashes must equal the corresponding hashes in success.json and be linked from the closure document. The audited head must be a valid ancestor of the current assurance head. Missing, malformed, placeholder, incomplete, mismatched, unlinked, or historically misbound evidence remains locked.",
   "required_equal_fields": [
     [
       "audited_head",
@@ -137,8 +137,16 @@
         "replay_equivalence.accepted_stage8_evidence_commit": "c2ded83b8195b9321e715626c1f305f9627936e8",
         "unresolved_class_a": [],
         "scientific_objects_modified": false,
-        "stage10_outcomes_accessed": false
-      }
+        "stage10_outcomes_accessed": false,
+        "failures": [],
+        "blockers": []
+      },
+      "required_equal_success_fields": [
+        [
+          "audited_head",
+          "audited_head"
+        ]
+      ]
     }
   ]
 }

@@ -111,6 +111,8 @@ def _contract(tmp_path: Path) -> Path:
                             "blockers": [],
                             "construction.contract_id": "stage9.5-6-replay-report-construction-v1",
                             "construction.producer_id": "stage9.5-6-replay-equivalence-assurance-v1",
+                            "construction.comparator_id": "stage9.5-6-replay-equivalence-comparator-v1",
+                            "construction.finalizer_id": "stage9.5-6-replay-report-finalizer-v1",
                             "construction.manual_success_report_permitted": False,
                             "construction.deterministic_comparison_complete": True,
                             "construction.source_evidence_complete": True,
@@ -224,6 +226,8 @@ def _write_replay_report(tmp_path: Path, payload: dict[str, object]) -> str:
         "construction": {
             "contract_id": "stage9.5-6-replay-report-construction-v1",
             "producer_id": "stage9.5-6-replay-equivalence-assurance-v1",
+            "comparator_id": "stage9.5-6-replay-equivalence-comparator-v1",
+            "finalizer_id": "stage9.5-6-replay-report-finalizer-v1",
             "manual_success_report_permitted": False,
             "deterministic_comparison_complete": True,
             "source_evidence_complete": True,

@@ -55,6 +55,68 @@ def _get_path(payload: dict[str, Any], dotted: str) -> Any:
     return node
 
 
+def _validate_contract_schema(
+    contract: dict[str, Any],
+    failures: list[str],
+) -> None:
+    required_dict_fields = ["required_success_values"]
+    required_list_fields = [
+        "required_success_hash_fields",
+        "closure_doc_must_reference",
+    ]
+    optional_list_fields = [
+        "required_sha40_fields",
+        "required_equal_fields",
+        "required_git_ancestor_fields",
+        "required_canonical_json_reports",
+    ]
+    string_list_fields = [
+        "required_success_hash_fields",
+        "closure_doc_must_reference",
+        "required_sha40_fields",
+        "required_git_ancestor_fields",
+    ]
+
+    for field in required_dict_fields:
+        if field not in contract:
+            failures.append(f"contract_missing_field:{field}")
+            continue
+        value = contract[field]
+        if not isinstance(value, dict):
+            failures.append(f"contract_invalid_field_type:{field}")
+            continue
+        if not all(isinstance(key, str) for key in value):
+            failures.append(f"contract_invalid_mapping_key:{field}")
+
+    for field in required_list_fields:
+        if field not in contract:
+            failures.append(f"contract_missing_field:{field}")
+            continue
+        if not isinstance(contract[field], list):
+            failures.append(f"contract_invalid_field_type:{field}")
+
+    for field in optional_list_fields:
+        if field in contract and not isinstance(contract[field], list):
+            failures.append(f"contract_invalid_field_type:{field}")
+
+    for field in string_list_fields:
+        value = contract.get(field)
+        if isinstance(value, list) and not all(
+            isinstance(item, str) for item in value
+        ):
+            failures.append(f"contract_invalid_list_item:{field}")
+
+    hash_link = contract.get(
+        "closure_doc_must_contain_report_canonical_sha256",
+        False,
+    )
+    if not isinstance(hash_link, bool):
+        failures.append(
+            "contract_invalid_field_type:"
+            "closure_doc_must_contain_report_canonical_sha256"
+        )
+
+
 def evaluate(
     *,
     contract_path: Path = CONTRACT_PATH,
@@ -90,6 +152,10 @@ def evaluate(
         or not isinstance(success_path, str)
     ):
         report["failures"].append("contract_invalid_required_field_type")
+        return report
+
+    _validate_contract_schema(contract, report["failures"])
+    if report["failures"]:
         return report
 
     closure = (

@@ -97,7 +97,9 @@
       "construction.manual_success_report_permitted": false,
       "construction.deterministic_comparison_complete": true,
       "construction.source_evidence_complete": true,
-      "construction.mismatch_count": 0
+      "construction.mismatch_count": 0,
+      "construction.comparator_id": "stage9.5-6-replay-equivalence-comparator-v1",
+      "construction.finalizer_id": "stage9.5-6-replay-report-finalizer-v1"
     },
     "pass_may_be_derived_only_from_deterministic_comparisons": true,
     "missing_evidence_is_failure": true,

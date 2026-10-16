@@ -13,6 +13,7 @@ on:
       - "data/manifests/stage9_5_6_closure_order_gate_v1.json"
       - "STAGE9_5_6_CLEAN_DETERMINISTIC_FULL_SEED_RERUN_CLOSURE.md"
       - "results/audits/stage9_5_full_seed_rerun_v1/success.json"
+      - "results/audits/stage9_5_full_seed_rerun_v1/fresh_clone_reconstruction_report.json"
       - "STAGE9_5_1_V1_2_HEAVY_ARTIFACT_INVENTORY_CORRECTION.md"
       - "STAGE9_5_0_PARAMETER_CONTROL_COMPLETENESS_CLOSURE.md"
       - "STAGE9_5_1_FRESH_CLONE_RECONSTRUCTION_IMPLEMENTATION.md"

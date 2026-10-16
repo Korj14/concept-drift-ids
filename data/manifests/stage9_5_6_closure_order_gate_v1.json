@@ -39,17 +39,29 @@
     "replay_equivalence.accepted_correction_manifest_sha256": "d380fce5f9db8f0b639dc999298a263b10a10a3d02e35def226a121d098e2222",
     "replay_equivalence.accepted_stage8_evidence_commit": "c2ded83b8195b9321e715626c1f305f9627936e8",
     "replay_equivalence.stage1_reconstructed_under_historical_environment": true,
-    "replay_equivalence.regenerated_correction_config_all_scientific_blocks_equal": true
+    "replay_equivalence.regenerated_correction_config_all_scientific_blocks_equal": true,
+    "stage9_5_1.audit_id": "stage9.5-1-fresh-clone-reconstruction-v1_2",
+    "stage9_5_1.pass": true,
+    "stage9_5_1.system_a_verified_seeds": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "stage9_5_1.stage8_archive_requirement_count": 145,
+    "stage9_5_1.stage8_archive_verified_count": 145
   },
   "required_success_hash_fields": [
-    "artifact.report_canonical_sha256"
+    "artifact.report_canonical_sha256",
+    "stage9_5_1.report_canonical_sha256"
   ],
   "closure_doc_must_reference": [
     "results/audits/stage9_5_full_seed_rerun_v1/success.json",
     "stage9.5-6-replay-equivalence-correction-v1_1"
   ],
   "closure_doc_must_contain_report_canonical_sha256": true,
-  "unlock_rule": "All required files must exist and every contract check must pass. The success record must bind the rerun to the frozen historical replay identities and a same-head Stage-9 success; its audited head must be a valid ancestor of the current assurance head. Missing, malformed, placeholder, incomplete, mismatched, unlinked, or historically misbound evidence remains locked.",
+  "unlock_rule": "All required files must exist and every contract check must pass. The success record must bind the rerun to the frozen historical replay identities, a same-head Stage-9 success, and a successful Stage-9.5-1 recovery report with all five checkpoint seeds verified and all 145 descriptor-linked Stage-8 heavy files verified. Both the Stage-9.5-6 report hash and Stage-9.5-1 recovery-report hash must be linked from the closure document. Its audited head must be a valid ancestor of the current assurance head. Missing, malformed, placeholder, incomplete, mismatched, unlinked, or historically misbound evidence remains locked.",
   "required_equal_fields": [
     [
       "audited_head",

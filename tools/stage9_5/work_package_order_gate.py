@@ -192,7 +192,7 @@ def evaluate(
 
         try:
             report_payload = _load_json(report_path)
-        except (OSError, json.JSONDecodeError, TypeError) as exc:
+        except (OSError, json.JSONDecodeError, TypeError, ValueError) as exc:
             report["failures"].append(
                 f"required_report_invalid:{relative}:{type(exc).__name__}"
             )

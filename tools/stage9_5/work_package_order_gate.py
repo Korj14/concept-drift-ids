@@ -158,6 +158,14 @@ def evaluate(
         if marker not in closure_text:
             report["failures"].append(f"closure_doc_missing_reference:{marker}")
 
+    token_format = contract.get(
+        "closure_doc_field_token_format",
+        "{field}={value}",
+    )
+    if not isinstance(token_format, str):
+        report["failures"].append("invalid_contract_closure_field_token_format")
+        token_format = "{field}={value}"
+
     for dotted in contract.get("closure_doc_must_contain_fields", []):
         try:
             value = _get_path(success_payload, dotted)
@@ -166,7 +174,14 @@ def evaluate(
                 f"missing_closure_link_field:{dotted}"
             )
             continue
-        if str(value) not in closure_text:
+        try:
+            token = token_format.format(field=dotted, value=value)
+        except (KeyError, ValueError):
+            report["failures"].append(
+                "invalid_contract_closure_field_token_format"
+            )
+            continue
+        if token not in closure_text:
             report["failures"].append(
                 f"closure_doc_missing_field_value:{dotted}"
             )

@@ -114,3 +114,7 @@ Missing, malformed, placeholder, incomplete, mismatched, or unlinked evidence re
 
 This hardening changes only the assurance unlock predicate. It does not alter accepted Stage-8/9 evidence, the frozen Stage-9.5 base protocol, or the replay-equivalence scientific object.
 
+### External-artifact execution provenance boundary
+
+Stage 9.5-1 recovery verification and the Stage 9.5-6 historical replay may legitimately execute outside GitHub Actions because the governing external checkpoint/archive bytes are not committed and no authoritative CI handoff mechanism is presently frozen. Therefore the closure authority is the frozen scientific/recovery identity plus canonical verification-report hashes and their explicit linkage from the closure record. GitHub Actions workflow/job/artifact IDs are supplemental provenance when available; they must not become mandatory closure predicates unless a prospective, authoritative transfer/execution mechanism is first frozen before recovery or rerun outcomes are inspected.
+

@@ -110,7 +110,7 @@ The prospective contract `data/manifests/stage9_5_6_closure_order_gate_v1.json` 
 - a valid Stage-9.5-6 report canonical SHA-256 linked from the closure document;
 - a successful Stage-9.5-1 recovery record bound to `stage9.5-1-fresh-clone-reconstruction-v1_2`, with checkpoint seeds 0–4 verified, the Stage-8 heavy archive at **145 required / 145 verified**, and its own canonical report SHA-256 linked from the same closure document.
 
-Missing, malformed, placeholder, incomplete, mismatched, or unlinked evidence remains locked. The validator produces a machine-readable order-gate report in CI, and its unit tests include explicit placeholder, unresolved-Class-A, unlinked-hash, missing-file, and complete-valid-evidence cases.
+Missing, malformed, placeholder, incomplete, mismatched, or unlinked evidence remains locked. Concrete workflow/job/artifact identifiers must also be linked from the closure document using the exact labeled inline-code form `` `{field}={value}` ``; an unrelated numeric substring does not satisfy the gate. The validator produces a machine-readable order-gate report in CI, and its unit tests include explicit placeholder, unresolved-Class-A, unlinked-hash, unlinked-ID, numeric-substring, missing-file, ancestry-binding, and complete-valid-evidence cases.
 
 This hardening changes only the assurance unlock predicate. It does not alter accepted Stage-8/9 evidence, the frozen Stage-9.5 base protocol, or the replay-equivalence scientific object.
 

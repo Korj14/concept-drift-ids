@@ -90,3 +90,26 @@ Prospectively, the workflow order gate requires both of the following before Sta
 If either is absent, the order-gate job records the later packages as locked and Stage 9.5-7/8/9 are skipped. After a valid 9.5-6 closure, Stage 9.5-7 runs first; Stage 9.5-8 depends on successful 9.5-7 completion; Stage 9.5-9 depends on successful 9.5-8 completion.
 
 This is prospective workflow enforcement only. It does not delete, rewrite, or retroactively relabel the preserved out-of-order historical artifacts beyond the provisional status already recorded above. It does not modify scientific source, accepted Stage-8/9 evidence, or the historical runtime lock.
+
+## Prospective unlock-predicate hardening — 16 October 2026
+
+A further fail-open risk was identified before any valid Stage 9.5-6 closure existed: the initial CI order gate treated the mere presence of the closure Markdown file and `success.json` as sufficient to unlock Stage 9.5-7. A placeholder, malformed, or semantically incomplete pair could therefore have satisfied the filename predicate without proving a valid 9.5-6 closure.
+
+The prospective contract `data/manifests/stage9_5_6_closure_order_gate_v1.json` now freezes the machine-readable unlock predicate before Stage 9.5-6 execution. The validator `tools/stage9_5/work_package_order_gate.py` requires, at minimum:
+
+- the exact Stage 9.5-6 audit/status identity;
+- Stage 9.5-1 closed with zero identity failures and zero external-artifact blockers;
+- same-head Stage-9 contract success;
+- replay-equivalence protocol v1.1 identity and pass status;
+- complete Phase-A seeds 0–4 and Phase-B seeds 0–4;
+- preservation of the original Phase-C v1 seed-0 failure lineage;
+- completed corrected Phase-C seed-0 rerun;
+- verification of the accepted maintenance archive needed for record-level replay equivalence;
+- zero unresolved Class-A defects;
+- no scientific-object replacement and no Stage-10 outcome access;
+- a valid report canonical SHA-256 linked from the closure document.
+
+Missing, malformed, placeholder, incomplete, mismatched, or unlinked evidence remains locked. The validator produces a machine-readable order-gate report in CI, and its unit tests include explicit placeholder, unresolved-Class-A, unlinked-hash, missing-file, and complete-valid-evidence cases.
+
+This hardening changes only the assurance unlock predicate. It does not alter accepted Stage-8/9 evidence, the frozen Stage-9.5 base protocol, or the replay-equivalence scientific object.
+

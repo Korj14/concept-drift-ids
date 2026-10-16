@@ -10,6 +10,9 @@ on:
       - "data/manifests/stage9_5_parameter_register_v1_11.json"
       - "data/manifests/stage9_5_fresh_clone_reconstruction_v1.json"
       - "data/manifests/stage9_5_fresh_clone_reconstruction_v1_2.json"
+      - "data/manifests/stage9_5_6_closure_order_gate_v1.json"
+      - "STAGE9_5_6_CLEAN_DETERMINISTIC_FULL_SEED_RERUN_CLOSURE.md"
+      - "results/audits/stage9_5_full_seed_rerun_v1/success.json"
       - "STAGE9_5_1_V1_2_HEAVY_ARTIFACT_INVENTORY_CORRECTION.md"
       - "STAGE9_5_0_PARAMETER_CONTROL_COMPLETENESS_CLOSURE.md"
       - "STAGE9_5_1_FRESH_CLONE_RECONSTRUCTION_IMPLEMENTATION.md"
@@ -65,10 +68,10 @@ jobs:
         run: |
           python -c "from pathlib import Path; required=['STAGE9_5_Q1_INDEPENDENT_ASSURANCE_PROTOCOL.md','data/manifests/stage9_5_parameter_register_v1.json','data/manifests/stage9_5_parameter_register_v1_11.json']; missing=[p for p in required if not Path(p).is_file()]; assert not missing, missing"
 
-      - name: Run Stage 9.5 scanner unit tests
+      - name: Run Stage 9.5 scanner and order-gate unit tests
         shell: pwsh
         run: |
-          python -m pytest tests/stage9_5/test_parameter_scan.py -q
+          python -m pytest tests/stage9_5/test_parameter_scan.py tests/stage9_5/test_work_package_order_gate.py -q
 
       - name: Run Stage 9.5-0 parameter/control scan
         shell: pwsh
@@ -334,15 +337,19 @@ jobs:
         id: gate
         shell: bash
         run: |
-          closure_doc="STAGE9_5_6_CLEAN_DETERMINISTIC_FULL_SEED_RERUN_CLOSURE.md"
-          success_json="results/audits/stage9_5_full_seed_rerun_v1/success.json"
-          if [[ -f "$closure_doc" && -f "$success_json" ]]; then
-            echo "later_packages_unlocked=true" >> "$GITHUB_OUTPUT"
-            echo "Stage 9.5-6 closure evidence is present; later work packages may execute in sequence."
-          else
-            echo "later_packages_unlocked=false" >> "$GITHUB_OUTPUT"
-            echo "Stage 9.5-7/8/9 remain locked: valid Stage 9.5-6 closure evidence is absent."
-          fi
+          mkdir -p artifacts/stage9_5_order_gate_v1
+          python tools/stage9_5/work_package_order_gate.py \
+            --report-path artifacts/stage9_5_order_gate_v1/order_gate_report.json \
+            | tee artifacts/stage9_5_order_gate_v1/order_gate_output.txt
+          grep '^later_packages_unlocked=' artifacts/stage9_5_order_gate_v1/order_gate_output.txt >> "$GITHUB_OUTPUT"
+
+      - name: Upload Stage 9.5 work-package order-gate evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: stage9-5-work-package-order-gate-v1
+          path: artifacts/stage9_5_order_gate_v1/
+          if-no-files-found: error
 
 
   claim-traceability:

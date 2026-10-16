@@ -75,7 +75,7 @@ jobs:
       - name: Run Stage 9.5 scanner and order-gate unit tests
         shell: pwsh
         run: |
-          python -m pytest tests/stage9_5/test_parameter_scan.py tests/stage9_5/test_work_package_order_gate.py tests/stage9_5/test_replay_report_finalizer.py -q
+          python -m pytest tests/stage9_5/test_parameter_scan.py tests/stage9_5/test_work_package_order_gate.py tests/stage9_5/test_replay_report_finalizer.py tests/stage9_5/test_replay_equivalence_comparator.py -q
 
       - name: Run Stage 9.5-0 parameter/control scan
         shell: pwsh

@@ -12,6 +12,7 @@ from tools.stage9_5.fresh_clone_reconstruction import (
     _sha256_file,
     _stage8_archive_requirements,
     _verify_stage8_large_archive,
+    _verify_system_a,
 )
 
 
@@ -150,3 +151,48 @@ def test_missing_stage8_archive_is_external_blocker(
     )
     assert report["blockers"] == ["stage8_large_artifact_archive_missing"]
     assert report["failures"] == []
+
+def test_supplied_incomplete_stage8_archive_is_identity_failure(
+    tmp_path: Path,
+) -> None:
+    payload = json.loads(IDENTITY_PATH.read_text(encoding="utf-8"))
+    root = tmp_path / "partial_archive"
+    root.mkdir()
+    report: dict[str, object] = {
+        "external_artifacts": {},
+        "blockers": [],
+        "failures": [],
+    }
+    _verify_stage8_large_archive(
+        report,
+        payload["stage8_compact"],
+        payload["stage8_large_artifact_archive"],
+        root,
+    )
+    assert report["blockers"] == []
+    assert report["failures"] == [
+        "stage8_large_artifact_archive_incomplete_or_mismatched"
+    ]
+
+
+def test_supplied_incomplete_checkpoint_root_is_identity_failure(
+    tmp_path: Path,
+) -> None:
+    payload = json.loads(IDENTITY_PATH.read_text(encoding="utf-8"))
+    root = tmp_path / "partial_checkpoints"
+    root.mkdir()
+    report: dict[str, object] = {
+        "checks": [],
+        "external_artifacts": {},
+        "blockers": [],
+        "failures": [],
+    }
+    _verify_system_a(
+        report,
+        payload["system_a"],
+        payload["preprocessing"]["core_state_sha256"],
+        root,
+    )
+    assert report["blockers"] == []
+    assert "system_a_checkpoint_recovery_incomplete" in report["failures"]
+

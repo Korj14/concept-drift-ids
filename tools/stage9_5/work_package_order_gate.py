@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import re
 import subprocess
@@ -13,6 +14,17 @@ CONTRACT_PATH = (
 )
 SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
 SHA40_RE = re.compile(r"^[0-9a-f]{40}$")
+
+
+def _canonical_json_hash(payload: object) -> str:
+    data = json.dumps(
+        payload,
+        sort_keys=True,
+        separators=(",", ":"),
+        ensure_ascii=False,
+        allow_nan=False,
+    ).encode("utf-8")
+    return hashlib.sha256(data).hexdigest()
 
 
 def _load_json(path: Path) -> dict[str, Any]:
@@ -36,6 +48,7 @@ def evaluate(
     contract_path: Path = CONTRACT_PATH,
     closure_doc: Path | None = None,
     success_json: Path | None = None,
+    evidence_root: Path = PROJECT_ROOT,
 ) -> dict[str, Any]:
     contract = _load_json(contract_path)
     closure = (
@@ -134,6 +147,74 @@ def evaluate(
             report["failures"].append(f"invalid_success_sha256:{dotted}")
             continue
         report_hashes.append(value)
+
+    resolved_root = evidence_root.resolve()
+    for binding in contract.get("required_canonical_json_reports", []):
+        if not isinstance(binding, dict):
+            report["failures"].append("invalid_contract_report_binding")
+            continue
+        relative = binding.get("path")
+        hash_field = binding.get("success_hash_field")
+        embedded_hash_field = binding.get("embedded_hash_field")
+        required_values = binding.get("required_values", {})
+        if (
+            not isinstance(relative, str)
+            or not isinstance(hash_field, str)
+            or not isinstance(embedded_hash_field, str)
+            or not isinstance(required_values, dict)
+        ):
+            report["failures"].append("invalid_contract_report_binding")
+            continue
+
+        relative_path = Path(relative)
+        if relative_path.is_absolute():
+            report["failures"].append(f"report_path_not_repository_relative:{relative}")
+            continue
+        report_path = (resolved_root / relative_path).resolve()
+        if not report_path.is_relative_to(resolved_root):
+            report["failures"].append(f"report_path_escapes_repository:{relative}")
+            continue
+        if not report_path.is_file():
+            report["failures"].append(f"required_report_missing:{relative}")
+            continue
+
+        try:
+            report_payload = _load_json(report_path)
+        except (OSError, json.JSONDecodeError, TypeError) as exc:
+            report["failures"].append(
+                f"required_report_invalid:{relative}:{type(exc).__name__}"
+            )
+            continue
+
+        try:
+            expected_hash = _get_path(success_payload, hash_field)
+        except KeyError:
+            report["failures"].append(f"missing_success_hash_field:{hash_field}")
+            continue
+        embedded_hash = report_payload.get(embedded_hash_field)
+        core = dict(report_payload)
+        core.pop(embedded_hash_field, None)
+        actual_hash = _canonical_json_hash(core)
+        if (
+            not isinstance(expected_hash, str)
+            or SHA256_RE.fullmatch(expected_hash) is None
+            or embedded_hash != expected_hash
+            or actual_hash != expected_hash
+        ):
+            report["failures"].append(f"required_report_hash_mismatch:{relative}")
+
+        for dotted, expected in required_values.items():
+            try:
+                actual = _get_path(report_payload, dotted)
+            except KeyError:
+                report["failures"].append(
+                    f"required_report_missing_field:{relative}:{dotted}"
+                )
+                continue
+            if actual != expected:
+                report["failures"].append(
+                    f"required_report_value_mismatch:{relative}:{dotted}"
+                )
 
     try:
         closure_text = closure.read_text(encoding="utf-8")

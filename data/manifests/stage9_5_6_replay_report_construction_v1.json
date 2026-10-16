@@ -10,7 +10,7 @@
     "producer_id": "stage9.5-6-replay-equivalence-assurance-v1",
     "comparator_id": "stage9.5-6-replay-equivalence-comparator-v1",
     "finalizer_id": "stage9.5-6-replay-report-finalizer-v1",
-    "comparator_status": "phase_a_b_and_phase_c_preconditions_implemented_phase_c_output_blocked",
+    "comparator_status": "phase_a_b_c_implemented_stage1_evidence_blocked",
     "finalizer_status": "implemented_prospectively_frozen",
     "comparator_and_finalizer_must_be_frozen_before_replay_outcomes": true,
     "post_outcome_projection_changes_permitted": false
@@ -170,7 +170,7 @@
       "correction_source_head": "79ddc4c6d6dea52c7cabc55a6d082448fc24fcf9",
       "phase_a_b_head": "bfa14b942e4a5b2fbfa8aa3c43728a7f1cd81645",
       "accepted_stage8_evidence_commit": "c2ded83b8195b9321e715626c1f305f9627936e8",
-      "self_hash_and_transitive_hash_handling_must_be_explicitly_implemented_before_execution": true,
+      "self_hash_and_transitive_hash_handling_must_be_explicitly_implemented_before_execution": false,
       "preconditions_implementation": {
         "implementation_status": "implemented_prospectively_frozen",
         "tool_path": "tools/stage9_5/replay_equivalence_comparator.py",
@@ -206,26 +206,62 @@
         "equality_rule": "after only the ten rebound upstream raw manifest identities are normalized, accepted and regenerated correction configs must have identical canonical JSON SHA-256 and exact recursive content equality"
       },
       "corrected_output_projection": {
-        "implementation_status": "not_implemented_blocked",
-        "exact_fields_already_frozen": [
-          "predictions and both raw gzip SHA-256 and canonical decompressed JSONL SHA-256",
+        "implementation_status": "implemented_prospectively_frozen",
+        "tool_path": "tools/stage9_5/replay_equivalence_comparator.py",
+        "test_path": "tests/stage9_5/test_replay_equivalence_comparator.py",
+        "historical_corrected_phase_c_source_head": "79ddc4c6d6dea52c7cabc55a6d082448fc24fcf9",
+        "historical_corrected_phase_c_source_blob_sha1": "83967545107ea7de29196b2e2cd187562e353ac5",
+        "raw_integrity_and_binding_order": [
+          "verify each arm evaluation payload_sha256 and summary_sha256 before projection",
+          "bind each arm evaluation primary_config_manifest_sha256 to its actual correction-config manifest",
+          "bind each arm evaluation phase_b_arm_manifest_sha256 and copied maintenance_summary to its actual Phase-B arm manifest",
+          "bind each arm evaluation shared_identity_sha256 to the actual Phase-A shared_identity.identity_sha256",
+          "verify prediction-trace path containment, compressed-file SHA-256, decompressed canonical JSONL SHA-256, row count, and frozen scenario stream-row count",
+          "verify the seed manifest payload_sha256 and manifest_sha256 before projection",
+          "bind the seed manifest to the actual correction-config, Phase-A seed-0 run manifest, Phase-B seed-0 manifest, and all three raw arm summary_sha256 values",
+          "require lambda_one_predictive_equality true and adaptive_components_received_boundary false"
+        ],
+        "normalized_fields": [
+          "arm_evaluation.primary_config_manifest_sha256",
+          "arm_evaluation.phase_b_arm_manifest_sha256",
+          "arm_evaluation.maintenance_summary.compute_seconds",
+          "arm_evaluation.maintenance_summary.shap_seconds",
+          "arm_evaluation.maintenance_summary.surrogate_seconds",
+          "arm_evaluation.maintenance_summary.lifecycle_seconds",
+          "arm_evaluation.maintenance_summary.compute_seconds_per_opportunity",
+          "arm_evaluation.maintenance_summary.compute_seconds_per_publication",
+          "phase_c_seed_manifest.primary_config_manifest_sha256",
+          "phase_c_seed_manifest.phase_a_run_manifest_sha256",
+          "phase_c_seed_manifest.phase_b_seed_manifest_sha256",
+          "phase_c_seed_manifest.arm_summary_sha256.*"
+        ],
+        "derived_hash_fields_removed_after_raw_integrity_verification": [
+          "arm_evaluation.payload_sha256",
+          "arm_evaluation.summary_sha256",
+          "phase_c_seed_manifest.payload_sha256",
+          "phase_c_seed_manifest.manifest_sha256"
+        ],
+        "exact_fields_include": [
+          "shared_identity_sha256",
           "metrics_by_neural_weight",
           "explanation",
           "primary_windows",
           "primary_recovery",
+          "all non-timing maintenance_summary fields",
+          "prediction_trace path",
+          "prediction_trace row_count",
+          "prediction_trace compressed sha256",
+          "prediction_trace canonical_jsonl_sha256",
+          "lambda_one_predictive_equality",
           "trigger_diagnostics",
           "neural_retention_probes",
-          "lambda_one_predictive_equality",
           "boundary_index",
-          "adaptive_components_received_boundary"
+          "adaptive_components_received_boundary",
+          "seed",
+          "arm",
+          "status"
         ],
-        "deterministic_trace_writer": {
-          "gzip_filename": "",
-          "gzip_mtime": 0,
-          "gzip_compresslevel": 9,
-          "consequence": "raw compressed prediction-trace SHA-256 remains exact and is not a diagnostic projection"
-        },
-        "remaining_design_boundary": "only correction-config / Phase-A / Phase-B raw manifest identities and copied Phase-B timing-summary fields that transitively encode already-approved diagnostic projections may be normalized; all scientific Phase-C output remains fail-closed"
+        "equality_rule": "after raw integrity/binding checks and only the predeclared upstream/timing projections, accepted and fresh corrected Phase-C seed-0 arm evaluations and seed manifest must have identical canonical JSON SHA-256 values and exact recursive content equality"
       }
     }
   },
@@ -246,8 +282,8 @@
     "manual_boolean_override_permitted": false
   },
   "current_blocker": {
-    "id": "replay_equivalence_comparator_phase_c_corrected_output_not_implemented",
-    "effect": "Phase-A, Phase-B, and Phase-C failure-lineage/correction-config preconditions are prospectively frozen and implemented. Stage 9.5-6 remains blocked until deterministic corrected Phase-C seed-0 output comparison and its transitive-hash projection tests are prospectively frozen before recovered-artifact replay outcomes are inspected."
+    "id": "stage1_reconstruction_evidence_not_verified",
+    "effect": "Phase-A, Phase-B, Phase-C preconditions, corrected Phase-C seed-0 output comparison, and deterministic report finalization are prospectively frozen and implemented. Stage 9.5-6 remains blocked until Stage-1 interim-table reconstruction under the frozen historical environment is represented by machine-verifiable evidence, in addition to the two unresolved external artifact prerequisites."
   },
   "scientific_objects_modified": false,
   "stage8_9_replacement": false,

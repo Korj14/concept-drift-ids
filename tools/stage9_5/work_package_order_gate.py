@@ -88,6 +88,19 @@ def evaluate(
         if not isinstance(value, str) or SHA40_RE.fullmatch(value) is None:
             report["failures"].append(f"invalid_success_sha40:{dotted}")
 
+    for dotted in contract.get("required_positive_integer_fields", []):
+        try:
+            value = _get_path(success_payload, dotted)
+        except KeyError:
+            report["failures"].append(
+                f"missing_positive_integer_field:{dotted}"
+            )
+            continue
+        if isinstance(value, bool) or not isinstance(value, int) or value <= 0:
+            report["failures"].append(
+                f"invalid_positive_integer_field:{dotted}"
+            )
+
     for pair in contract.get("required_equal_fields", []):
         if not isinstance(pair, list) or len(pair) != 2:
             report["failures"].append("invalid_contract_equal_field_pair")
@@ -144,6 +157,19 @@ def evaluate(
     for marker in contract["closure_doc_must_reference"]:
         if marker not in closure_text:
             report["failures"].append(f"closure_doc_missing_reference:{marker}")
+
+    for dotted in contract.get("closure_doc_must_contain_fields", []):
+        try:
+            value = _get_path(success_payload, dotted)
+        except KeyError:
+            report["failures"].append(
+                f"missing_closure_link_field:{dotted}"
+            )
+            continue
+        if str(value) not in closure_text:
+            report["failures"].append(
+                f"closure_doc_missing_field_value:{dotted}"
+            )
 
     if contract.get("closure_doc_must_contain_report_canonical_sha256", False):
         for value in report_hashes:

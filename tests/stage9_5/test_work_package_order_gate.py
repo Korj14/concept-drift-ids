@@ -720,3 +720,40 @@ def test_replay_report_hidden_failure_remains_locked(tmp_path: Path) -> None:
         in report["failures"]
     )
 
+def test_report_path_escape_remains_locked(tmp_path: Path) -> None:
+    evidence_root = tmp_path / "repo"
+    evidence_root.mkdir()
+    contract_path = _contract(evidence_root)
+    contract = json.loads(contract_path.read_text(encoding="utf-8"))
+    bindings = contract["required_canonical_json_reports"]
+    assert isinstance(bindings, list)
+    replay_binding = bindings[1]
+    assert isinstance(replay_binding, dict)
+    replay_binding["path"] = "../outside.json"
+    contract_path.write_text(json.dumps(contract), encoding="utf-8")
+
+    outside = tmp_path / "outside.json"
+    outside.write_text("{}\n", encoding="utf-8")
+    closure = evidence_root / "closure.md"
+    success_path = evidence_root / "success.json"
+    payload = _success()
+    success_path.write_text(json.dumps(payload), encoding="utf-8")
+    closure.write_text(
+        "success.json\n"
+        "stage9.5-6-replay-equivalence-correction-v1_1\n"
+        "recovery_report.json\n"
+        "../outside.json\n"
+        + "a" * 64
+        + "\n",
+        encoding="utf-8",
+    )
+
+    report = evaluate(
+        contract_path=contract_path,
+        closure_doc=closure,
+        success_json=success_path,
+        evidence_root=evidence_root,
+    )
+    assert report["later_packages_unlocked"] is False
+    assert "report_path_escapes_repository:../outside.json" in report["failures"]
+

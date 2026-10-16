@@ -169,6 +169,8 @@ Rerun at least one complete accepted Stage-8 seed in a clean environment using t
 
 The rerun is verification evidence, not a replacement result. Do not bypass exact-head protection by executing from the current Stage-9.5 head. If execution requires a historical checkout or worktree, use it.
 
+> **Prospective execution correction after replay-equivalence audit.** The original sentence above is preserved as the frozen base-protocol minimum, but it is not by itself an executable current 9.5-6 procedure. The historical implementation has global upstream barriers: Phase B verifies all five Phase-A seeds before symbolic treatment, and corrected Phase C verifies all five Phase-A plus all five Phase-B seeds before scoring any seed. In addition, the historical upstream manifest identities include non-replay-invariant runtime/timing diagnostics. Current 9.5-6 execution is therefore governed by `STAGE9_5_6_REPLAY_EQUIVALENCE_CORRECTION_PROTOCOL_V1_1.md`: recover both required external artifact sets; reconstruct all five Phase-A seeds and all five Phase-B seeds under the frozen historical environment; preserve/reproduce the original failed Phase-C v1 seed-0 lineage; regenerate and verify the correction config under unchanged scientific blocks; then execute the frozen corrected Phase-C rerun target. This correction narrows how the original requirement may be satisfied; it does not replace accepted Stage-8/9 evidence or broaden the assurance claim.
+
 Compare promised exact identities exactly. Where a stored artifact explicitly permits canonical/numerical equivalence rather than byte identity, use only the predeclared equivalence rule.
 
 ### 9.5-7 — claim-to-evidence traceability

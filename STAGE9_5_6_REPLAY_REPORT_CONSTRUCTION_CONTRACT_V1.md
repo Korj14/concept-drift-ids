@@ -21,7 +21,7 @@ The deterministic replay-report finalizer is implemented and prospectively froze
 
 The remaining additional assurance blocker is therefore:
 
-`replay_equivalence_comparator_not_implemented`
+`replay_equivalence_comparator_phase_b_c_not_implemented`
 
 This blocker is separate from the two external artifact blockers:
 
@@ -40,10 +40,10 @@ The future deterministic producer is frozen to the identity:
 The report-construction pipeline is split into the frozen comparator identity
 `stage9.5-6-replay-equivalence-comparator-v1` and finalizer identity
 `stage9.5-6-replay-report-finalizer-v1`. The finalizer implementation and
-dedicated tests are now committed. The comparator implementation and its
-dedicated projection tests must still be committed and frozen before any replay
-outcomes are inspected. Neither layer may expose a manual override that can set
-`pass=true`.
+dedicated tests are committed. The comparator now has a prospectively frozen
+Phase-A implementation and dedicated tests; Phase-B and Phase-C comparison
+remain unimplemented and must be frozen before any replay outcomes are
+inspected. Neither layer may expose a manual override that can set `pass=true`.
 
 The successful report must carry, at minimum:
 
@@ -59,12 +59,32 @@ The successful report must carry, at minimum:
 The producer must implement the existing v1.1 replay-equivalence rules rather
 than define new comparison semantics after replay outcomes exist.
 
-For Phase A, all five seeds are required. Only the predeclared diagnostic
-runtime fields may be normalized:
+For Phase A, all five seeds are required. The comparator is now implemented
+and prospectively frozen in
+`tools/stage9_5/replay_equivalence_comparator.py`, with dedicated tests in
+`tests/stage9_5/test_replay_equivalence_comparator.py`.
+
+For each accepted/fresh seed pair, the comparator first verifies the raw
+historical hash chain: `payload_sha256` is checked against the raw JSON object
+without that field but still containing `manifest_sha256`; then
+`manifest_sha256` is checked against the object without either derived hash.
+Every descriptor-linked file is independently byte-hash checked, and descriptor
+paths must remain inside the seed root.
+
+Only these predeclared diagnostic runtime fields are normalized, using the
+fixed sentinel `<stage9.5-6-diagnostic-normalized>`:
 
 - `runtime.platform`;
 - `runtime.processor`;
 - `runtime.threadpool_info[*].filepath`.
+
+After raw hash integrity is established, the two diagnostic-dependent derived
+hash fields `payload_sha256` and `manifest_sha256` are removed from the
+comparison projection. The accepted and fresh projected manifests must then
+have identical canonical JSON SHA-256 values and exact recursive content
+equality. All descriptor hashes, checkpoint identities, runtime fields other
+than the three above, protocol/configuration fields, and scientific content
+remain exact.
 
 For Phase B, all five seeds and all three arms are required. The original
 accepted `maintenance.jsonl` records are required. Only the predeclared
@@ -78,18 +98,18 @@ probes, and other non-diagnostic scientific fields remain fail-closed.
 ## Derived-hash implementation boundary
 
 The accepted manifests contain self-hashes and transitive hashes that can
-change when only predeclared diagnostic fields change. The replay protocol
-defines the allowed diagnostic projections, but a deterministic implementation
-must explicitly define how self-hashes and their dependent manifest hashes are
-handled under those projections.
+change when only predeclared diagnostic fields change. Phase-A handling is now
+explicitly frozen as described above and is no longer an implementation
+blocker.
 
-That implementation detail must be frozen in code and tests **before** replay
-outcomes are inspected. It must not be inferred, relaxed, or expanded after a
-mismatch is observed.
+Phase-B and Phase-C still require their own deterministic self-/transitive-hash
+projection rules. Those implementation details must be frozen in code and tests
+**before** replay outcomes are inspected. They must not be inferred, relaxed,
+or expanded after a mismatch is observed.
 
 ## Fail-closed rules
 
-Until the deterministic comparator is implemented, tested, and frozen:
+Until the remaining deterministic Phase-B and Phase-C comparator logic is implemented, tested, and frozen:
 
 - do not create a successful `replay_equivalence_report.json` manually;
 - do not treat aggregate agreement as a substitute for record-level comparison;

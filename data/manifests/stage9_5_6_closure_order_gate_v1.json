@@ -60,10 +60,12 @@
     "results/audits/stage9_5_full_seed_rerun_v1/success.json",
     "stage9.5-6-replay-equivalence-correction-v1_1",
     "results/audits/stage9_5_full_seed_rerun_v1/fresh_clone_reconstruction_report.json",
-    "results/audits/stage9_5_full_seed_rerun_v1/replay_equivalence_report.json"
+    "results/audits/stage9_5_full_seed_rerun_v1/replay_equivalence_report.json",
+    "STAGE9_5_6_REPLAY_REPORT_CONSTRUCTION_CONTRACT_V1.md",
+    "data/manifests/stage9_5_6_replay_report_construction_v1.json"
   ],
   "closure_doc_must_contain_report_canonical_sha256": true,
-  "unlock_rule": "All required files must exist and every contract check must pass. The success record must bind the rerun to the frozen historical replay identities, a same-head Stage-9 success, and a successful Stage-9.5-1 recovery report with all five checkpoint seeds verified and all 145 descriptor-linked Stage-8 heavy files verified. The preserved small Stage-9.5-1 recovery JSON and Stage-9.5-6 replay-equivalence JSON must be committed unchanged at their frozen audit paths; the gate recomputes each embedded canonical hash and verifies its frozen fields directly. The Stage-9.5-1 report's repository_head must be a valid Git ancestor of the later Stage-9.5-6 audited_head, while the replay report itself must carry that exact audited_head and explicitly contain zero failures and zero blockers. Their hashes must equal the corresponding hashes in success.json and be linked from the closure document. The audited head must be a valid ancestor of the current assurance head. Missing, malformed, placeholder, incomplete, mismatched, unlinked, unrelated-lineage, or historically misbound evidence remains locked.",
+  "unlock_rule": "All required files must exist and every contract check must pass. The success record must bind the rerun to the frozen historical replay identities, a same-head Stage-9 success, and a successful Stage-9.5-1 recovery report with all five checkpoint seeds verified and all 145 descriptor-linked Stage-8 heavy files verified. The preserved Stage-9.5-1 recovery JSON and Stage-9.5-6 replay-equivalence JSON must be committed unchanged at their frozen audit paths; the gate recomputes each embedded canonical hash and verifies its frozen fields directly. The Stage-9.5-1 report's repository_head must be a valid Git ancestor of the later Stage-9.5-6 audited_head. The replay report must carry that exact audited_head, zero failures/blockers, and the frozen replay-report construction identity: deterministic producer stage9.5-6-replay-equivalence-assurance-v1, complete deterministic/source-evidence comparison, zero mismatches, and no manual success override. The construction contract document and manifest must be referenced by the closure. Their report hashes must equal the corresponding hashes in success.json and be linked from the closure document. The audited head must be a valid ancestor of the current assurance head. Missing, malformed, placeholder, incomplete, mismatched, manually asserted, unlinked, unrelated-lineage, or historically misbound evidence remains locked.",
   "required_equal_fields": [
     [
       "audited_head",
@@ -145,7 +147,13 @@
         "scientific_objects_modified": false,
         "stage10_outcomes_accessed": false,
         "failures": [],
-        "blockers": []
+        "blockers": [],
+        "construction.contract_id": "stage9.5-6-replay-report-construction-v1",
+        "construction.producer_id": "stage9.5-6-replay-equivalence-assurance-v1",
+        "construction.manual_success_report_permitted": false,
+        "construction.deterministic_comparison_complete": true,
+        "construction.source_evidence_complete": true,
+        "construction.mismatch_count": 0
       },
       "required_equal_success_fields": [
         [

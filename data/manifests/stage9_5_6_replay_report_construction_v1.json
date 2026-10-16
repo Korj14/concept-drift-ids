@@ -10,7 +10,7 @@
     "producer_id": "stage9.5-6-replay-equivalence-assurance-v1",
     "comparator_id": "stage9.5-6-replay-equivalence-comparator-v1",
     "finalizer_id": "stage9.5-6-replay-report-finalizer-v1",
-    "comparator_status": "phase_a_b_implemented_phase_c_blocked",
+    "comparator_status": "phase_a_b_and_phase_c_preconditions_implemented_phase_c_output_blocked",
     "finalizer_status": "implemented_prospectively_frozen",
     "comparator_and_finalizer_must_be_frozen_before_replay_outcomes": true,
     "post_outcome_projection_changes_permitted": false
@@ -170,7 +170,63 @@
       "correction_source_head": "79ddc4c6d6dea52c7cabc55a6d082448fc24fcf9",
       "phase_a_b_head": "bfa14b942e4a5b2fbfa8aa3c43728a7f1cd81645",
       "accepted_stage8_evidence_commit": "c2ded83b8195b9321e715626c1f305f9627936e8",
-      "self_hash_and_transitive_hash_handling_must_be_explicitly_implemented_before_execution": true
+      "self_hash_and_transitive_hash_handling_must_be_explicitly_implemented_before_execution": true,
+      "preconditions_implementation": {
+        "implementation_status": "implemented_prospectively_frozen",
+        "tool_path": "tools/stage9_5/replay_equivalence_comparator.py",
+        "test_path": "tests/stage9_5/test_replay_equivalence_comparator.py",
+        "accepted_correction_manifest_sha256": "d380fce5f9db8f0b639dc999298a263b10a10a3d02e35def226a121d098e2222",
+        "correction_source_head": "79ddc4c6d6dea52c7cabc55a6d082448fc24fcf9",
+        "frozen_scientific_blocks": [
+          "governing_source_hashes",
+          "scenario",
+          "system_a",
+          "r0_v2",
+          "primary_control_plane",
+          "primary_symbolic_operator",
+          "fusion",
+          "analysis"
+        ],
+        "normalized_upstream_identity_fields": [
+          "correction.reused_upstream_artifacts.phase_a.*.run_manifest_sha256",
+          "correction.reused_upstream_artifacts.phase_b.*.phase_b_manifest_sha256"
+        ],
+        "raw_integrity_and_binding_order": [
+          "verify accepted and regenerated correction-config payload_sha256 and manifest_sha256 before projection",
+          "require the accepted correction manifest identity d380fce5f9db8f0b639dc999298a263b10a10a3d02e35def226a121d098e2222",
+          "require both correction configs to bind prepared_from_git_commit to historical correction source 79ddc4c6d6dea52c7cabc55a6d082448fc24fcf9",
+          "require every frozen scientific block to match exactly",
+          "bind every accepted/fresh Phase-A run_manifest_sha256 and Phase-B phase_b_manifest_sha256 in the correction config to the actual corresponding artifact manifest before normalization",
+          "bind accepted and fresh failed-v1 attempt.json/failure.json to the accepted correction config file/payload SHA-256 identities and require exactly those two lineage files"
+        ],
+        "derived_hash_fields_removed_after_raw_integrity_verification": [
+          "payload_sha256",
+          "manifest_sha256"
+        ],
+        "equality_rule": "after only the ten rebound upstream raw manifest identities are normalized, accepted and regenerated correction configs must have identical canonical JSON SHA-256 and exact recursive content equality"
+      },
+      "corrected_output_projection": {
+        "implementation_status": "not_implemented_blocked",
+        "exact_fields_already_frozen": [
+          "predictions and both raw gzip SHA-256 and canonical decompressed JSONL SHA-256",
+          "metrics_by_neural_weight",
+          "explanation",
+          "primary_windows",
+          "primary_recovery",
+          "trigger_diagnostics",
+          "neural_retention_probes",
+          "lambda_one_predictive_equality",
+          "boundary_index",
+          "adaptive_components_received_boundary"
+        ],
+        "deterministic_trace_writer": {
+          "gzip_filename": "",
+          "gzip_mtime": 0,
+          "gzip_compresslevel": 9,
+          "consequence": "raw compressed prediction-trace SHA-256 remains exact and is not a diagnostic projection"
+        },
+        "remaining_design_boundary": "only correction-config / Phase-A / Phase-B raw manifest identities and copied Phase-B timing-summary fields that transitively encode already-approved diagnostic projections may be normalized; all scientific Phase-C output remains fail-closed"
+      }
     }
   },
   "success_report_construction": {
@@ -190,8 +246,8 @@
     "manual_boolean_override_permitted": false
   },
   "current_blocker": {
-    "id": "replay_equivalence_comparator_phase_c_not_implemented",
-    "effect": "Phase-A and Phase-B comparator projections and tests are prospectively frozen. Stage 9.5-6 remains blocked until deterministic Phase-C comparison, including its corrected-config/failure-lineage and self-/transitive-hash handling, is prospectively frozen before recovered-artifact replay outcomes are inspected."
+    "id": "replay_equivalence_comparator_phase_c_corrected_output_not_implemented",
+    "effect": "Phase-A, Phase-B, and Phase-C failure-lineage/correction-config preconditions are prospectively frozen and implemented. Stage 9.5-6 remains blocked until deterministic corrected Phase-C seed-0 output comparison and its transitive-hash projection tests are prospectively frozen before recovered-artifact replay outcomes are inspected."
   },
   "scientific_objects_modified": false,
   "stage8_9_replacement": false,

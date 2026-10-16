@@ -757,3 +757,45 @@ def test_report_path_escape_remains_locked(tmp_path: Path) -> None:
     assert report["later_packages_unlocked"] is False
     assert "report_path_escapes_repository:../outside.json" in report["failures"]
 
+def test_noncanonical_nan_replay_report_remains_locked(
+    tmp_path: Path,
+) -> None:
+    closure = tmp_path / "closure.md"
+    success_path = tmp_path / "success.json"
+    payload = _success()
+    recovery_hash = _write_recovery_report(tmp_path, payload)
+    replay_hash = _write_replay_report(tmp_path, payload)
+
+    report_path = tmp_path / "replay_report.json"
+    report_payload = json.loads(report_path.read_text(encoding="utf-8"))
+    report_payload["diagnostic_nan"] = float("nan")
+    report_path.write_text(
+        json.dumps(report_payload, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+
+    success_path.write_text(json.dumps(payload), encoding="utf-8")
+    closure.write_text(
+        "success.json\n"
+        "stage9.5-6-replay-equivalence-correction-v1_1\n"
+        "recovery_report.json\n"
+        "replay_report.json\n"
+        + replay_hash
+        + "\n"
+        + recovery_hash
+        + "\n",
+        encoding="utf-8",
+    )
+
+    report = evaluate(
+        contract_path=_contract(tmp_path),
+        closure_doc=closure,
+        success_json=success_path,
+        evidence_root=tmp_path,
+    )
+    assert report["later_packages_unlocked"] is False
+    assert (
+        "required_report_not_canonicalizable:replay_report.json:ValueError"
+        in report["failures"]
+    )
+

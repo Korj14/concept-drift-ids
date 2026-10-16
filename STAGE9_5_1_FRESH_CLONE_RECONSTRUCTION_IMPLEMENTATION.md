@@ -43,12 +43,12 @@ When the original external bytes are recovered, verify them from a clean histori
 
 ```bash
 python tools/stage9_5/fresh_clone_reconstruction.py \
-  --output-dir artifacts/stage9_5_v1_2/fresh_clone_reconstruction \
+  --output-dir results/audits/stage9_5_full_seed_rerun_v1 \
   --checkpoint-root <directory-containing-seed_0.pt-through-seed_4.pt> \
   --stage8-archive-root <recovered-artifacts-cd_primary_v1-root>
 ```
 
-The command verifies the five checkpoint SHA-256 identities and every descriptor-linked required Stage-8 heavy file, then writes `fresh_clone_reconstruction_report.json` and the companion Markdown report under the selected output directory. Preserve those outputs unchanged as assurance evidence. Do not commit recovered heavy bytes merely to satisfy the verifier.
+The command verifies the five checkpoint SHA-256 identities and every descriptor-linked required Stage-8 heavy file, then writes `fresh_clone_reconstruction_report.json` and the companion Markdown report directly under `results/audits/stage9_5_full_seed_rerun_v1/`. Preserve those small verifier outputs unchanged as assurance evidence and commit them with the eventual closure record; the order gate recomputes the JSON report's canonical hash and verifies its audit/status, five verified checkpoint seeds, zero failures/blockers, and **145 required / 145 verified** Stage-8 archive counts. Do not commit recovered heavy checkpoint/archive bytes merely to satisfy the verifier.
 
 A successful Stage 9.5-1 recovery verification removes the external-artifact blockers only. It does not itself close Stage 9.5-6, does not replace the accepted Stage-8/9 evidence, and does not authorize Stage-10 treatment execution; the frozen replay-equivalence v1.1 procedure and work-package ordering still apply.
 

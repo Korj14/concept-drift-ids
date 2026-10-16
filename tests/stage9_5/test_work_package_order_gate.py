@@ -22,6 +22,13 @@ def _contract(tmp_path: Path) -> Path:
                     "stage9_5_1.external_artifact_blockers": 0,
                     "same_head_stage9.conclusion": "success",
                     "replay_equivalence.protocol_id": "stage9.5-6-replay-equivalence-correction-v1_1",
+                    "replay_equivalence.rerun_seed": 0,
+                    "replay_equivalence.historical_heads.phase_a_b": "bfa14b942e4a5b2fbfa8aa3c43728a7f1cd81645",
+                    "replay_equivalence.historical_heads.correction_source": "79ddc4c6d6dea52c7cabc55a6d082448fc24fcf9",
+                    "replay_equivalence.accepted_correction_manifest_sha256": "d380fce5f9db8f0b639dc999298a263b10a10a3d02e35def226a121d098e2222",
+                    "replay_equivalence.accepted_stage8_evidence_commit": "c2ded83b8195b9321e715626c1f305f9627936e8",
+                    "replay_equivalence.stage1_reconstructed_under_historical_environment": True,
+                    "replay_equivalence.regenerated_correction_config_all_scientific_blocks_equal": True,
                     "replay_equivalence.pass": True,
                     "replay_equivalence.phase_a_complete_seeds": [0, 1, 2, 3, 4],
                     "replay_equivalence.phase_b_complete_seeds": [0, 1, 2, 3, 4],
@@ -34,6 +41,16 @@ def _contract(tmp_path: Path) -> Path:
                 },
                 "required_success_hash_fields": [
                     "artifact.report_canonical_sha256"
+                ],
+                "required_sha40_fields": [
+                    "audited_head",
+                    "same_head_stage9.head_sha",
+                    "replay_equivalence.historical_heads.phase_a_b",
+                    "replay_equivalence.historical_heads.correction_source",
+                    "replay_equivalence.accepted_stage8_evidence_commit",
+                ],
+                "required_equal_fields": [
+                    ["audited_head", "same_head_stage9.head_sha"]
                 ],
                 "closure_doc_must_reference": [
                     "success.json",
@@ -51,14 +68,24 @@ def _success() -> dict[str, object]:
     return {
         "audit_id": "stage9.5-6-clean-deterministic-full-seed-rerun-v1-success",
         "status": "accepted_stage9_5_6_closure_evidence",
+        "audited_head": "b" * 40,
         "stage9_5_1": {
             "status": "closed",
             "identity_failures": 0,
             "external_artifact_blockers": 0,
         },
-        "same_head_stage9": {"conclusion": "success"},
+        "same_head_stage9": {"conclusion": "success", "head_sha": "b" * 40},
         "replay_equivalence": {
             "protocol_id": "stage9.5-6-replay-equivalence-correction-v1_1",
+            "rerun_seed": 0,
+            "historical_heads": {
+                "phase_a_b": "bfa14b942e4a5b2fbfa8aa3c43728a7f1cd81645",
+                "correction_source": "79ddc4c6d6dea52c7cabc55a6d082448fc24fcf9",
+            },
+            "accepted_correction_manifest_sha256": "d380fce5f9db8f0b639dc999298a263b10a10a3d02e35def226a121d098e2222",
+            "accepted_stage8_evidence_commit": "c2ded83b8195b9321e715626c1f305f9627936e8",
+            "stage1_reconstructed_under_historical_environment": True,
+            "regenerated_correction_config_all_scientific_blocks_equal": True,
             "pass": True,
             "phase_a_complete_seeds": [0, 1, 2, 3, 4],
             "phase_b_complete_seeds": [0, 1, 2, 3, 4],
@@ -158,3 +185,59 @@ def test_unlinked_report_hash_remains_locked(tmp_path: Path) -> None:
     )
     assert report["later_packages_unlocked"] is False
     assert "closure_doc_missing_report_canonical_sha256" in report["failures"]
+
+def test_same_head_mismatch_remains_locked(tmp_path: Path) -> None:
+    closure = tmp_path / "closure.md"
+    success_path = tmp_path / "success.json"
+    payload = _success()
+    payload["same_head_stage9"] = {
+        "conclusion": "success",
+        "head_sha": "c" * 40,
+    }
+    success_path.write_text(json.dumps(payload), encoding="utf-8")
+    closure.write_text(
+        "success.json\nstage9.5-6-replay-equivalence-correction-v1_1\n"
+        + "a" * 64
+        + "\n",
+        encoding="utf-8",
+    )
+
+    report = evaluate(
+        contract_path=_contract(tmp_path),
+        closure_doc=closure,
+        success_json=success_path,
+    )
+    assert report["later_packages_unlocked"] is False
+    assert (
+        "success_field_mismatch:audited_head!=same_head_stage9.head_sha"
+        in report["failures"]
+    )
+
+
+def test_historical_replay_identity_mismatch_remains_locked(tmp_path: Path) -> None:
+    closure = tmp_path / "closure.md"
+    success_path = tmp_path / "success.json"
+    payload = _success()
+    replay = payload["replay_equivalence"]
+    assert isinstance(replay, dict)
+    replay["accepted_stage8_evidence_commit"] = "d" * 40
+    success_path.write_text(json.dumps(payload), encoding="utf-8")
+    closure.write_text(
+        "success.json\nstage9.5-6-replay-equivalence-correction-v1_1\n"
+        + "a" * 64
+        + "\n",
+        encoding="utf-8",
+    )
+
+    report = evaluate(
+        contract_path=_contract(tmp_path),
+        closure_doc=closure,
+        success_json=success_path,
+    )
+    assert report["later_packages_unlocked"] is False
+    assert (
+        "success_value_mismatch:"
+        "replay_equivalence.accepted_stage8_evidence_commit"
+        in report["failures"]
+    )
+

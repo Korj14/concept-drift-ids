@@ -2,6 +2,24 @@
 
 Research code for an adaptive neuro-symbolic network intrusion-detection system with concept-drift-driven symbolic rule evolution.
 
+
+## Current assurance status — 16 October 2026
+
+Accepted Stage-8/Stage-9 scientific evidence is frozen. The project is currently in the independent Stage-9.5 assurance gate, which remains **OPEN / BLOCKED**; Stage-10 treatment execution is **PROHIBITED**.
+
+Current fresh-clone reconstruction state is **0 repository/runtime/compact-evidence identity failures / 2 external-artifact blockers**:
+
+- `system_a_checkpoint_bytes_missing` — the five exact original System-A checkpoint files must be recovered from an authoritative source and SHA-256 verified;
+- `stage8_large_artifact_archive_missing` — the original heavy archive rooted at `artifacts/cd_primary_v1` must be recovered and descriptor/hash verified.
+
+Stage 9.5-6 also preserves a historical replay-identity defect caused by non-replay-invariant runtime/timing fields in upstream manifest hashes. A prospectively frozen replay-equivalence correction exists, but it cannot execute until both external artifact sets are recovered.
+
+The statistical oracle, causal/information-property assurance, targeted mutation assurance, and static software-assurance package are closed; the frozen targeted mutation set remains **11/11 killed**. Stage 9.5-7/8/9 historical executions are provisional and are now locked in CI until a valid Stage 9.5-6 closure exists.
+
+These are reconstructibility/provenance blockers. They do not, by themselves, establish that accepted Stage-8/9 numerical results are wrong. Do not substitute retrained checkpoints, regenerated archives, numerically equivalent serializations, or summary-only approximations for the missing original bytes.
+
+The later stage-specific sections below are retained as historical execution/protocol documentation and should not be read as the current project gate state.
+
 ## Environment
 
 The project is frozen to:

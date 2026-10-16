@@ -21,6 +21,11 @@ def _contract(tmp_path: Path) -> Path:
                     "stage9_5_1.status": "closed",
                     "stage9_5_1.identity_failures": 0,
                     "stage9_5_1.external_artifact_blockers": 0,
+                    "stage9_5_1.audit_id": "stage9.5-1-fresh-clone-reconstruction-v1_2",
+                    "stage9_5_1.pass": True,
+                    "stage9_5_1.system_a_verified_seeds": [0, 1, 2, 3, 4],
+                    "stage9_5_1.stage8_archive_requirement_count": 145,
+                    "stage9_5_1.stage8_archive_verified_count": 145,
                     "same_head_stage9.conclusion": "success",
                     "replay_equivalence.protocol_id": "stage9.5-6-replay-equivalence-correction-v1_1",
                     "replay_equivalence.rerun_seed": 0,
@@ -41,7 +46,8 @@ def _contract(tmp_path: Path) -> Path:
                     "stage10_outcomes_accessed": False,
                 },
                 "required_success_hash_fields": [
-                    "artifact.report_canonical_sha256"
+                    "artifact.report_canonical_sha256",
+                    "stage9_5_1.report_canonical_sha256",
                 ],
                 "required_sha40_fields": [
                     "audited_head",
@@ -74,6 +80,12 @@ def _success() -> dict[str, object]:
             "status": "closed",
             "identity_failures": 0,
             "external_artifact_blockers": 0,
+            "audit_id": "stage9.5-1-fresh-clone-reconstruction-v1_2",
+            "pass": True,
+            "system_a_verified_seeds": [0, 1, 2, 3, 4],
+            "stage8_archive_requirement_count": 145,
+            "stage8_archive_verified_count": 145,
+            "report_canonical_sha256": "a" * 64,
         },
         "same_head_stage9": {"conclusion": "success", "head_sha": "b" * 40},
         "replay_equivalence": {
@@ -307,4 +319,58 @@ def test_git_ancestor_binding_rejects_unknown_sha(tmp_path: Path) -> None:
     )
     assert report["later_packages_unlocked"] is False
     assert "audited_head_not_ancestor:audited_head" in report["failures"]
+
+def test_stage9_5_1_archive_verified_count_mismatch_remains_locked(
+    tmp_path: Path,
+) -> None:
+    closure = tmp_path / "closure.md"
+    success_path = tmp_path / "success.json"
+    payload = _success()
+    stage9_5_1 = payload["stage9_5_1"]
+    assert isinstance(stage9_5_1, dict)
+    stage9_5_1["stage8_archive_verified_count"] = 144
+    success_path.write_text(json.dumps(payload), encoding="utf-8")
+    closure.write_text(
+        "success.json\nstage9.5-6-replay-equivalence-correction-v1_1\n"
+        + "a" * 64
+        + "\n",
+        encoding="utf-8",
+    )
+
+    report = evaluate(
+        contract_path=_contract(tmp_path),
+        closure_doc=closure,
+        success_json=success_path,
+    )
+    assert report["later_packages_unlocked"] is False
+    assert (
+        "success_value_mismatch:stage9_5_1.stage8_archive_verified_count"
+        in report["failures"]
+    )
+
+
+def test_unlinked_stage9_5_1_recovery_report_hash_remains_locked(
+    tmp_path: Path,
+) -> None:
+    closure = tmp_path / "closure.md"
+    success_path = tmp_path / "success.json"
+    payload = _success()
+    stage9_5_1 = payload["stage9_5_1"]
+    assert isinstance(stage9_5_1, dict)
+    stage9_5_1["report_canonical_sha256"] = "b" * 64
+    success_path.write_text(json.dumps(payload), encoding="utf-8")
+    closure.write_text(
+        "success.json\nstage9.5-6-replay-equivalence-correction-v1_1\n"
+        + "a" * 64
+        + "\n",
+        encoding="utf-8",
+    )
+
+    report = evaluate(
+        contract_path=_contract(tmp_path),
+        closure_doc=closure,
+        success_json=success_path,
+    )
+    assert report["later_packages_unlocked"] is False
+    assert "closure_doc_missing_report_canonical_sha256" in report["failures"]
 

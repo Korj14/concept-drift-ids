@@ -120,3 +120,39 @@ Stage 9.5-1 recovery verification and the Stage 9.5-6 historical replay may legi
 ### Current assurance status — 16 October 2026
 
 The historical gate-state section above records the state at the time of the original order correction. The current Stage-9.5-1 reconstruction state is **0 identity failures / 2 external-artifact blockers**: `system_a_checkpoint_bytes_missing` and `stage8_large_artifact_archive_missing`. Stage 9.5-6 is therefore blocked by both unresolved external prerequisites and by the prospectively frozen replay-equivalence execution requirements; checkpoint recovery alone is not closure. Stage 9.5-7/8/9 remain provisional/locked in the current workflow, Stage 9.5 overall remains **OPEN / BLOCKED**, and Stage 10 remains **PROHIBITED**.
+
+### Stage-9.5 assurance-diversion retrospective requirement
+
+Before Stage 9.5 is declared closed, create and preserve
+`STAGE9_5_ASSURANCE_DIVERSION_RETROSPECTIVE.md` as the authoritative
+retrospective for the extended assurance/reconstruction diversion that spanned
+multiple working chats.
+
+The retrospective must reconstruct the diversion from repository evidence,
+frozen manifests, CI records, and closure artifacts rather than relying on chat
+memory alone. At minimum it must document:
+
+- the original Stage-9.5-1 and Stage-9.5-6 triggers that opened the diversion;
+- the chronology of material defects, corrections, reversions, and superseding
+  protocols, including the mistaken frozen-base-protocol edit/restoration and
+  the later GitHub-CI-ID over-hardening/backout;
+- the external-artifact recovery searches, what surfaces were exhausted, and
+  why regeneration/substitution is not valid recovery;
+- the evolution of the semantic order gate, direct recovery/replay report
+  binding, canonical-hash/path/lineage hardening, and fail-closed behavior;
+- the replay-equivalence construction contract, deterministic finalizer, and
+  Phase-A/Phase-B/Phase-C comparator projection decisions and their frozen
+  identities;
+- exact commit/head and CI evidence for the final accepted assurance state,
+  including any failed intermediate attempts that materially affected the
+  assurance design;
+- a clear separation between assurance-mechanics changes and accepted
+  Stage-8/9 scientific evidence, explicitly stating whether any scientific
+  object, treatment, estimand, result, or claim boundary changed;
+- unresolved limitations and the final rationale for authorizing Stage 10.
+
+This retrospective is a **Stage-9.5 closure-documentation obligation**, not a
+prerequisite for executing the still-blocked Stage-9.5-1 recovery or Stage-9.5-6
+replay. It must be completed before the project represents Stage 9.5 as fully
+closed.
+

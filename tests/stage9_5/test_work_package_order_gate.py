@@ -4,7 +4,7 @@ import json
 import subprocess
 from pathlib import Path
 
-from tools.stage9_5.work_package_order_gate import evaluate
+from tools.stage9_5.work_package_order_gate import _canonical_json_hash, evaluate
 
 
 def _contract(tmp_path: Path) -> Path:
@@ -62,8 +62,26 @@ def _contract(tmp_path: Path) -> Path:
                 "closure_doc_must_reference": [
                     "success.json",
                     "stage9.5-6-replay-equivalence-correction-v1_1",
+                    "recovery_report.json",
                 ],
                 "closure_doc_must_contain_report_canonical_sha256": True,
+                "required_canonical_json_reports": [
+                    {
+                        "path": "recovery_report.json",
+                        "success_hash_field": "stage9_5_1.report_canonical_sha256",
+                        "embedded_hash_field": "canonical_sha256",
+                        "required_values": {
+                            "audit_id": "stage9.5-1-fresh-clone-reconstruction-v1_2",
+                            "status": "pass",
+                            "pass": True,
+                            "failures": [],
+                            "blockers": [],
+                            "external_artifacts.system_a_checkpoints.verified_seeds": [0, 1, 2, 3, 4],
+                            "external_artifacts.stage8_large_artifact_archive.requirement_count": 145,
+                            "external_artifacts.stage8_large_artifact_archive.verified_count": 145,
+                        },
+                    }
+                ],
             }
         ),
         encoding="utf-8",
@@ -111,6 +129,40 @@ def _success() -> dict[str, object]:
         "scientific_objects_modified": False,
         "stage10_outcomes_accessed": False,
     }
+
+
+def _write_recovery_report(
+    tmp_path: Path,
+    payload: dict[str, object],
+    *,
+    verified_count: int = 145,
+) -> str:
+    report: dict[str, object] = {
+        "audit_id": "stage9.5-1-fresh-clone-reconstruction-v1_2",
+        "status": "pass",
+        "pass": True,
+        "failures": [],
+        "blockers": [],
+        "external_artifacts": {
+            "system_a_checkpoints": {
+                "verified_seeds": [0, 1, 2, 3, 4],
+            },
+            "stage8_large_artifact_archive": {
+                "requirement_count": 145,
+                "verified_count": verified_count,
+            },
+        },
+    }
+    canonical = _canonical_json_hash(report)
+    report["canonical_sha256"] = canonical
+    (tmp_path / "recovery_report.json").write_text(
+        json.dumps(report, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+    stage9_5_1 = payload["stage9_5_1"]
+    assert isinstance(stage9_5_1, dict)
+    stage9_5_1["report_canonical_sha256"] = canonical
+    return canonical
 
 
 def test_missing_files_remain_locked(tmp_path: Path) -> None:
@@ -164,10 +216,15 @@ def test_complete_linked_success_evidence_unlocks(tmp_path: Path) -> None:
     closure = tmp_path / "closure.md"
     success_path = tmp_path / "success.json"
     payload = _success()
+    recovery_hash = _write_recovery_report(tmp_path, payload)
     success_path.write_text(json.dumps(payload), encoding="utf-8")
     closure.write_text(
-        "success.json\nstage9.5-6-replay-equivalence-correction-v1_1\n"
+        "success.json\n"
+        "stage9.5-6-replay-equivalence-correction-v1_1\n"
+        "recovery_report.json\n"
         + "a" * 64
+        + "\n"
+        + recovery_hash
         + "\n",
         encoding="utf-8",
     )
@@ -176,6 +233,7 @@ def test_complete_linked_success_evidence_unlocks(tmp_path: Path) -> None:
         contract_path=_contract(tmp_path),
         closure_doc=closure,
         success_json=success_path,
+        evidence_root=tmp_path,
     )
     assert report["later_packages_unlocked"] is True
     assert report["failures"] == []
@@ -273,10 +331,15 @@ def test_git_ancestor_binding_accepts_current_head(tmp_path: Path) -> None:
     same_head = payload["same_head_stage9"]
     assert isinstance(same_head, dict)
     same_head["head_sha"] = head
+    recovery_hash = _write_recovery_report(tmp_path, payload)
     success_path.write_text(json.dumps(payload), encoding="utf-8")
     closure.write_text(
-        "success.json\nstage9.5-6-replay-equivalence-correction-v1_1\n"
+        "success.json\n"
+        "stage9.5-6-replay-equivalence-correction-v1_1\n"
+        "recovery_report.json\n"
         + "a" * 64
+        + "\n"
+        + recovery_hash
         + "\n",
         encoding="utf-8",
     )
@@ -285,6 +348,7 @@ def test_git_ancestor_binding_accepts_current_head(tmp_path: Path) -> None:
         contract_path=contract_path,
         closure_doc=closure,
         success_json=success_path,
+        evidence_root=tmp_path,
     )
     assert report["later_packages_unlocked"] is True
     assert report["failures"] == []
@@ -373,4 +437,71 @@ def test_unlinked_stage9_5_1_recovery_report_hash_remains_locked(
     )
     assert report["later_packages_unlocked"] is False
     assert "closure_doc_missing_report_canonical_sha256" in report["failures"]
+
+def test_tampered_recovery_report_hash_remains_locked(tmp_path: Path) -> None:
+    closure = tmp_path / "closure.md"
+    success_path = tmp_path / "success.json"
+    payload = _success()
+    recovery_hash = _write_recovery_report(tmp_path, payload)
+    report_path = tmp_path / "recovery_report.json"
+    report_payload = json.loads(report_path.read_text(encoding="utf-8"))
+    report_payload["status"] = "blocked"
+    report_path.write_text(json.dumps(report_payload), encoding="utf-8")
+    success_path.write_text(json.dumps(payload), encoding="utf-8")
+    closure.write_text(
+        "success.json\n"
+        "stage9.5-6-replay-equivalence-correction-v1_1\n"
+        "recovery_report.json\n"
+        + "a" * 64
+        + "\n"
+        + recovery_hash
+        + "\n",
+        encoding="utf-8",
+    )
+
+    report = evaluate(
+        contract_path=_contract(tmp_path),
+        closure_doc=closure,
+        success_json=success_path,
+        evidence_root=tmp_path,
+    )
+    assert report["later_packages_unlocked"] is False
+    assert "required_report_hash_mismatch:recovery_report.json" in report["failures"]
+
+
+def test_raw_recovery_report_archive_count_mismatch_remains_locked(
+    tmp_path: Path,
+) -> None:
+    closure = tmp_path / "closure.md"
+    success_path = tmp_path / "success.json"
+    payload = _success()
+    recovery_hash = _write_recovery_report(
+        tmp_path,
+        payload,
+        verified_count=144,
+    )
+    success_path.write_text(json.dumps(payload), encoding="utf-8")
+    closure.write_text(
+        "success.json\n"
+        "stage9.5-6-replay-equivalence-correction-v1_1\n"
+        "recovery_report.json\n"
+        + "a" * 64
+        + "\n"
+        + recovery_hash
+        + "\n",
+        encoding="utf-8",
+    )
+
+    report = evaluate(
+        contract_path=_contract(tmp_path),
+        closure_doc=closure,
+        success_json=success_path,
+        evidence_root=tmp_path,
+    )
+    assert report["later_packages_unlocked"] is False
+    assert (
+        "required_report_value_mismatch:recovery_report.json:"
+        "external_artifacts.stage8_large_artifact_archive.verified_count"
+        in report["failures"]
+    )
 

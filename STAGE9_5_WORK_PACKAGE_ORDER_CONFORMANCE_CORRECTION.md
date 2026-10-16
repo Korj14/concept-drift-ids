@@ -107,7 +107,8 @@ The prospective contract `data/manifests/stage9_5_6_closure_order_gate_v1.json` 
 - verification of the accepted maintenance archive needed for record-level replay equivalence;
 - zero unresolved Class-A defects;
 - no scientific-object replacement and no Stage-10 outcome access;
-- a valid report canonical SHA-256 linked from the closure document.
+- a valid Stage-9.5-6 report canonical SHA-256 linked from the closure document;
+- a successful Stage-9.5-1 recovery record bound to `stage9.5-1-fresh-clone-reconstruction-v1_2`, with checkpoint seeds 0–4 verified, the Stage-8 heavy archive at **145 required / 145 verified**, and its own canonical report SHA-256 linked from the same closure document.
 
 Missing, malformed, placeholder, incomplete, mismatched, or unlinked evidence remains locked. The validator produces a machine-readable order-gate report in CI, and its unit tests include explicit placeholder, unresolved-Class-A, unlinked-hash, missing-file, and complete-valid-evidence cases.
 

@@ -901,3 +901,41 @@ def test_recovery_report_head_not_in_replay_lineage_remains_locked(
         in report["failures"]
     )
 
+def test_duplicate_key_contract_returns_locked_decision(tmp_path: Path) -> None:
+    contract_path = tmp_path / "contract.json"
+    contract_path.write_text(
+        '{"contract_id":"a","contract_id":"b"}\n',
+        encoding="utf-8",
+    )
+
+    report = evaluate(
+        contract_path=contract_path,
+        closure_doc=tmp_path / "closure.md",
+        success_json=tmp_path / "success.json",
+        evidence_root=tmp_path,
+    )
+    assert report["later_packages_unlocked"] is False
+    assert report["failures"] == ["contract_invalid:ValueError"]
+
+
+def test_missing_required_contract_path_returns_locked_decision(
+    tmp_path: Path,
+) -> None:
+    contract_path = tmp_path / "contract.json"
+    contract_path.write_text(
+        json.dumps(
+            {
+                "contract_id": "test-gate",
+                "closure_doc_path": "closure.md",
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    report = evaluate(
+        contract_path=contract_path,
+        evidence_root=tmp_path,
+    )
+    assert report["later_packages_unlocked"] is False
+    assert report["failures"] == ["contract_missing_field:success_json_path"]
+

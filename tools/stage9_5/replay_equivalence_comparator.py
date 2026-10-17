@@ -426,6 +426,102 @@ def _project_phase_b_maintenance_record(
     return projected
 
 
+def compare_phase_b_maintenance_jsonl(
+    *,
+    accepted_path: Path,
+    fresh_path: Path,
+) -> dict[str, Any]:
+    """Compare ordered Phase-B maintenance records under the frozen projection."""
+
+    failures: list[str] = []
+    try:
+        accepted_records = _load_jsonl(accepted_path)
+    except (OSError, json.JSONDecodeError, TypeError, ValueError) as exc:
+        failures.append(
+            f"accepted_maintenance_invalid:{type(exc).__name__}:{exc}"
+        )
+        accepted_records = None
+
+    try:
+        fresh_records = _load_jsonl(fresh_path)
+    except (OSError, json.JSONDecodeError, TypeError, ValueError) as exc:
+        failures.append(
+            f"fresh_maintenance_invalid:{type(exc).__name__}:{exc}"
+        )
+        fresh_records = None
+
+    accepted_projected: list[dict[str, Any]] | None = None
+    fresh_projected: list[dict[str, Any]] | None = None
+    if accepted_records is not None:
+        try:
+            accepted_projected = [
+                _project_phase_b_maintenance_record(record)
+                for record in accepted_records
+            ]
+        except (TypeError, ValueError) as exc:
+            failures.append(
+                f"accepted_maintenance_projection_invalid:"
+                f"{type(exc).__name__}:{exc}"
+            )
+    if fresh_records is not None:
+        try:
+            fresh_projected = [
+                _project_phase_b_maintenance_record(record)
+                for record in fresh_records
+            ]
+        except (TypeError, ValueError) as exc:
+            failures.append(
+                f"fresh_maintenance_projection_invalid:"
+                f"{type(exc).__name__}:{exc}"
+            )
+
+    mismatches: list[str] = []
+    accepted_sha256: str | None = None
+    fresh_sha256: str | None = None
+    accepted_count: int | None = None
+    fresh_count: int | None = None
+    if accepted_projected is not None:
+        accepted_count = len(accepted_projected)
+        accepted_sha256 = _canonical_sha256(accepted_projected)
+    if fresh_projected is not None:
+        fresh_count = len(fresh_projected)
+        fresh_sha256 = _canonical_sha256(fresh_projected)
+
+    if accepted_projected is not None and fresh_projected is not None:
+        if len(accepted_projected) != len(fresh_projected):
+            mismatches.append("maintenance.length")
+        else:
+            for index, (accepted_record, fresh_record) in enumerate(
+                zip(accepted_projected, fresh_projected)
+            ):
+                mismatches.extend(
+                    _difference_paths(
+                        accepted_record,
+                        fresh_record,
+                        f"maintenance[{index}]",
+                    )
+                )
+
+    return {
+        "pass": not failures and not mismatches,
+        "failures": failures,
+        "mismatch_count": len(mismatches),
+        "mismatches": mismatches,
+        "accepted_record_count": accepted_count,
+        "fresh_record_count": fresh_count,
+        "accepted_projected_sha256": accepted_sha256,
+        "fresh_projected_sha256": fresh_sha256,
+        "projection": {
+            "top_level_fields_removed": list(PHASE_B_RECORD_TIMING_FIELDS),
+            "nested_direct_child_removed": [
+                "generation_payload.timing_seconds"
+            ],
+            "record_count_is_semantic": True,
+            "record_order_is_semantic": True,
+        },
+    }
+
+
 def _project_phase_b_arm_manifest(
     manifest: dict[str, Any],
 ) -> dict[str, Any]:

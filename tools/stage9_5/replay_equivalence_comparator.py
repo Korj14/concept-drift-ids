@@ -17,6 +17,12 @@ CONSTRUCTION_CONTRACT_PATH = (
     / "manifests"
     / "stage9_5_6_replay_report_construction_v1.json"
 )
+STAGE1_CONTRACT_PATH = (
+    PROJECT_ROOT
+    / "data"
+    / "manifests"
+    / "stage9_5_6_stage1_reconstruction_evidence_v1.json"
+)
 SEEDS = (0, 1, 2, 3, 4)
 PHASE_A_SUBDIR = "phase_a_shared_control_plane"
 PHASE_B_SUBDIR = "phase_b_symbolic_arms"
@@ -53,6 +59,7 @@ PHASE_C_FROZEN_SCIENTIFIC_BLOCKS = (
     "analysis",
 )
 SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
+SHA40_RE = re.compile(r"^[0-9a-f]{40}$")
 
 
 def _reject_duplicate_pairs(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
@@ -101,6 +108,104 @@ def _git_head() -> str:
         capture_output=True,
         text=True,
     ).stdout.strip()
+
+
+def _git_is_ancestor(ancestor: str, descendant: str) -> bool:
+    result = subprocess.run(
+        ["git", "merge-base", "--is-ancestor", ancestor, descendant],
+        cwd=PROJECT_ROOT,
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    return result.returncode == 0
+
+
+def _verify_stage1_reconstruction_report(
+    report_path: Path,
+    *,
+    contract_path: Path = STAGE1_CONTRACT_PATH,
+    expected_root: Path = PROJECT_ROOT,
+) -> dict[str, Any]:
+    failures: list[str] = []
+    try:
+        contract = _load_json(contract_path)
+        report = _load_json(report_path)
+    except (OSError, json.JSONDecodeError, TypeError, ValueError) as exc:
+        return {
+            "pass": False,
+            "failures": [
+                f"stage1_report_invalid:{type(exc).__name__}:{exc}"
+            ],
+            "canonical_sha256": None,
+            "repository_head": None,
+        }
+
+    required = contract.get("required_report")
+    if not isinstance(required, dict):
+        return {
+            "pass": False,
+            "failures": ["stage1_contract_required_report_invalid"],
+            "canonical_sha256": None,
+            "repository_head": None,
+        }
+
+    expected_path = (expected_root / str(required["path"])).resolve()
+    if report_path.resolve() != expected_path:
+        failures.append("stage1_report_path_mismatch")
+
+    expected_audit = required.get("audit_id")
+    if report.get("audit_id") != expected_audit:
+        failures.append("stage1_report_audit_id_mismatch")
+
+    embedded_hash = report.get("canonical_sha256")
+    if not isinstance(embedded_hash, str) or SHA256_RE.fullmatch(
+        embedded_hash
+    ) is None:
+        failures.append("stage1_report_canonical_sha256_invalid")
+    else:
+        core = dict(report)
+        core.pop("canonical_sha256", None)
+        if _canonical_sha256(core) != embedded_hash:
+            failures.append("stage1_report_canonical_sha256_mismatch")
+
+    required_success = required.get("required_success_values")
+    if not isinstance(required_success, dict):
+        failures.append("stage1_contract_success_values_invalid")
+    else:
+        for field, expected_value in required_success.items():
+            if report.get(field) != expected_value:
+                failures.append(
+                    f"stage1_report_success_value_mismatch:{field}"
+                )
+
+    if report.get("manual_success_override_permitted") is not False:
+        failures.append("stage1_report_manual_override_not_false")
+    if report.get("scientific_objects_modified") is not False:
+        failures.append("stage1_report_scientific_objects_modified")
+    if report.get("stage10_outcomes_accessed") is not False:
+        failures.append("stage1_report_stage10_outcomes_accessed")
+
+    repository_head = report.get("repository_head")
+    current_head = _git_head()
+    if not isinstance(repository_head, str) or SHA40_RE.fullmatch(
+        repository_head
+    ) is None:
+        failures.append("stage1_report_repository_head_invalid")
+    elif not _git_is_ancestor(repository_head, current_head):
+        failures.append("stage1_report_repository_head_not_ancestor")
+
+    return {
+        "pass": not failures,
+        "failures": failures,
+        "canonical_sha256": (
+            embedded_hash
+            if isinstance(embedded_hash, str)
+            and SHA256_RE.fullmatch(embedded_hash) is not None
+            else None
+        ),
+        "repository_head": repository_head,
+    }
 
 
 def _verify_run_manifest_hashes(
@@ -1645,6 +1750,7 @@ def run(
     fresh_root: Path,
     accepted_correction_config_path: Path,
     fresh_correction_config_path: Path,
+    stage1_report_path: Path,
     output_path: Path,
 ) -> dict[str, Any]:
     contract = _load_json(CONSTRUCTION_CONTRACT_PATH)
@@ -1662,6 +1768,7 @@ def run(
         accepted_config_path=accepted_correction_config_path,
         fresh_config_path=fresh_correction_config_path,
     )
+    stage1 = _verify_stage1_reconstruction_report(stage1_report_path)
     mismatches = [
         {
             "phase": "phase_a",
@@ -1701,12 +1808,26 @@ def run(
         + list(phase_b["failures"])
         + list(phase_c_preconditions["failures"])
         + list(phase_c_output["failures"])
+        + list(stage1["failures"])
     )
-    blockers = ["stage1_reconstruction_evidence_not_verified"]
+    blockers: list[str] = []
+    if not stage1["pass"]:
+        blockers.append("stage1_reconstruction_evidence_not_verified")
     if not phase_c_preconditions["pass"]:
         blockers.append("phase_c_preconditions_failed")
     if not phase_c_output["pass"]:
         blockers.append("phase_c_corrected_output_failed")
+
+    all_components_pass = bool(
+        phase_a["pass"]
+        and phase_b["pass"]
+        and phase_c_preconditions["pass"]
+        and phase_c_output["pass"]
+        and stage1["pass"]
+        and not failures
+        and not mismatches
+        and not blockers
+    )
 
     evidence: dict[str, Any] = {
         "audit_id": "stage9.5-6-replay-equivalence-comparison-v1",
@@ -1714,8 +1835,8 @@ def run(
         "producer_id": "stage9.5-6-replay-equivalence-comparator-v1",
         "audited_head": _git_head(),
         "manual_override_used": False,
-        "comparison_complete": False,
-        "source_evidence_complete": False,
+        "comparison_complete": all_components_pass,
+        "source_evidence_complete": all_components_pass,
         "mismatch_count": int(
             phase_a["mismatch_count"]
             + phase_b["mismatch_count"]
@@ -1749,16 +1870,28 @@ def run(
                 and phase_c_output["pass"]
             ),
             "status": (
-                "corrected_output_verified_stage1_evidence_blocked"
+                "corrected_output_verified"
                 if (
                     phase_c_preconditions["pass"]
                     and phase_c_output["pass"]
+                    and stage1["pass"]
                 )
-                else "phase_c_comparison_failed"
+                else (
+                    "corrected_output_verified_stage1_evidence_blocked"
+                    if (
+                        phase_c_preconditions["pass"]
+                        and phase_c_output["pass"]
+                    )
+                    else "phase_c_comparison_failed"
+                )
             ),
         },
         "accepted_maintenance_archive_verified": phase_b["pass"],
-        "stage1_reconstructed_under_historical_environment": False,
+        "stage1_reconstructed_under_historical_environment": stage1["pass"],
+        "stage1_reconstruction": stage1,
+        "stage1_reconstruction_report_canonical_sha256": stage1[
+            "canonical_sha256"
+        ],
         "regenerated_correction_config_all_scientific_blocks_equal": (
             phase_c_preconditions["scientific_blocks_equal"]
         ),
@@ -1773,15 +1906,19 @@ def run(
             "c2ded83b8195b9321e715626c1f305f9627936e8"
         ),
         "unresolved_class_a": (
-            ["stage1_reconstruction_evidence_not_verified"]
-            if (
-                phase_c_preconditions["pass"]
-                and phase_c_output["pass"]
+            []
+            if all_components_pass
+            else (
+                ["stage1_reconstruction_evidence_not_verified"]
+                if (
+                    phase_c_preconditions["pass"]
+                    and phase_c_output["pass"]
+                    and not stage1["pass"]
+                )
+                else [
+                    "replay_equivalence_comparison_incomplete"
+                ]
             )
-            else [
-                "replay_equivalence_phase_c_comparison_failed",
-                "stage1_reconstruction_evidence_not_verified",
-            ]
         ),
         "scientific_objects_modified": False,
         "stage10_outcomes_accessed": False,
@@ -1814,6 +1951,11 @@ def main() -> None:
         required=True,
     )
     parser.add_argument(
+        "--stage1-report",
+        type=Path,
+        required=True,
+    )
+    parser.add_argument(
         "--output",
         type=Path,
         default=Path(
@@ -1828,6 +1970,7 @@ def main() -> None:
         fresh_root=args.fresh_root,
         accepted_correction_config_path=args.accepted_correction_config,
         fresh_correction_config_path=args.fresh_correction_config,
+        stage1_report_path=args.stage1_report,
         output_path=args.output,
     )
     if not evidence["phase_a"]["pass"]:
@@ -1838,10 +1981,14 @@ def main() -> None:
         raise SystemExit("Stage 9.5-6 Phase-C replay preconditions failed.")
     if not evidence["phase_c"]["corrected_rerun_complete"]:
         raise SystemExit("Stage 9.5-6 corrected Phase-C output comparison failed.")
-    raise SystemExit(
-        "Stage 9.5-6 remains blocked: Stage-1 historical-environment "
-        "reconstruction evidence is not yet machine-verified."
-    )
+    if not evidence["stage1_reconstructed_under_historical_environment"]:
+        raise SystemExit(
+            "Stage 9.5-6 remains blocked: Stage-1 historical-environment "
+            "reconstruction evidence is not machine-verified."
+        )
+    if not evidence["comparison_complete"]:
+        raise SystemExit("Stage 9.5-6 replay comparison is incomplete.")
+    print(json.dumps(evidence, sort_keys=True, indent=2))
 
 
 if __name__ == "__main__":

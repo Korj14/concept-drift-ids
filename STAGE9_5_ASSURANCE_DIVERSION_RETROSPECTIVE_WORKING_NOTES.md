@@ -1482,3 +1482,81 @@ conservative no-synthesis decision -> exhaustive restore-event forensics ->
 versioned transport-reconstruction correction. None of those states should be
 collapsed or rewritten after the fact.
 
+## Current-chat reconciliation and Dropbox materialization preflight — 17 October 2026
+
+A later chat resumed after the assurance branch had advanced externally by
+**107 commits** from the previously observed Phase-A comparator head
+`cf78ba076a12693bc1b89ac52181fc8f20091fdc` to
+`8947848e337074096689de7d62b0c46850182b9a`. The delta was reconciled before
+any mutation.
+
+The reconciled head showed that several tasks which had still been pending in
+the earlier chat were already complete prospectively:
+
+- Phase-A, Phase-B, and corrected Phase-C replay comparison are implemented and
+  frozen;
+- the deterministic replay-report finalizer is implemented and frozen;
+- authoritative Stage-1 reconstruction evidence is closed;
+- the historical replay execution handoff is frozen;
+- the multi-chat assurance-diversion retrospective is already maintained in
+  this file;
+- no identified non-external Stage-9.5-6 implementation blocker remains.
+
+The current-status overlay instead places the live bottleneck at Stage-9.5-1:
+the Dropbox recovery bytes must be materialized on a verifier-capable
+filesystem, the frozen zero-byte transport correction must complete the five
+manifest-bound omissions, and the unchanged v1.2 verifier must then produce a
+successful 145/145 report before Stage-9.5-6 may execute.
+
+### Read-only Dropbox revalidation
+
+The connected Dropbox surface was rechecked without mutation. All five
+checkpoint objects remain present at `/seed_0.pt` through `/seed_4.pt`;
+each reports the expected size of **76,105 bytes**. The
+`/cd_primary_v1` folder remains present and reports the same aggregate size
+recorded by the frozen discovery evidence: **1,863,975,043 bytes**.
+
+The Dropbox connector also successfully issued direct temporary download links,
+confirming that the source files are downloadable from the connected cloud
+surface.
+
+### One-file materialization preflight
+
+A deliberately conservative materialization test was attempted on
+`seed_0.pt` only. No archive transfer was attempted.
+
+The verifier container tried to consume the connector-issued temporary URL
+directly with a single HTTP GET. The request failed at DNS resolution before
+any file bytes were written:
+
+`Could not resolve host: ...dl.dropboxusercontent.com`.
+
+No partial checkpoint file was accepted, no hash claim was made, and no
+Dropbox object was mutated.
+
+A public-web workaround was deliberately not used: the temporary URL is private
+and single-use, and routing it through an unrelated public web-fetch surface
+would weaken the intended connector-to-verifier provenance boundary merely to
+work around this container's network restriction.
+
+Therefore the authoritative conclusion remains unchanged: the Dropbox recovery
+surface is present, but this specific container is not the verifier-capable
+filesystem on which the recovered byte streams can presently be materialized.
+
+### Exact-head assurance state during this preflight
+
+At head `8947848e337074096689de7d62b0c46850182b9a`:
+
+- the work-package order gate completed successfully and emitted
+  `later_packages_unlocked=false`;
+- Stage-9.5-7/8/9 remained skipped/locked;
+- fresh-clone reconstruction tests reported **13 passed**;
+- the unchanged v1.2 reconstruction result remained
+  **0 identity failures / 2 external-artifact blockers**.
+
+This chat therefore made no scientific, comparator, verifier, or closure-rule
+change. Its contribution was reconciliation of the externally advanced branch,
+read-only revalidation of the connected Dropbox recovery surface, and explicit
+preservation of the remaining connector-to-verifier materialization boundary
+for the final reviewer-facing Stage-9.5 retrospective.
+

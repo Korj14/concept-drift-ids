@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "status_id": "stage9.5-6-current-status-v1",
-  "status_observed_at_head": "a5620b34a39dbf67c0e6ca769f6b1dc650e963b9",
+  "status_observed_at_head": "f1a383ea084255e086b925f56aabe15e24d9f82d",
   "status_date": "2026-10-17",
   "purpose": "Additive current-status overlay. Does not modify the prospectively frozen replay construction contract, accepted Stage-8/9 science, or closure authority.",
   "frozen_replay_construction_contract": {
@@ -38,12 +38,12 @@
     "identified_non_external_blockers": []
   },
   "unresolved_external_blockers": [
-    "stage8_large_artifact_archive_incomplete_140_of_145",
-    "stage9_5_1_frozen_v1_2_verifier_not_yet_rerun_on_materialized_new_surface"
+    "dropbox_recovery_bytes_not_yet_materialized_on_verifier_capable_filesystem",
+    "stage9_5_1_frozen_v1_2_verifier_not_yet_rerun_on_completed_materialized_surface"
   ],
   "work_package_state": {
-    "stage9.5-1": "closed_failed_historical_state_with_partial_authoritative_recovery_discovered",
-    "stage9.5-6": "blocked_until_stage9.5-1_frozen_verifier_success",
+    "stage9.5-1": "historical_negative_closure_preserved_reopening_route_frozen_pending_materialization_and_verifier",
+    "stage9.5-6": "blocked_until_stage9.5-1_frozen_v1_2_verifier_success",
     "stage9.5-7": "locked",
     "stage9.5-8": "locked",
     "stage9.5-9": "locked",
@@ -51,11 +51,11 @@
   },
   "next_authoritative_sequence": [
     "preserve the historical negative Stage-9.5-1 closure as the correct state when no connected personal-cloud source was available",
-    "recover the five missing zero-byte C-arm maintenance files from an authoritative original source/archive representation if available; do not silently synthesize them",
-    "materialize the five exact Dropbox checkpoint files and complete Stage-8 archive onto a verifier-capable filesystem without changing bytes",
-    "rerun the unchanged Stage-9.5-1 v1.2 verifier and require pass=true, verified seeds 0-4, 145/145 archive files, zero failures, and zero blockers",
+    "materialize the five exact Dropbox checkpoint files and the 140 present Stage-8 descriptor-linked files onto a verifier-capable filesystem without changing bytes",
+    "run the frozen zero-byte transport reconstruction correction; require all five C-arm maintenance paths to be preexisting-verified or explicitly transport-reconstructed as exact empty bytes with zero failures",
+    "run the unchanged Stage-9.5-1 v1.2 verifier and require pass=true, verified seeds 0-4, 145/145 archive files, zero failures, and zero blockers",
     "only after verifier-produced success may Stage-9.5-1 be reopened/superseded and the frozen Stage-9.5-6 historical replay handoff execute",
-    "preserve the multi-chat assurance-diversion retrospective, historical negative closure, and Dropbox recovery discovery in the final project record"
+    "preserve the multi-chat assurance-diversion retrospective, historical negative closure, Dropbox discovery, exhaustive restore-event forensics, and zero-byte transport reconstruction correction in the final project record"
   ],
   "scientific_objects_modified": false,
   "accepted_stage8_9_evidence_replaced": false,
@@ -78,13 +78,39 @@
       "frozen_verifier_rerun_complete": false
     },
     "stage8_archive": {
-      "status": "located_but_incomplete_against_frozen_inventory",
+      "status": "dropbox_physical_tree_140_of_145_with_frozen_reconstructible_route_for_five_manifest_bound_zero_byte_transport_omissions",
       "required_paths": 145,
       "present_paths": 140,
       "missing_paths": 5,
-      "missing_paths_all_zero_byte_frozen_symbolic_maintenance": true
+      "missing_paths_all_zero_byte_frozen_symbolic_maintenance": true,
+      "reconstructible_route_frozen": true,
+      "reconstruction_execution_complete": false,
+      "restore_event_forensics": {
+        "event_count": 253,
+        "operation_types": [
+          "ADD"
+        ],
+        "non_add_event_count": 0,
+        "missing_c_frozen_maintenance_add_event_count": 0,
+        "history_exhausted": true
+      }
     },
     "historical_negative_closure_superseded": false,
     "governing_success_criteria_unchanged": true
+  },
+  "zero_byte_transport_reconstruction": {
+    "status": "frozen_not_yet_executed",
+    "correction_doc": "STAGE9_5_1_ZERO_BYTE_TRANSPORT_RECONSTRUCTION_CORRECTION.md",
+    "contract_path": "data/manifests/stage9_5_1_zero_byte_transport_reconstruction_v1.json",
+    "tool_path": "tools/stage9_5/zero_byte_transport_reconstruction.py",
+    "test_path": "tests/stage9_5/test_zero_byte_transport_reconstruction.py",
+    "forensic_record": "data/manifests/stage9_5_1_dropbox_restore_event_forensics_v1.json",
+    "allowed_path_count": 5,
+    "exact_byte_stream": "zero bytes",
+    "exact_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "original_dropbox_objects_recovered": false,
+    "reconstructible_route_frozen": true,
+    "frozen_stage9_5_1_verifier_unchanged": true,
+    "verifier_success_still_required": true
   }
 }

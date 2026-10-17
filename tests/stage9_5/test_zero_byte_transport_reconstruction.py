@@ -5,12 +5,19 @@ import shutil
 from pathlib import Path
 
 from tools.stage9_5.zero_byte_transport_reconstruction import (
+    CONTRACT_PATH,
     EMPTY_SHA256,
     PROJECT_ROOT,
     _canonical_sha256,
+    _validate_forensic_basis,
     run,
 )
 
+
+
+def test_forensic_basis_resolves_pinned_git_blobs_not_live_worktree() -> None:
+    contract = json.loads(CONTRACT_PATH.read_text(encoding="utf-8"))
+    assert _validate_forensic_basis(contract) == []
 
 def _materialized_archive(tmp_path: Path) -> Path:
     root = tmp_path / "cd_primary_v1"

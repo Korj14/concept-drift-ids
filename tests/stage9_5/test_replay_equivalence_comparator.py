@@ -1151,7 +1151,14 @@ def _write_stage1_contract_and_report(
     repository_head: str,
     status: str = "pass",
 ) -> tuple[Path, Path]:
+    verifier_path = tmp_path / "stage1_verifier.py"
+    verifier_path.write_text("# frozen toy verifier\n", encoding="utf-8")
     contract = {
+        "contract_id": "stage9.5-6-stage1-reconstruction-evidence-v1",
+        "verifier_implementation": {
+            "verifier_id": "stage9.5-6-stage1-reconstruction-verifier-v1",
+            "tool_path": "stage1_verifier.py",
+        },
         "required_report": {
             "path": "stage1_reconstruction_report.json",
             "audit_id": "stage9.5-6-stage1-reconstruction-v1",
@@ -1165,7 +1172,7 @@ def _write_stage1_contract_and_report(
                 "failures": [],
                 "blockers": [],
             },
-        }
+        },
     }
     contract_path = tmp_path / "stage1_contract.json"
     contract_path.write_text(
@@ -1175,6 +1182,10 @@ def _write_stage1_contract_and_report(
 
     report = {
         "audit_id": "stage9.5-6-stage1-reconstruction-v1",
+        "contract_id": contract["contract_id"],
+        "contract_canonical_sha256": _canonical_sha256(contract),
+        "verifier_id": contract["verifier_implementation"]["verifier_id"],
+        "verifier_source_sha256": _sha256_file(verifier_path),
         "status": status,
         "pass": status == "pass",
         "repository_head": repository_head,
@@ -1253,4 +1264,61 @@ def test_stage1_report_binding_rejects_unrelated_repository_head(
 
     assert result["pass"] is False
     assert "stage1_report_repository_head_not_ancestor" in result["failures"]
+
+def test_stage1_report_binding_rejects_wrong_contract_identity(
+    tmp_path: Path,
+) -> None:
+    contract_path, report_path = _write_stage1_contract_and_report(
+        tmp_path,
+        repository_head=_git_head(),
+    )
+    report = json.loads(report_path.read_text(encoding="utf-8"))
+    report["contract_canonical_sha256"] = "0" * 64
+    report.pop("canonical_sha256", None)
+    report["canonical_sha256"] = _canonical_sha256(report)
+    report_path.write_text(
+        json.dumps(report, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+
+    result = _verify_stage1_reconstruction_report(
+        report_path,
+        contract_path=contract_path,
+        expected_root=tmp_path,
+    )
+
+    assert result["pass"] is False
+    assert (
+        "stage1_report_contract_canonical_sha256_mismatch"
+        in result["failures"]
+    )
+
+
+def test_stage1_report_binding_rejects_wrong_verifier_source_identity(
+    tmp_path: Path,
+) -> None:
+    contract_path, report_path = _write_stage1_contract_and_report(
+        tmp_path,
+        repository_head=_git_head(),
+    )
+    report = json.loads(report_path.read_text(encoding="utf-8"))
+    report["verifier_source_sha256"] = "0" * 64
+    report.pop("canonical_sha256", None)
+    report["canonical_sha256"] = _canonical_sha256(report)
+    report_path.write_text(
+        json.dumps(report, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+
+    result = _verify_stage1_reconstruction_report(
+        report_path,
+        contract_path=contract_path,
+        expected_root=tmp_path,
+    )
+
+    assert result["pass"] is False
+    assert (
+        "stage1_report_verifier_source_sha256_mismatch"
+        in result["failures"]
+    )
 

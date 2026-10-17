@@ -1,0 +1,164 @@
+{
+  "schema_version": 1,
+  "audit_id": "stage9.5-1-dropbox-recovery-discovery-v1",
+  "status": "authoritative_surface_discovered_partial_archive_not_yet_verifier_pass",
+  "observed_date": "2026-10-17",
+  "observed_assurance_head": "5e1b15162d7977e59ffe73d16bed6d2832ba6764",
+  "historical_negative_closure_preserved": true,
+  "governing_success_criteria_unchanged": true,
+  "dropbox_surface": {
+    "namespace": "ns:12411519539",
+    "checkpoint_paths": [
+      "/seed_0.pt",
+      "/seed_1.pt",
+      "/seed_2.pt",
+      "/seed_3.pt",
+      "/seed_4.pt"
+    ],
+    "stage8_archive_path": "/cd_primary_v1",
+    "mutation_performed": false
+  },
+  "system_a_checkpoints": {
+    "status": "all_five_exact_byte_identities_located",
+    "frozen_sha256": {
+      "0": "514c6d552b3cd680ae966bbb568105bd2871bc68d3a47aded070a70ba0615bd1",
+      "1": "07696c3f580645d9c96ac3e736cfb5eeaa8033f148bf64822e8ee105861cf552",
+      "2": "7630514cf409256bd2bbe27eca59f881acb238be698b5fdb1ee12bca8e402491",
+      "3": "cce1ce47db047b9d441bbe6dad9bd53f1ee6ff3ad7d404521cae72a38bccd4b4",
+      "4": "9b9e56371f3246482998c4efea4829e1e6d5aaf549bb43e1af05e471dfcb9e93"
+    },
+    "dropbox_files": {
+      "0": {
+        "path": "/seed_0.pt",
+        "size": 76105,
+        "content_hash": "ddc75eaaae68cf1e6ee34a5a68c264f922d64543ca883cd03234763a182a1719"
+      },
+      "1": {
+        "path": "/seed_1.pt",
+        "size": 76105,
+        "content_hash": "b6288356dd06f134aa18ea886c5ec17e695488f57074a455115f0cd17fef4feb"
+      },
+      "2": {
+        "path": "/seed_2.pt",
+        "size": 76105,
+        "content_hash": "f9ad4465f34aa3e525722a989bcf7b3588a1e57973cdbe2e1fe5e30a00378b05"
+      },
+      "3": {
+        "path": "/seed_3.pt",
+        "size": 76105,
+        "content_hash": "0f6d6b65cdadc92f7aaf3e345845bdb6c9014f7512f8fff7a7026a8e3c0fd716"
+      },
+      "4": {
+        "path": "/seed_4.pt",
+        "size": 76105,
+        "content_hash": "2cbb2afd97b9be46964901e8a66413a09b5cbbb9e041dd8530fc5834ab7e722e"
+      }
+    },
+    "identity_proof": {
+      "dropbox_content_hash_spec": "https://www.dropbox.com/developers/reference/content-hash",
+      "block_size_bytes": 4194304,
+      "each_file_is_single_block": true,
+      "proof_rule": "For a non-empty file smaller than one Dropbox block, content_hash = SHA256(binary(SHA256(file_bytes))). Each observed Dropbox content_hash equals SHA256(binary(frozen ordinary SHA256)) for its seed.",
+      "ordinary_sha256_bytes_not_recomputed_locally_due_connector_transfer_boundary": true
+    },
+    "frozen_verifier_status": "not_yet_rerun_with_materialized_checkpoint_root"
+  },
+  "stage8_large_archive": {
+    "status": "located_structurally_incomplete_against_frozen_145_path_inventory",
+    "dropbox_path": "/cd_primary_v1",
+    "tree_summary": {
+      "entry_count": 253,
+      "file_count": 203,
+      "folder_count": 50,
+      "total_file_bytes": 1863975043
+    },
+    "major_family_indicators": {
+      "phase_a_run_manifests": 5,
+      "phase_a_predictions": 5,
+      "phase_b_seed_manifests": 5,
+      "phase_b_nonfrozen_maintenance_logs": 10,
+      "corrected_phase_c_seed_manifests": 5,
+      "corrected_phase_c_arm_evaluations": 15,
+      "corrected_phase_c_prediction_traces": 15,
+      "preserved_original_phase_c_seed0_failure_files": 2
+    },
+    "descriptor_linked_inventory": {
+      "requirement_count": 145,
+      "present_path_count": 140,
+      "missing_path_count": 5,
+      "per_seed": [
+        {
+          "seed": 0,
+          "required": 31,
+          "present": 30
+        },
+        {
+          "seed": 1,
+          "required": 28,
+          "present": 27
+        },
+        {
+          "seed": 2,
+          "required": 29,
+          "present": 28
+        },
+        {
+          "seed": 3,
+          "required": 28,
+          "present": 27
+        },
+        {
+          "seed": 4,
+          "required": 29,
+          "present": 28
+        }
+      ],
+      "missing": [
+        {
+          "path": "phase_b_symbolic_arms/seed-0/c_frozen_symbolic/maintenance.jsonl",
+          "expected_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "expected_bytes": 0
+        },
+        {
+          "path": "phase_b_symbolic_arms/seed-1/c_frozen_symbolic/maintenance.jsonl",
+          "expected_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "expected_bytes": 0
+        },
+        {
+          "path": "phase_b_symbolic_arms/seed-2/c_frozen_symbolic/maintenance.jsonl",
+          "expected_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "expected_bytes": 0
+        },
+        {
+          "path": "phase_b_symbolic_arms/seed-3/c_frozen_symbolic/maintenance.jsonl",
+          "expected_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "expected_bytes": 0
+        },
+        {
+          "path": "phase_b_symbolic_arms/seed-4/c_frozen_symbolic/maintenance.jsonl",
+          "expected_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "expected_bytes": 0
+        }
+      ],
+      "missing_files_are_manifest_declared_zero_opportunity_frozen_symbolic_maintenance": true
+    },
+    "dropbox_global_title_search_maintenance_jsonl_count": 10,
+    "missing_path_revision_lookup_seed0": "FILE_NOT_FOUND",
+    "compressed_backup_search_found": false,
+    "frozen_verifier_status": "cannot_pass_145_of_145_until_authoritative_missing_paths_are supplied"
+  },
+  "assurance_disposition": {
+    "stage9_5_1_negative_closure_reopened": false,
+    "reason": "The new authoritative surface materially narrows the external-provenance defect but does not yet satisfy the unchanged frozen v1.2 verifier success criterion. Checkpoints are located exactly; archive path inventory remains 140/145.",
+    "prohibited_action": "Do not silently synthesize the five empty maintenance files and call the archive original.",
+    "next_steps": [
+      "obtain the five missing zero-byte maintenance files from an authoritative original source or original archive representation if available",
+      "materialize the five exact Dropbox checkpoint files and complete archive onto a verifier-capable filesystem without changing bytes",
+      "run the unchanged Stage-9.5-1 v1.2 verifier and require pass=true, five verified seeds, 145/145 archive files, zero failures, zero blockers",
+      "only then reopen/supersede the historical negative closure and proceed to the frozen Stage-9.5-6 handoff"
+    ]
+  },
+  "scientific_objects_modified": false,
+  "accepted_stage8_9_evidence_replaced": false,
+  "stage10_outcomes_accessed": false
+}

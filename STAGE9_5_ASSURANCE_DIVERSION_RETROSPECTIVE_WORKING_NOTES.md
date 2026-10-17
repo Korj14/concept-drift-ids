@@ -709,3 +709,60 @@ final procedure rather than presenting the path as if it had been linear.
     assurance work was complete, rather than obscuring the true external
     provenance bottleneck.
 
+40. On 17 October 2026 this continuation resumed after the user again instructed
+    the assurance work to proceed and reiterated that the entire Stage-9.5
+    diversion spanning multiple chats must be documented at final closure. The
+    live assurance branch had advanced from the previously observed Phase-A-era
+    head `cf78ba076a12693bc1b89ac52181fc8f20091fdc` to
+    `6013f6dcc2568f26f05682720dc5a10394dd48ec`, **72 commits ahead**.
+    The delta was reconciled before mutation.
+
+    Reconciliation confirmed that the apparent remaining Phase-B/Phase-C work
+    was obsolete. The repository already contains prospectively frozen
+    deterministic replay comparison for Phase A, Phase B, Phase-C
+    failure-lineage/correction-config preconditions, and corrected Phase-C
+    seed-0 outputs; the deterministic replay-report finalizer; authoritative
+    Stage-1 reconstruction evidence and closure; the frozen end-to-end
+    historical replay execution handoff; the additive current-status overlay;
+    and this multi-chat assurance-diversion working record. The authoritative
+    current-status overlay records **no identified non-external Stage-9.5-6
+    implementation/evidence blocker**.
+
+    Exact-head Stage-9 robustness run `39046437404` completed successfully.
+    Stage-9.5 assurance run `39046437384` had the expected fail-closed
+    top-level shape: the assurance-contract job passed with **87 tests**;
+    statistical oracle, causal properties, targeted mutations, and the semantic
+    work-package order gate passed; static discovery remained the accepted
+    **ruff=154 / mypy=55** baseline; fresh-clone reconstruction remained
+    **0 identity failures / 2 external-artifact blockers**;
+    `later_packages_unlocked=false`; and Stage-9.5-7/8/9 were skipped because
+    the Stage-9.5-6 closure/success records do not yet exist.
+
+    The 17 October Stage-1 reconstruction work introduced a new external-data
+    transport surface through the unofficial `bencorn/CICIDS2017` mirror on
+    Hugging Face. A targeted recovery check was performed against that new
+    surface for the missing System-A checkpoint/archive identifiers. The mirror
+    exposes original CICIDS2017 distribution material such as
+    `MachineLearningCSV.zip` and related dataset files, not the project-
+    generated System-A checkpoints or `artifacts/cd_primary_v1` replay
+    archive. It therefore remains supplemental transport for Stage-1 raw inputs
+    only and does not reduce either unresolved provenance blocker.
+
+    No new comparator, finalizer, protocol, scientific, provenance, or
+    order-gate semantics were added. The project again stopped software
+    expansion at the genuine external-evidence boundary. The only unresolved
+    prerequisites remain `system_a_checkpoint_bytes_missing` and
+    `stage8_large_artifact_archive_missing`. The authoritative next sequence
+    remains: recover/verify the five exact original System-A checkpoints ->
+    recover/verify the original Stage-8 heavy archive at 145/145 -> close
+    Stage-9.5-1 -> execute the frozen historical replay handoff ->
+    comparator/finalizer -> Stage-9.5-6 closure/order-gate unlock -> revalidate
+    9.5-7 -> rerun/revalidate 9.5-8 -> run 9.5-9 hostile review last -> require
+    zero unresolved Class-A defects -> finalize the multi-chat
+    assurance-diversion retrospective -> close Stage 9.5 -> only then authorize
+    Stage 10.
+
+    This entry is specifically preserved so the final Stage-9.5 reviewer-facing
+    retrospective can reconstruct the multi-chat diversion from committed
+    repository evidence rather than relying on conversation history.
+

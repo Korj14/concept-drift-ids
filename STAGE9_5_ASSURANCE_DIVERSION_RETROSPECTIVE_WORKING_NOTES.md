@@ -342,3 +342,32 @@ final procedure rather than presenting the path as if it had been linear.
     9.5-8 -> 9.5-9 -> zero unresolved Class-A defects -> finalize the multi-chat
     assurance-diversion retrospective -> close Stage 9.5 -> only then Stage 10.
 
+32. On 17 October 2026 this continuation resumed from the previously observed
+    Phase-A-era head `cf78ba076a12693bc1b89ac52181fc8f20091fdc` but found the
+    assurance branch already at `bd44bb9198acc11e837d47c938c213e86eb500d7`,
+    **63 commits ahead**. The delta was reconciled before any mutation. It
+    confirmed that the deterministic replay comparator had already been
+    prospectively frozen for Phase A, Phase B, Phase-C failure-lineage and
+    correction-config preconditions, and corrected Phase-C seed-0 output
+    comparison; the replay-report finalizer was frozen; authoritative Stage-1
+    reconstruction evidence had been closed; an end-to-end historical replay
+    execution handoff had been frozen; and the multi-chat diversion notes were
+    already being maintained. Exact-head Stage-9 robustness run
+    `39036358382` passed. Stage-9.5 assurance run `39036358349` had the
+    expected fail-closed top-level shape: the assurance-contract job passed
+    with **87 tests**; statistical oracle, causal properties, targeted
+    mutations, and the semantic work-package order gate all passed; static
+    discovery remained the accepted `ruff=154, mypy=55` baseline; fresh-clone
+    reconstruction remained `0 identity failures / 2 external-artifact
+    blockers`; `later_packages_unlocked=false`; and Stage-9.5-7/8/9 were
+    skipped. The additive current-status overlay at
+    `data/manifests/stage9_5_6_current_status_v1.json` was checked against the
+    live branch and remained accurate: no non-external Stage-9.5-6
+    implementation/evidence blocker is currently identified. The only
+    unresolved prerequisites remain
+    `system_a_checkpoint_bytes_missing` and
+    `stage8_large_artifact_archive_missing`. No additional comparator,
+    protocol, scientific, or gate hardening was added merely to consume time;
+    this continuation instead preserved the reconciliation in the working
+    retrospective for final Stage-9.5 closure documentation.
+

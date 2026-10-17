@@ -38,23 +38,24 @@
     "identified_non_external_blockers": []
   },
   "unresolved_external_blockers": [
-    "system_a_checkpoint_bytes_missing",
-    "stage8_large_artifact_archive_missing"
+    "stage8_large_artifact_archive_incomplete_140_of_145",
+    "stage9_5_1_frozen_v1_2_verifier_not_yet_rerun_on_materialized_new_surface"
   ],
   "work_package_state": {
-    "stage9.5-1": "closed_failed_external_provenance_unresolved",
-    "stage9.5-6": "blocked_by_closed_failed_stage9.5-1",
+    "stage9.5-1": "closed_failed_historical_state_with_partial_authoritative_recovery_discovered",
+    "stage9.5-6": "blocked_until_stage9.5-1_frozen_verifier_success",
     "stage9.5-7": "locked",
     "stage9.5-8": "locked",
     "stage9.5-9": "locked",
     "stage10": "prohibited"
   },
   "next_authoritative_sequence": [
-    "do not reinterpret the negative Stage-9.5-1 closure as a successful reconstruction",
-    "if exact original checkpoint/archive bytes are later recovered, reopen Stage-9.5-1 under the unchanged v1.2 verifier and require five verified seeds plus 145/145 Stage-8 files with zero failures/blockers",
-    "otherwise the current Stage-9.5 assurance path cannot achieve zero unresolved Class-A defects or authorize Stage 10",
-    "any future continuation must choose a prospectively governed restart/new evidence-generation campaign rather than silently substituting regenerated artifacts into the accepted Stage-8/9 evidence chain",
-    "preserve the multi-chat assurance-diversion retrospective and this negative closure in the final project record"
+    "preserve the historical negative Stage-9.5-1 closure as the correct state when no connected personal-cloud source was available",
+    "recover the five missing zero-byte C-arm maintenance files from an authoritative original source/archive representation if available; do not silently synthesize them",
+    "materialize the five exact Dropbox checkpoint files and complete Stage-8 archive onto a verifier-capable filesystem without changing bytes",
+    "rerun the unchanged Stage-9.5-1 v1.2 verifier and require pass=true, verified seeds 0-4, 145/145 archive files, zero failures, and zero blockers",
+    "only after verifier-produced success may Stage-9.5-1 be reopened/superseded and the frozen Stage-9.5-6 historical replay handoff execute",
+    "preserve the multi-chat assurance-diversion retrospective, historical negative closure, and Dropbox recovery discovery in the final project record"
   ],
   "scientific_objects_modified": false,
   "accepted_stage8_9_evidence_replaced": false,
@@ -67,5 +68,23 @@
     "identity_failures": 0,
     "external_artifact_blockers": 2,
     "reopen_only_on_exact_original_bytes_and_frozen_verifier_success": true
+  },
+  "post_negative_closure_recovery_discovery": {
+    "status": "partial_authoritative_recovery_discovered",
+    "discovery_path": "STAGE9_5_1_DROPBOX_RECOVERY_DISCOVERY.md",
+    "machine_record_path": "data/manifests/stage9_5_1_dropbox_recovery_discovery_v1.json",
+    "checkpoint_family": {
+      "status": "all_five_exact_byte_identities_located_in_dropbox",
+      "frozen_verifier_rerun_complete": false
+    },
+    "stage8_archive": {
+      "status": "located_but_incomplete_against_frozen_inventory",
+      "required_paths": 145,
+      "present_paths": 140,
+      "missing_paths": 5,
+      "missing_paths_all_zero_byte_frozen_symbolic_maintenance": true
+    },
+    "historical_negative_closure_superseded": false,
+    "governing_success_criteria_unchanged": true
   }
 }

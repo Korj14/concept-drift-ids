@@ -13,6 +13,8 @@ on:
       - "data/manifests/stage9_5_6_closure_order_gate_v1.json"
       - "data/manifests/stage9_5_6_replay_report_construction_v1.json"
       - "data/manifests/stage9_5_6_stage1_reconstruction_evidence_v1.json"
+      - "results/audits/stage9_5_full_seed_rerun_v1/stage1_reconstruction_report.json"
+      - "STAGE9_5_6_STAGE1_RECONSTRUCTION_EVIDENCE_CLOSURE.md"
       - "STAGE9_5_6_REPLAY_REPORT_CONSTRUCTION_CONTRACT_V1.md"
       - "STAGE9_5_6_STAGE1_RECONSTRUCTION_EXECUTION_HANDOFF.md"
       - "STAGE9_5_ASSURANCE_DIVERSION_RETROSPECTIVE_WORKING_NOTES.md"

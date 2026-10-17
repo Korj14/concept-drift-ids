@@ -87,9 +87,25 @@
     }
   },
   "current_status": {
-    "implementation": "not_implemented",
-    "blocker_id": "stage1_reconstruction_evidence_verifier_not_implemented"
+    "implementation": "implemented_prospectively_frozen",
+    "authoritative_execution": "not_verified",
+    "blocker_id": "stage1_reconstruction_evidence_not_verified"
   },
   "scientific_objects_modified": false,
-  "stage10_execution_permitted": false
+  "stage10_execution_permitted": false,
+  "verifier_implementation": {
+    "status": "implemented_prospectively_frozen",
+    "tool_path": "tools/stage9_5/stage1_reconstruction_evidence.py",
+    "test_path": "tests/stage9_5/test_stage1_reconstruction_evidence.py",
+    "historical_source_execution": "exact preprocessing.py bytes loaded from frozen replay head after Git blob SHA-1 verification",
+    "independent_semantic_check": "separate structural-preprocessing implementation compares each decompressed reconstructed table with exact values and column order",
+    "environment_checks": [
+      "Python version equals 3.11.9",
+      "requirements-lock raw SHA-256 equals frozen identity",
+      "requirements-lock normalized-text SHA-256 equals frozen identity",
+      "all locked installed distributions equal exact versions"
+    ],
+    "report_pass_is_derived": true,
+    "manual_success_override_permitted": false
+  }
 }

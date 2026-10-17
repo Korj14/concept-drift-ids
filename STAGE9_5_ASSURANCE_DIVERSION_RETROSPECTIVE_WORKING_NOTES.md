@@ -113,6 +113,19 @@ post-outcome/manual success construction.
     environment remain authoritative, and the Stage-1 execution handoff
     remains the accepted route.
 
+
+21. The Stage-1 reconstruction report provenance envelope was hardened after
+    review showed that canonical content, success fields, path, and Git ancestry
+    alone did not bind the report to the exact verifier implementation and
+    frozen Stage-1 contract bytes. The verifier now embeds
+    `contract_id`, `contract_canonical_sha256`, `verifier_id`, and
+    `verifier_source_sha256`; the replay comparator recomputes and verifies
+    those identities before accepting the report. Stage-9.5 assurance Python
+    sources were also bound to repository-canonical LF via `.gitattributes`
+    so source-byte SHA-256 identities remain portable across Windows/Linux
+    checkouts. This changed assurance provenance only; Stage-1 structural
+    preprocessing semantics and accepted Stage-8/9 science remained unchanged.
+
 ## Scientific invariants maintained throughout
 
 - No accepted Stage-8/9 result was retuned or replaced.

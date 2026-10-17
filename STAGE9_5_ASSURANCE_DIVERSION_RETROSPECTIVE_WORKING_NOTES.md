@@ -1140,3 +1140,69 @@ final procedure rather than presenting the path as if it had been linear.
     from committed repository evidence rather than transient conversation
     memory.
 
+48. On 17 October 2026 the user explicitly instructed the project to **close
+    Stage 9.5-1 in the next response**, while also requiring that academic and
+    scientific rigor be preserved. The live assurance head was first reconciled
+    at `260351e3cd77c5e5ddff6b40b810d9e75c1fe5f4`; this head already
+    contained the fully implemented replay comparator/finalizer stack,
+    authoritative Stage-1 reconstruction closure, the frozen historical replay
+    handoff, and no identified non-external Stage-9.5-6 blocker.
+
+    Exact-head evidence at that observation point was:
+    Stage-9 robustness run `39050628185` **success**; Stage-9.5 assurance
+    run `39050628180`; assurance-contract **87 tests passed**; fresh-clone
+    job `117448298396` **13 tests passed** and reported **0 identity
+    failures / 2 external-artifact blockers**; order-gate job
+    `117448298419` passed with `later_packages_unlocked=false`;
+    Stage-9.5-7/8/9 were skipped; and the accepted Stage-9.5-5 discovery
+    baseline remained `ruff=154 / mypy=55`.
+
+    A final recovery sweep was performed before deciding closure. It checked
+    Project/conversation files, local mounted/container paths, repository and
+    previously audited history surfaces, GitHub Releases, the System-A manifest
+    freeze run `37531241834`, all four Actions runs attached to accepted
+    Stage-8 evidence commit
+    `c2ded83b8195b9321e715626c1f305f9627936e8`, exact public-web searches
+    for all five checkpoint SHA-256 identities and Stage-8 archive identifiers,
+    and the later Stage-1 transport/mirror surface. No authoritative
+    System-A checkpoint bytes or original Stage-8 heavy archive were found.
+    Google Drive, Dropbox, Box, and SharePoint plugins were discoverable but not
+    installed/connected, so the search did not claim global physical
+    irrecoverability of every user-held copy.
+
+    Because successful closure remained impossible without weakening the frozen
+    evidence criterion, the project did **not** fabricate a pass, regenerate
+    checkpoints, rebuild the heavy archive and call it original, reclassify the
+    Class-A defect, or relax the 145-file requirement. Instead Stage 9.5-1 was
+    closed explicitly as a **negative assurance closure**:
+    `STAGE9_5_1_FRESH_CLONE_RECONSTRUCTION_NEGATIVE_CLOSURE.md` plus
+    `data/manifests/stage9_5_1_negative_closure_v1.json`.
+
+    The negative closure records `pass=false`, zero identity mismatches, both
+    unresolved external blockers, the exact five checkpoint hashes, the
+    145-file Stage-8 requirement, the exact-head CI evidence, prohibited
+    substitute resolutions, and a strict reopening predicate. It does not
+    declare the accepted Stage-8/9 numerical results false. It declares that
+    publication-grade independent reconstruction of the full original
+    checkpoint/heavy-artifact chain was not demonstrated.
+
+    The downstream status was changed only in additive current-status overlays:
+    Stage 9.5-1 is **CLOSED — FAILED / EXTERNAL PROVENANCE UNRESOLVED**;
+    Stage 9.5-6 is blocked by that closed-failed predecessor; Stage 9.5-7/8/9
+    remain locked as authoritative closure packages; Stage 9.5 cannot obtain
+    zero-unresolved-Class-A closure under the current evidence package; and
+    Stage 10 remains **PROHIBITED**.
+
+    Reopening is permitted only if the exact original checkpoint and archive
+    bytes are later supplied and the unchanged v1.2 verifier passes five seeds,
+    **145/145** archive files, zero failures, and zero blockers. Otherwise any
+    future continuation must be a separately governed restart/new evidence-
+    generation campaign rather than silent substitution into the accepted
+    Stage-8/9 evidence chain.
+
+    This entry is a required part of the final reviewer-facing Stage-9.5
+    retrospective because it records the point at which the assurance diversion
+    terminated not in a successful reconstruction, but in a deliberate,
+    scientifically honest negative closure rather than indefinite or fabricated
+    gate satisfaction.
+

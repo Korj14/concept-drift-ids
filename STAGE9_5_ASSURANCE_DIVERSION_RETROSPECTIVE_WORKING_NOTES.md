@@ -279,3 +279,34 @@ final procedure rather than presenting the path as if it had been linear.
 
 29. A subsequent live-state reconciliation at head `ddcc8c21dff5c30d01c2a5935ae609406b804e8f` found one remaining historical/current-status ambiguity: the prospectively frozen replay-construction manifest still retained its earlier status-only fields `deterministic_producer.comparator_status = phase_a_b_c_implemented_stage1_evidence_blocked` and `current_blocker = stage1_reconstruction_evidence_not_verified`, even though the authoritative Stage-1 closure/report, README, order-governance overlay, comparator/finalizer stack, and historical replay handoff all showed Stage-1 resolved and no identified non-external Stage-9.5-6 blocker. The frozen construction contract was deliberately **not** rewritten after the fact. Instead, additive machine-readable status overlay `data/manifests/stage9_5_6_current_status_v1.json` was committed. It binds the historical frozen construction-contract blob identity and the canonical Stage-1 report identity, marks the stale fields explicitly as historical freeze state, records the current replay pipeline as implemented/frozen, and states that the only unresolved Stage-9.5-6 blockers are the two external artifact families. This preserved the historical audit trail while eliminating ambiguity for future closure work and the final retrospective.
 
+30. On 17 October 2026 a later continuation resumed from the previously
+    observed Phase-A-era head but found the assurance branch already at
+    `ffb2645cce0724916f385bbd59b9d652b8aec0f0`, 61 commits ahead of
+    `cf78ba076a12693bc1b89ac52181fc8f20091fdc`. The delta was reconciled
+    before mutation. It confirmed that the full deterministic replay stack
+    (Phase A, Phase B, Phase-C failure-lineage/correction-config checks, and
+    corrected Phase-C seed-0 output comparison), replay-report finalizer,
+    authoritative Stage-1 reconstruction evidence/closure, historical replay
+    execution handoff, current-status overlay, and the requested multi-chat
+    retrospective working notes were already in place. The exact-head Stage-9
+    robustness run `39033910515` completed successfully. Stage-9.5 assurance
+    run `39033910546` had the intended top-level failure shape: the
+    assurance-contract job passed with **87 tests**, statistical oracle,
+    targeted mutations, causal properties, and the semantic work-package order
+    gate all passed; static discovery remained the already-accepted
+    `ruff=154, mypy=55` baseline; fresh-clone reconstruction remained
+    `0 identity failures / 2 external-artifact blockers`; and
+    Stage-9.5-7/8/9 were skipped because
+    `later_packages_unlocked=false`. During this reconciliation, PR #21's
+    descriptive body was found stale: it still presented the historical
+    replay-invariance defect and Stage-1 predecessor issue as current blockers.
+    The PR metadata was corrected to match
+    `data/manifests/stage9_5_6_current_status_v1.json`: no non-external
+    Stage-9.5-6 implementation/evidence blocker is currently identified, and
+    the only unresolved blockers are
+    `system_a_checkpoint_bytes_missing` and
+    `stage8_large_artifact_archive_missing`. This was governance/status
+    reconciliation only; no repository science, verifier, comparator,
+    finalizer, Stage-1 report, accepted Stage-8/9 evidence, claim boundary, or
+    Stage-10 gate was changed.
+

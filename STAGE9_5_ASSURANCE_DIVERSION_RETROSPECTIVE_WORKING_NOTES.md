@@ -371,3 +371,36 @@ final procedure rather than presenting the path as if it had been linear.
     this continuation instead preserved the reconciliation in the working
     retrospective for final Stage-9.5 closure documentation.
 
+33. On 17 October 2026 this continuation resumed after the user explicitly
+    reiterated that the entire multi-chat Stage-9.5 assurance diversion must be
+    documented at closure. The live assurance branch had advanced from the
+    previously observed Phase-A-era head
+    `cf78ba076a12693bc1b89ac52181fc8f20091fdc` to
+    `4c49f772d30739c5119f49eba4081de81651f9eb`, **64 commits ahead**.
+    The delta was reconciled before mutation. It confirmed that the deterministic
+    replay comparator is prospectively frozen for Phase A, Phase B, Phase-C
+    preconditions/failure lineage, and corrected Phase-C seed-0 output
+    comparison; the replay-report finalizer is frozen; authoritative Stage-1
+    reconstruction evidence is closed; the historical replay execution handoff
+    is frozen; and the additive current-status overlay identifies no remaining
+    non-external Stage-9.5-6 implementation/evidence blocker.
+
+    Exact-head Stage-9 robustness run `39036901931` passed. Stage-9.5
+    assurance run `39036901857` had the expected fail-closed top-level
+    shape: assurance-contract passed with **87 tests**; statistical oracle,
+    causal properties, targeted mutations, and the semantic work-package order
+    gate all passed; static discovery remained the already accepted
+    `ruff=154, mypy=55` baseline; fresh-clone reconstruction remained
+    `0 identity failures / 2 external-artifact blockers`;
+    `later_packages_unlocked=false`; and Stage-9.5-7/8/9 were skipped because
+    the Stage-9.5-6 closure/success records do not yet exist.
+
+    The only unresolved prerequisites therefore remain the two original
+    external evidence families:
+    `system_a_checkpoint_bytes_missing` and
+    `stage8_large_artifact_archive_missing`. No additional comparator,
+    finalizer, protocol, provenance, or gate hardening was introduced in this
+    continuation. Instead, this episode was added to the working retrospective
+    so the eventual reviewer-facing Stage-9.5 closure document can reconstruct
+    the diversion from repository evidence rather than chat memory.
+

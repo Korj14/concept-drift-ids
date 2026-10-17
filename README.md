@@ -3,7 +3,7 @@
 Research code for an adaptive neuro-symbolic network intrusion-detection system with concept-drift-driven symbolic rule evolution.
 
 
-## Current assurance status — 16 October 2026
+## Current assurance status — 17 October 2026
 
 Accepted Stage-8/Stage-9 scientific evidence is frozen. The project is currently in the independent Stage-9.5 assurance gate, which remains **OPEN / BLOCKED**; Stage-10 treatment execution is **PROHIBITED**.
 
@@ -12,11 +12,15 @@ Current fresh-clone reconstruction state is **0 repository/runtime/compact-evide
 - `system_a_checkpoint_bytes_missing` — the five exact original System-A checkpoint files must be recovered from an authoritative source and SHA-256 verified;
 - `stage8_large_artifact_archive_missing` — the original heavy archive rooted at `artifacts/cd_primary_v1` must be recovered and descriptor/hash verified.
 
-Stage 9.5-6 also preserves a historical replay-identity defect caused by non-replay-invariant runtime/timing fields in upstream manifest hashes. A prospectively frozen replay-equivalence correction exists, but it cannot execute until both external artifact sets are recovered.
+Stage 9.5-6 replay-equivalence mechanics are now prospectively frozen and implemented across Phase A, Phase B, corrected Phase-C seed-0 preconditions/output comparison, and deterministic replay-report finalization. The remaining **non-external** Stage-9.5-6 blocker is `stage1_reconstruction_evidence_not_verified`: the Stage-1 reconstruction verifier and evidence contract are frozen, but an authoritative passing `stage1_reconstruction_report.json` has not yet been produced under the exact historical Python 3.11.9 / locked-dependency environment.
 
-The statistical oracle, causal/information-property assurance, targeted mutation assurance, and static software-assurance package are closed; the frozen targeted mutation set remains **11/11 killed**. Stage 9.5-7/8/9 historical executions are provisional and are now locked in CI until a valid Stage 9.5-6 closure exists.
+The eight mounted CICIDS2017 raw CSVs were independently re-hashed on 17 October 2026 and match all eight frozen raw identities. The current execution container exposes Python 3.13.5 rather than 3.11.9, so that environment is valid only for raw-input preflight and is **not** closure authority. Do not weaken the historical-environment requirement merely because reconstructed tables appear semantically equal.
 
-These are reconstructibility/provenance blockers. They do not, by themselves, establish that accepted Stage-8/9 numerical results are wrong. Do not substitute retrained checkpoints, regenerated archives, numerically equivalent serializations, or summary-only approximations for the missing original bytes.
+The statistical oracle, causal/information-property assurance, targeted mutation assurance, and static software-assurance package are closed; the frozen targeted mutation set remains **11/11 killed**. Stage 9.5-7/8/9 historical executions are provisional and remain locked in CI until a valid Stage 9.5-6 closure exists.
+
+These are reconstructibility/provenance blockers. They do not, by themselves, establish that accepted Stage-8/9 numerical results are wrong. Do not substitute retrained checkpoints, regenerated archives, numerically equivalent serializations, summary-only approximations, or a non-historical runtime for the missing authoritative evidence.
+
+The multi-chat assurance diversion is being preserved in `STAGE9_5_ASSURANCE_DIVERSION_RETROSPECTIVE_WORKING_NOTES.md`; a reviewer-facing retrospective must be finalized when Stage 9.5 closes.
 
 The later stage-specific sections below are retained as historical execution/protocol documentation and should not be read as the current project gate state.
 

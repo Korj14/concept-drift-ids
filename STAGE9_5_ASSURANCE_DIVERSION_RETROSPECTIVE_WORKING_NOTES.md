@@ -100,6 +100,19 @@ post-outcome/manual success construction.
     `STAGE9_5_6_STAGE1_RECONSTRUCTION_EXECUTION_HANDOFF.md` rather than
     weakening the historical-environment requirement.
 
+20. The current execution environment was checked for a local authoritative
+    Stage-1 route. All eight mounted raw CSVs were already known to match the
+    frozen SHA-256 identities, but the container exposed only Python 3.13.5 and
+    no installed Python 3.11.9 interpreter. The installed `uv` tool likewise
+    reported no local 3.11.9 interpreter, and the container had no outbound
+    GitHub/DNS access to provision one. The official UNB CIC-IDS2017 page still
+    identifies `MachineLearningCSV.zip` as the published CSV bundle, but the
+    linked CIC download form returned a server error during this tranche.
+    Therefore no newly discovered network/mirror acquisition path was promoted
+    to closure authority. Exact raw-file hashes plus the frozen historical
+    environment remain authoritative, and the Stage-1 execution handoff
+    remains the accepted route.
+
 ## Scientific invariants maintained throughout
 
 - No accepted Stage-8/9 result was retuned or replaced.

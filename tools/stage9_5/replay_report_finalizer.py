@@ -16,6 +16,7 @@ CONTRACT_PATH = (
 )
 OUTPUT_NAME = "replay_equivalence_report.json"
 SHA40_RE = re.compile(r"^[0-9a-f]{40}$")
+SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
 
 
 def _reject_duplicate_pairs(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
@@ -78,6 +79,17 @@ def _comparison_failures(
     audited_head = evidence.get("audited_head")
     if not isinstance(audited_head, str) or SHA40_RE.fullmatch(audited_head) is None:
         failures.append("invalid_comparison_evidence_audited_head")
+
+    embedded_hash = evidence.get("canonical_sha256")
+    if not isinstance(embedded_hash, str) or SHA256_RE.fullmatch(
+        embedded_hash
+    ) is None:
+        failures.append("invalid_comparison_evidence_canonical_sha256")
+    else:
+        core = dict(evidence)
+        core.pop("canonical_sha256", None)
+        if _canonical_sha256(core) != embedded_hash:
+            failures.append("comparison_evidence_canonical_sha256_mismatch")
     return failures
 
 
@@ -90,7 +102,13 @@ def _build_report(
     if not isinstance(construction, dict):
         raise TypeError("deterministic_producer must be an object")
 
-    comparison_hash = _canonical_sha256(evidence)
+    embedded_hash = evidence.get("canonical_sha256")
+    comparison_hash = (
+        embedded_hash
+        if isinstance(embedded_hash, str)
+        and SHA256_RE.fullmatch(embedded_hash) is not None
+        else None
+    )
     mismatch_count = evidence.get("mismatch_count")
     mismatch_value = mismatch_count if isinstance(mismatch_count, int) else -1
     pass_state = not validation_failures
@@ -129,6 +147,9 @@ def _build_report(
             ),
             "mismatch_count": mismatch_value,
             "comparison_evidence_canonical_sha256": comparison_hash,
+            "stage1_reconstruction_report_canonical_sha256": evidence.get(
+                "stage1_reconstruction_report_canonical_sha256"
+            ),
         },
         "replay_equivalence": {
             "protocol_id": contract["replay_protocol_id"],

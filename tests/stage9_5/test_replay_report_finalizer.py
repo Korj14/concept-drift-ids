@@ -33,6 +33,12 @@ def _set_path(payload: dict[str, Any], dotted: str, value: Any) -> None:
     node[parts[-1]] = value
 
 
+def _seal(payload: dict[str, Any]) -> dict[str, Any]:
+    payload.pop("canonical_sha256", None)
+    payload["canonical_sha256"] = _canonical_sha256(payload)
+    return payload
+
+
 def _comparison_evidence() -> dict[str, Any]:
     contract = json.loads(CONTRACT_PATH.read_text(encoding="utf-8"))
     expected = contract["comparison_evidence_contract"]
@@ -40,7 +46,8 @@ def _comparison_evidence() -> dict[str, Any]:
     payload: dict[str, Any] = {"audited_head": _head()}
     for dotted, value in expected.items():
         _set_path(payload, dotted, value)
-    return payload
+    payload["stage1_reconstruction_report_canonical_sha256"] = "b" * 64
+    return _seal(payload)
 
 
 def _write_evidence(tmp_path: Path, payload: dict[str, Any]) -> Path:
@@ -73,8 +80,13 @@ def test_valid_comparison_evidence_finalizes_canonical_success(
     assert construction["deterministic_comparison_complete"] is True
     assert construction["source_evidence_complete"] is True
     assert construction["mismatch_count"] == 0
-    assert construction["comparison_evidence_canonical_sha256"] == _canonical_sha256(
-        evidence
+    assert (
+        construction["comparison_evidence_canonical_sha256"]
+        == evidence["canonical_sha256"]
+    )
+    assert (
+        construction["stage1_reconstruction_report_canonical_sha256"]
+        == "b" * 64
     )
     core = dict(report)
     observed = core.pop("canonical_sha256")
@@ -84,6 +96,7 @@ def test_valid_comparison_evidence_finalizes_canonical_success(
 def test_manual_override_comparison_evidence_is_blocked(tmp_path: Path) -> None:
     evidence = _comparison_evidence()
     evidence["manual_override_used"] = True
+    _seal(evidence)
     path = _write_evidence(tmp_path, evidence)
 
     report = run(path, tmp_path / "out")
@@ -97,6 +110,7 @@ def test_nonzero_comparison_mismatch_is_blocked(tmp_path: Path) -> None:
     evidence = _comparison_evidence()
     evidence["mismatch_count"] = 1
     evidence["mismatches"] = [{"name": "phase_b.seed0.d_drift"}]
+    _seal(evidence)
     path = _write_evidence(tmp_path, evidence)
 
     report = run(path, tmp_path / "out")
@@ -112,6 +126,7 @@ def test_incomplete_phase_a_seed_set_is_blocked(tmp_path: Path) -> None:
     phase_a = evidence["phase_a"]
     assert isinstance(phase_a, dict)
     phase_a["complete_seeds"] = [0, 1, 2, 3]
+    _seal(evidence)
     path = _write_evidence(tmp_path, evidence)
 
     report = run(path, tmp_path / "out")
@@ -121,3 +136,19 @@ def test_incomplete_phase_a_seed_set_is_blocked(tmp_path: Path) -> None:
         "comparison_evidence_value_mismatch:phase_a.complete_seeds"
         in report["failures"]
     )
+
+def test_stale_comparison_evidence_canonical_hash_is_blocked(
+    tmp_path: Path,
+) -> None:
+    evidence = _comparison_evidence()
+    evidence["manual_override_used"] = True
+    path = _write_evidence(tmp_path, evidence)
+
+    report = run(path, tmp_path / "out")
+
+    assert report["pass"] is False
+    assert (
+        "comparison_evidence_canonical_sha256_mismatch"
+        in report["failures"]
+    )
+

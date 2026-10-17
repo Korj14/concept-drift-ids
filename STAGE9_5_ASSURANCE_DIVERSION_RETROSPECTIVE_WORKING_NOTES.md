@@ -1076,3 +1076,67 @@ final procedure rather than presenting the path as if it had been linear.
     requirement that the full assurance diversion be reconstructed from
     committed repository evidence rather than transient conversation memory.
 
+47. On 17 October 2026 this continuation resumed after the user again instructed
+    the assurance work to proceed and explicitly reiterated that the complete
+    Stage-9.5 assurance diversion spanning multiple chats must be documented at
+    final closure. The live assurance branch had advanced externally from the
+    previously remembered Phase-A-era head
+    `cf78ba076a12693bc1b89ac52181fc8f20091fdc` to
+    `8f69a57e25fecc11996535eb444f2d28d3b2c8bc`, **79 commits ahead**.
+    The delta was reconciled before any repository mutation.
+
+    Reconciliation showed that the previously planned Phase-B comparator design
+    work was obsolete. The live repository already contains prospectively
+    frozen deterministic replay comparison for Phase A, Phase B, Phase-C
+    failure-lineage/correction-config preconditions, and corrected Phase-C
+    seed-0 output comparison; the deterministic replay-report finalizer;
+    authoritative Stage-1 reconstruction evidence and closure; the frozen
+    historical replay execution handoff; the additive machine-readable
+    current-status overlay; and this multi-chat assurance-diversion working
+    record.
+
+    The current-status overlay
+    `data/manifests/stage9_5_6_current_status_v1.json` was re-audited against
+    the live branch. From its scientific/assurance observation point
+    `ddcc8c21dff5c30d01c2a5935ae609406b804e8f` to the live head, repository
+    changes were confined to the additive current-status overlay and further
+    retrospective entries; no comparator, finalizer, verifier, order-gate,
+    accepted Stage-8/9 evidence, claim boundary, or Stage-10 gate changed.
+    Therefore its statement remains authoritative: **no identified
+    non-external Stage-9.5-6 implementation/evidence blocker remains**.
+
+    Exact-head Stage-9 robustness run `39050370370` completed successfully.
+    Stage-9.5 assurance run `39050370349` was still completing when this entry
+    was written, so no unsettled job was represented as closed. Already-settled
+    results had the expected fail-closed shape: the semantic work-package order
+    gate passed and reported `later_packages_unlocked=false` because the
+    Stage-9.5-6 closure/success records do not yet exist; statistical oracle and
+    causal properties passed; fresh-clone reconstruction reported **0 identity
+    failures / 2 external-artifact blockers**; static discovery remained the
+    already accepted **ruff=154 / mypy=55** baseline; and Stage-9.5-7/8/9 were
+    skipped. Assurance-contract and targeted-mutations were still in progress
+    at the time of this factual snapshot and are intentionally not claimed here
+    as settled.
+
+    No new comparator, finalizer, protocol, scientific, provenance, or gate
+    semantics were added. This continuation deliberately stopped software
+    expansion at the genuine external-evidence boundary. The only unresolved
+    prerequisites remain `system_a_checkpoint_bytes_missing` and
+    `stage8_large_artifact_archive_missing`.
+
+    The authoritative next sequence remains: recover and hash-verify the five
+    exact original System-A checkpoints -> recover and verify the original
+    Stage-8 heavy archive at 145/145 descriptor-linked requirements -> close
+    Stage-9.5-1 from verifier-produced recovery evidence -> execute the frozen
+    historical replay handoff -> run the frozen comparator/finalizer -> close
+    Stage-9.5-6 and require `later_packages_unlocked=true` -> revalidate
+    Stage-9.5-7 -> rerun/revalidate Stage-9.5-8 -> run Stage-9.5-9 hostile
+    review last -> require zero unresolved Class-A defects -> finalize the
+    reviewer-facing multi-chat assurance-diversion retrospective -> close
+    Stage 9.5 -> only then authorize Stage 10.
+
+    This entry is preserved specifically to satisfy the user's closure
+    requirement that the entire multi-chat assurance diversion be reconstructed
+    from committed repository evidence rather than transient conversation
+    memory.
+

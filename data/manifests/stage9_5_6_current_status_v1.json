@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "status_id": "stage9.5-6-current-status-v1",
+  "status_observed_at_head": "ddcc8c21dff5c30d01c2a5935ae609406b804e8f",
+  "status_date": "2026-10-17",
+  "purpose": "Additive current-status overlay. Does not modify the prospectively frozen replay construction contract, accepted Stage-8/9 science, or closure authority.",
+  "frozen_replay_construction_contract": {
+    "path": "data/manifests/stage9_5_6_replay_report_construction_v1.json",
+    "git_blob_sha1": "e7bbb6a68c1cc9e7ae2610122626974052b465e2",
+    "contract_id": "stage9.5-6-replay-report-construction-v1",
+    "historical_status_fields_note": "The frozen contract's deterministic_producer.comparator_status and current_blocker fields record an earlier prospective execution state in which Stage-1 evidence had not yet been verified. They are preserved as historical freeze state and are not the current blocker statement."
+  },
+  "stage1_reconstruction": {
+    "status": "closed_authoritative_verified",
+    "closure_path": "STAGE9_5_6_STAGE1_RECONSTRUCTION_EVIDENCE_CLOSURE.md",
+    "report_path": "results/audits/stage9_5_full_seed_rerun_v1/stage1_reconstruction_report.json",
+    "report_git_blob_sha1": "cb3a432c8a3bf79eb30fdecb3dd9f3c169894f76",
+    "report_canonical_sha256": "4bafa772f9737d934f40c90bf7be8d80a62108cf89a9c74895fbe5c12c4a88af",
+    "authoritative_execution_head": "58b3e42cdeeddea28f7cb20268ed9912684adba3",
+    "blocker_resolved": "stage1_reconstruction_evidence_not_verified"
+  },
+  "replay_pipeline": {
+    "comparator": {
+      "id": "stage9.5-6-replay-equivalence-comparator-v1",
+      "phase_a": "implemented_prospectively_frozen",
+      "phase_b": "implemented_prospectively_frozen",
+      "phase_c_preconditions_and_failure_lineage": "implemented_prospectively_frozen",
+      "phase_c_corrected_seed0_output_comparison": "implemented_prospectively_frozen"
+    },
+    "finalizer": {
+      "id": "stage9.5-6-replay-report-finalizer-v1",
+      "status": "implemented_prospectively_frozen"
+    },
+    "historical_execution_handoff": {
+      "path": "STAGE9_5_6_HISTORICAL_REPLAY_EXECUTION_HANDOFF.md",
+      "status": "prospectively_frozen"
+    },
+    "identified_non_external_blockers": []
+  },
+  "unresolved_external_blockers": [
+    "system_a_checkpoint_bytes_missing",
+    "stage8_large_artifact_archive_missing"
+  ],
+  "work_package_state": {
+    "stage9.5-1": "open_blocked_external_artifacts",
+    "stage9.5-6": "open_blocked_external_artifacts_only",
+    "stage9.5-7": "locked_pending_valid_stage9.5-6_closure",
+    "stage9.5-8": "locked_pending_valid_stage9.5-6_closure",
+    "stage9.5-9": "locked_pending_valid_stage9.5-6_closure",
+    "stage10": "prohibited"
+  },
+  "next_authoritative_sequence": [
+    "recover and verify exact five original System-A checkpoint bytes",
+    "recover and verify original Stage-8 heavy artifact archive at 145/145 descriptor-linked requirements",
+    "close Stage-9.5-1 from verifier-produced recovery report",
+    "execute frozen Stage-9.5-6 historical replay handoff",
+    "run deterministic comparator and finalizer",
+    "create closure metadata only from verified reports and same-head Stage-9 success",
+    "require later_packages_unlocked=true",
+    "revalidate Stage-9.5-7",
+    "rerun/revalidate Stage-9.5-8",
+    "run Stage-9.5-9 hostile review last",
+    "require zero unresolved Class-A defects",
+    "finalize multi-chat assurance-diversion retrospective",
+    "close Stage 9.5",
+    "only then authorize Stage 10"
+  ],
+  "scientific_objects_modified": false,
+  "accepted_stage8_9_evidence_replaced": false,
+  "stage10_outcomes_accessed": false
+}

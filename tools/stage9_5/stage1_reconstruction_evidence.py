@@ -363,10 +363,20 @@ def _verify_raw_manifest(
 
 def _empty_report(contract: dict[str, Any]) -> dict[str, Any]:
     required = contract["required_report"]
+    verifier = contract["verifier_implementation"]
     if not isinstance(required, dict):
         raise TypeError("required_report must be an object")
+    if not isinstance(verifier, dict):
+        raise TypeError("verifier_implementation must be an object")
+    verifier_id = verifier.get("verifier_id")
+    if not isinstance(verifier_id, str) or not verifier_id:
+        raise TypeError("verifier_implementation.verifier_id must be a string")
     return {
         "audit_id": required["audit_id"],
+        "contract_id": contract["contract_id"],
+        "contract_canonical_sha256": _canonical_sha256(contract),
+        "verifier_id": verifier_id,
+        "verifier_source_sha256": _sha256_file(Path(__file__)),
         "status": "blocked",
         "pass": False,
         "repository_head": subprocess.run(

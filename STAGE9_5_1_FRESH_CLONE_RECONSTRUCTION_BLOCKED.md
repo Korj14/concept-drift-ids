@@ -1,3 +1,5 @@
+> **Current disposition — 17 October 2026:** Stage 9.5-1 is now **CLOSED — FAILED / EXTERNAL PROVENANCE UNRESOLVED**. See `STAGE9_5_1_FRESH_CLONE_RECONSTRUCTION_NEGATIVE_CLOSURE.md` and `data/manifests/stage9_5_1_negative_closure_v1.json`. The historical body below is preserved unchanged as provenance and must not be read as the current package status.
+>
 # Stage 9.5-1 Fresh-Clone Reconstruction — BLOCKED Disposition
 
 > **Historical disposition — superseded for current blocker inventory.** This file preserves the v1.1 fresh-clone result at the audited head shown below. It must not be read as the current Stage-9.5-1 blocker count. The governing current correction is `STAGE9_5_1_V1_2_HEAVY_ARTIFACT_INVENTORY_CORRECTION.md`: fresh-clone v1.2 reports **0 identity failures / 2 external-artifact blockers**, adding `stage8_large_artifact_archive_missing` alongside `system_a_checkpoint_bytes_missing`. This historical file remains part of the provenance trail and is not rewritten to replace its original v1.1 result.

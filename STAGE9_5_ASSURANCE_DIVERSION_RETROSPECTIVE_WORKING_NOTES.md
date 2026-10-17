@@ -404,3 +404,49 @@ final procedure rather than presenting the path as if it had been linear.
     so the eventual reviewer-facing Stage-9.5 closure document can reconstruct
     the diversion from repository evidence rather than chat memory.
 
+34. On 17 October 2026 this continuation resumed after the user again
+    emphasized that the entire Stage-9.5 assurance diversion, spanning multiple
+    chats, must be documented at final Stage-9.5 closure rather than left in
+    transient conversation history. The live assurance branch had advanced from
+    the previously observed Phase-A-era head
+    `cf78ba076a12693bc1b89ac52181fc8f20091fdc` to
+    `bad2bbd3c20b8b557d25b63eb144d74aea6b3728`, **65 commits ahead**.
+    The delta was reconciled before mutation.
+
+    The reconciliation confirmed that the work which had previously appeared
+    to remain ahead was already complete and prospectively frozen in the
+    repository: deterministic replay comparison for Phase A, Phase B,
+    Phase-C failure-lineage/correction-config preconditions, and corrected
+    Phase-C seed-0 outputs; the deterministic replay-report finalizer;
+    authoritative Stage-1 reconstruction evidence and closure; the historical
+    replay execution handoff; the additive current-status overlay; and this
+    multi-chat retrospective working record. The authoritative current-status
+    overlay records **no identified non-external Stage-9.5-6 blocker**. The only
+    unresolved prerequisites remain the two external evidence families:
+    `system_a_checkpoint_bytes_missing` and
+    `stage8_large_artifact_archive_missing`.
+
+    Exact-head Stage-9 robustness run `39038815811` completed successfully.
+    Stage-9.5 assurance run `39038815677` showed the expected fail-closed
+    shape. The assurance-contract job passed with **87 tests**; statistical
+    oracle, causal properties, targeted mutations, and the semantic
+    work-package order gate passed; fresh-clone reconstruction reported
+    **0 identity failures / 2 external-artifact blockers**; static discovery
+    remained the already accepted **ruff=154 / mypy=55** baseline;
+    `later_packages_unlocked=false`; and Stage-9.5-7/8/9 were skipped because
+    the Stage-9.5-6 closure/success records do not yet exist.
+
+    No new comparator, finalizer, protocol, scientific, provenance, or gate
+    semantics were added in this continuation. That restraint is intentional:
+    further software work would not remove the actual blockers. This entry
+    exists to preserve the cross-chat chronology requested by the user and to
+    ensure the eventual reviewer-facing Stage-9.5 closure retrospective can be
+    assembled from committed repository evidence. The remaining authoritative
+    sequence is: recover/verify the five exact original System-A checkpoints ->
+    recover/verify the original Stage-8 heavy archive at 145/145 ->
+    close Stage-9.5-1 -> execute the frozen historical replay handoff ->
+    comparator/finalizer -> Stage-9.5-6 closure/order-gate unlock -> revalidate
+    9.5-7 -> rerun/revalidate 9.5-8 -> run 9.5-9 hostile review last -> require
+    zero unresolved Class-A defects -> finalize the multi-chat diversion
+    retrospective -> close Stage 9.5 -> only then authorize Stage 10.
+

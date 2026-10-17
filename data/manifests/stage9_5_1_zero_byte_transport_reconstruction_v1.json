@@ -1,0 +1,108 @@
+{
+  "schema_version": 1,
+  "contract_id": "stage9.5-1-zero-byte-transport-reconstruction-v1",
+  "status": "frozen_before_transport_reconstruction_execution",
+  "correction_class": "additive_assurance_transport_reconstruction",
+  "governing_plan_basis": {
+    "requirement": "archive or provide a reconstructible route to every non-Git heavy artifact needed to independently verify Stage 8/9 compact evidence",
+    "success_authority_unchanged": true,
+    "frozen_verifier": "tools/stage9_5/fresh_clone_reconstruction.py",
+    "verifier_contract": "stage9.5-1-fresh-clone-reconstruction-v1_2"
+  },
+  "provenance_boundary": {
+    "original_dropbox_objects_recovered": false,
+    "transport_reconstruction_explicit": true,
+    "accepted_stage8_9_evidence_replaced": false,
+    "scientific_objects_modified": false,
+    "stage10_outcomes_accessed": false,
+    "disclosure_required_in_final_retrospective": true,
+    "disclosure_required_in_hostile_review": true
+  },
+  "forensic_basis": {
+    "dropbox_discovery_doc": "STAGE9_5_1_DROPBOX_RECOVERY_DISCOVERY.md",
+    "dropbox_discovery_doc_git_blob_sha1": "baf18136c549f97957017ac77ff7e7fcc1e83774",
+    "dropbox_discovery_manifest": "data/manifests/stage9_5_1_dropbox_recovery_discovery_v1.json",
+    "dropbox_discovery_manifest_git_blob_sha1": "a8237b4df5760b6d4e8e76ced28a97ab74a0ba30",
+    "current_dropbox_tree_entries": 253,
+    "current_dropbox_tree_files": 203,
+    "current_dropbox_tree_folders": 50,
+    "restore_event_history_exhausted": true,
+    "restore_event_count": 253,
+    "restore_event_operation_types": [
+      "ADD"
+    ],
+    "non_add_event_count": 0,
+    "missing_c_frozen_maintenance_add_event_count": 0,
+    "interpretation": "The current Dropbox archive was ingested object-by-object; the five manifest-declared empty C-arm maintenance files were omitted at initial transport rather than subsequently deleted, moved, renamed, or restored."
+  },
+  "empty_file_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "allowed_reconstructions": [
+    {
+      "seed": 0,
+      "path": "phase_b_symbolic_arms/seed-0/c_frozen_symbolic/maintenance.jsonl",
+      "accepted_arm_manifest_path": "results/frozen/cd_primary_v1/phase_b_symbolic_arms/seed-0/c_frozen_symbolic/arm_manifest.json",
+      "accepted_arm_manifest_sha256": "6761637201b39412e4bf6154bf0fde926be891ae0c57a2b3a787017590cc9d32",
+      "expected_size_bytes": 0
+    },
+    {
+      "seed": 1,
+      "path": "phase_b_symbolic_arms/seed-1/c_frozen_symbolic/maintenance.jsonl",
+      "accepted_arm_manifest_path": "results/frozen/cd_primary_v1/phase_b_symbolic_arms/seed-1/c_frozen_symbolic/arm_manifest.json",
+      "accepted_arm_manifest_sha256": "12a4158d9c72e477915f44733cea580b42b5281f1d78648cd608453479dcf845",
+      "expected_size_bytes": 0
+    },
+    {
+      "seed": 2,
+      "path": "phase_b_symbolic_arms/seed-2/c_frozen_symbolic/maintenance.jsonl",
+      "accepted_arm_manifest_path": "results/frozen/cd_primary_v1/phase_b_symbolic_arms/seed-2/c_frozen_symbolic/arm_manifest.json",
+      "accepted_arm_manifest_sha256": "6c54e300587dd10cab8235908f5f5d0f633193abefb6637113d8c573bd99629f",
+      "expected_size_bytes": 0
+    },
+    {
+      "seed": 3,
+      "path": "phase_b_symbolic_arms/seed-3/c_frozen_symbolic/maintenance.jsonl",
+      "accepted_arm_manifest_path": "results/frozen/cd_primary_v1/phase_b_symbolic_arms/seed-3/c_frozen_symbolic/arm_manifest.json",
+      "accepted_arm_manifest_sha256": "ae80781ccdf2e85beb039f6fc80911dff9295e3398e0f45bbe15ca1033313dbc",
+      "expected_size_bytes": 0
+    },
+    {
+      "seed": 4,
+      "path": "phase_b_symbolic_arms/seed-4/c_frozen_symbolic/maintenance.jsonl",
+      "accepted_arm_manifest_path": "results/frozen/cd_primary_v1/phase_b_symbolic_arms/seed-4/c_frozen_symbolic/arm_manifest.json",
+      "accepted_arm_manifest_sha256": "09b5465643a597e550ee73b8a145f0a499a5b045c0dfa2bba5e621d11ec5a3b2",
+      "expected_size_bytes": 0
+    }
+  ],
+  "required_preconditions": [
+    "materialized archive C-arm arm_manifest.json exists for each seed and is byte-identical to its committed accepted compact-evidence copy",
+    "accepted arm manifest self-hashes validate",
+    "accepted arm manifest declares files.maintenance.path = maintenance.jsonl",
+    "accepted arm manifest declares files.maintenance.sha256 = SHA256(empty bytes)",
+    "accepted maintenance summary records zero opportunity_count, publication_count, candidate_count, compute_seconds, shap_seconds, surrogate_seconds, and lifecycle_seconds",
+    "accepted publications list is empty",
+    "target maintenance file is either absent or already exactly zero bytes with the frozen SHA-256",
+    "no file is overwritten"
+  ],
+  "execution_rule": {
+    "create_only_missing_files": true,
+    "overwrite_permitted": false,
+    "file_bytes": "empty byte string",
+    "output_report": "results/audits/stage9_5_full_seed_rerun_v1/zero_byte_transport_reconstruction_report.json",
+    "report_must_distinguish_reconstructed_from_preexisting": true
+  },
+  "success_rule": {
+    "reconstruction_report_pass_is_not_stage9_5_1_closure": true,
+    "unchanged_v1_2_verifier_must_still_pass": true,
+    "required_checkpoint_seeds": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "required_stage8_archive_count": 145,
+    "required_stage8_archive_verified_count": 145,
+    "verifier_failures": [],
+    "verifier_blockers": []
+  }
+}

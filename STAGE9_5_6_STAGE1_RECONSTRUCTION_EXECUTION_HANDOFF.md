@@ -16,7 +16,10 @@ The authoritative success object is:
 `results/audits/stage9_5_full_seed_rerun_v1/stage1_reconstruction_report.json`
 
 A passing report must be derived by the frozen verifier. It must not be
-hand-authored or reconstructed from copied booleans.
+hand-authored or reconstructed from copied booleans. The downstream replay
+comparator recomputes the report's frozen contract identity and verifier-source
+identity before accepting it, in addition to checking the report's canonical
+hash, success fields, fixed path, and Git ancestry.
 
 ## Frozen runtime prerequisite
 
@@ -80,6 +83,13 @@ bytes unchanged for the subsequent replay comparator and closure linkage.
 The generated canonical report must show all of the following:
 
 - `audit_id = stage9.5-6-stage1-reconstruction-v1`;
+- `contract_id = stage9.5-6-stage1-reconstruction-evidence-v1`;
+- `contract_canonical_sha256` equal to the canonical SHA-256 of the exact
+  frozen Stage-1 reconstruction contract used for execution;
+- `verifier_id = stage9.5-6-stage1-reconstruction-verifier-v1`;
+- `verifier_source_sha256` equal to the exact LF-canonical
+  `tools/stage9_5/stage1_reconstruction_evidence.py` source bytes in the
+  checkout whose `repository_head` is recorded by the report;
 - `status = pass`;
 - `pass = true`;
 - `raw_file_count_verified = 8`;

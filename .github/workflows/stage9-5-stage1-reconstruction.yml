@@ -24,6 +24,7 @@ jobs:
       MKL_NUM_THREADS: "1"
       OPENBLAS_NUM_THREADS: "1"
       NUMEXPR_NUM_THREADS: "1"
+      PYTHONPATH: "src"
       CICIDS2017_MIRROR_REPO: "https://huggingface.co/datasets/bencorn/CICIDS2017"
 
     steps:

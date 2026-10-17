@@ -5,22 +5,22 @@ Research code for an adaptive neuro-symbolic network intrusion-detection system 
 
 ## Current assurance status — 17 October 2026
 
-Accepted Stage-8/Stage-9 scientific evidence is frozen. The project is currently in the independent Stage-9.5 assurance gate, which remains **OPEN / BLOCKED**; Stage-10 treatment execution is **PROHIBITED**.
+Accepted Stage-8/Stage-9 scientific evidence is frozen. Stage 9.5-1 has now been **CLOSED — FAILED / EXTERNAL PROVENANCE UNRESOLVED** by `STAGE9_5_1_FRESH_CLONE_RECONSTRUCTION_NEGATIVE_CLOSURE.md`; this is a negative assurance closure, not a successful reconstruction. Stage-10 treatment execution remains **PROHIBITED**.
 
-Current fresh-clone reconstruction state is **0 repository/runtime/compact-evidence identity failures / 2 external-artifact blockers**:
+The final fresh-clone disposition is **0 repository/runtime/compact-evidence identity failures / 2 unresolved external-artifact blockers**:
 
-- `system_a_checkpoint_bytes_missing` — the five exact original System-A checkpoint files must be recovered from an authoritative source and SHA-256 verified;
-- `stage8_large_artifact_archive_missing` — the original heavy archive rooted at `artifacts/cd_primary_v1` must be recovered and descriptor/hash verified.
+- `system_a_checkpoint_bytes_missing` — the five exact original System-A checkpoint files were not recovered from any currently accessible authoritative source;
+- `stage8_large_artifact_archive_missing` — the original heavy archive rooted at `artifacts/cd_primary_v1` was not recovered, so the required 145/145 descriptor-linked verification cannot pass.
 
-Stage 9.5-6 replay-equivalence mechanics are prospectively frozen and implemented across Phase A, Phase B, corrected Phase-C seed-0 preconditions/output comparison, deterministic replay-report finalization, and Stage-1 historical reconstruction evidence. The Stage-1 prerequisite is **closed** by the preserved verifier-produced report `results/audits/stage9_5_full_seed_rerun_v1/stage1_reconstruction_report.json`, canonical SHA-256 `4bafa772f9737d934f40c90bf7be8d80a62108cf89a9c74895fbe5c12c4a88af`, produced under the frozen Python 3.11.9 / locked-dependency environment with 8/8 raw files, 8/8 interim tables, and zero semantic mismatches.
+The frozen Stage-9.5-1 success criterion was not weakened. Retrained checkpoints, regenerated archives, numerically equivalent serializations, summary-only approximations, and manually authored success evidence remain prohibited substitutes. The negative closure may be reopened only if the exact original bytes are later supplied and the unchanged v1.2 verifier passes with five verified seeds, 145/145 Stage-8 files, zero failures, and zero blockers.
 
-No non-external Stage-9.5-6 implementation/evidence blocker is currently identified. Full replay remains blocked only by the two external artifact families above. Once they are recovered and verified, follow `STAGE9_5_6_HISTORICAL_REPLAY_EXECUTION_HANDOFF.md` for the exact historical A/B/C execution, comparator, finalizer, and order-gate sequence. The current local container may still differ from the historical runtime, but that no longer leaves Stage-1 evidence unresolved because the authoritative Stage-1 execution has already been preserved and closed.
+Stage 9.5-6 replay-equivalence mechanics are prospectively frozen and implemented across Phase A, Phase B, corrected Phase-C seed-0 preconditions/output comparison, deterministic replay-report finalization, and Stage-1 historical reconstruction evidence. The Stage-1 prerequisite is **closed** by the preserved verifier-produced report `results/audits/stage9_5_full_seed_rerun_v1/stage1_reconstruction_report.json`, canonical SHA-256 `4bafa772f9737d934f40c90bf7be8d80a62108cf89a9c74895fbe5c12c4a88af`.
 
-The statistical oracle, causal/information-property assurance, targeted mutation assurance, and static software-assurance package are closed; the frozen targeted mutation set remains **11/11 killed**. Stage 9.5-7/8/9 historical executions are provisional and remain locked in CI until a valid Stage 9.5-6 closure exists.
+Because 9.5-1 is now closed-failed with an unresolved Class-A provenance defect, the current Stage-9.5 path cannot legitimately reach a valid Stage-9.5-6 closure or zero-unresolved-Class-A closure. Stage 9.5-7/8/9 therefore remain locked as authoritative closure packages, and Stage 9.5 overall is **NOT CLOSABLE UNDER THE CURRENT EVIDENCE PACKAGE**.
 
-These are reconstructibility/provenance blockers. They do not, by themselves, establish that accepted Stage-8/9 numerical results are wrong. Do not substitute retrained checkpoints, regenerated archives, numerically equivalent serializations, summary-only approximations, or a non-historical runtime for the missing authoritative evidence.
+This negative closure does not establish that the accepted Stage-8/9 numerical results are false; it establishes that publication-grade independent reconstruction of their full checkpoint/heavy-artifact chain has not been demonstrated.
 
-The multi-chat assurance diversion is being preserved in `STAGE9_5_ASSURANCE_DIVERSION_RETROSPECTIVE_WORKING_NOTES.md`; a reviewer-facing retrospective must be finalized when Stage 9.5 closes.
+The multi-chat assurance diversion is being preserved in `STAGE9_5_ASSURANCE_DIVERSION_RETROSPECTIVE_WORKING_NOTES.md`; any future restart or reopened recovery must preserve this negative closure and the unchanged scientific record.
 
 The later stage-specific sections below are retained as historical execution/protocol documentation and should not be read as the current project gate state.
 

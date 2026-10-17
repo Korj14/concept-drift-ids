@@ -310,3 +310,35 @@ final procedure rather than presenting the path as if it had been linear.
     finalizer, Stage-1 report, accepted Stage-8/9 evidence, claim boundary, or
     Stage-10 gate was changed.
 
+31. On 17 October 2026 the continuation at exact assurance head
+    `309f32c595dca8b06a3bcea2c2db233506c424a3` performed a closure-readiness
+    audit after reconciling the externally advanced branch. Exact-head Stage-9
+    robustness run `39034242366` completed successfully. Stage-9.5 assurance
+    run `39034242363` had the expected fail-closed shape: the assurance-contract
+    job passed with **87 tests**; statistical oracle, targeted mutations, causal
+    properties, and the work-package order gate all passed; static discovery
+    remained the accepted `ruff=154, mypy=55` baseline; fresh-clone
+    reconstruction remained `0 identity failures / 2 external-artifact
+    blockers`; and Stage-9.5-7/8/9 were skipped with
+    `later_packages_unlocked=false`.
+
+    The closure-readiness audit mapped every field required by
+    `data/manifests/stage9_5_6_closure_order_gate_v1.json` to an already-frozen
+    authoritative source: Stage-9.5-1 recovery report, deterministic replay
+    comparator/finalizer report, same-head Stage-9 success, historical replay
+    identities, canonical report hashes, and explicit closure references. The
+    end-to-end operator sequence is already frozen in
+    `STAGE9_5_6_HISTORICAL_REPLAY_EXECUTION_HANDOFF.md`. No additional
+    non-external implementation, protocol, provenance, or closure-metadata
+    blocker was identified. Further software hardening was deliberately not
+    added merely to consume time or create a new gate.
+
+    Therefore the only unresolved prerequisites to advancing Stage-9.5 are the
+    two original external evidence families:
+    `system_a_checkpoint_bytes_missing` and
+    `stage8_large_artifact_archive_missing`. Once recovered, the accepted
+    sequence is Stage-9.5-1 verification/closure -> historical replay ->
+    comparator/finalizer -> Stage-9.5-6 closure/order-gate unlock -> 9.5-7 ->
+    9.5-8 -> 9.5-9 -> zero unresolved Class-A defects -> finalize the multi-chat
+    assurance-diversion retrospective -> close Stage 9.5 -> only then Stage 10.
+

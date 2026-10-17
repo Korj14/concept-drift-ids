@@ -27,10 +27,11 @@
   },
   "implementation_binding": {
     "path": "tools/stage9_5/replay_equivalence_comparator.py",
-    "blob_sha1": "88afd99e245ec1787f55b3d167191b5ed4f2653b",
+    "blob_sha1": "455fb8729851a37a797622599ecc77357c46661e",
     "projection_function": "_project_phase_b_maintenance_record",
     "loader_function": "_load_jsonl",
-    "timing_field_constant": "PHASE_B_RECORD_TIMING_FIELDS"
+    "timing_field_constant": "PHASE_B_RECORD_TIMING_FIELDS",
+    "comparator_function": "compare_phase_b_maintenance_jsonl"
   },
   "input_contract": {
     "representation": "ordered JSONL sequence",

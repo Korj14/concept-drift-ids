@@ -629,3 +629,32 @@ final procedure rather than presenting the path as if it had been linear.
     than another hardening cycle: progress is presently blocked by recovery of
     original external evidence bytes, not by missing repository implementation.
 
+30. On 17 October 2026 the next continuation resumed after the assurance branch
+    had advanced externally by 70 commits from the previously observed
+    Phase-A comparator head `cf78ba076a12693bc1b89ac52181fc8f20091fdc`
+    to `b6b45ddc09cde0ae4b6ec96eb363d34d190797fe`. The delta was
+    reconciled before any mutation. It showed that Phase-B comparison,
+    Phase-C precondition/failure-lineage validation, corrected Phase-C seed-0
+    output comparison, authoritative Stage-1 reconstruction evidence, the
+    deterministic finalizer, and the end-to-end historical replay execution
+    handoff had already been prospectively frozen. The additive current-status
+    overlay reported no identified non-external Stage-9.5-6 blocker; the only
+    unresolved blockers remained `system_a_checkpoint_bytes_missing` and
+    `stage8_large_artifact_archive_missing`.
+
+    Exact-head CI on `b6b45ddc09cde0ae4b6ec96eb363d34d190797fe`
+    showed Stage-9 robustness success, 87 assurance-contract tests passing,
+    the unchanged Stage-9.5-5 discovery baseline of Ruff 154 / mypy 55,
+    fresh-clone reconstruction at 0 identity failures / 2 external-artifact
+    blockers, the work-package order gate locked with
+    `later_packages_unlocked=false`, and Stage-9.5-7/8/9 skipped. A direct
+    CLI audit of `STAGE9_5_6_HISTORICAL_REPLAY_EXECUTION_HANDOFF.md`
+    against the live Stage-9.5-1 verifier, replay comparator, replay-report
+    finalizer, and order-gate interfaces found the frozen handoff command
+    surface consistent with the implementations. The 11 commits after the
+    current-status overlay's observed head `ddcc8c21...` changed only the
+    additive status/retrospective documentation and introduced no new replay,
+    assurance, or scientific semantics. No additional assurance mechanism was
+    added in this continuation because the remaining bottleneck is external
+    recovery rather than an identified repository-side implementation gap.
+

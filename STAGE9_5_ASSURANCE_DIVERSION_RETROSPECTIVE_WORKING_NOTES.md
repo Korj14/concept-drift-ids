@@ -1206,3 +1206,76 @@ final procedure rather than presenting the path as if it had been linear.
     scientifically honest negative closure rather than indefinite or fabricated
     gate satisfaction.
 
+## Dropbox recovery surface discovered after negative closure — 17 October 2026
+
+A materially new authoritative surface became available after the Stage-9.5-1 negative closure: the user's Dropbox connector was connected.
+
+This event must remain explicit in the final retrospective because it changes the external-provenance search history without invalidating the historical negative closure. The negative closure itself already stated that connected personal-cloud storage had not been available and allowed reopening if exact originals were later recovered.
+
+### Checkpoint discovery
+
+Dropbox root contained `seed_0.pt` through `seed_4.pt`, each 76,105 bytes.
+
+The Dropbox API returned content hashes:
+
+- seed 0 — `ddc75eaaae68cf1e6ee34a5a68c264f922d64543ca883cd03234763a182a1719`
+- seed 1 — `b6288356dd06f134aa18ea886c5ec17e695488f57074a455115f0cd17fef4feb`
+- seed 2 — `f9ad4465f34aa3e525722a989bcf7b3588a1e57973cdbe2e1fe5e30a00378b05`
+- seed 3 — `0f6d6b65cdadc92f7aaf3e345845bdb6c9014f7512f8fff7a7026a8e3c0fd716`
+- seed 4 — `2cbb2afd97b9be46964901e8a66413a09b5cbbb9e041dd8530fc5834ab7e722e`
+
+Dropbox's documented content-hash algorithm uses 4 MiB blocks, SHA-256 per block, concatenation of binary block digests, then a final SHA-256. Because every checkpoint is smaller than one block, each observed Dropbox content hash equals
+`SHA256(binary(frozen_checkpoint_SHA256))`.
+
+All five observed values matched that transform of the five already-frozen checkpoint SHA-256 identities exactly. This established that the Dropbox checkpoint candidates correspond to the exact required byte streams under Dropbox's documented content-hash construction. The frozen Stage-9.5-1 verifier has not yet been rerun with those files materialized on a verifier-capable filesystem, so this discovery does not itself create a successful closure report.
+
+### Stage-8 archive discovery
+
+Dropbox also contained `/cd_primary_v1` with:
+
+- 253 entries;
+- 203 files;
+- 50 folders;
+- 1,863,975,043 total file bytes.
+
+The tree contained the expected major Phase-A/B/C families, including all five Phase-A run manifests/prediction files, all five Phase-B seed manifests, all ten D-arm maintenance logs, all five corrected Phase-C seed manifests, all fifteen corrected arm evaluations/prediction traces, and the original Phase-C seed-0 attempt/failure pair.
+
+The accepted Stage-8 compact evidence was used to reconstruct the unchanged v1.2 descriptor-linked archive inventory. Per-seed results were:
+
+- seed 0: 30/31 paths present;
+- seed 1: 27/28;
+- seed 2: 28/29;
+- seed 3: 27/28;
+- seed 4: 28/29.
+
+Total: **140/145** required paths present.
+
+The only five missing paths were the C-arm `maintenance.jsonl` files for seeds 0–4. Each accepted arm manifest binds that path to SHA-256
+`e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`,
+the zero-byte file hash, and each accepted C-arm maintenance summary records zero opportunities/publications/compute.
+
+A Dropbox-wide title search found only the ten D-arm maintenance files. Revision lookup for the exact missing seed-0 path returned `FILE_NOT_FOUND`. No compressed `cd_primary_v1` or Stage-8 backup was found.
+
+### Governance decision
+
+The five missing files were **not** silently recreated even though their exact byte content is cryptographically specified as empty. Doing so without authoritative provenance would weaken the already-frozen recovery rule after observing a recovery gap.
+
+Therefore:
+
+- the historical negative closure remains preserved;
+- the new surface materially narrows the external-provenance defect;
+- checkpoint originals are located with exact identity evidence;
+- the Stage-8 archive remains incomplete at 140/145;
+- Stage-9.5-1 is not yet reopened to successful closure;
+- Stage-9.5-6 remains blocked until the unchanged v1.2 verifier succeeds;
+- Stage-9.5-7/8/9 remain locked;
+- Stage 10 remains prohibited.
+
+The authoritative records for this event are:
+
+- `STAGE9_5_1_DROPBOX_RECOVERY_DISCOVERY.md`;
+- `data/manifests/stage9_5_1_dropbox_recovery_discovery_v1.json`;
+- the additive current-status update in `data/manifests/stage9_5_6_current_status_v1.json`.
+
+This episode is part of the final multi-chat assurance-diversion retrospective and must not be omitted or collapsed into a claim that the negative closure was simply "wrong"; it was correct for the surfaces available at that time.
+

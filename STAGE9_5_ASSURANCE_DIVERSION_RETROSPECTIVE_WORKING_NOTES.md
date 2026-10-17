@@ -224,3 +224,43 @@ final procedure rather than presenting the path as if it had been linear.
     mirror remained supplemental only: authority came from the pre-frozen
     eight raw-file identities and the frozen verifier/contract.
 
+26. On 17 October 2026 the next continuation found that the assurance branch had
+    advanced externally by 54 commits from the previously observed
+    `cf78ba076a12693bc1b89ac52181fc8f20091fdc` head to
+    `3a0f4746cf76527796823b6147723400c1be1d1f`. The delta was reconciled
+    before mutation. It showed that the replay comparator had already advanced
+    to prospectively frozen Phase-A, Phase-B, Phase-C precondition/failure
+    lineage, and corrected Phase-C seed-0 output comparison; the deterministic
+    finalizer was frozen; Stage-1 authoritative reconstruction had been closed;
+    and the requested multi-chat retrospective working notes were already being
+    maintained. Exact-head CI on `3a0f4746...` showed Stage-9 robustness
+    success, 87 assurance-contract tests passing, the unchanged Ruff 154 /
+    mypy 55 static discovery baseline, fresh-clone reconstruction at 0 identity
+    failures / 2 external-artifact blockers, the work-package order gate locked,
+    and 9.5-7/8/9 skipped. During reconciliation, the human-readable replay
+    construction contract was found to lag the machine contract by still
+    naming `stage1_reconstruction_evidence_not_verified` as current. That
+    stale governance text was corrected without changing the machine contract,
+    comparator, finalizer, Stage-1 evidence, or accepted Stage-8/9 science.
+
+27. The same continuation audited whether recovery of the two external artifact
+    families would be sufficient to execute the frozen replay without another
+    procedural design cycle. The comparator/finalizer CLIs were complete, but
+    the repository lacked one end-to-end operator handoff joining Stage-9.5-1
+    recovery, historical Phase-A/B execution at
+    `bfa14b942e4a5b2fbfa8aa3c43728a7f1cd81645`, reproduction of the
+    original Phase-C v1 seed-0 failure, regeneration of the correction config
+    from `79ddc4c6d6dea52c7cabc55a6d082448fc24fcf9`, the required
+    correction-config-only child commit, corrected Phase-C seed-0 execution,
+    deterministic comparator/finalizer, closure metadata, and the fail-closed
+    order gate. That procedural gap was closed by prospectively freezing
+    `STAGE9_5_6_HISTORICAL_REPLAY_EXECUTION_HANDOFF.md`. The handoff adds no
+    scientific semantics: it only sequences already-frozen commands and
+    identities, keeps heavy recovered/fresh replay bytes external, requires the
+    same-head Stage-9 success, and ends with
+    `later_packages_unlocked=true` as the only acceptable predecessor-gate
+    result. At the end of this episode there remained no identified
+    non-external Stage-9.5-6 implementation blocker; the two unresolved blockers
+    remained `system_a_checkpoint_bytes_missing` and
+    `stage8_large_artifact_archive_missing`.
+

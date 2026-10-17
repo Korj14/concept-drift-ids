@@ -150,6 +150,42 @@ def _verify_stage1_reconstruction_report(
             "repository_head": None,
         }
 
+    if report.get("contract_id") != contract.get("contract_id"):
+        failures.append("stage1_report_contract_id_mismatch")
+    expected_contract_hash = _canonical_sha256(contract)
+    if report.get("contract_canonical_sha256") != expected_contract_hash:
+        failures.append("stage1_report_contract_canonical_sha256_mismatch")
+
+    verifier = contract.get("verifier_implementation")
+    if not isinstance(verifier, dict):
+        failures.append("stage1_contract_verifier_implementation_invalid")
+    else:
+        expected_verifier_id = verifier.get("verifier_id")
+        if (
+            not isinstance(expected_verifier_id, str)
+            or not expected_verifier_id
+        ):
+            failures.append("stage1_contract_verifier_id_invalid")
+        elif report.get("verifier_id") != expected_verifier_id:
+            failures.append("stage1_report_verifier_id_mismatch")
+
+        verifier_path_value = verifier.get("tool_path")
+        if not isinstance(verifier_path_value, str):
+            failures.append("stage1_contract_verifier_tool_path_invalid")
+        else:
+            root = expected_root.resolve()
+            verifier_path = (root / verifier_path_value).resolve()
+            if not verifier_path.is_relative_to(root):
+                failures.append("stage1_contract_verifier_tool_path_escape")
+            elif not verifier_path.is_file():
+                failures.append("stage1_contract_verifier_tool_missing")
+            else:
+                expected_source_hash = _sha256_file(verifier_path)
+                if report.get("verifier_source_sha256") != expected_source_hash:
+                    failures.append(
+                        "stage1_report_verifier_source_sha256_mismatch"
+                    )
+
     expected_path = (expected_root / str(required["path"])).resolve()
     if report_path.resolve() != expected_path:
         failures.append("stage1_report_path_mismatch")

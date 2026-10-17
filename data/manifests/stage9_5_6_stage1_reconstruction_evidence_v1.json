@@ -106,6 +106,14 @@
       "all locked installed distributions equal exact versions"
     ],
     "report_pass_is_derived": true,
-    "manual_success_override_permitted": false
+    "manual_success_override_permitted": false,
+    "verifier_id": "stage9.5-6-stage1-reconstruction-verifier-v1",
+    "report_identity_binding": {
+      "contract_id_required": true,
+      "contract_canonical_sha256_required": true,
+      "verifier_id_required": true,
+      "verifier_source_sha256_required": true,
+      "comparator_must_recompute_all": true
+    }
   }
 }

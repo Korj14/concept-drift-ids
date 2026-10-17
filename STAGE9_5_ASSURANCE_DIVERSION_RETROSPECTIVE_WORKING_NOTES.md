@@ -658,3 +658,54 @@ final procedure rather than presenting the path as if it had been linear.
     added in this continuation because the remaining bottleneck is external
     recovery rather than an identified repository-side implementation gap.
 
+39. On 17 October 2026 this continuation resumed after the user again instructed
+    the project to proceed and reiterated that the complete Stage-9.5 assurance
+    diversion spanning multiple chats must be documented at final closure. The
+    live assurance branch had advanced from the previously observed
+    Phase-A-era head
+    `cf78ba076a12693bc1b89ac52181fc8f20091fdc` to
+    `25b864c19ef75f847f698f8c6e30f6f3e024d793`, **71 commits ahead**.
+    The delta was reconciled before any mutation.
+
+    Reconciliation showed that the apparent Phase-B design work was obsolete:
+    the repository already contains prospectively frozen deterministic replay
+    comparison for Phase A, Phase B, Phase-C failure-lineage/correction-config
+    preconditions, and corrected Phase-C seed-0 outputs; the deterministic
+    replay-report finalizer; authoritative Stage-1 reconstruction evidence and
+    closure; the frozen end-to-end historical replay execution handoff; the
+    additive current-status overlay; and this multi-chat assurance-diversion
+    working record. The current-status overlay identifies **no non-external
+    Stage-9.5-6 implementation/evidence blocker**.
+
+    The 12 commits after the status-overlay observation head
+    `ddcc8c21dff5c30d01c2a5935ae609406b804e8f` changed only the additive
+    current-status/retrospective documentation and introduced no new replay,
+    assurance, or scientific semantics. Exact-head Stage-9 robustness run
+    `39044660057` completed successfully. Stage-9.5 assurance run
+    `39044659874` had the expected fail-closed shape: assurance-contract
+    passed with **87 tests**; statistical oracle, causal properties, targeted
+    mutations, and the semantic work-package order gate passed; static
+    discovery remained the accepted **ruff=154 / mypy=55** baseline;
+    fresh-clone reconstruction remained **0 identity failures / 2
+    external-artifact blockers**; `later_packages_unlocked=false`; and
+    Stage-9.5-7/8/9 were skipped because Stage-9.5-6 closure/success evidence
+    does not yet exist.
+
+    This continuation deliberately introduced no new comparator, finalizer,
+    protocol, scientific, provenance, or order-gate semantics. The project is
+    genuinely blocked at the external-evidence boundary. The only unresolved
+    prerequisites remain `system_a_checkpoint_bytes_missing` and
+    `stage8_large_artifact_archive_missing`. The authoritative next sequence
+    remains: recover/verify the five exact original System-A checkpoints ->
+    recover/verify the original Stage-8 heavy archive at 145/145 -> close
+    Stage-9.5-1 -> execute the frozen historical replay handoff ->
+    comparator/finalizer -> Stage-9.5-6 closure/order-gate unlock -> revalidate
+    9.5-7 -> rerun/revalidate 9.5-8 -> run 9.5-9 hostile review last -> require
+    zero unresolved Class-A defects -> finalize the multi-chat assurance-
+    diversion retrospective -> close Stage 9.5 -> only then authorize Stage 10.
+
+    This entry is intentionally part of the final-retrospective evidence chain:
+    it records that software expansion was stopped once repository-side
+    assurance work was complete, rather than obscuring the true external
+    provenance bottleneck.
+

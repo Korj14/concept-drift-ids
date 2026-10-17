@@ -90,6 +90,15 @@ post-outcome/manual success construction.
     comparator evidence's own embedded canonical SHA-256 before accepting it,
     closing the provenance chain from Stage-1 reconstruction through comparator
     evidence to the final replay report.
+19. On 17 October 2026 the eight CICIDS2017 raw CSVs mounted in the current
+    working environment were independently re-hashed and matched all eight
+    frozen Stage-1 raw identities exactly. The same environment reported
+    Python 3.13.5 rather than the required historical Python 3.11.9, so it was
+    explicitly rejected as an authoritative Stage-1 execution environment.
+    The exact operator procedure, success predicate, output path, and
+    environment boundary were frozen in
+    `STAGE9_5_6_STAGE1_RECONSTRUCTION_EXECUTION_HANDOFF.md` rather than
+    weakening the historical-environment requirement.
 
 ## Scientific invariants maintained throughout
 

@@ -1,0 +1,95 @@
+{
+  "schema_version": 1,
+  "contract_id": "stage9.5-6-stage1-reconstruction-evidence-v1",
+  "status": "prospectively_frozen_before_stage9_5_6_replay_execution",
+  "governing_protocol": "stage9.5-6-replay-equivalence-correction-v1_1",
+  "protocol_step": 1,
+  "purpose": "Provide machine-verifiable evidence that CICIDS2017 Stage-1 interim tables were reconstructed from the frozen raw inputs under the historical environment before Phase-A replay.",
+  "scientific_scope": {
+    "structural_preprocessing_only": true,
+    "fitting": false,
+    "scaling": false,
+    "imputation": false,
+    "sampling": false,
+    "feature_selection": false,
+    "boundary_access": false
+  },
+  "historical_environment": {
+    "replay_head": "bfa14b942e4a5b2fbfa8aa3c43728a7f1cd81645",
+    "python_version": "3.11.9",
+    "requirements_lock_sha256": "5ef6553f286b84c117cd67febaf20292baf9930e7f4b6cf57918e2e00f965dd4",
+    "requirements_lock_normalized_text_sha256": "9f63cbe19dcb1b916c16603f5b7c01a2fa33ac11271ce2ef0014910158d6741d",
+    "preprocessing_path": "src/concept_drift_ids/preprocessing.py",
+    "preprocessing_git_blob_sha1": "52d71b6769671847af5b0c6d94e46156a45483e9"
+  },
+  "raw_input_contract": {
+    "manifest_path": "data/manifests/cicids2017_raw_manifest.json",
+    "manifest_canonical_sha256": "ef1f58af1192091fdf1037edd3a2af6770dad6f0f731ac61cceb007c0cafd8ea",
+    "required_file_count": 8,
+    "exact_file_sha256": {
+      "Monday-WorkingHours.pcap_ISCX.csv": "852c4beb34eda186f32561fa79df7a0747e92e1a6535b01270820dd9ffe17f34",
+      "Tuesday-WorkingHours.pcap_ISCX.csv": "52b8692ae8c7d2ed04671fe2b98335693c0a92c7ab157d8c8b534d6523080851",
+      "Wednesday-workingHours.pcap_ISCX.csv": "893c27dc968bf7a8adef1689f90be55ca4a4dc3088fb63d6ff247ac56856df2a",
+      "Thursday-WorkingHours-Morning-WebAttacks.pcap_ISCX.csv": "d67066211fb1689c78406f1506f4c44704ecb92088353d5c96d96d6474eb819d",
+      "Thursday-WorkingHours-Afternoon-Infilteration.pcap_ISCX.csv": "6bcda3857c2504676034e3ea57762d38393cc734cb377a726bd5cb153961b1b5",
+      "Friday-WorkingHours-Morning.pcap_ISCX.csv": "53a41c24d570ea83b7ac55b2e94df94e7a8216aeb80a2af0246b6bc8bb543000",
+      "Friday-WorkingHours-Afternoon-PortScan.pcap_ISCX.csv": "ca1824c51bfbb7b3c72290a11be04366ba8815878c6a1cc5c44cb1cee269e99b",
+      "Friday-WorkingHours-Afternoon-DDos.pcap_ISCX.csv": "6ff1580f5f81c0ae28a26f7631721018577f5f7c5e0feac28b795fcfe7b411ee"
+    }
+  },
+  "accepted_stage1_identity": {
+    "preprocessing_manifest_path": "data/interim/cicids2017/preprocessing_manifest.json",
+    "preprocessing_manifest_sha256": "962ad5c5725eb49c4fd5fa4f0035ecc8983deebcc6a3366da88bd7ea547bdd92",
+    "preprocessing_manifest_canonical_sha256": "d33ea433973d4f685812ec3dfbd22424fdcf715d2052bf557dc9e61e2c847ef0",
+    "model_feature_count": 77,
+    "metadata_columns": [
+      "source_file",
+      "source_order",
+      "row_in_source"
+    ],
+    "gzip_container_bytes_are_authoritative": false
+  },
+  "reconstruction_evidence_requirements": {
+    "raw_inputs_all_exact": true,
+    "historical_environment_exact": true,
+    "historical_preprocessing_source_exact": true,
+    "generated_preprocessing_manifest_canonical_sha256_must_equal_accepted": true,
+    "all_eight_interim_tables_required": true,
+    "decompressed_semantic_table_verification_required": true,
+    "gzip_container_sha256_must_not_be_used_as_semantic_identity": true,
+    "per_table_checks": [
+      "column names and order",
+      "row count",
+      "source_file metadata",
+      "source_order metadata",
+      "row_in_source sequence",
+      "Label values after frozen normalization",
+      "77 model-feature values after duplicate-column removal and infinity-to-NaN conversion"
+    ],
+    "semantic_equality_rule": "Each reconstructed decompressed table must exactly equal an independently recomputed in-memory application of the frozen historical structural preprocessing to the corresponding exact raw CSV under the frozen historical environment.",
+    "missing_or_mismatch_is_failure": true
+  },
+  "required_report": {
+    "path": "results/audits/stage9_5_full_seed_rerun_v1/stage1_reconstruction_report.json",
+    "audit_id": "stage9.5-6-stage1-reconstruction-v1",
+    "pass_must_be_derived": true,
+    "manual_success_override_permitted": false,
+    "canonical_sha256_required": true,
+    "required_success_values": {
+      "status": "pass",
+      "pass": true,
+      "raw_file_count_verified": 8,
+      "interim_table_count_verified": 8,
+      "preprocessing_manifest_canonical_sha256": "d33ea433973d4f685812ec3dfbd22424fdcf715d2052bf557dc9e61e2c847ef0",
+      "semantic_mismatch_count": 0,
+      "failures": [],
+      "blockers": []
+    }
+  },
+  "current_status": {
+    "implementation": "not_implemented",
+    "blocker_id": "stage1_reconstruction_evidence_verifier_not_implemented"
+  },
+  "scientific_objects_modified": false,
+  "stage10_execution_permitted": false
+}

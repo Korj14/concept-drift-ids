@@ -113,6 +113,9 @@
           "verify every seed-level arm descriptor SHA-256 matches the referenced arm-manifest bytes and its manifest_sha256 matches the arm manifest"
         ],
         "maintenance_record_projection": {
+          "record_level_contract_id": "stage9.5-6-phase-b-maintenance-record-projection-v1",
+          "record_level_contract_path": "data/manifests/stage9_5_6_phase_b_maintenance_record_projection_v1.json",
+          "scope_limited_to_record_projection": true,
           "removed_fields": [
             "shap_seconds",
             "surrogate_seconds",

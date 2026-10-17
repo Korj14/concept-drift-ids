@@ -264,3 +264,16 @@ final procedure rather than presenting the path as if it had been linear.
     remained `system_a_checkpoint_bytes_missing` and
     `stage8_large_artifact_archive_missing`.
 
+28. A final top-level status sweep after freezing the historical replay handoff
+    found that `README.md` still described
+    `stage1_reconstruction_evidence_not_verified` as the remaining
+    non-external Stage-9.5-6 blocker, even though the machine construction
+    contract, Stage-1 closure record, order-governance overlay, and preserved
+    report already showed that blocker resolved. The README was corrected to
+    name the authoritative Stage-1 report/canonical SHA-256, state that no
+    non-external Stage-9.5-6 implementation/evidence blocker is currently
+    identified, and direct future operators to
+    `STAGE9_5_6_HISTORICAL_REPLAY_EXECUTION_HANDOFF.md`. This was a
+    documentation-status reconciliation only; no verifier, comparator,
+    finalizer, Stage-8/9 evidence, claim boundary, or Stage-10 gate changed.
+

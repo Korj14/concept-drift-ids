@@ -19,29 +19,24 @@ frozen before recovered-artifact replay outcomes are inspected.
 
 The deterministic replay-report finalizer is implemented and prospectively frozen as `stage9.5-6-replay-report-finalizer-v1`. It validates the frozen machine-comparison evidence schema, derives the replay report fields, and computes the canonical report hash. It does **not** compare Phase-A/B/C replay artifacts.
 
-The remaining additional assurance blocker is therefore:
+The Stage-1 reconstruction prerequisite is now **closed** by the preserved
+authoritative report
+`results/audits/stage9_5_full_seed_rerun_v1/stage1_reconstruction_report.json`.
+Its canonical SHA-256 is
+`4bafa772f9737d934f40c90bf7be8d80a62108cf89a9c74895fbe5c12c4a88af`,
+with 8/8 raw files, 8/8 reconstructed interim tables, zero semantic
+mismatches, empty failures/blockers, and the frozen Python 3.11.9 environment.
+The additive closure record is
+`STAGE9_5_6_STAGE1_RECONSTRUCTION_EVIDENCE_CLOSURE.md`.
 
-`stage1_reconstruction_evidence_not_verified`
-
-This blocker is separate from the two external artifact blockers:
+No non-external replay-construction blocker is currently identified. The two
+remaining blockers are the original external artifact blockers:
 
 - `system_a_checkpoint_bytes_missing`;
 - `stage8_large_artifact_archive_missing`.
 
-The Stage-1 blocker exists because replay protocol v1.1 requires reconstruction
-of the interim tables under the frozen historical environment before Phase A.
-The reconstruction-evidence contract and deterministic verifier are now
-prospectively frozen in
-`data/manifests/stage9_5_6_stage1_reconstruction_evidence_v1.json` and
-`tools/stage9_5/stage1_reconstruction_evidence.py`, with dedicated tests.
-The verifier executes the exact historical preprocessing Git blob after source
-identity verification and independently recomputes the structural transform for
-semantic equality of all decompressed reconstructed tables. The remaining
-Stage-1 blocker is **authoritative execution evidence**: a canonical passing
-`stage1_reconstruction_report.json` has not yet been produced under the
-frozen historical environment. Downstream replay success must not substitute
-for that report. Recovery of the two external artifact families therefore does
-not by itself authorize Stage-9.5-6 closure.
+Recovery and exact verification of both external artifact families is still
+required before the historical all-five-seed replay can execute to closure.
 
 ## Required producer identity
 
@@ -202,18 +197,16 @@ handling are now explicitly frozen and implemented. The replay comparator and
 report finalizer therefore no longer have an unimplemented Phase-A/B/C
 projection layer.
 
-The remaining non-external execution boundary is replay step 1 from the v1.1
-protocol. The Stage-1 assurance contract and verifier are implemented and
-frozen; what remains is to execute them under the frozen historical environment
-against the exact eight raw CSV identities and preserve the resulting canonical
-passing report. The replay comparator now validates that report directly,
+Replay step 1 from the v1.1 protocol is now independently evidenced and
+closed. The replay comparator validates the preserved Stage-1 report directly,
 requires its repository head to be in the replay lineage, and carries its
-canonical SHA-256 into comparison evidence. Stage-1 success may not be inferred
-from downstream Phase-A/B/C success alone.
+canonical SHA-256 into comparison evidence. Stage-1 success remains an explicit
+verified prerequisite rather than something inferred from downstream Phase-A/B/C
+success.
 
 ## Fail-closed rules
 
-Until the frozen Stage-1 verifier has produced and preserved an authoritative passing reconstruction report and the two external artifact prerequisites are recovered:
+Until the two external artifact prerequisites are recovered and verified:
 
 - do not create a successful `replay_equivalence_report.json` manually;
 - do not treat aggregate agreement as a substitute for record-level comparison;

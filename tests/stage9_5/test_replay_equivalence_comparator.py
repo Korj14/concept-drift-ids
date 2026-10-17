@@ -17,6 +17,7 @@ from tools.stage9_5.replay_equivalence_comparator import (
     _verify_stage1_reconstruction_report,
     compare_phase_a_seed,
     compare_phase_b_arm,
+    compare_phase_b_maintenance_jsonl,
     compare_phase_b_seed,
     compare_phase_c_corrected_output,
     compare_phase_c_preconditions,
@@ -1503,5 +1504,210 @@ def test_phase_b_record_sequence_non_timing_change_fails_closed() -> None:
 
     assert _project_phase_b_record_sequence(accepted) != (
         _project_phase_b_record_sequence(fresh)
+    )
+
+def _write_maintenance_jsonl(
+    path: Path,
+    records: list[dict[str, Any]],
+) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(
+        "".join(
+            json.dumps(record, sort_keys=True) + "\n"
+            for record in records
+        ),
+        encoding="utf-8",
+    )
+
+
+def _maintenance_records() -> list[dict[str, Any]]:
+    return [
+        {
+            "record_id": "r-1",
+            "scientific_value": {"decision": "publish", "score": 0.75},
+            "shap_seconds": 1.0,
+            "surrogate_seconds": 2.0,
+            "lifecycle_seconds": 3.0,
+            "generation_payload": {
+                "generation_evidence_id": "a" * 64,
+                "timing_seconds": {"shap": 1.25, "surrogate": 2.25},
+                "scientific_value": {"kept": True},
+            },
+        },
+        {
+            "record_id": "r-2",
+            "scientific_value": {"decision": "retire", "score": 0.25},
+            "shap_seconds": 4.0,
+            "surrogate_seconds": 5.0,
+            "lifecycle_seconds": 6.0,
+            "generation_payload": None,
+        },
+    ]
+
+
+def test_phase_b_maintenance_comparator_timing_only_differences_pass(
+    tmp_path: Path,
+) -> None:
+    accepted = _maintenance_records()
+    fresh = copy.deepcopy(accepted)
+    fresh[0]["shap_seconds"] = 101.0
+    fresh[0]["surrogate_seconds"] = 202.0
+    fresh[0]["lifecycle_seconds"] = 303.0
+    generation = fresh[0]["generation_payload"]
+    assert isinstance(generation, dict)
+    generation["timing_seconds"] = {
+        "shap": 1001.0,
+        "surrogate": 2002.0,
+    }
+    fresh[1]["shap_seconds"] = 404.0
+    fresh[1]["surrogate_seconds"] = 505.0
+    fresh[1]["lifecycle_seconds"] = 606.0
+
+    accepted_path = tmp_path / "accepted" / "maintenance.jsonl"
+    fresh_path = tmp_path / "fresh" / "maintenance.jsonl"
+    _write_maintenance_jsonl(accepted_path, accepted)
+    _write_maintenance_jsonl(fresh_path, fresh)
+
+    result = compare_phase_b_maintenance_jsonl(
+        accepted_path=accepted_path,
+        fresh_path=fresh_path,
+    )
+
+    assert result["pass"] is True
+    assert result["failures"] == []
+    assert result["mismatches"] == []
+    assert result["accepted_record_count"] == 2
+    assert result["fresh_record_count"] == 2
+    assert (
+        result["accepted_projected_sha256"]
+        == result["fresh_projected_sha256"]
+    )
+
+
+def test_phase_b_maintenance_comparator_non_timing_scientific_change_fails(
+    tmp_path: Path,
+) -> None:
+    accepted = _maintenance_records()
+    fresh = copy.deepcopy(accepted)
+    fresh[0]["scientific_value"]["decision"] = "retire"
+
+    accepted_path = tmp_path / "accepted" / "maintenance.jsonl"
+    fresh_path = tmp_path / "fresh" / "maintenance.jsonl"
+    _write_maintenance_jsonl(accepted_path, accepted)
+    _write_maintenance_jsonl(fresh_path, fresh)
+
+    result = compare_phase_b_maintenance_jsonl(
+        accepted_path=accepted_path,
+        fresh_path=fresh_path,
+    )
+
+    assert result["pass"] is False
+    assert result["failures"] == []
+    assert (
+        "maintenance[0].scientific_value.decision"
+        in result["mismatches"]
+    )
+
+
+def test_phase_b_maintenance_comparator_record_count_change_fails(
+    tmp_path: Path,
+) -> None:
+    accepted = _maintenance_records()
+    fresh = copy.deepcopy(accepted[:1])
+
+    accepted_path = tmp_path / "accepted" / "maintenance.jsonl"
+    fresh_path = tmp_path / "fresh" / "maintenance.jsonl"
+    _write_maintenance_jsonl(accepted_path, accepted)
+    _write_maintenance_jsonl(fresh_path, fresh)
+
+    result = compare_phase_b_maintenance_jsonl(
+        accepted_path=accepted_path,
+        fresh_path=fresh_path,
+    )
+
+    assert result["pass"] is False
+    assert result["accepted_record_count"] == 2
+    assert result["fresh_record_count"] == 1
+    assert result["mismatches"] == ["maintenance.length"]
+
+
+def test_phase_b_maintenance_comparator_record_order_change_fails(
+    tmp_path: Path,
+) -> None:
+    accepted = _maintenance_records()
+    fresh = [copy.deepcopy(accepted[1]), copy.deepcopy(accepted[0])]
+
+    accepted_path = tmp_path / "accepted" / "maintenance.jsonl"
+    fresh_path = tmp_path / "fresh" / "maintenance.jsonl"
+    _write_maintenance_jsonl(accepted_path, accepted)
+    _write_maintenance_jsonl(fresh_path, fresh)
+
+    result = compare_phase_b_maintenance_jsonl(
+        accepted_path=accepted_path,
+        fresh_path=fresh_path,
+    )
+
+    assert result["pass"] is False
+    assert result["accepted_record_count"] == 2
+    assert result["fresh_record_count"] == 2
+    assert "maintenance[0].record_id" in result["mismatches"]
+    assert "maintenance[1].record_id" in result["mismatches"]
+
+
+def test_phase_b_maintenance_comparator_malformed_and_duplicate_key_fail_closed(
+    tmp_path: Path,
+) -> None:
+    accepted_path = tmp_path / "accepted" / "maintenance.jsonl"
+    _write_maintenance_jsonl(accepted_path, _maintenance_records())
+
+    malformed_path = tmp_path / "fresh-malformed" / "maintenance.jsonl"
+    malformed_path.parent.mkdir(parents=True)
+    malformed_path.write_text('{"record_id": "r-1"\n', encoding="utf-8")
+    malformed = compare_phase_b_maintenance_jsonl(
+        accepted_path=accepted_path,
+        fresh_path=malformed_path,
+    )
+    assert malformed["pass"] is False
+    assert any(
+        failure.startswith("fresh_maintenance_invalid:ValueError:")
+        for failure in malformed["failures"]
+    )
+
+    duplicate_path = tmp_path / "fresh-duplicate" / "maintenance.jsonl"
+    duplicate_path.parent.mkdir(parents=True)
+    duplicate_path.write_text(
+        '{"record_id":"r-1","record_id":"r-2"}\n',
+        encoding="utf-8",
+    )
+    duplicate = compare_phase_b_maintenance_jsonl(
+        accepted_path=accepted_path,
+        fresh_path=duplicate_path,
+    )
+    assert duplicate["pass"] is False
+    assert any(
+        failure.startswith("fresh_maintenance_invalid:ValueError:")
+        for failure in duplicate["failures"]
+    )
+
+
+def test_phase_b_maintenance_comparator_missing_accepted_evidence_fails_closed(
+    tmp_path: Path,
+) -> None:
+    accepted_path = tmp_path / "accepted-missing" / "maintenance.jsonl"
+    fresh_path = tmp_path / "fresh" / "maintenance.jsonl"
+    _write_maintenance_jsonl(fresh_path, _maintenance_records())
+
+    result = compare_phase_b_maintenance_jsonl(
+        accepted_path=accepted_path,
+        fresh_path=fresh_path,
+    )
+
+    assert result["pass"] is False
+    assert result["accepted_record_count"] is None
+    assert any(
+        failure.startswith(
+            "accepted_maintenance_invalid:FileNotFoundError:"
+        )
+        for failure in result["failures"]
     )
 

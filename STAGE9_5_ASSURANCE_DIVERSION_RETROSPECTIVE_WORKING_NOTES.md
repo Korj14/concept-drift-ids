@@ -75,6 +75,21 @@ post-outcome/manual success construction.
     accepted preprocessing-manifest identity, and semantic equality of all
     eight decompressed reconstructed tables to an independently recomputed
     historical structural preprocessing result.
+16. The Stage-1 reconstruction verifier was then implemented prospectively in
+    `tools/stage9_5/stage1_reconstruction_evidence.py`. It executes the exact
+    historical preprocessing Git blob after SHA-1 verification, independently
+    recomputes the structural transformation, verifies the frozen dependency
+    environment and all eight raw SHA-256 identities, and derives the canonical
+    reconstruction report without a manual success path.
+17. The replay comparator was bound to that canonical Stage-1 report rather
+    than a manually supplied boolean. It verifies the report's canonical hash,
+    required success fields, fixed evidence path, and Git ancestry before
+    clearing the Stage-1 blocker, and carries the Stage-1 report hash into the
+    comparison evidence.
+18. The replay-report finalizer was additionally hardened to verify the
+    comparator evidence's own embedded canonical SHA-256 before accepting it,
+    closing the provenance chain from Stage-1 reconstruction through comparator
+    evidence to the final replay report.
 
 ## Scientific invariants maintained throughout
 
@@ -97,7 +112,9 @@ External:
 - `stage8_large_artifact_archive_missing`
 
 Non-external:
-- `stage1_reconstruction_evidence_verifier_not_implemented`
+- `stage1_reconstruction_evidence_not_verified` — verifier implementation is
+  frozen; authoritative historical-environment execution/report is still
+  pending.
 
 After these are resolved, the intended order remains:
 Stage-9.5-1 recovery closure -> Stage-9.5-6 historical replay closure ->

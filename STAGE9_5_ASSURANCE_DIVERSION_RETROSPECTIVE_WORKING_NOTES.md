@@ -126,6 +126,16 @@ post-outcome/manual success construction.
     checkouts. This changed assurance provenance only; Stage-1 structural
     preprocessing semantics and accepted Stage-8/9 science remained unchanged.
 
+22. A final local-runtime preflight checked one additional execution surface not
+    previously recorded: cached/local container or interpreter provisioning.
+    The working environment exposed no `python3.11` or `python3.11.9`
+    executable, no Docker/Podman/nerdctl runtime, no pyenv/conda/mamba-style
+    environment manager, and no obvious cached Python-3.11 interpreter under
+    the inspected local roots. This confirmed that the present container still
+    cannot produce authoritative Stage-1 evidence without external provisioning
+    of the frozen Python 3.11.9 environment. The historical-environment
+    requirement was not weakened.
+
 ## Scientific invariants maintained throughout
 
 - No accepted Stage-8/9 result was retuned or replaced.

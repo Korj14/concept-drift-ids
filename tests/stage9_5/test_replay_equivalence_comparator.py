@@ -1322,3 +1322,22 @@ def test_stage1_report_binding_rejects_wrong_verifier_source_identity(
         in result["failures"]
     )
 
+def test_committed_stage1_reconstruction_report_passes_binding() -> None:
+    report_path = (
+        Path(__file__).resolve().parents[2]
+        / "results"
+        / "audits"
+        / "stage9_5_full_seed_rerun_v1"
+        / "stage1_reconstruction_report.json"
+    )
+    assert report_path.is_file()
+
+    result = _verify_stage1_reconstruction_report(report_path)
+
+    assert result["pass"] is True
+    assert result["failures"] == []
+    assert (
+        result["canonical_sha256"]
+        == "4bafa772f9737d934f40c90bf7be8d80a62108cf89a9c74895fbe5c12c4a88af"
+    )
+

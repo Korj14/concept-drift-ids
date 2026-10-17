@@ -11,6 +11,8 @@ from tools.stage9_5.replay_equivalence_comparator import (
     NORMALIZED_DIAGNOSTIC,
     _canonical_sha256,
     _project_phase_a_manifest,
+    _git_head,
+    _verify_stage1_reconstruction_report,
     compare_phase_a_seed,
     compare_phase_b_arm,
     compare_phase_b_seed,
@@ -1142,4 +1144,113 @@ def test_phase_c_corrected_output_rejects_seed_control_change(
 
     assert result["pass"] is False
     assert "fresh:phase_c_lambda_one_control_failed" in result["failures"]
+
+def _write_stage1_contract_and_report(
+    tmp_path: Path,
+    *,
+    repository_head: str,
+    status: str = "pass",
+) -> tuple[Path, Path]:
+    contract = {
+        "required_report": {
+            "path": "stage1_reconstruction_report.json",
+            "audit_id": "stage9.5-6-stage1-reconstruction-v1",
+            "required_success_values": {
+                "status": "pass",
+                "pass": True,
+                "raw_file_count_verified": 8,
+                "interim_table_count_verified": 8,
+                "preprocessing_manifest_canonical_sha256": "d" * 64,
+                "semantic_mismatch_count": 0,
+                "failures": [],
+                "blockers": [],
+            },
+        }
+    }
+    contract_path = tmp_path / "stage1_contract.json"
+    contract_path.write_text(
+        json.dumps(contract, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+
+    report = {
+        "audit_id": "stage9.5-6-stage1-reconstruction-v1",
+        "status": status,
+        "pass": status == "pass",
+        "repository_head": repository_head,
+        "manual_success_override_permitted": False,
+        "raw_file_count_verified": 8,
+        "interim_table_count_verified": 8,
+        "preprocessing_manifest_canonical_sha256": "d" * 64,
+        "semantic_mismatch_count": 0,
+        "failures": [] if status == "pass" else ["toy_failure"],
+        "blockers": [],
+        "scientific_objects_modified": False,
+        "stage10_outcomes_accessed": False,
+    }
+    report["canonical_sha256"] = _canonical_sha256(report)
+    report_path = tmp_path / "stage1_reconstruction_report.json"
+    report_path.write_text(
+        json.dumps(report, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+    return contract_path, report_path
+
+
+def test_stage1_report_binding_accepts_canonical_ancestor_report(
+    tmp_path: Path,
+) -> None:
+    contract_path, report_path = _write_stage1_contract_and_report(
+        tmp_path,
+        repository_head=_git_head(),
+    )
+
+    result = _verify_stage1_reconstruction_report(
+        report_path,
+        contract_path=contract_path,
+        expected_root=tmp_path,
+    )
+
+    assert result["pass"] is True
+    assert result["failures"] == []
+    assert result["canonical_sha256"] is not None
+
+
+def test_stage1_report_binding_rejects_resealed_semantic_failure(
+    tmp_path: Path,
+) -> None:
+    contract_path, report_path = _write_stage1_contract_and_report(
+        tmp_path,
+        repository_head=_git_head(),
+        status="blocked",
+    )
+
+    result = _verify_stage1_reconstruction_report(
+        report_path,
+        contract_path=contract_path,
+        expected_root=tmp_path,
+    )
+
+    assert result["pass"] is False
+    assert "stage1_report_success_value_mismatch:status" in result["failures"]
+    assert "stage1_report_success_value_mismatch:pass" in result["failures"]
+    assert "stage1_report_success_value_mismatch:failures" in result["failures"]
+
+
+def test_stage1_report_binding_rejects_unrelated_repository_head(
+    tmp_path: Path,
+) -> None:
+    contract_path, report_path = _write_stage1_contract_and_report(
+        tmp_path,
+        repository_head="f" * 40,
+    )
+
+    result = _verify_stage1_reconstruction_report(
+        report_path,
+        contract_path=contract_path,
+        expected_root=tmp_path,
+    )
+
+    assert result["pass"] is False
+    assert "stage1_report_repository_head_not_ancestor" in result["failures"]
 

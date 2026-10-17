@@ -1020,3 +1020,59 @@ final procedure rather than presenting the path as if it had been linear.
     from committed repository evidence rather than reconstructed from transient
     conversation memory.
 
+46. On 17 October 2026 this continuation resumed after the user again instructed
+    the assurance work to proceed and explicitly reiterated that the complete
+    Stage-9.5 diversion spanning two to three chats must be documented at final
+    closure. The live assurance branch had advanced externally from the
+    previously remembered Phase-A-era head
+    `cf78ba076a12693bc1b89ac52181fc8f20091fdc` to
+    `df4f94a4b05619936bee29785098cd9a8efc4645`, **78 commits
+    ahead**. The delta was reconciled before any repository mutation.
+
+    Reconciliation confirmed that the apparent planned Phase-B design work was
+    obsolete. The live repository already contains prospectively frozen
+    deterministic replay comparison for Phase A, Phase B, Phase-C
+    failure-lineage/correction-config preconditions, and corrected Phase-C
+    seed-0 outputs; the deterministic replay-report finalizer; authoritative
+    Stage-1 reconstruction evidence and closure; the frozen end-to-end
+    historical replay execution handoff; the additive current-status overlay;
+    and this multi-chat assurance-diversion working record. The machine-readable
+    current-status overlay records **no identified non-external Stage-9.5-6
+    implementation/evidence blocker**.
+
+    The 19 commits after the current-status observation head
+    `ddcc8c21dff5c30d01c2a5935ae609406b804e8f` were audited and found
+    to change only the additive current-status/retrospective record; they
+    introduced no new comparator, finalizer, replay protocol, order-gate, or
+    scientific semantics.
+
+    Exact-head Stage-9 robustness run `39049858993` completed successfully.
+    Stage-9.5 assurance run `39049858987` had the intended fail-closed shape:
+    the assurance-contract job passed with **87 tests**; statistical oracle,
+    causal properties, targeted mutations, and the semantic work-package order
+    gate passed; static discovery remained the accepted **ruff=154 / mypy=55**
+    baseline; fresh-clone reconstruction remained **0 identity failures / 2
+    external-artifact blockers**; `later_packages_unlocked=false`; and
+    Stage-9.5-7/8/9 were skipped because the Stage-9.5-6 closure/success records
+    do not yet exist.
+
+    No new assurance mechanism was added. The project again stopped software
+    expansion at the genuine external-evidence boundary. The only unresolved
+    prerequisites remain `system_a_checkpoint_bytes_missing` and
+    `stage8_large_artifact_archive_missing`.
+
+    The authoritative next sequence remains: recover and hash-verify the five
+    exact original System-A checkpoints -> recover and verify the original
+    Stage-8 heavy archive at 145/145 descriptor-linked requirements -> close
+    Stage-9.5-1 from verifier-produced recovery evidence -> execute the frozen
+    historical replay handoff -> run the frozen comparator/finalizer -> close
+    Stage-9.5-6 and require `later_packages_unlocked=true` -> revalidate
+    Stage-9.5-7 -> rerun/revalidate Stage-9.5-8 -> run Stage-9.5-9 hostile
+    review last -> require zero unresolved Class-A defects -> finalize the
+    reviewer-facing multi-chat assurance-diversion retrospective -> close
+    Stage 9.5 -> only then authorize Stage 10.
+
+    This entry is preserved specifically to satisfy the user's closure
+    requirement that the full assurance diversion be reconstructed from
+    committed repository evidence rather than transient conversation memory.
+

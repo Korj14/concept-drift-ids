@@ -9,8 +9,10 @@ from typing import Any
 
 from tools.stage9_5.replay_equivalence_comparator import (
     NORMALIZED_DIAGNOSTIC,
+    PHASE_B_RECORD_TIMING_FIELDS,
     _canonical_sha256,
     _project_phase_a_manifest,
+    _project_phase_b_maintenance_record,
     _git_head,
     _verify_stage1_reconstruction_report,
     compare_phase_a_seed,
@@ -1339,5 +1341,167 @@ def test_committed_stage1_reconstruction_report_passes_binding() -> None:
     assert (
         result["canonical_sha256"]
         == "4bafa772f9737d934f40c90bf7be8d80a62108cf89a9c74895fbe5c12c4a88af"
+    )
+
+def _project_phase_b_record_sequence(
+    records: list[dict[str, Any]],
+) -> list[dict[str, Any]]:
+    return [_project_phase_b_maintenance_record(record) for record in records]
+
+
+def test_phase_b_record_projection_contract_matches_frozen_v1_1_surface() -> None:
+    root = Path(__file__).resolve().parents[2]
+    contract_path = (
+        root
+        / "data"
+        / "manifests"
+        / "stage9_5_6_phase_b_maintenance_record_projection_v1.json"
+    )
+    contract = json.loads(contract_path.read_text(encoding="utf-8"))
+
+    assert contract["contract_id"] == (
+        "stage9.5-6-phase-b-maintenance-record-projection-v1"
+    )
+    assert contract["permitted_record_projection"]["top_level_fields_removed"] == [
+        "shap_seconds",
+        "surrogate_seconds",
+        "lifecycle_seconds",
+    ]
+    assert contract["permitted_record_projection"]["nested_direct_child_removed"] == [
+        "generation_payload.timing_seconds"
+    ]
+    assert tuple(PHASE_B_RECORD_TIMING_FIELDS) == (
+        "shap_seconds",
+        "surrogate_seconds",
+        "lifecycle_seconds",
+    )
+    assert contract["permitted_record_projection"]["diagnostic_exclusion_set_closed"] is True
+    assert contract["permitted_record_projection"]["no_name_pattern_matching"] is True
+    assert contract["permitted_record_projection"]["no_recursive_timing_field_removal"] is True
+    assert contract["arm_manifest_transitive_hash_handling_frozen_by_this_contract"] is False
+    assert contract["seed_manifest_transitive_hash_handling_frozen_by_this_contract"] is False
+
+
+def test_phase_b_record_projection_ignores_exactly_predeclared_timing_paths() -> None:
+    accepted = {
+        "record_id": "r-1",
+        "scientific_value": {"score": 0.75},
+        "shap_seconds": 1.0,
+        "surrogate_seconds": 2.0,
+        "lifecycle_seconds": 3.0,
+        "generation_payload": {
+            "generation_evidence_id": "a" * 64,
+            "scientific_value": {"kept": True},
+            "timing_seconds": {
+                "shap": 1.25,
+                "surrogate": 2.25,
+            },
+            "timing_seconds_extra": "must-remain-exact",
+            "nested": {"timing_seconds": "also-must-remain-exact"},
+        },
+        "other": {"timing_seconds": "must-remain-exact"},
+    }
+    fresh = copy.deepcopy(accepted)
+    fresh["shap_seconds"] = 100.0
+    fresh["surrogate_seconds"] = 200.0
+    fresh["lifecycle_seconds"] = 300.0
+    fresh["generation_payload"]["timing_seconds"] = [
+        "different",
+        {"shape": "entire-direct-child-is-diagnostic"},
+    ]
+
+    assert _project_phase_b_maintenance_record(accepted) == (
+        _project_phase_b_maintenance_record(fresh)
+    )
+
+
+def test_phase_b_record_projection_preserves_non_timing_generation_payload_fields() -> None:
+    accepted = {
+        "record_id": "r-1",
+        "generation_payload": {
+            "generation_evidence_id": "a" * 64,
+            "timing_seconds": {"shap": 1.0},
+            "nested": {"timing_seconds": "scientific-here"},
+        },
+    }
+    fresh = copy.deepcopy(accepted)
+    fresh["generation_payload"]["nested"]["timing_seconds"] = "changed"
+
+    assert _project_phase_b_maintenance_record(accepted) != (
+        _project_phase_b_maintenance_record(fresh)
+    )
+
+
+def test_phase_b_record_projection_preserves_generation_payload_parent_semantics() -> None:
+    missing = {"record_id": "r-1"}
+    null = {"record_id": "r-1", "generation_payload": None}
+    object_value = {
+        "record_id": "r-1",
+        "generation_payload": {"timing_seconds": 1.0},
+    }
+
+    missing_projected = _project_phase_b_maintenance_record(missing)
+    null_projected = _project_phase_b_maintenance_record(null)
+    object_projected = _project_phase_b_maintenance_record(object_value)
+
+    assert "generation_payload" not in missing_projected
+    assert null_projected["generation_payload"] is None
+    assert object_projected["generation_payload"] == {}
+    assert missing_projected != null_projected
+    assert null_projected != object_projected
+    assert missing_projected != object_projected
+
+
+def test_phase_b_record_projection_rejects_non_object_generation_payload() -> None:
+    try:
+        _project_phase_b_maintenance_record(
+            {"record_id": "r-1", "generation_payload": "invalid"}
+        )
+    except TypeError as exc:
+        assert "generation_payload must be an object or null" in str(exc)
+    else:
+        raise AssertionError("Non-object generation_payload must fail closed")
+
+
+def test_phase_b_record_sequence_missing_added_and_reordered_records_fail_closed() -> None:
+    accepted = [
+        {"record_id": "r-1", "scientific_value": 1, "shap_seconds": 1.0},
+        {"record_id": "r-2", "scientific_value": 2, "shap_seconds": 2.0},
+    ]
+    missing = [copy.deepcopy(accepted[0])]
+    added = copy.deepcopy(accepted) + [
+        {"record_id": "r-3", "scientific_value": 3, "shap_seconds": 3.0}
+    ]
+    reordered = [copy.deepcopy(accepted[1]), copy.deepcopy(accepted[0])]
+
+    accepted_projected = _project_phase_b_record_sequence(accepted)
+    missing_projected = _project_phase_b_record_sequence(missing)
+    added_projected = _project_phase_b_record_sequence(added)
+    reordered_projected = _project_phase_b_record_sequence(reordered)
+
+    assert accepted_projected != missing_projected
+    assert accepted_projected != added_projected
+    assert accepted_projected != reordered_projected
+    assert _canonical_sha256(accepted_projected) != _canonical_sha256(missing_projected)
+    assert _canonical_sha256(accepted_projected) != _canonical_sha256(added_projected)
+    assert _canonical_sha256(accepted_projected) != _canonical_sha256(reordered_projected)
+
+
+def test_phase_b_record_sequence_non_timing_change_fails_closed() -> None:
+    accepted = [
+        {
+            "record_id": "r-1",
+            "scientific_value": {"decision": "publish"},
+            "generation_payload": {
+                "generation_evidence_id": "a" * 64,
+                "timing_seconds": {"shap": 1.0},
+            },
+        }
+    ]
+    fresh = copy.deepcopy(accepted)
+    fresh[0]["scientific_value"]["decision"] = "retire"
+
+    assert _project_phase_b_record_sequence(accepted) != (
+        _project_phase_b_record_sequence(fresh)
     )
 

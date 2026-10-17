@@ -33,7 +33,9 @@
     ],
     "non_add_event_count": 0,
     "missing_c_frozen_maintenance_add_event_count": 0,
-    "interpretation": "The current Dropbox archive was ingested object-by-object; the five manifest-declared empty C-arm maintenance files were omitted at initial transport rather than subsequently deleted, moved, renamed, or restored."
+    "interpretation": "The current Dropbox archive was ingested object-by-object; the five manifest-declared empty C-arm maintenance files were omitted at initial transport rather than subsequently deleted, moved, renamed, or restored.",
+    "dropbox_restore_event_forensics_manifest": "data/manifests/stage9_5_1_dropbox_restore_event_forensics_v1.json",
+    "dropbox_restore_event_forensics_manifest_git_blob_sha1": "3503d84a3db82802c49084f7dd09e007031d80a9"
   },
   "empty_file_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
   "allowed_reconstructions": [

@@ -12,6 +12,7 @@ on:
       - "data/manifests/stage9_5_fresh_clone_reconstruction_v1_2.json"
       - "data/manifests/stage9_5_6_closure_order_gate_v1.json"
       - "data/manifests/stage9_5_6_replay_report_construction_v1.json"
+      - "data/manifests/stage9_5_6_stage1_reconstruction_evidence_v1.json"
       - "STAGE9_5_6_REPLAY_REPORT_CONSTRUCTION_CONTRACT_V1.md"
       - "STAGE9_5_6_CLEAN_DETERMINISTIC_FULL_SEED_RERUN_CLOSURE.md"
       - "results/audits/stage9_5_full_seed_rerun_v1/success.json"
@@ -70,12 +71,12 @@ jobs:
       - name: Verify prospective Stage 9.5 freeze artifacts
         shell: pwsh
         run: |
-          python -c "from pathlib import Path; required=['STAGE9_5_Q1_INDEPENDENT_ASSURANCE_PROTOCOL.md','data/manifests/stage9_5_parameter_register_v1.json','data/manifests/stage9_5_parameter_register_v1_11.json','data/manifests/stage9_5_6_replay_report_construction_v1.json','STAGE9_5_6_REPLAY_REPORT_CONSTRUCTION_CONTRACT_V1.md']; missing=[p for p in required if not Path(p).is_file()]; assert not missing, missing"
+          python -c "from pathlib import Path; required=['STAGE9_5_Q1_INDEPENDENT_ASSURANCE_PROTOCOL.md','data/manifests/stage9_5_parameter_register_v1.json','data/manifests/stage9_5_parameter_register_v1_11.json','data/manifests/stage9_5_6_replay_report_construction_v1.json','data/manifests/stage9_5_6_stage1_reconstruction_evidence_v1.json','STAGE9_5_6_REPLAY_REPORT_CONSTRUCTION_CONTRACT_V1.md']; missing=[p for p in required if not Path(p).is_file()]; assert not missing, missing"
 
       - name: Run Stage 9.5 scanner and order-gate unit tests
         shell: pwsh
         run: |
-          python -m pytest tests/stage9_5/test_parameter_scan.py tests/stage9_5/test_work_package_order_gate.py tests/stage9_5/test_replay_report_finalizer.py tests/stage9_5/test_replay_equivalence_comparator.py -q
+          python -m pytest tests/stage9_5/test_parameter_scan.py tests/stage9_5/test_work_package_order_gate.py tests/stage9_5/test_replay_report_finalizer.py tests/stage9_5/test_replay_equivalence_comparator.py tests/stage9_5/test_stage1_reconstruction_evidence.py -q
 
       - name: Run Stage 9.5-0 parameter/control scan
         shell: pwsh

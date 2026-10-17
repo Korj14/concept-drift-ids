@@ -1279,3 +1279,36 @@ The authoritative records for this event are:
 
 This episode is part of the final multi-chat assurance-diversion retrospective and must not be omitted or collapsed into a claim that the negative closure was simply "wrong"; it was correct for the surfaces available at that time.
 
+## Dropbox revision-history exhaustion follow-up — 17 October 2026
+
+After the Dropbox recovery surface had narrowed the accepted Stage-8 archive to
+140/145 required paths, one final read-only recovery check was performed before
+treating that source as exhausted.
+
+An advanced Dropbox-wide title search for `maintenance.jsonl` returned exactly
+the ten active D-arm maintenance logs and no C-frozen maintenance file. Search
+for `cd_primary_v1` returned only the already-audited archive tree. Dropbox
+revision history was then queried separately for each of the five exact missing
+paths:
+
+- seed 0 C-frozen `maintenance.jsonl`;
+- seed 1 C-frozen `maintenance.jsonl`;
+- seed 2 C-frozen `maintenance.jsonl`;
+- seed 3 C-frozen `maintenance.jsonl`;
+- seed 4 C-frozen `maintenance.jsonl`.
+
+All five revision-history calls returned `FILE_NOT_FOUND`. No recoverable
+historical revision was exposed for any missing path.
+
+The scientific/governance decision did not change: the known SHA-256 of the
+empty file does not authorize creating substitute files and relabeling them as
+recovered originals. Dropbox is therefore exhausted for this narrow recovery
+question, the authoritative archive state remains 140/145, and any further
+successful recovery must come from a genuinely new authoritative source or
+original archive representation.
+
+This follow-up is retained so the final reviewer-facing Stage-9.5 retrospective
+can distinguish (a) discovery of a materially useful personal-cloud surface,
+(b) partial recovery on that surface, and (c) explicit exhaustion of that
+surface without relaxing the frozen success criterion.
+

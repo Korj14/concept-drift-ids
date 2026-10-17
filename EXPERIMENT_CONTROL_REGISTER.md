@@ -267,3 +267,25 @@ This overlay records the current assurance state without reopening accepted Stag
 
 Interpretation boundary: these assurance blockers concern reconstructibility/provenance and the literal historical replay gate. They do not by themselves establish that accepted Stage-8/9 numerical results are wrong, and they do not authorize replacement of accepted evidence with regenerated artifacts or summary-only approximations.
 
+## Stage 9.5-1 negative-closure overlay — 17 October 2026
+
+This additive overlay supersedes only the **current-status interpretation** of the 16 October Stage-9.5 table above. Historical open/blocking rows remain part of the assurance chronology.
+
+| Control | Current state |
+| --- | --- |
+| Stage 9.5-1 fresh-clone reconstruction | **CLOSED — FAILED / EXTERNAL PROVENANCE UNRESOLVED** |
+| Negative closure authority | `STAGE9_5_1_FRESH_CLONE_RECONSTRUCTION_NEGATIVE_CLOSURE.md` + `data/manifests/stage9_5_1_negative_closure_v1.json` |
+| Final verifier disposition | **0 identity failures / 2 unresolved external-artifact blockers** |
+| Frozen success criterion | **UNCHANGED** — exact five original System-A checkpoints + original Stage-8 heavy archive at **145/145**, zero failures/blockers |
+| External blocker 1 | `system_a_checkpoint_bytes_missing` |
+| External blocker 2 | `stage8_large_artifact_archive_missing` |
+| Regeneration/substitution | **PROHIBITED as closure evidence** |
+| Stage 9.5-6 historical rerun | **BLOCKED BY CLOSED-FAILED 9.5-1** under the current evidence package |
+| Stage 9.5-7/8/9 | **LOCKED as authoritative closure packages** |
+| Stage 9.5 overall | **NOT CLOSABLE UNDER THE CURRENT EVIDENCE PACKAGE** because the Class-A provenance defect remains unresolved |
+| Stage 10 | **PROHIBITED** |
+
+Interpretation boundary: the negative closure terminates the Stage-9.5-1 assurance attempt without falsifying success. It does not assert that accepted Stage-8/9 numerical results are wrong, and it does not change any accepted treatment, estimand, metric, or result. It records that publication-grade clean-clone reconstruction of the full original checkpoint/heavy-artifact chain has not been demonstrated.
+
+Reopening is permitted only if the exact original bytes are later recovered and the unchanged v1.2 verifier independently passes the frozen five-seed / 145-of-145 predicate. Otherwise any continuation requires a separately governed restart/new evidence-generation campaign rather than substitution into the accepted evidence chain.
+

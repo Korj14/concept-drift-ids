@@ -129,6 +129,10 @@ def _validate_forensic_basis(contract: dict[str, Any]) -> list[str]:
             "dropbox_discovery_manifest",
             "dropbox_discovery_manifest_git_blob_sha1",
         ),
+        (
+            "dropbox_restore_event_forensics_manifest",
+            "dropbox_restore_event_forensics_manifest_git_blob_sha1",
+        ),
     )
     for path_field, sha_field in checks:
         relative = basis.get(path_field)
@@ -153,6 +157,61 @@ def _validate_forensic_basis(contract: dict[str, Any]) -> list[str]:
         failures.append("forensic_basis:non_add_events_present")
     if basis.get("missing_c_frozen_maintenance_add_event_count") != 0:
         failures.append("forensic_basis:missing_files_have_add_events")
+
+    forensic_path_value = basis.get("dropbox_restore_event_forensics_manifest")
+    if isinstance(forensic_path_value, str):
+        forensic_path = PROJECT_ROOT / forensic_path_value
+        try:
+            forensic = _load_json(forensic_path)
+        except (OSError, json.JSONDecodeError, TypeError, ValueError) as exc:
+            failures.append(
+                "forensic_basis:restore_event_record_invalid:"
+                f"{type(exc).__name__}"
+            )
+        else:
+            if forensic.get("audit_id") != (
+                "stage9.5-1-dropbox-restore-event-forensics-v1"
+            ):
+                failures.append(
+                    "forensic_basis:restore_event_record_audit_id_mismatch"
+                )
+            pagination = forensic.get("pagination")
+            operations = forensic.get("operation_summary")
+            findings = forensic.get("missing_path_event_findings")
+            if not isinstance(pagination, dict):
+                failures.append(
+                    "forensic_basis:restore_event_pagination_missing"
+                )
+            else:
+                if pagination.get("history_exhausted") is not True:
+                    failures.append(
+                        "forensic_basis:restore_event_history_not_exhausted"
+                    )
+                if pagination.get("total_events") != 253:
+                    failures.append(
+                        "forensic_basis:restore_event_total_mismatch"
+                    )
+            if not isinstance(operations, dict):
+                failures.append(
+                    "forensic_basis:restore_event_operation_summary_missing"
+                )
+            else:
+                if operations.get("observed_operation_types") != ["ADD"]:
+                    failures.append(
+                        "forensic_basis:restore_event_operation_type_mismatch"
+                    )
+                if operations.get("non_add_event_count") != 0:
+                    failures.append(
+                        "forensic_basis:restore_event_non_add_present"
+                    )
+            if not isinstance(findings, dict):
+                failures.append(
+                    "forensic_basis:missing_path_findings_missing"
+                )
+            elif findings.get("add_event_count") != 0:
+                failures.append(
+                    "forensic_basis:missing_path_add_event_present"
+                )
     return failures
 
 

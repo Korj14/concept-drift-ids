@@ -1312,3 +1312,173 @@ can distinguish (a) discovery of a materially useful personal-cloud surface,
 (b) partial recovery on that surface, and (c) explicit exhaustion of that
 surface without relaxing the frozen success criterion.
 
+## Zero-byte transport-omission forensics and reconstructible-route correction — 17 October 2026
+
+After the Dropbox recovery discovery had narrowed Stage-9.5-1 to five missing
+C-frozen `maintenance.jsonl` objects, the user instructed the project to
+complete the next step that materially moved Stage 9.5 toward closure rather
+than continuing abstract hardening.
+
+The live assurance head was first reconciled at
+`bae55fd79302bf564e409d11874f06a430d62510`. That head already contained
+substantial work completed across the assurance diversion: Phase-A/B/C replay
+comparison, the deterministic finalizer, authoritative Stage-1 reconstruction,
+the historical replay handoff, the Stage-9.5-1 negative closure, Dropbox
+recovery discovery, and this running multi-chat retrospective. The current
+status at that head reported no identified non-external Stage-9.5-6 blocker.
+The remaining recovery state was five exact checkpoints located in Dropbox and
+a Stage-8 archive physically present at **140/145** descriptor-linked paths.
+
+### Connector-to-verifier transport attempt
+
+A direct attempt was made to materialize the five Dropbox checkpoint byte
+streams into the verifier container.
+
+Dropbox successfully issued temporary raw-byte download links for all five
+checkpoint files. The ordinary verifier container could not consume those links
+because its direct network path has no external DNS access. The platform's
+sanctioned container downloader in turn requires a prior web-view authorization,
+while Dropbox temporary download links are single-use and the web fetch layer
+does not support those private binary URLs. The Dropbox connector exposes
+metadata, text extraction, previews, and temporary links, but not a raw-byte
+file object that the Project/conversation `files.materialize` layer can place
+directly into the verifier container.
+
+No scientific or provenance rule was changed to work around that product
+boundary. The raw bytes therefore remain to be materialized on a
+verifier-capable filesystem outside this connector-to-container bridge.
+
+### Exhaustive Dropbox restore-event audit
+
+A new read-only Dropbox surface was then audited:
+`list_restore_events` for the live `/cd_primary_v1` folder.
+
+The full history was paginated to exhaustion:
+
+- **26 pages**;
+- **253 total events**;
+- current Dropbox tree: **253 entries**;
+- operation types observed: **ADD only**;
+- non-ADD events: **0**;
+- DELETE/MOVE/RENAME/RESTORE/ROLLBACK events: **0**.
+
+This provided a stronger provenance fact than the earlier title/revision
+searches.
+
+For every seed 0-4, the history contains ADD events for the
+`c_frozen_symbolic` folder and its `arm_manifest.json`,
+`initial_state.json`, and `final_state.json`. It also contains the D-drift
+and D-periodic `maintenance.jsonl` ADD events. It contains **no ADD event** for
+any of the five C-frozen `maintenance.jsonl` paths.
+
+Combined with the earlier exact-path revision checks returning
+`FILE_NOT_FOUND`, this establishes that the five empty C-arm maintenance
+objects were omitted during the Dropbox archive ingestion itself; they were not
+objects that Dropbox later deleted, moved, renamed, restored, or rolled back.
+
+The machine record is:
+
+`data/manifests/stage9_5_1_dropbox_restore_event_forensics_v1.json`.
+
+### Governing-plan reinterpretation after new transport evidence
+
+The earlier no-synthesis decision was deliberately conservative and remains part
+of the historical record. At that point, the project knew only that the five
+files were absent and cryptographically expected to be empty. That alone was
+not accepted as authority to recreate them.
+
+The exhaustive transport history added a materially different fact: the
+connected archive representation demonstrably omitted those zero-byte objects
+at ingestion while preserving their sibling objects.
+
+The reconciled governing plan requires the project to **archive or provide a
+reconstructible route** to every non-Git heavy artifact needed for independent
+Stage-8/9 verification. The five missing byte streams are uniquely determined:
+each accepted C-arm manifest binds `maintenance.jsonl` to SHA-256
+
+`e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`
+
+and records zero maintenance opportunities, zero publications, zero candidates,
+and zero maintenance compute/timing.
+
+On that basis, the project froze a versioned **transport reconstruction
+correction** rather than silently relabeling newly created files as recovered
+Dropbox originals.
+
+The frozen contract is:
+
+`data/manifests/stage9_5_1_zero_byte_transport_reconstruction_v1.json`.
+
+The implementation is:
+
+`tools/stage9_5/zero_byte_transport_reconstruction.py`.
+
+Dedicated tests are:
+
+`tests/stage9_5/test_zero_byte_transport_reconstruction.py`.
+
+The human correction note is:
+
+`STAGE9_5_1_ZERO_BYTE_TRANSPORT_RECONSTRUCTION_CORRECTION.md`.
+
+### Fail-closed reconstruction mechanics
+
+The correction does not weaken or modify the Stage-9.5-1 v1.2 verifier.
+
+Before creating any file, the reconstruction utility validates **all five**
+entries. It verifies:
+
+- pinned Git-blob identities for the earlier Dropbox discovery records and the
+  new restore-event forensic record;
+- committed accepted C-arm manifest payload/manifest self-hashes;
+- byte identity between the materialized archive's C-arm manifest and the
+  committed accepted compact-evidence manifest;
+- the exact maintenance descriptor path and frozen empty-file SHA-256;
+- zero maintenance opportunities/publications/candidates/compute/SHAP/
+  surrogate/lifecycle;
+- an empty publications list;
+- path containment inside the supplied archive root;
+- no overwrite of any existing file.
+
+Only if every precondition passes may any write occur. Missing files are created
+with exclusive-create semantics and exactly zero bytes. Preexisting correct
+zero-byte files are preserved and reported separately rather than relabeled as
+reconstructed.
+
+The machine report explicitly states:
+
+- `original_dropbox_objects_recovered = false`;
+- `transport_reconstruction_explicit = true`;
+- `governing_verifier_unchanged = true`.
+
+The reconstruction report is not Stage-9.5-1 success authority.
+
+### Unchanged closure authority
+
+After the checkpoint family and 140 present archive files are materialized on a
+verifier-capable filesystem, the frozen transport correction can complete the
+five manifest-bound empty byte streams. The unchanged Stage-9.5-1 v1.2 verifier
+must then independently produce:
+
+- `pass=true`;
+- checkpoint seeds `[0,1,2,3,4]`;
+- archive requirement count **145**;
+- archive verified count **145**;
+- zero failures;
+- zero blockers.
+
+Only such verifier-produced success may reopen/supersede the historical
+negative closure and permit the frozen Stage-9.5-6 historical replay handoff.
+
+The current-status overlay was updated additively to reflect this state. The
+physical Dropbox tree remains 140/145, but a frozen reconstructible route now
+exists for the five uniquely defined transport omissions. The remaining
+execution barriers are raw-byte materialization to a verifier-capable
+filesystem and the unchanged v1.2 verifier rerun.
+
+This entire episode must remain visible in the final reviewer-facing
+retrospective: historical negative closure -> partial Dropbox recovery ->
+conservative no-synthesis decision -> exhaustive restore-event forensics ->
+versioned transport-reconstruction correction. None of those states should be
+collapsed or rewritten after the fact.
+

@@ -30,10 +30,18 @@ This blocker is separate from the two external artifact blockers:
 
 The Stage-1 blocker exists because replay protocol v1.1 requires reconstruction
 of the interim tables under the frozen historical environment before Phase A.
-No dedicated machine-verifiable Stage-1 reconstruction record is presently
-frozen. Downstream replay success must not be used as a substitute for that
-step. Recovery of the two external artifact families therefore does not by
-itself authorize Stage-9.5-6 execution or closure.
+The reconstruction-evidence contract and deterministic verifier are now
+prospectively frozen in
+`data/manifests/stage9_5_6_stage1_reconstruction_evidence_v1.json` and
+`tools/stage9_5/stage1_reconstruction_evidence.py`, with dedicated tests.
+The verifier executes the exact historical preprocessing Git blob after source
+identity verification and independently recomputes the structural transform for
+semantic equality of all decompressed reconstructed tables. The remaining
+Stage-1 blocker is **authoritative execution evidence**: a canonical passing
+`stage1_reconstruction_report.json` has not yet been produced under the
+frozen historical environment. Downstream replay success must not substitute
+for that report. Recovery of the two external artifact families therefore does
+not by itself authorize Stage-9.5-6 closure.
 
 ## Required producer identity
 
@@ -195,14 +203,17 @@ report finalizer therefore no longer have an unimplemented Phase-A/B/C
 projection layer.
 
 The remaining non-external execution boundary is replay step 1 from the v1.1
-protocol: Stage-1 interim tables must be reconstructed under the frozen
-historical environment and represented by machine-verifiable assurance
-evidence. That evidence must be frozen prospectively and may not be inferred
+protocol. The Stage-1 assurance contract and verifier are implemented and
+frozen; what remains is to execute them under the frozen historical environment
+against the exact eight raw CSV identities and preserve the resulting canonical
+passing report. The replay comparator now validates that report directly,
+requires its repository head to be in the replay lineage, and carries its
+canonical SHA-256 into comparison evidence. Stage-1 success may not be inferred
 from downstream Phase-A/B/C success alone.
 
 ## Fail-closed rules
 
-Until Stage-1 historical-environment reconstruction is represented by machine-verifiable evidence and the two external artifact prerequisites are recovered:
+Until the frozen Stage-1 verifier has produced and preserved an authoritative passing reconstruction report and the two external artifact prerequisites are recovered:
 
 - do not create a successful `replay_equivalence_report.json` manually;
 - do not treat aggregate agreement as a substitute for record-level comparison;

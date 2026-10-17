@@ -143,3 +143,22 @@ Therefore:
 
 No accepted Stage-8/9 scientific result, estimand, comparator, metric, or claim
 boundary is changed by this recovery discovery.
+
+### Exhaustive Dropbox revision-history follow-up — 17 October 2026
+
+A later read-only follow-up repeated the Dropbox-wide filename search with
+advanced/title-only search semantics. It again returned exactly the ten active
+D-arm `maintenance.jsonl` files and no C-frozen maintenance file or second
+`cd_primary_v1` tree.
+
+Dropbox revision history was then queried independently for all five exact
+missing C-frozen paths, seeds 0 through 4. Every path returned
+`FILE_NOT_FOUND`; no current or recoverable historical revision was exposed
+for any of the five files.
+
+This closes the presently connected Dropbox surface for this specific recovery
+question. It does **not** authorize synthesizing the known-empty files, and it
+does not establish that no original copy exists anywhere outside Dropbox. The
+governing archive state therefore remains **140/145**, with the same five
+zero-byte C-arm maintenance files as the only unresolved archive paths.
+

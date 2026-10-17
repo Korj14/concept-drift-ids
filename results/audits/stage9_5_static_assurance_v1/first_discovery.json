@@ -1,0 +1,59 @@
+{
+  "audit_id": "stage9.5-5-static-software-assurance-v1-discovery",
+  "status": "triage_required_scope_correction_required",
+  "accepted_as_closure_evidence": false,
+  "exact_head": "55151a8c588c27eea5ea5e207c854bdbec9debf6",
+  "workflow_run_id": 38550422435,
+  "static_job_id": 115806748277,
+  "same_head_stage9": {
+    "workflow_run_id": 38550422254,
+    "run_number": 443,
+    "conclusion": "success"
+  },
+  "artifact": {
+    "id": 11886039921,
+    "name": "stage9-5-static-assurance-v1",
+    "zip_sha256": "71fce1bb08084cb0ea019434b669a74303117c8d73ddb24c5b91cf1f321a83f6",
+    "report_canonical_sha256": "6bafeb7d2e680620a374ca757b0bc11d4c29ea336b1da0cd71abc6f00673e5cc"
+  },
+  "toolchain": {
+    "ruff": "0.17.0",
+    "mypy": "2.4.0",
+    "historical_runtime_lock_identity_match": true
+  },
+  "discovery": {
+    "ruff_findings": 164,
+    "mypy_findings": 59,
+    "ruff_top_codes": {
+      "I001": 39,
+      "UP035": 28,
+      "B023": 19,
+      "F401": 15,
+      "B008": 13,
+      "FURB167": 9,
+      "RUF046": 8
+    },
+    "mypy_top_codes": {
+      "arg-type": 23,
+      "assignment": 8,
+      "index": 8,
+      "dict-item": 8,
+      "union-attr": 5,
+      "var-annotated": 4
+    }
+  },
+  "initial_triage": {
+    "b023": "reviewed: trace-row generators close over arm-local variables but are synchronously and fully consumed before the enclosing arm loop advances; no late-binding execution path observed",
+    "b008_ruf009": "reviewed: flagged defaults are frozen/immutable configuration objects or numpy dtype objects; no mutable-default state mutation observed",
+    "assurance_findings": "require explicit disposition; test-only exec in mutation suite and returncode-inspecting subprocess use are intentional but must be ledgered",
+    "mypy_scientific": "predominantly static inference/annotation limitations; requires exact finding ledger before closure"
+  },
+  "scope_defect": {
+    "description": "v1 scope was frozen before tools/stage9_5/static_assurance.py and tests/stage9_5/test_static_assurance.py existed, so the static harness did not check itself",
+    "classification": "assurance_harness_risk",
+    "correction": "v1.1 scope includes both files and reruns discovery before final triage"
+  },
+  "scientific_source_changes": false,
+  "historical_runtime_lock_changes": false,
+  "stage10_outcomes_accessed": false
+}

@@ -1,0 +1,175 @@
+{
+  "audit_id": "stage9.5-5-static-finding-triage-v1_4",
+  "status": "closed_all_findings_dispositioned",
+  "source_static_report": {
+    "exact_head": "7e48418f98ad4115c1ae63644ee333f3bc268ae1",
+    "workflow_run_id": 38646749987,
+    "job_id": 116135369558,
+    "artifact_id": 11932953733,
+    "artifact_name": "stage9-5-static-assurance-v1-4",
+    "artifact_zip_sha256": "68362fa2c33e48a4baf3884a05f02230eb162c5a76b05903ff616f160718e661",
+    "report_canonical_sha256": "05cdab1f0a6c8eb48b4fb01e10e0012fe40bf132ff97e498e9c6bc4ad4c96298",
+    "tool_execution_valid": true,
+    "ruff_findings": 155,
+    "mypy_findings": 55
+  },
+  "fingerprint_normalization": {
+    "ruff": "normalize Windows path to repository-relative forward-slash path; fingerprint SHA-256 over canonical JSON {tool,path,line,column,code,message}",
+    "mypy": "normalize Windows path to repository-relative forward-slash path; fingerprint SHA-256 over canonical JSON {tool,path,line,column,code,message}",
+    "set_hash": "SHA-256 of sorted individual fingerprint SHA-256 values joined by newline with a final newline"
+  },
+  "fingerprint_sets": {
+    "all_210": "2cffcdaa4a53f608336b4336df833877c6f5ad65f57877c63fb37c0c8b1b5a69",
+    "scientific_189": "268693732ad427a3e21482634b75b7c0d72bf61d70847340bf14cc45678754df",
+    "assurance_21": "97dfcd0d8712c0864153ed85b79c54d5e9e84bf19bf1e78bf5fe45eb13f02d8e",
+    "ruff_155": "e171b0b1bcae520650d3caf74f185f84a0d734062693b318b0b02481595697b6",
+    "mypy_55": "2c1f0facd868cae68bbbccf830b3426f64628b84233ea0e897fe89d2f899f6f4"
+  },
+  "coverage": {
+    "total_findings": 210,
+    "scientific_findings": 189,
+    "assurance_findings": 21,
+    "unmatched_findings": 0,
+    "multiply_matched_findings": 0,
+    "unresolved_findings": 0
+  },
+  "dispositions": {
+    "scientific_ruff": {
+      "count": 134,
+      "classification": "cosmetic_legacy",
+      "resolved": true,
+      "counts_by_code": {
+        "B008": 13,
+        "B023": 19,
+        "C401": 1,
+        "C405": 1,
+        "C409": 2,
+        "F401": 15,
+        "FURB192": 4,
+        "I001": 33,
+        "RUF007": 1,
+        "RUF009": 2,
+        "RUF046": 8,
+        "SIM102": 4,
+        "SIM117": 1,
+        "TRY004": 4,
+        "UP012": 1,
+        "UP035": 25
+      },
+      "reviewed_behavioral_groups": {
+        "B023": "All 19 findings occur in Stage-8/Stage-9 Phase-C trace generators that are synchronously and fully consumed by _write_trace_gzip_new before the enclosing arm loop advances; no delayed late-binding path exists.",
+        "B008_RUF009": "Flagged defaults are frozen immutable configuration dataclasses or immutable NumPy dtype objects; no mutable default state is shared.",
+        "TRY004": "Exception-class taxonomy only; fail-closed conditions and accepted behavior are unchanged."
+      },
+      "remaining_rationale": "Import ordering, unused imports, collection/comprehension modernization, redundant casts, pairwise/min/style simplifications, and explicit UTF-8 spelling do not change accepted scientific execution."
+    },
+    "scientific_mypy": {
+      "count": 55,
+      "resolved": true,
+      "third_party_typing_limitations": {
+        "count": 4,
+        "classification": "third_party_typing_limitation",
+        "exact_entries": [
+          {
+            "path": "src/concept_drift_ids/cd_shared_runner.py",
+            "line": 443,
+            "code": "assignment",
+            "rationale": "PyTorch helper return is typed broadly as nn.Module while the accepted runtime object is BinaryMLP."
+          },
+          {
+            "path": "src/concept_drift_ids/cd_stage9_shared_runner.py",
+            "line": 470,
+            "code": "assignment",
+            "rationale": "PyTorch helper return is typed broadly as nn.Module while the accepted runtime object is BinaryMLP."
+          },
+          {
+            "path": "src/concept_drift_ids/cd_symbolic_evaluation.py",
+            "line": 327,
+            "code": "arg-type",
+            "rationale": "NumPy/collection typing does not precisely express the heterogeneous symbolic payload dictionary."
+          },
+          {
+            "path": "src/concept_drift_ids/cd_symbolic_evaluation.py",
+            "line": 333,
+            "code": "arg-type",
+            "rationale": "NumPy/collection typing does not precisely express the heterogeneous symbolic payload dictionary."
+          }
+        ]
+      },
+      "legacy_static_typing": {
+        "count": 51,
+        "classification": "cosmetic_legacy",
+        "counts_by_code": {
+          "arg-type": 20,
+          "assignment": 5,
+          "attr-defined": 1,
+          "dict-item": 8,
+          "index": 8,
+          "no-redef": 1,
+          "return-value": 1,
+          "union-attr": 5,
+          "var-annotated": 2
+        },
+        "reviewed_clusters": {
+          "lifecycle": "Static inference/narrowing debt from reused local names, heterogeneous evidence dictionaries, and Optional narrowing; runtime guards plus closed property/mutation suites cover the affected lifecycle paths.",
+          "stage9_monitor": "dict[str, object] configuration/observation construction loses static field precision; frozen runtime validation constrains actual field types.",
+          "stage9_rows": "Stage-8 and Stage-9 row dataclasses are nominally different but structurally identical for row_id/features/label.",
+          "json_manifests": "JSON/object typing is broader than validated manifest schemas; runtime validation precedes accepted indexing/conversion.",
+          "aggregate_export": "Static narrowing/name-reuse warnings occur behind explicit guards; the independent statistical oracle exactly reproduces accepted aggregate outputs."
+        }
+      }
+    },
+    "assurance_ruff": {
+      "count": 21,
+      "resolved": true,
+      "cosmetic_legacy": {
+        "count": 20,
+        "classification": "cosmetic_legacy",
+        "counts_by_code": {
+          "FURB167": 7,
+          "I001": 8,
+          "PLR0402": 1,
+          "PYI041": 1,
+          "SIM103": 1,
+          "TRY004": 1,
+          "UP035": 1
+        },
+        "rationale": "Import ordering/modernization, re.I spelling, boolean-return style, type-spelling, and exception taxonomy only; no assurance behavior changes."
+      },
+      "deliberate_exec": {
+        "count": 1,
+        "classification": "assurance_harness_risk",
+        "resolved": true,
+        "disposition": "accepted_intentional_test_only_mechanism",
+        "selector": {
+          "path": "tests/stage9_5/test_targeted_mutations.py",
+          "line": 45,
+          "code": "S102"
+        },
+        "rationale": "The mutation harness deliberately compiles repository-controlled production-function source after asserting exact mutation-substrate occurrence counts. No external/user-controlled code is executed; execution is isolated to the mutation test process. This mechanism is required to prove the 11 frozen source-derived mutants are killed."
+      }
+    },
+    "assurance_mypy": {
+      "count": 0,
+      "resolved": true,
+      "classification": "none"
+    }
+  },
+  "regression_context": {
+    "same_head_stage9_run_id": 38646749995,
+    "same_head_stage9_conclusion": "success",
+    "stage9_5_0_job_id": 116135370101,
+    "stage9_5_0_conclusion": "success",
+    "stage9_5_2_job_id": 116135369652,
+    "stage9_5_2_conclusion": "success",
+    "stage9_5_3_job_id": 116135369649,
+    "stage9_5_3_conclusion": "success",
+    "stage9_5_4_job_id": 116135369468,
+    "stage9_5_4_conclusion": "success",
+    "stage9_5_1_job_id": 116135369595,
+    "stage9_5_1_status": "blocked_0_identity_failures_1_external_artifact_blocker"
+  },
+  "scientific_source_changes_for_static_cleanup": false,
+  "historical_runtime_lock_changes": false,
+  "stage10_outcomes_accessed": false
+}

@@ -1,0 +1,20 @@
+{
+  "audit_id": "stage9.5-0-v1.6-scanner-harness-failure",
+  "classification": "technical_scanner_classification_logging_failure",
+  "scientific_class": "not_Class_A",
+  "accepted_as_completeness_evidence": false,
+  "exact_head": "26f19abc209e210cdd3083c7a84539325f01e183",
+  "workflow_run_id": 38435408111,
+  "failure_phase": "scanner unit tests before parameter scan",
+  "scanner_tests": {
+    "passed": 13,
+    "failed": 2
+  },
+  "failures": [
+    "mathematical/probability zero fallback was omitted from both candidate and exclusion logs because expression relevance returned before exclusion classification",
+    "Markdown seed range <0..4> was still parsed as decimal 0.4 because range normalization was not present"
+  ],
+  "scientific_outcomes_accessed": false,
+  "register_changed": false,
+  "correction": "v1.6.1 scanner-only correction; frozen v1.6 register and scientific values unchanged"
+}

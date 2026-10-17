@@ -1,0 +1,74 @@
+name: Stage 9.5 supplemental static
+
+on:
+  push:
+    branches:
+      - "stage9-5-q1-assurance"
+    paths:
+      - "data/manifests/stage9_5_static_assurance_v1_9.json"
+      - "STAGE9_5_5_SUPPLEMENTAL_7_8_STATIC_ASSURANCE.md"
+      - "STAGE9_5_5_SUPPLEMENTAL_V1_6_MYPY_PACKAGE_BASE_CORRECTION.md"
+      - "STAGE9_5_5_SUPPLEMENTAL_V1_9_IMPORT_NORMALIZATION.md"
+      - "tools/stage9_5/**"
+      - "tests/stage9_5/**"
+      - ".github/workflows/stage9-5-supplemental-static.yml"
+  workflow_dispatch:
+
+jobs:
+  supplemental-static:
+    runs-on: windows-latest
+    env:
+      PYTHONHASHSEED: "0"
+      OMP_NUM_THREADS: "1"
+      MKL_NUM_THREADS: "1"
+      OPENBLAS_NUM_THREADS: "1"
+      NUMEXPR_NUM_THREADS: "1"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11.9"
+
+      - name: Install historical frozen runtime
+        shell: pwsh
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements-lock.txt
+
+      - name: Verify historical lock remains unchanged
+        shell: pwsh
+        run: |
+          git diff --exit-code -- requirements-lock.txt
+          $actual = (Get-FileHash requirements-lock.txt -Algorithm SHA256).Hash.ToLower()
+          if ($actual -ne "5ef6553f286b84c117cd67febaf20292baf9930e7f4b6cf57918e2e00f965dd4") {
+            throw "Historical runtime lock SHA-256 mismatch: $actual"
+          }
+
+      - name: Install developer-only static tools
+        shell: pwsh
+        run: |
+          python -m pip install "ruff==0.17.0" "mypy==2.4.0"
+          ruff --version
+          mypy --version
+
+      - name: Run supplemental static harness tests
+        shell: pwsh
+        run: |
+          python -m pytest tests/stage9_5/test_supplemental_static_assurance.py -q
+
+      - name: Run supplemental static assurance v1.9
+        shell: pwsh
+        run: |
+          python tools/stage9_5/static_assurance.py --contract data/manifests/stage9_5_static_assurance_v1_9.json --output-dir artifacts/stage9_5_static_v1_9
+
+      - name: Upload supplemental static evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: stage9-5-static-assurance-v1-9-delta
+          path: artifacts/stage9_5_static_v1_9/
+          if-no-files-found: error

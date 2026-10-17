@@ -1,0 +1,168 @@
+{
+  "schema_version": 1,
+  "status": "prospectively_frozen_before_stage9_5_3_4_execution",
+  "protocol_id": "stage9.5-q1-assurance-v1",
+  "packages": [
+    "stage9.5-3-causal-information-property-tests",
+    "stage9.5-4-targeted-mutation-testing"
+  ],
+  "prerequisites": {
+    "stage9_5_0": "closed",
+    "stage9_5_1": "open_blocked_system_a_checkpoint_bytes_missing",
+    "stage9_5_2": "closed"
+  },
+  "production_scientific_modules_must_not_be_modified_for_test_convenience": true,
+  "property_tests": [
+    {
+      "id": "P01_prediction_before_label_release",
+      "requirement": "label release before prediction must fail closed",
+      "existing_anchor": "tests/test_cd_control_plane_unit.py::test_label_release_requires_same_clock_prediction_commit",
+      "dedicated_fixture": "tests/stage9_5/test_causal_properties.py::test_p01_label_release_before_prediction_fails_closed"
+    },
+    {
+      "id": "P02_detector_after_label_maturity",
+      "requirement": "detector observation before label maturity must fail closed",
+      "existing_anchor": "tests/test_cd_control_plane_unit.py::test_information_timing_rejects_future_or_pending_evidence",
+      "dedicated_fixture": "tests/stage9_5/test_causal_properties.py::test_p02_detector_observation_before_label_maturity_fails_closed"
+    },
+    {
+      "id": "P03_boundary_hidden_from_adaptive_components",
+      "requirement": "boundary/reference metadata supplied to adaptive components must fail closed",
+      "existing_anchor": "tests/test_cd_control_plane_unit.py::test_boundary_fields_are_rejected_recursively",
+      "dedicated_fixture": "tests/stage9_5/test_causal_properties.py::test_p03_boundary_reference_contamination_fails_closed"
+    },
+    {
+      "id": "P04_checkpoint_pure_detector_epoch",
+      "requirement": "stale or wrong checkpoint admission to a detector epoch must fail closed",
+      "existing_anchor": "tests/test_cd_control_plane_unit.py::test_checkpoint_purity_verifier_rejects_impure_admission",
+      "dedicated_fixture": "tests/stage9_5/test_causal_properties.py::test_p04_wrong_checkpoint_detector_admission_fails_closed"
+    },
+    {
+      "id": "P05_shared_neural_trajectory",
+      "requirement": "C/D shared-neural trajectory divergence must fail closed",
+      "existing_anchor": "tests/test_cd_control_plane_unit.py::test_shared_control_plane_identity_fails_closed",
+      "dedicated_fixture": "tests/stage9_5/test_causal_properties.py::test_p05_shared_neural_trajectory_divergence_fails_closed"
+    },
+    {
+      "id": "P06_r0_start_identity",
+      "requirement": "wrong R0 start identity must fail closed",
+      "existing_anchor": "tests/test_system_b_r0_v2_frozen_contract.py",
+      "dedicated_fixture": "tests/stage9_5/test_causal_properties.py::test_p06_wrong_r0_start_identity_fails_closed"
+    },
+    {
+      "id": "P07_seed_threshold_binding",
+      "requirement": "wrong seed or threshold binding must fail closed",
+      "existing_anchor": "tests/test_cd_primary_stage8_unit.py::test_periodic_arm_rejects_seed_mismatch_before_any_shared_access",
+      "dedicated_fixture": "tests/stage9_5/test_causal_properties.py::test_p07_seed_or_threshold_binding_mismatch_fails_closed"
+    },
+    {
+      "id": "P08_generation_validation_disjointness",
+      "requirement": "generation and validation evidence overlap must fail closed",
+      "existing_anchor": "tests/test_cd_symbolic_candidates_unit.py",
+      "dedicated_fixture": "tests/stage9_5/test_causal_properties.py::test_p08_generation_validation_overlap_fails_closed"
+    },
+    {
+      "id": "P09_prediction_evidence_immutability",
+      "requirement": "retrospective replacement or recomputation of prediction evidence must fail closed",
+      "existing_anchor": "tests/test_cd_evidence_unit.py::test_jsonl_writer_is_write_once_and_round_trips",
+      "dedicated_fixture": "tests/stage9_5/test_causal_properties.py::test_p09_retrospective_prediction_replacement_fails_closed"
+    },
+    {
+      "id": "P10_treatment_independent_detector_input",
+      "requirement": "treatment-dependent detector input must fail closed",
+      "existing_anchor": "tests/test_cd_control_plane_unit.py::test_shared_control_plane_identity_fails_closed",
+      "dedicated_fixture": "tests/stage9_5/test_causal_properties.py::test_p10_treatment_dependent_detector_input_fails_closed"
+    },
+    {
+      "id": "P11_symbolic_rng_operator_match",
+      "requirement": "symbolic operator/RNG mismatch across trigger arms must fail closed",
+      "existing_anchor": "tests/test_cd_primary_stage8_unit.py",
+      "dedicated_fixture": "tests/stage9_5/test_causal_properties.py::test_p11_symbolic_operator_or_rng_mismatch_fails_closed"
+    },
+    {
+      "id": "P12_lambda1_no_symbolic_predictive_influence",
+      "requirement": "lambda=1 symbolic state must not alter predictive output",
+      "existing_anchor": "Stage 9.5-2 oracle exact-zero lambda-1 contrast",
+      "dedicated_fixture": "tests/stage9_5/test_causal_properties.py::test_p12_lambda1_symbolic_predictive_influence_fails"
+    },
+    {
+      "id": "P13_write_once_freeze",
+      "requirement": "write-after-freeze or partial write-once output reuse must fail closed",
+      "existing_anchor": "tests/test_cd_control_plane_unit.py::test_write_once_artifacts_refuse_overwrite",
+      "dedicated_fixture": "tests/stage9_5/test_causal_properties.py::test_p13_write_after_freeze_or_partial_reuse_fails_closed"
+    }
+  ],
+  "mutants": [
+    {
+      "id": "M01_maturity_lt_to_lte",
+      "description": "mutate strict maturity boundary < versus <=",
+      "kill_fixture": "tests/stage9_5/test_targeted_mutations.py::test_m01_maturity_boundary_mutant_killed"
+    },
+    {
+      "id": "M02_publication_lt_to_lte",
+      "description": "mutate strict publication/effective-index boundary < versus <=",
+      "kill_fixture": "tests/stage9_5/test_targeted_mutations.py::test_m02_publication_boundary_mutant_killed"
+    },
+    {
+      "id": "M03_event_order_inversion",
+      "description": "invert prediction and label event order",
+      "kill_fixture": "tests/stage9_5/test_targeted_mutations.py::test_m03_prediction_label_order_mutant_killed"
+    },
+    {
+      "id": "M04_boundary_mask_removal",
+      "description": "remove boundary/reference contamination guard",
+      "kill_fixture": "tests/stage9_5/test_targeted_mutations.py::test_m04_boundary_mask_removal_mutant_killed"
+    },
+    {
+      "id": "M05_checkpoint_identity_bypass",
+      "description": "bypass checkpoint identity comparison",
+      "kill_fixture": "tests/stage9_5/test_targeted_mutations.py::test_m05_checkpoint_identity_bypass_mutant_killed"
+    },
+    {
+      "id": "M06_seed_r0_threshold_bypass",
+      "description": "bypass seed/R0/threshold identity comparison",
+      "kill_fixture": "tests/stage9_5/test_targeted_mutations.py::test_m06_seed_r0_threshold_bypass_mutant_killed"
+    },
+    {
+      "id": "M07_generation_validation_overlap_bypass",
+      "description": "bypass generation-validation disjointness",
+      "kill_fixture": "tests/stage9_5/test_targeted_mutations.py::test_m07_generation_validation_overlap_bypass_mutant_killed"
+    },
+    {
+      "id": "M08_opportunity_budget_off_by_one",
+      "description": "allow a fifth symbolic opportunity or fail to consume a no-op opportunity",
+      "kill_fixture": "tests/stage9_5/test_targeted_mutations.py::test_m08_opportunity_budget_mutants_killed"
+    },
+    {
+      "id": "M09_lambda1_symbolic_contribution",
+      "description": "allow nonzero symbolic contribution at lambda=1",
+      "kill_fixture": "tests/stage9_5/test_targeted_mutations.py::test_m09_lambda1_symbolic_contribution_mutant_killed"
+    },
+    {
+      "id": "M10_manifest_hash_bypass",
+      "description": "bypass manifest/hash verification",
+      "kill_fixture": "tests/stage9_5/test_targeted_mutations.py::test_m10_manifest_hash_bypass_mutant_killed"
+    },
+    {
+      "id": "M11_shared_neural_identity_bypass",
+      "description": "bypass arm/shared-neural identity comparison",
+      "kill_fixture": "tests/stage9_5/test_targeted_mutations.py::test_m11_shared_neural_identity_bypass_mutant_killed"
+    }
+  ],
+  "mutation_closure_rule": {
+    "defined_mutants": 11,
+    "required_killed": 11,
+    "required_kill_rate": 1,
+    "equivalent_or_non_executable_mutant_policy": "must be individually justified in a machine-readable disposition and may not be silently removed"
+  },
+  "property_closure_rule": {
+    "required_properties": 13,
+    "required_fail_closed": 13,
+    "positive_path_only_coverage_sufficient": false
+  },
+  "evidence_outputs": {
+    "property_report": "artifacts/stage9_5_v1/causal_properties/property_report.json",
+    "mutation_report": "artifacts/stage9_5_v1/targeted_mutations/mutation_report.json"
+  },
+  "stage10_outcomes_accessed": false
+}

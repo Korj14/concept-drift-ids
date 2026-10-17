@@ -1,0 +1,60 @@
+{
+  "audit_id": "stage9.5-9-hostile-review-audit-v1_1-completed-blocked",
+  "status": "completed_audit_overall_stage9_5_blocked",
+  "audited_head": "5b166780b25f63a6d4ea3491740719b7a1141e40",
+  "workflow_run_id": 38662525440,
+  "hostile_review_job_id": 116186887767,
+  "same_head_stage9": {
+    "workflow_run_id": 38662525353,
+    "run_number": 561,
+    "conclusion": "success"
+  },
+  "artifact": {
+    "id": 11939601594,
+    "name": "stage9-5-hostile-review-v1-1",
+    "zip_sha256": "a5a7f69b99f04e6dd129ff0992fae6602a142b4857441e1cfc1eb0f1de27aa49",
+    "report_canonical_sha256": "90de1ec99aca3a40a116cfa68de6b1c13d7407f6e30033f24050c56200192c47"
+  },
+  "audit_execution_pass": true,
+  "package_evidence_checks": {
+    "9.5-0": true,
+    "9.5-1": true,
+    "9.5-2": true,
+    "9.5-3": true,
+    "9.5-4": true,
+    "9.5-5": true,
+    "9.5-6": true,
+    "9.5-7": true,
+    "9.5-8": true
+  },
+  "reviewer_attacks": {
+    "count": 20,
+    "class_b_count": 6,
+    "class_b_all_dispositioned": true,
+    "class_c_count": 14,
+    "class_c_all_dispositioned": true,
+    "other_class_count": 0
+  },
+  "preserved_failed_audit_artifacts": 25,
+  "stage10_master_protocol_frozen": true,
+  "stage10_master_obligation_count": 15,
+  "stage10_outcomes_accessed": false,
+  "stage10_results_present": false,
+  "unresolved_class_a_count": 1,
+  "unresolved_class_a": [
+    {
+      "id": "A-PROV-01",
+      "title": "Exact frozen System-A checkpoint bytes are unrecovered",
+      "status": "open_blocked",
+      "classification": "Class A",
+      "blocks_stage9_5_closure": true,
+      "blocks_stage10": true,
+      "valid_resolution": "recover original five checkpoint files from authoritative archive and verify frozen SHA-256 identities"
+    }
+  ],
+  "stage9_5_closure_eligible": false,
+  "stage9_5_status": "open_blocked",
+  "stage10_status": "prohibited",
+  "scientific_source_changes": false,
+  "historical_runtime_lock_changes": false
+}

@@ -1,0 +1,16 @@
+{
+  "status": "failed_preserved",
+  "type": "stage9_5_scanner_harness_failure_before_audit_execution",
+  "head_sha": "b5b3d0bc3a629babc4bb2c46a9a200d6ada6748b",
+  "workflow_run_id": 38425863792,
+  "workflow_job_id": 115394962240,
+  "scanner_unit_tests": {
+    "passed": 3,
+    "failed": 1
+  },
+  "root_cause": "one temporary test fixture still wrote stage9_5_parameter_register_v1.json after the scanner default moved to v1_1; audit scan step was skipped",
+  "stage9_5_audit_result_created": false,
+  "scientific_outcome_accessed": false,
+  "stage8_or_stage9_evidence_modified": false,
+  "disposition": "fix fixture path and workflow artifact path only; rerun exact-head tests before executing corrected scan"
+}

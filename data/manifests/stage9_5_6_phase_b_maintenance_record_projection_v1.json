@@ -1,0 +1,91 @@
+{
+  "schema_version": 1,
+  "contract_id": "stage9.5-6-phase-b-maintenance-record-projection-v1",
+  "status": "prospectively_frozen_record_level_projection",
+  "scope": {
+    "included": [
+      "Phase-B maintenance.jsonl ordered record projection and equality only"
+    ],
+    "excluded": [
+      "maintenance_summary projection",
+      "arm_manifest projection or transitive-hash handling",
+      "phase_b_manifest projection or transitive-hash handling",
+      "Phase-C projection"
+    ]
+  },
+  "authority": {
+    "replay_protocol": {
+      "path": "STAGE9_5_6_REPLAY_EQUIVALENCE_CORRECTION_PROTOCOL_V1_1.md",
+      "blob_sha1": "e9b9fcb8d863aad58e543f9d60a8ea6f5341406f",
+      "rule": "Phase-B maintenance projection may remove only shap_seconds, surrogate_seconds, lifecycle_seconds, and nested generation_payload.timing_seconds; projected records must match exactly."
+    },
+    "phase_b_dependency_map": {
+      "path": "data/manifests/stage9_5_6_replay_report_construction_v1.json",
+      "blob_sha1": "e7bbb6a68c1cc9e7ae2610122626974052b465e2",
+      "json_path": "comparison_scope.phase_b.projection_implementation.maintenance_record_projection"
+    }
+  },
+  "implementation_binding": {
+    "path": "tools/stage9_5/replay_equivalence_comparator.py",
+    "blob_sha1": "455fb8729851a37a797622599ecc77357c46661e",
+    "projection_function": "_project_phase_b_maintenance_record",
+    "loader_function": "_load_jsonl",
+    "timing_field_constant": "PHASE_B_RECORD_TIMING_FIELDS",
+    "comparator_function": "compare_phase_b_maintenance_jsonl"
+  },
+  "input_contract": {
+    "representation": "ordered JSONL sequence",
+    "record_type": "JSON object",
+    "malformed_json": "fail_closed",
+    "duplicate_object_key": "fail_closed",
+    "non_object_record": "fail_closed",
+    "order_is_semantic": true,
+    "record_count_is_semantic": true
+  },
+  "permitted_record_projection": {
+    "top_level_fields_removed": [
+      "shap_seconds",
+      "surrogate_seconds",
+      "lifecycle_seconds"
+    ],
+    "nested_direct_child_removed": [
+      "generation_payload.timing_seconds"
+    ],
+    "diagnostic_exclusion_set_closed": true,
+    "no_name_pattern_matching": true,
+    "no_recursive_timing_field_removal": true
+  },
+  "generation_payload_timing_seconds": {
+    "parent_missing": "preserve generation_payload absence; synthesize nothing",
+    "parent_null": "preserve null exactly",
+    "parent_object": "remove only the direct child key timing_seconds if present; preserve every other key/value recursively and exactly",
+    "parent_other_type": "fail_closed",
+    "timing_seconds_value": "entire direct-child value is excluded when present; no other descendant or similarly named field is excluded",
+    "timing_seconds_presence": "presence, absence, or value may differ because this direct child is the predeclared diagnostic field"
+  },
+  "ordered_sequence_equality": {
+    "project_each_record_independently": true,
+    "accepted_and_fresh_record_count_must_match": true,
+    "ordinal_position_must_match": true,
+    "equality": "exact recursive equality of projected record at each ordinal index",
+    "projected_sequence_canonical_sha256_may_summarize_equality": true,
+    "canonical_sha256_is_not_a_substitute_for_record_count_order_and_recursive_equality": true
+  },
+  "fail_closed_conditions": [
+    "missing record",
+    "added record",
+    "reordered records",
+    "any non-timing top-level field change",
+    "any non-timing nested field change",
+    "generation_payload missing versus null or object",
+    "generation_payload sibling change",
+    "timing_seconds outside generation_payload direct-child path",
+    "similarly named timing field outside the four predeclared paths",
+    "malformed or non-object JSONL record"
+  ],
+  "non_timing_scientific_fields_rule": "All fields not at the four explicitly permitted diagnostic paths remain exact. No additional diagnostic exclusion is authorized.",
+  "arm_manifest_transitive_hash_handling_frozen_by_this_contract": false,
+  "seed_manifest_transitive_hash_handling_frozen_by_this_contract": false,
+  "scientific_objects_modified": false,
+  "stage10_execution_permitted": false
+}

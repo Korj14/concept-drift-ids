@@ -1,0 +1,119 @@
+{
+  "schema_version": 1,
+  "audit_id": "stage9.5-1-dropbox-restore-event-forensics-v1",
+  "status": "exhaustive_read_only_history_complete",
+  "observed_date": "2026-10-17",
+  "observed_assurance_head": "bae55fd79302bf564e409d11874f06a430d62510",
+  "dropbox_scope": {
+    "path": "/cd_primary_v1",
+    "namespace": "ns:12411519539",
+    "mutation_performed": false
+  },
+  "pagination": {
+    "total_pages": 26,
+    "total_events": 253,
+    "history_exhausted": true,
+    "has_more_after_final_page": false
+  },
+  "operation_summary": {
+    "observed_operation_types": [
+      "ADD"
+    ],
+    "add_event_count": 253,
+    "non_add_event_count": 0,
+    "delete_event_count": 0,
+    "move_event_count": 0,
+    "rename_event_count": 0,
+    "restore_event_count": 0,
+    "rollback_event_count": 0
+  },
+  "current_tree_crosscheck": {
+    "current_entry_count": 253,
+    "current_file_count": 203,
+    "current_folder_count": 50,
+    "event_count_equals_current_entry_count": true
+  },
+  "missing_paths": [
+    "phase_b_symbolic_arms/seed-0/c_frozen_symbolic/maintenance.jsonl",
+    "phase_b_symbolic_arms/seed-1/c_frozen_symbolic/maintenance.jsonl",
+    "phase_b_symbolic_arms/seed-2/c_frozen_symbolic/maintenance.jsonl",
+    "phase_b_symbolic_arms/seed-3/c_frozen_symbolic/maintenance.jsonl",
+    "phase_b_symbolic_arms/seed-4/c_frozen_symbolic/maintenance.jsonl"
+  ],
+  "missing_path_event_findings": {
+    "add_event_count": 0,
+    "delete_event_count": 0,
+    "move_event_count": 0,
+    "rename_event_count": 0,
+    "restore_event_count": 0,
+    "revision_lookup_result_all_five": "FILE_NOT_FOUND"
+  },
+  "sibling_ingestion_findings": {
+    "c_frozen_symbolic_folder_add_seen_for_seeds": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "arm_manifest_add_seen_for_seeds": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "initial_state_add_seen_for_seeds": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "final_state_add_seen_for_seeds": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "d_drift_maintenance_add_seen_for_seeds": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "d_periodic_maintenance_add_seen_for_seeds": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "c_frozen_maintenance_add_seen_for_seeds": []
+  },
+  "accepted_manifest_crosscheck": {
+    "each_missing_path_declared": true,
+    "expected_size_bytes": 0,
+    "expected_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "each_c_arm_opportunity_count": 0,
+    "each_c_arm_publication_count": 0,
+    "each_c_arm_compute_seconds": 0
+  },
+  "forensic_interpretation": {
+    "conclusion": "The Dropbox archive was ingested object-by-object and the five manifest-declared zero-byte C-arm maintenance files were omitted at initial transport. The connected Dropbox history contains no evidence that those objects were ever added and later deleted, moved, renamed, restored, or rolled back.",
+    "original_object_recovery_proven": false,
+    "exact_byte_content_reconstructible_from_frozen_manifest": true,
+    "silent_relabeling_as_recovered_original_prohibited": true
+  },
+  "downstream_disposition": {
+    "enables_versioned_transport_reconstruction_correction": true,
+    "frozen_stage9_5_1_verifier_unchanged": true,
+    "verifier_success_still_required_for_reopening": true,
+    "stage10_authorized": false
+  },
+  "scientific_objects_modified": false,
+  "accepted_stage8_9_evidence_replaced": false,
+  "stage10_outcomes_accessed": false
+}

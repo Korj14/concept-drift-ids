@@ -1,0 +1,58 @@
+{
+  "audit_id": "stage9.5-0-parameter-control-completeness-v1_11_1-success",
+  "status": "accepted_stage9_5_0_closure_evidence",
+  "audited_head": "1ba03046562138907d1c616293f5300bbaffb025",
+  "governing_protocol": "STAGE9_5_Q1_INDEPENDENT_ASSURANCE_PROTOCOL.md",
+  "protocol_freeze_commit": "cf9bb49cc18c751872a12d3530df8ff78d26d67a",
+  "upstream_stage9_closure_head": "4dca828acb3916feb3f30d61f1b587240a6eba19",
+  "parameter_register": "data/manifests/stage9_5_parameter_register_v1_11.json",
+  "parameter_register_sha256": "294ea5e76c4266d2011c963f737c492a1944c5d59e31f05fcaf99b4cda5057a0",
+  "scan_canonical_sha256": "3c53bbc026f8cb3a1a21ba8e9160cf692472f9df3ca152c23867dfe8a504727c",
+  "artifact": {
+    "workflow_run_id": 38450785661,
+    "run_number": 171,
+    "artifact_id": 11840900286,
+    "artifact_name": "stage9-5-parameter-scan-v1-11-1",
+    "zip_sha256": "2514a9085ba271e1533a40259f50f2e1c6d7da285baedaa6bac3433a3bd200fd"
+  },
+  "same_head_stage9_regression": {
+    "workflow_run_id": 38450785384,
+    "run_number": 361,
+    "conclusion": "success"
+  },
+  "scanner_tests": {
+    "passed": 22,
+    "failed": 0
+  },
+  "scan_scope": {
+    "bound": true,
+    "scientific_python_sources": 38,
+    "binding_manifests": [
+      "data/manifests/cd_primary_run_config_v1_1.json",
+      "data/manifests/cd_stage9_run_config_v1_1.json"
+    ]
+  },
+  "counts": {
+    "registered_entries": 88,
+    "material_candidates": 511,
+    "excluded_candidates": 1444,
+    "unclassified_material_candidates": 0,
+    "ambiguous_material_candidates": 0,
+    "unclassified_high_leverage_candidates": 0
+  },
+  "targeted_exclusion_review": {
+    "stage9_latency_zero": "material and registered as stage9.latency_family; no matching exclusion",
+    "stage9_replay_booleans": "six material source mirrors registered as primary replay/no-replay controls; no matching exclusion",
+    "lifecycle_overlap_defaults": "0.95/0.50/0.50 material and registered as lifecycle.overlap_thresholds; no matching exclusion",
+    "lifecycle_failure_streak": "material and registered as lifecycle.state_machine_policy; no matching exclusion",
+    "adwin_direct_source": "material and registered as drift.adwin_defaults; no matching exclusion",
+    "page_hinkley_direct_source": "material and registered as stage9.page_hinkley; no matching exclusion",
+    "r0_active_counts": "material and registered as derived R0 identity check; no matching exclusion",
+    "stage9_detector_defaults": "material and registered as drift.primary_detector; no matching exclusion",
+    "lifecycle_state_machine": "material and registered as lifecycle.state_machine_policy; no matching exclusion",
+    "remaining_high_leverage_exclusions": "reviewed; retained categories are provenance/runtime mirrors, validation/domain guards, arithmetic identities, historical statements, or preserved failed-run checks"
+  },
+  "scientific_value_changes": false,
+  "stage10_outcomes_accessed": false,
+  "closure_scope": "Stage 9.5-0 only; does not close Stage 9.5 or the Q1 assurance gate"
+}

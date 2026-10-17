@@ -1,0 +1,516 @@
+name: Stage 9.5 assurance
+
+on:
+  push:
+    branches:
+      - "stage9-5-*"
+  pull_request:
+    paths:
+      - "STAGE9_5_Q1_INDEPENDENT_ASSURANCE_PROTOCOL.md"
+      - "data/manifests/stage9_5_parameter_register_v1_11.json"
+      - "data/manifests/stage9_5_fresh_clone_reconstruction_v1.json"
+      - "data/manifests/stage9_5_fresh_clone_reconstruction_v1_2.json"
+      - "data/manifests/stage9_5_1_negative_closure_v1.json"
+      - "STAGE9_5_1_FRESH_CLONE_RECONSTRUCTION_NEGATIVE_CLOSURE.md"
+      - "data/manifests/stage9_5_6_current_status_v1.json"
+      - "data/manifests/stage9_5_6_closure_order_gate_v1.json"
+      - "data/manifests/stage9_5_6_replay_report_construction_v1.json"
+      - "data/manifests/stage9_5_6_phase_b_maintenance_record_projection_v1.json"
+      - "data/manifests/stage9_5_1_zero_byte_transport_reconstruction_v1.json"
+      - "data/manifests/stage9_5_1_dropbox_restore_event_forensics_v1.json"
+      - "data/manifests/stage9_5_6_stage1_reconstruction_evidence_v1.json"
+      - "results/audits/stage9_5_full_seed_rerun_v1/stage1_reconstruction_report.json"
+      - "STAGE9_5_6_STAGE1_RECONSTRUCTION_EVIDENCE_CLOSURE.md"
+      - "STAGE9_5_6_REPLAY_REPORT_CONSTRUCTION_CONTRACT_V1.md"
+      - "STAGE9_5_6_STAGE1_RECONSTRUCTION_EXECUTION_HANDOFF.md"
+      - "STAGE9_5_ASSURANCE_DIVERSION_RETROSPECTIVE_WORKING_NOTES.md"
+      - "STAGE9_5_6_CLEAN_DETERMINISTIC_FULL_SEED_RERUN_CLOSURE.md"
+      - "results/audits/stage9_5_full_seed_rerun_v1/success.json"
+      - "results/audits/stage9_5_full_seed_rerun_v1/fresh_clone_reconstruction_report.json"
+      - "results/audits/stage9_5_full_seed_rerun_v1/replay_equivalence_report.json"
+      - "STAGE9_5_1_V1_2_HEAVY_ARTIFACT_INVENTORY_CORRECTION.md"
+      - "STAGE9_5_0_PARAMETER_CONTROL_COMPLETENESS_CLOSURE.md"
+      - "STAGE9_5_1_FRESH_CLONE_RECONSTRUCTION_IMPLEMENTATION.md"
+      - "STAGE9_5_1_FRESH_CLONE_RECONSTRUCTION_BLOCKED.md"
+      - "data/manifests/stage9_5_statistical_oracle_v1.json"
+      - "STAGE9_5_2_INDEPENDENT_STATISTICAL_ORACLE_IMPLEMENTATION.md"
+      - "STAGE9_5_2_INDEPENDENT_STATISTICAL_ORACLE_CLOSURE.md"
+      - "data/manifests/stage9_5_causal_mutation_assurance_v1.json"
+      - "STAGE9_5_3_4_CAUSAL_MUTATION_ASSURANCE_IMPLEMENTATION.md"
+      - "STAGE9_5_3_CAUSAL_PROPERTY_ASSURANCE_CLOSURE.md"
+      - "STAGE9_5_4_TARGETED_MUTATION_ASSURANCE_CLOSURE.md"
+      - "data/manifests/stage9_5_static_assurance_v1_6.json"
+      - "STAGE9_5_5_STATIC_SOFTWARE_ASSURANCE_IMPLEMENTATION.md"
+      - "STAGE9_5_5_V1_1_SELF_SCOPE_CORRECTION.md"
+      - "data/manifests/stage9_5_static_assurance_v1_6.json"
+      - "data/manifests/stage9_5_claim_reporting_v1.json"
+      - "data/manifests/stage9_5_claim_definitions_v1.json"
+      - "STAGE9_5_7_8_CLAIM_REPORTING_IMPLEMENTATION.md"
+      - "STAGE9_5_5_SUPPLEMENTAL_7_8_STATIC_ASSURANCE.md"
+      - "STAGE9_5_5_SUPPLEMENTAL_V1_6_MYPY_PACKAGE_BASE_CORRECTION.md"
+      - "data/manifests/stage9_5_static_assurance_v1_6.json"
+      - "STAGE9_5_8_V1_1_MODULE_INVOCATION_CORRECTION.md"
+      - "tools/stage9_5/**"
+      - "tests/stage9_5/**"
+      - ".github/workflows/stage9-5-assurance.yml"
+
+jobs:
+  assurance-contract:
+    runs-on: windows-latest
+    env:
+      PYTHONHASHSEED: "0"
+      OMP_NUM_THREADS: "1"
+      MKL_NUM_THREADS: "1"
+      OPENBLAS_NUM_THREADS: "1"
+      NUMEXPR_NUM_THREADS: "1"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11.9"
+
+      - name: Install historical frozen runtime
+        shell: pwsh
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements-lock.txt
+
+      - name: Verify prospective Stage 9.5 freeze artifacts
+        shell: pwsh
+        run: |
+          python -c "from pathlib import Path; required=['STAGE9_5_Q1_INDEPENDENT_ASSURANCE_PROTOCOL.md','data/manifests/stage9_5_parameter_register_v1.json','data/manifests/stage9_5_parameter_register_v1_11.json','data/manifests/stage9_5_6_replay_report_construction_v1.json','data/manifests/stage9_5_6_phase_b_maintenance_record_projection_v1.json','data/manifests/stage9_5_6_stage1_reconstruction_evidence_v1.json','data/manifests/stage9_5_1_zero_byte_transport_reconstruction_v1.json','data/manifests/stage9_5_1_dropbox_restore_event_forensics_v1.json','STAGE9_5_6_REPLAY_REPORT_CONSTRUCTION_CONTRACT_V1.md']; missing=[p for p in required if not Path(p).is_file()]; assert not missing, missing"
+
+      - name: Run Stage 9.5 scanner and order-gate unit tests
+        shell: pwsh
+        run: |
+          python -m pytest tests/stage9_5/test_parameter_scan.py tests/stage9_5/test_work_package_order_gate.py tests/stage9_5/test_replay_report_finalizer.py tests/stage9_5/test_replay_equivalence_comparator.py tests/stage9_5/test_stage1_reconstruction_evidence.py tests/stage9_5/test_zero_byte_transport_reconstruction.py -q
+
+      - name: Run Stage 9.5-0 parameter/control scan
+        shell: pwsh
+        run: |
+          python tools/stage9_5/parameter_scan.py --output-dir artifacts/stage9_5_v1_11_1/parameter_scan
+
+      - name: Upload Stage 9.5-0 scan evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: stage9-5-parameter-scan-v1-11-1
+          path: artifacts/stage9_5_v1_11_1/parameter_scan/
+          if-no-files-found: error
+
+
+  fresh-clone-reconstruction:
+    runs-on: windows-latest
+    env:
+      PYTHONHASHSEED: "0"
+      OMP_NUM_THREADS: "1"
+      MKL_NUM_THREADS: "1"
+      OPENBLAS_NUM_THREADS: "1"
+      NUMEXPR_NUM_THREADS: "1"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11.9"
+
+      - name: Install historical frozen runtime
+        shell: pwsh
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements-lock.txt
+
+      - name: Run Stage 9.5-1 verifier tests
+        shell: pwsh
+        run: |
+          python -m pytest tests/stage9_5/test_fresh_clone_reconstruction.py -q
+
+      - name: Run Stage 9.5-1 fresh-clone reconstruction
+        shell: pwsh
+        run: |
+          python tools/stage9_5/fresh_clone_reconstruction.py --output-dir artifacts/stage9_5_v1_2/fresh_clone_reconstruction
+
+      - name: Upload Stage 9.5-1 reconstruction evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: stage9-5-fresh-clone-reconstruction-v1-2
+          path: artifacts/stage9_5_v1_2/fresh_clone_reconstruction/
+          if-no-files-found: error
+
+
+  statistical-oracle:
+    runs-on: windows-latest
+    env:
+      PYTHONHASHSEED: "0"
+      OMP_NUM_THREADS: "1"
+      MKL_NUM_THREADS: "1"
+      OPENBLAS_NUM_THREADS: "1"
+      NUMEXPR_NUM_THREADS: "1"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11.9"
+
+      - name: Install historical frozen runtime
+        shell: pwsh
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements-lock.txt
+
+      - name: Verify Stage 9.5-2 prospective freeze
+        shell: pwsh
+        run: |
+          python -c "from pathlib import Path; required=['data/manifests/stage9_5_statistical_oracle_v1.json','STAGE9_5_2_INDEPENDENT_STATISTICAL_ORACLE_IMPLEMENTATION.md']; missing=[p for p in required if not Path(p).is_file()]; assert not missing, missing"
+
+      - name: Run Stage 9.5-2 oracle tests
+        shell: pwsh
+        run: |
+          python -m pytest tests/stage9_5/test_statistical_oracle.py -q
+
+      - name: Run Stage 9.5-2 independent statistical oracle
+        shell: pwsh
+        run: |
+          python tools/stage9_5/statistical_oracle.py --output-dir artifacts/stage9_5_oracle_v1_1/statistical_oracle
+
+      - name: Upload Stage 9.5-2 oracle evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: stage9-5-statistical-oracle-v1-1
+          path: artifacts/stage9_5_oracle_v1_1/statistical_oracle/
+          if-no-files-found: error
+
+
+  causal-properties:
+    runs-on: windows-latest
+    env:
+      PYTHONHASHSEED: "0"
+      OMP_NUM_THREADS: "1"
+      MKL_NUM_THREADS: "1"
+      OPENBLAS_NUM_THREADS: "1"
+      NUMEXPR_NUM_THREADS: "1"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11.9"
+
+      - name: Install historical frozen runtime
+        shell: pwsh
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements-lock.txt
+
+      - name: Verify Stage 9.5-3 prospective freeze
+        shell: pwsh
+        run: |
+          python -c "from pathlib import Path; required=['data/manifests/stage9_5_causal_mutation_assurance_v1.json','STAGE9_5_3_4_CAUSAL_MUTATION_ASSURANCE_IMPLEMENTATION.md']; missing=[p for p in required if not Path(p).is_file()]; assert not missing, missing"
+
+      - name: Run Stage 9.5-3 causal property assurance
+        shell: pwsh
+        run: |
+          python tools/stage9_5/causal_property_assurance.py --output-dir artifacts/stage9_5_v1/causal_properties
+
+      - name: Upload Stage 9.5-3 property evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: stage9-5-causal-properties-v1
+          path: artifacts/stage9_5_v1/causal_properties/
+          if-no-files-found: error
+
+
+  targeted-mutations:
+    runs-on: windows-latest
+    env:
+      PYTHONHASHSEED: "0"
+      OMP_NUM_THREADS: "1"
+      MKL_NUM_THREADS: "1"
+      OPENBLAS_NUM_THREADS: "1"
+      NUMEXPR_NUM_THREADS: "1"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11.9"
+
+      - name: Install historical frozen runtime
+        shell: pwsh
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements-lock.txt
+
+      - name: Verify Stage 9.5-4 prospective freeze
+        shell: pwsh
+        run: |
+          python -c "from pathlib import Path; required=['data/manifests/stage9_5_causal_mutation_assurance_v1.json','STAGE9_5_3_4_CAUSAL_MUTATION_ASSURANCE_IMPLEMENTATION.md']; missing=[p for p in required if not Path(p).is_file()]; assert not missing, missing"
+
+      - name: Run Stage 9.5-4 targeted mutation assurance
+        shell: pwsh
+        run: |
+          python tools/stage9_5/targeted_mutation_assurance.py --output-dir artifacts/stage9_5_mutation_v1_1/targeted_mutations
+
+      - name: Upload Stage 9.5-4 mutation evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: stage9-5-targeted-mutations-v1-1
+          path: artifacts/stage9_5_mutation_v1_1/targeted_mutations/
+          if-no-files-found: error
+
+
+  static-assurance:
+    runs-on: windows-latest
+    env:
+      PYTHONHASHSEED: "0"
+      OMP_NUM_THREADS: "1"
+      MKL_NUM_THREADS: "1"
+      OPENBLAS_NUM_THREADS: "1"
+      NUMEXPR_NUM_THREADS: "1"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11.9"
+
+      - name: Install historical frozen runtime
+        shell: pwsh
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements-lock.txt
+
+      - name: Verify historical lock remains unchanged
+        shell: pwsh
+        run: |
+          git diff --exit-code -- requirements-lock.txt
+          $actual = (Get-FileHash requirements-lock.txt -Algorithm SHA256).Hash.ToLower()
+          if ($actual -ne "5ef6553f286b84c117cd67febaf20292baf9930e7f4b6cf57918e2e00f965dd4") {
+            throw "Historical runtime lock SHA-256 mismatch: $actual"
+          }
+
+      - name: Install developer-only static tools
+        shell: pwsh
+        run: |
+          python -m pip install "ruff==0.17.0" "mypy==2.4.0"
+          ruff --version
+          mypy --version
+
+      - name: Run Stage 9.5-5 static harness tests
+        shell: pwsh
+        run: |
+          python -m pytest tests/stage9_5/test_static_assurance.py -q
+
+      - name: Run Stage 9.5-5 static assurance discovery
+        shell: pwsh
+        run: |
+          python tools/stage9_5/static_assurance.py --output-dir artifacts/stage9_5_static_v1_4
+
+      - name: Upload Stage 9.5-5 static evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: stage9-5-static-assurance-v1-4
+          path: artifacts/stage9_5_static_v1_4/
+          if-no-files-found: error
+
+
+  work-package-order-gate:
+    runs-on: ubuntu-latest
+    outputs:
+      later_packages_unlocked: ${{ steps.gate.outputs.later_packages_unlocked }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11.9"
+
+      - name: Evaluate Stage 9.5-6 predecessor closure
+        id: gate
+        shell: bash
+        run: |
+          mkdir -p artifacts/stage9_5_order_gate_v1
+          python tools/stage9_5/work_package_order_gate.py \
+            --report-path artifacts/stage9_5_order_gate_v1/order_gate_report.json \
+            | tee artifacts/stage9_5_order_gate_v1/order_gate_output.txt
+          grep '^later_packages_unlocked=' artifacts/stage9_5_order_gate_v1/order_gate_output.txt >> "$GITHUB_OUTPUT"
+
+      - name: Upload Stage 9.5 work-package order-gate evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: stage9-5-work-package-order-gate-v1
+          path: artifacts/stage9_5_order_gate_v1/
+          if-no-files-found: error
+
+
+  claim-traceability:
+    needs: work-package-order-gate
+    if: ${{ needs.work-package-order-gate.outputs.later_packages_unlocked == 'true' }}
+    runs-on: windows-latest
+    env:
+      PYTHONHASHSEED: "0"
+      OMP_NUM_THREADS: "1"
+      MKL_NUM_THREADS: "1"
+      OPENBLAS_NUM_THREADS: "1"
+      NUMEXPR_NUM_THREADS: "1"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11.9"
+
+      - name: Install historical frozen runtime
+        shell: pwsh
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements-lock.txt
+
+      - name: Verify Stage 9.5-7 prospective freeze
+        shell: pwsh
+        run: |
+          python -c "from pathlib import Path; required=['data/manifests/stage9_5_claim_reporting_v1.json','data/manifests/stage9_5_claim_definitions_v1.json','STAGE9_5_7_8_CLAIM_REPORTING_IMPLEMENTATION.md']; missing=[p for p in required if not Path(p).is_file()]; assert not missing, missing"
+
+      - name: Run Stage 9.5-7 claim-traceability tests
+        shell: pwsh
+        run: |
+          python -m pytest tests/stage9_5/test_claim_traceability.py -q
+
+      - name: Run Stage 9.5-7 claim ledger
+        shell: pwsh
+        run: |
+          python tools/stage9_5/claim_traceability.py --output-dir artifacts/stage9_5_claims_v1
+
+      - name: Upload Stage 9.5-7 claim evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: stage9-5-claim-traceability-v1
+          path: artifacts/stage9_5_claims_v1/
+          if-no-files-found: error
+
+
+  independent-reporting:
+    needs: claim-traceability
+    runs-on: windows-latest
+    env:
+      PYTHONHASHSEED: "0"
+      OMP_NUM_THREADS: "1"
+      MKL_NUM_THREADS: "1"
+      OPENBLAS_NUM_THREADS: "1"
+      NUMEXPR_NUM_THREADS: "1"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11.9"
+
+      - name: Install historical frozen runtime
+        shell: pwsh
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements-lock.txt
+
+      - name: Run Stage 9.5-8 independent reporting tests
+        shell: pwsh
+        run: |
+          python -m pytest tests/stage9_5/test_independent_reporting.py -q
+
+      - name: Run Stage 9.5-8 independent reporting
+        shell: pwsh
+        run: |
+          python -m tools.stage9_5.independent_reporting --output-dir artifacts/stage9_5_reporting_v1
+
+      - name: Upload Stage 9.5-8 reporting evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: stage9-5-independent-reporting-v1
+          path: artifacts/stage9_5_reporting_v1/
+          if-no-files-found: error
+
+
+  hostile-review-audit:
+    needs: independent-reporting
+    runs-on: windows-latest
+    env:
+      PYTHONHASHSEED: "0"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11.9"
+
+      - name: Install historical frozen runtime
+        shell: pwsh
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements-lock.txt
+
+      - name: Install developer-only audit tools
+        shell: pwsh
+        run: |
+          python -m pip install "ruff==0.17.0" "mypy==2.4.0"
+
+      - name: Run Stage 9.5-9 auditor tests
+        shell: pwsh
+        run: |
+          python -m pytest tests/stage9_5/test_hostile_review_audit.py -q
+
+      - name: Static-check Stage 9.5-9 auditor
+        shell: pwsh
+        run: |
+          ruff check tools/stage9_5/hostile_review_audit.py tests/stage9_5/test_hostile_review_audit.py
+          mypy --python-version 3.11 --ignore-missing-imports --follow-imports=silent --explicit-package-bases --show-error-codes --no-color-output tools/stage9_5/hostile_review_audit.py
+
+      - name: Run Stage 9.5-9 hostile-review audit
+        shell: pwsh
+        run: |
+          python -m tools.stage9_5.hostile_review_audit --output-dir artifacts/stage9_5_hostile_review_v1_1
+
+      - name: Upload Stage 9.5-9 hostile-review evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: stage9-5-hostile-review-v1-1
+          path: artifacts/stage9_5_hostile_review_v1_1/
+          if-no-files-found: error

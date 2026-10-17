@@ -1,0 +1,28 @@
+{
+  "audit_id": "stage9.5-0-v1.7-parameter-scan-block",
+  "classification": "registry_completeness_residual",
+  "scientific_class": "not_Class_A",
+  "accepted_as_closure_evidence": false,
+  "exact_head": "e453d188c1661c537344db755a2d9c5c35b909b1",
+  "workflow_run_id": 38436698407,
+  "scanner_unit_tests": "17 passed",
+  "stage9_regression_same_head": "success",
+  "artifact_zip_sha256": "071ca1604171fafd186722475570c779809f07fbede6ae38b81cc80ff9d10eb7",
+  "scan_canonical_sha256": "c58e7da9ded76831304bac5c7421a056cc1458bb8f4bd2bec040e49ef90b712a",
+  "counts": {
+    "registered_entries": 86,
+    "material_candidates": 486,
+    "excluded_candidates": 1506,
+    "unclassified_material_candidates": 1,
+    "unclassified_high_leverage_candidates": 1,
+    "ambiguous_material_candidates": 0
+  },
+  "residual": {
+    "path": "src/concept_drift_ids/neural.py",
+    "line": 201,
+    "locator": "select_mcc_threshold :: -abs(float(thresholds[i]) - 0.5),",
+    "value": 0.5,
+    "disposition": "numeric mirror of already-registered System-A threshold tie-break policy closest_to_0.5"
+  },
+  "correction_protocol": "STAGE9_5_V1_8_THRESHOLD_TIEBREAK_RESIDUAL_DISPOSITION.md"
+}

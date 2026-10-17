@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "protocol_id": "stage9.5-6-replay-equivalence-correction-v1",
+  "status": "prospectively_frozen_execution_blocked",
+  "blocker_dependency": "system_a_checkpoint_bytes_missing",
+  "rerun_seed": 0,
+  "historical_heads": {
+    "phase_a_b": "bfa14b942e4a5b2fbfa8aa3c43728a7f1cd81645",
+    "correction_source": "79ddc4c6d6dea52c7cabc55a6d082448fc24fcf9",
+    "accepted_correction_config_commit": "1cc61cae8fae40d30530daf2d1f4b542898eef6d"
+  },
+  "accepted_correction_manifest_sha256": "d380fce5f9db8f0b639dc999298a263b10a10a3d02e35def226a121d098e2222",
+  "execution_barriers": {
+    "all_five_phase_a_before_phase_b": true,
+    "all_five_phase_a_b_before_corrected_phase_c": true,
+    "failed_v1_seed0_identity_required": true
+  },
+  "phase_a_diagnostic_projection": [
+    "runtime.platform",
+    "runtime.processor",
+    "runtime.threadpool_info[*].filepath"
+  ],
+  "phase_b_diagnostic_projection": [
+    "maintenance[*].shap_seconds",
+    "maintenance[*].surrogate_seconds",
+    "maintenance[*].lifecycle_seconds",
+    "maintenance[*].generation_payload.timing_seconds",
+    "maintenance_summary.compute_seconds",
+    "maintenance_summary.shap_seconds",
+    "maintenance_summary.surrogate_seconds",
+    "maintenance_summary.lifecycle_seconds",
+    "maintenance_summary.compute_seconds_per_opportunity",
+    "maintenance_summary.compute_seconds_per_publication"
+  ],
+  "explicitly_not_excluded": [
+    "initial checkpoint byte hashes",
+    "generated child checkpoint byte hashes",
+    "model state hashes",
+    "predictions and probabilities",
+    "detector and label schedules",
+    "replay evidence",
+    "candidate and rule content",
+    "lifecycle decisions and publication clocks",
+    "metrics and explanation values"
+  ],
+  "regenerated_correction_config_role": "isolated verification artifact only; all frozen scientific blocks must equal accepted v1.1 correction",
+  "post_outcome_new_exclusions_permitted": false,
+  "stage8_9_replacement": false,
+  "stage10_execution_permitted": false
+}

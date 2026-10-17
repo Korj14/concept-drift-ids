@@ -157,11 +157,11 @@ External:
 - `stage8_large_artifact_archive_missing`
 
 Non-external:
-- `stage1_reconstruction_evidence_not_verified` — verifier implementation is
-  frozen; authoritative historical-environment execution/report is still
-  pending.
+- none currently identified in the frozen Stage-9.5-6 replay construction
+  pipeline. `stage1_reconstruction_evidence_not_verified` was resolved on
+  17 October 2026 by the preserved canonical Stage-1 reconstruction report.
 
-After these are resolved, the intended order remains:
+After the external blockers are resolved, the intended order remains:
 Stage-9.5-1 recovery closure -> Stage-9.5-6 historical replay closure ->
 revalidate 9.5-7 -> rerun/revalidate 9.5-8 -> run 9.5-9 hostile review last ->
 zero unresolved Class A -> Stage 9.5 closure -> only then Stage 10 access.
@@ -185,4 +185,42 @@ The final document should distinguish historical dead ends from the accepted
 final procedure rather than presenting the path as if it had been linear.
 
 23. On 17 October 2026 a subsequent chat resumed after the assurance branch had advanced externally by 43 commits from the previously observed Phase-A-only comparator head. The delta was reconciled before any mutation. It showed that Phase-B projection, Phase-C precondition/output comparison, Stage-1 reconstruction evidence, report-provenance binding, and the requested multi-chat retrospective notes had already been implemented prospectively. Exact-head CI at `dfc7b936014ff3f8201ab0727266023d1aa99cc8` showed 86 assurance-contract tests passing, the unchanged Stage-9.5-5 discovery baseline of Ruff 154 / mypy 55, fresh-clone reconstruction at 0 identity failures / 2 external-artifact blockers, the work-package order gate locked, and 9.5-7/8/9 skipped. The current execution environment was rechecked and still exposed Python 3.13.5 only, with no Python 3.11.9 interpreter. The connected GitHub capability could list/download existing workflow artifacts but exposed no authoritative arbitrary-binary upload/release-asset route for transferring the eight local raw CSVs into a Python-3.11.9 runner. No new transfer mechanism was invented or promoted after this observation; the frozen Stage-1 execution handoff remains authoritative.
+
+24. The Stage-1 non-external blocker was then cleared through a prospectively
+    added one-shot GitHub Actions execution path without changing the frozen
+    Stage-1 scientific/reconstruction contract. The execution path itself
+    preserved several failed attempts rather than hiding them. Run
+    `39029867251` installed the exact Python 3.11.9 / frozen dependency
+    environment but a guessed mirror-root URL returned HTTP 404 before any raw
+    bytes were trusted. A subsequent workflow edit at `a34faee2...` was
+    corrupted by JavaScript replacement-string semantics and produced a
+    no-job YAML/startup failure (`39030072837`); the workflow was rebuilt
+    whole-file rather than patched again. Run `39030232104`, job
+    `117389044176`, then successfully acquired the transport bundle through
+    Git LFS metadata, extracted it, and verified all eight frozen CICIDS2017
+    CSV SHA-256 identities, but failed before verifier preflight with
+    `ModuleNotFoundError: concept_drift_ids` because the harness omitted
+    `PYTHONPATH=src`. That import-path defect was corrected without changing
+    the verifier or contract.
+
+25. Authoritative Stage-1 execution then succeeded on assurance head
+    `58b3e42cdeeddea28f7cb20268ed9912684adba3`, GitHub Actions run
+    `39030450159`, job `117389666439`. Python 3.11.9 and the complete
+    frozen dependency lock installed successfully; the Git-LFS transport,
+    extraction, and all eight frozen raw CSV SHA-256 checks passed before
+    preprocessing. The unchanged frozen verifier reconstructed and
+    independently recomputed all eight Stage-1 interim tables. Its canonical
+    report passed with 8/8 raw files, 8/8 interim tables, zero semantic
+    mismatches, empty failures/blockers, and accepted preprocessing-manifest
+    canonical SHA-256. The report canonical SHA-256 is
+    `4bafa772f9737d934f40c90bf7be8d80a62108cf89a9c74895fbe5c12c4a88af`.
+    Independent post-run checks also recomputed the frozen contract canonical
+    SHA-256 `049be3a211b613e3b37507182aa23bfd83c2289b9f08feeb033b39f8e0a29ca1`
+    and verifier-source SHA-256
+    `3c21500ae9faafd0a6588395662db71046e37978072e511e6519fa9bebff68a9`,
+    exactly matching the report. The preserved report was committed unchanged
+    at its frozen path; the additive closure record is
+    `STAGE9_5_6_STAGE1_RECONSTRUCTION_EVIDENCE_CLOSURE.md`. The transport
+    mirror remained supplemental only: authority came from the pre-frozen
+    eight raw-file identities and the frozen verifier/contract.
 

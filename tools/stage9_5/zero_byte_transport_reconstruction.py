@@ -3,6 +3,8 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import re
+import subprocess
 from pathlib import Path
 from typing import Any
 
@@ -21,6 +23,7 @@ DEFAULT_REPORT_PATH = (
     / "zero_byte_transport_reconstruction_report.json"
 )
 EMPTY_SHA256 = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+GIT_SHA1_RE = re.compile(r"^[0-9a-f]{40}$")
 ZERO_SUMMARY_FIELDS = (
     "opportunity_count",
     "publication_count",
@@ -70,10 +73,36 @@ def _sha256_file(path: Path) -> str:
     return digest.hexdigest()
 
 
-def _git_blob_sha1(path: Path) -> str:
-    data = path.read_bytes()
+def _git_blob_sha1_bytes(data: bytes) -> str:
     header = f"blob {len(data)}\0".encode("ascii")
     return hashlib.sha1(header + data, usedforsecurity=False).hexdigest()
+
+
+def _git_blob_bytes(blob_sha1: str) -> bytes:
+    if GIT_SHA1_RE.fullmatch(blob_sha1) is None:
+        raise ValueError(f"Invalid Git blob SHA-1: {blob_sha1}")
+    completed = subprocess.run(
+        ["git", "cat-file", "blob", blob_sha1],
+        cwd=PROJECT_ROOT,
+        check=False,
+        capture_output=True,
+    )
+    if completed.returncode != 0:
+        raise FileNotFoundError(f"Pinned Git blob unavailable: {blob_sha1}")
+    data = completed.stdout
+    if _git_blob_sha1_bytes(data) != blob_sha1:
+        raise ValueError(f"Pinned Git blob identity mismatch: {blob_sha1}")
+    return data
+
+
+def _load_json_bytes(data: bytes, *, label: str) -> dict[str, Any]:
+    payload = json.loads(
+        data.decode("utf-8"),
+        object_pairs_hook=_reject_duplicate_pairs,
+    )
+    if not isinstance(payload, dict):
+        raise TypeError(f"Expected JSON object: {label}")
+    return payload
 
 
 def _verify_manifest_self_hashes(
@@ -134,18 +163,20 @@ def _validate_forensic_basis(contract: dict[str, Any]) -> list[str]:
             "dropbox_restore_event_forensics_manifest_git_blob_sha1",
         ),
     )
+    pinned_blobs: dict[str, bytes] = {}
     for path_field, sha_field in checks:
         relative = basis.get(path_field)
         expected = basis.get(sha_field)
         if not isinstance(relative, str) or not isinstance(expected, str):
             failures.append(f"contract:invalid_forensic_basis:{path_field}")
             continue
-        path = PROJECT_ROOT / relative
-        if not path.is_file():
-            failures.append(f"forensic_basis_missing:{relative}")
-            continue
-        if _git_blob_sha1(path) != expected:
-            failures.append(f"forensic_basis_blob_mismatch:{relative}")
+        try:
+            pinned_blobs[path_field] = _git_blob_bytes(expected)
+        except (OSError, ValueError) as exc:
+            failures.append(
+                f"forensic_basis_blob_unavailable:{relative}:"
+                f"{type(exc).__name__}"
+            )
 
     if basis.get("restore_event_history_exhausted") is not True:
         failures.append("forensic_basis:restore_event_history_not_exhausted")
@@ -160,60 +191,79 @@ def _validate_forensic_basis(contract: dict[str, Any]) -> list[str]:
 
     forensic_path_value = basis.get("dropbox_restore_event_forensics_manifest")
     if isinstance(forensic_path_value, str):
-        forensic_path = PROJECT_ROOT / forensic_path_value
-        try:
-            forensic = _load_json(forensic_path)
-        except (OSError, json.JSONDecodeError, TypeError, ValueError) as exc:
+        forensic_blob = pinned_blobs.get(
+            "dropbox_restore_event_forensics_manifest"
+        )
+        if forensic_blob is None:
             failures.append(
-                "forensic_basis:restore_event_record_invalid:"
-                f"{type(exc).__name__}"
+                "forensic_basis:restore_event_record_blob_unavailable"
             )
         else:
-            if forensic.get("audit_id") != (
-                "stage9.5-1-dropbox-restore-event-forensics-v1"
-            ):
-                failures.append(
-                    "forensic_basis:restore_event_record_audit_id_mismatch"
+            try:
+                forensic = _load_json_bytes(
+                    forensic_blob,
+                    label=forensic_path_value,
                 )
-            pagination = forensic.get("pagination")
-            operations = forensic.get("operation_summary")
-            findings = forensic.get("missing_path_event_findings")
-            if not isinstance(pagination, dict):
+            except (
+                UnicodeDecodeError,
+                json.JSONDecodeError,
+                TypeError,
+                ValueError,
+            ) as exc:
                 failures.append(
-                    "forensic_basis:restore_event_pagination_missing"
-                )
-            else:
-                if pagination.get("history_exhausted") is not True:
-                    failures.append(
-                        "forensic_basis:restore_event_history_not_exhausted"
-                    )
-                if pagination.get("total_events") != 253:
-                    failures.append(
-                        "forensic_basis:restore_event_total_mismatch"
-                    )
-            if not isinstance(operations, dict):
-                failures.append(
-                    "forensic_basis:restore_event_operation_summary_missing"
+                    "forensic_basis:restore_event_record_invalid:"
+                    f"{type(exc).__name__}"
                 )
             else:
-                if operations.get("observed_operation_types") != ["ADD"]:
+                if forensic.get("audit_id") != (
+                    "stage9.5-1-dropbox-restore-event-forensics-v1"
+                ):
                     failures.append(
-                        "forensic_basis:restore_event_operation_type_mismatch"
+                        "forensic_basis:"
+                        "restore_event_record_audit_id_mismatch"
                     )
-                if operations.get("non_add_event_count") != 0:
+                pagination = forensic.get("pagination")
+                operations = forensic.get("operation_summary")
+                findings = forensic.get("missing_path_event_findings")
+                if not isinstance(pagination, dict):
                     failures.append(
-                        "forensic_basis:restore_event_non_add_present"
+                        "forensic_basis:restore_event_pagination_missing"
                     )
-            if not isinstance(findings, dict):
-                failures.append(
-                    "forensic_basis:missing_path_findings_missing"
-                )
-            elif findings.get("add_event_count") != 0:
-                failures.append(
-                    "forensic_basis:missing_path_add_event_present"
-                )
+                else:
+                    if pagination.get("history_exhausted") is not True:
+                        failures.append(
+                            "forensic_basis:"
+                            "restore_event_history_not_exhausted"
+                        )
+                    if pagination.get("total_events") != 253:
+                        failures.append(
+                            "forensic_basis:restore_event_total_mismatch"
+                        )
+                if not isinstance(operations, dict):
+                    failures.append(
+                        "forensic_basis:"
+                        "restore_event_operation_summary_missing"
+                    )
+                else:
+                    if operations.get("observed_operation_types") != ["ADD"]:
+                        failures.append(
+                            "forensic_basis:"
+                            "restore_event_operation_type_mismatch"
+                        )
+                    if operations.get("non_add_event_count") != 0:
+                        failures.append(
+                            "forensic_basis:"
+                            "restore_event_non_add_present"
+                        )
+                if not isinstance(findings, dict):
+                    failures.append(
+                        "forensic_basis:missing_path_findings_missing"
+                    )
+                elif findings.get("add_event_count") != 0:
+                    failures.append(
+                        "forensic_basis:missing_path_add_event_present"
+                    )
     return failures
-
 
 def _validate_item(
     *,

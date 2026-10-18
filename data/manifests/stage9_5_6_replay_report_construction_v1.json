@@ -402,13 +402,15 @@
       "construction.source_evidence_complete": true,
       "construction.mismatch_count": 0,
       "construction.comparator_id": "stage9.5-6-replay-equivalence-comparator-v1",
-      "construction.finalizer_id": "stage9.5-6-replay-report-finalizer-v1",
-      "construction.stage9_5_1_recovery_report_canonical_sha256": "<valid-sha256-from-comparison-evidence>"
+      "construction.finalizer_id": "stage9.5-6-replay-report-finalizer-v1"
     },
     "pass_may_be_derived_only_from_deterministic_comparisons": true,
     "missing_evidence_is_failure": true,
     "mismatch_is_failure": true,
-    "manual_boolean_override_permitted": false
+    "manual_boolean_override_permitted": false,
+    "required_dynamic_fields": {
+      "construction.stage9_5_1_recovery_report_canonical_sha256": "sha256"
+    }
   },
   "current_blocker": {
     "id": "stage9_5_1_recovery_not_verified",

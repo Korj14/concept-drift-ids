@@ -194,19 +194,44 @@ def test_hidden_nested_comparison_mismatch_is_blocked(
 
     assert report["pass"] is False
     assert (
-        "nested_comparison_pass_not_true:phase_b.seed_results[0]"
+        "nested_comparison_pass_not_true:comparison_evidence.phase_b.seed_results[0]"
         in report["failures"]
     )
     assert (
-        "nested_comparison_failures_nonempty:phase_b.seed_results[0]"
+        "nested_comparison_failures_nonempty:comparison_evidence.phase_b.seed_results[0]"
         in report["failures"]
     )
     assert (
-        "nested_comparison_mismatch_count_nonzero:phase_b.seed_results[0]"
+        "nested_comparison_mismatch_count_nonzero:comparison_evidence.phase_b.seed_results[0]"
         in report["failures"]
     )
     assert (
-        "nested_comparison_mismatches_nonempty:phase_b.seed_results[0]"
+        "nested_comparison_mismatches_nonempty:comparison_evidence.phase_b.seed_results[0]"
+        in report["failures"]
+    )
+
+def test_extra_hidden_nested_mismatch_is_blocked(
+    tmp_path: Path,
+) -> None:
+    evidence = _comparison_evidence()
+    evidence["extra_diagnostics"] = {
+        "mismatch_count": 1,
+        "mismatches": ["hidden.scientific_difference"],
+    }
+    _seal(evidence)
+    path = _write_evidence(tmp_path, evidence)
+
+    report = run(path, tmp_path / "out")
+
+    assert report["pass"] is False
+    assert (
+        "nested_comparison_mismatch_count_nonzero:"
+        "comparison_evidence.extra_diagnostics"
+        in report["failures"]
+    )
+    assert (
+        "nested_comparison_mismatches_nonempty:"
+        "comparison_evidence.extra_diagnostics"
         in report["failures"]
     )
 

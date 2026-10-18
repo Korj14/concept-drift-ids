@@ -171,3 +171,42 @@ def test_missing_recovery_report_hash_is_blocked(tmp_path: Path) -> None:
         in report["failures"]
     )
 
+def test_hidden_nested_comparison_mismatch_is_blocked(
+    tmp_path: Path,
+) -> None:
+    evidence = _comparison_evidence()
+    phase_b = evidence["phase_b"]
+    assert isinstance(phase_b, dict)
+    phase_b["seed_results"] = [
+        {
+            "seed": 0,
+            "pass": False,
+            "failures": ["hidden_phase_b_failure"],
+            "blockers": [],
+            "mismatch_count": 1,
+            "mismatches": ["arm_manifest.scientific_field"],
+        }
+    ]
+    _seal(evidence)
+    path = _write_evidence(tmp_path, evidence)
+
+    report = run(path, tmp_path / "out")
+
+    assert report["pass"] is False
+    assert (
+        "nested_comparison_pass_not_true:phase_b.seed_results[0]"
+        in report["failures"]
+    )
+    assert (
+        "nested_comparison_failures_nonempty:phase_b.seed_results[0]"
+        in report["failures"]
+    )
+    assert (
+        "nested_comparison_mismatch_count_nonzero:phase_b.seed_results[0]"
+        in report["failures"]
+    )
+    assert (
+        "nested_comparison_mismatches_nonempty:phase_b.seed_results[0]"
+        in report["failures"]
+    )
+

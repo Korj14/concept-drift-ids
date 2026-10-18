@@ -250,6 +250,60 @@ their raw integrity has already been established. All remaining seed-manifest
 content, especially trigger diagnostics and retention probes, must match
 exactly.
 
+## Explicit Phase-C dependency map
+
+The machine contract now records the historical dependency map needed to audit
+any later comparator implementation. Its authority is limited to frozen
+pre-outcome source at correction head
+`79ddc4c6d6dea52c7cabc55a6d082448fc24fcf9`, the frozen correction config,
+the v1.1 replay-equivalence protocol, and the already-frozen Phase-B projection
+contracts.
+
+The map distinguishes four dependency classes:
+
+1. **Attempt/config identity.** `attempt.json.primary_config_manifest_sha256`
+   is a transitive reference to the accepted/fresh validated correction config.
+   Its `payload_sha256` therefore also depends on that config identity. Both
+   must verify raw before the config identity is normalized and the verified
+   self-hash is removed from cross-tree projection.
+2. **Evaluation transitive identity.** Each evaluation's
+   `primary_config_manifest_sha256`, `phase_b_arm_manifest_sha256`, and six
+   inherited Phase-B timing-only `maintenance_summary` fields are the only
+   permitted non-leaf differences. `summary_sha256` and `payload_sha256`
+   transitively cover those fields; they verify raw first and are then removed.
+   The shared identity, metrics, explanations, windows/recovery, and complete
+   prediction-trace descriptor remain exact.
+3. **Prediction trace.** Trace rows depend on frozen Phase-A neural
+   predictions/checkpoint identities, frozen Phase-B symbolic trajectories and
+   rule-version identities, frozen fusion thresholds, and the corrected
+   Phase-C source. The raw gzip SHA-256, decompressed JSONL-byte SHA-256, row
+   count, and every row field remain exact; no derived-hash normalization
+   applies.
+4. **Seed-manifest transitive identity.** Correction-config identity,
+   Phase-A run-manifest identity, Phase-B seed-manifest identity, and the three
+   raw arm-summary identities may be normalized only after their own upstream
+   objects and projected comparisons pass. The seed-manifest
+   `manifest_sha256` and `payload_sha256` verify raw first, then are removed.
+   Trigger diagnostics, retention probes, lambda=1 control, boundary index, and
+   boundary-contamination flag remain exact.
+
+This dependency map does **not** authorize a new diagnostic exclusion. Its only
+purpose is to distinguish already-validated transitive identities from
+scientific leaf values so that permitted upstream runtime/timing differences do
+not create false second-order hash failures.
+
+The exact frozen source bindings for the dependency map are recorded in the
+machine contract for:
+
+- `cd_primary_phase_c.py` — trace/evaluation/diagnostic/retention/seed-manifest
+  construction;
+- `cd_control_plane.py` — canonical JSON and `payload_sha256`;
+- `cd_analysis.py` — recovery-time logic;
+- `neural.py` — retention-probe metrics;
+- `cd_symbolic_evaluation.py` — symbolic evaluation/fusion/lambda=1 control;
+- `cd_primary_correction.py` — failed-v1 lineage and correction-config gate;
+- the already-frozen Phase-B maintenance-record projection contract.
+
 ## Derived hashes versus exclusions
 
 Removing a verified self-hash or normalizing a verified transitive identity is

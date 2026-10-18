@@ -841,6 +841,12 @@ def compare_phase_b_seed(
     expected_phase_a_keys = {str(item) for item in SEEDS}
     if phase_a_result.get("pass") is not True:
         failures.append("verified_phase_a_result_not_passed")
+    if phase_a_result.get("complete_seeds") != list(SEEDS):
+        failures.append("verified_phase_a_complete_seeds_mismatch")
+    if phase_a_result.get("mismatch_count") != 0:
+        failures.append("verified_phase_a_mismatch_count_nonzero")
+    if phase_a_result.get("failures") != []:
+        failures.append("verified_phase_a_failures_nonempty")
     if not isinstance(phase_a_map, dict):
         failures.append("verified_phase_a_shared_identity_map_missing")
         phase_a_map = {}

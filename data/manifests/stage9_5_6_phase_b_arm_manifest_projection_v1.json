@@ -1,0 +1,187 @@
+{
+  "schema_version": 1,
+  "contract_id": "stage9.5-6-phase-b-arm-manifest-projection-v1",
+  "status": "prospectively_frozen_arm_manifest_projection",
+  "scope": {
+    "included": [
+      "Phase-B per-arm arm_manifest.json raw integrity verification",
+      "Phase-B per-arm maintenance-summary timing projection",
+      "Phase-B per-arm maintenance descriptor transitive-hash projection",
+      "Phase-B per-arm projected manifest equality"
+    ],
+    "excluded": [
+      "maintenance.jsonl record projection semantics beyond the separately frozen record-level contract",
+      "Phase-B seed-level phase_b_manifest projection or transitive-hash handling",
+      "Phase-C projection"
+    ]
+  },
+  "authority": {
+    "replay_protocol": {
+      "path": "STAGE9_5_6_REPLAY_EQUIVALENCE_CORRECTION_PROTOCOL_V1_1.md",
+      "blob_sha1": "e9b9fcb8d863aad58e543f9d60a8ea6f5341406f",
+      "rule": "Phase-B may remove only the four predeclared maintenance-record timing diagnostics and the six frozen timing-only maintenance-summary fields; all other fields remain fail-closed."
+    },
+    "maintenance_record_projection": {
+      "contract_id": "stage9.5-6-phase-b-maintenance-record-projection-v1",
+      "path": "data/manifests/stage9_5_6_phase_b_maintenance_record_projection_v1.json",
+      "blob_sha1": "0fe70a82f1f70f968feefb3d2ef19cb67f517440"
+    },
+    "historical_phase_b_source": {
+      "head_sha": "bfa14b942e4a5b2fbfa8aa3c43728a7f1cd81645",
+      "path": "src/concept_drift_ids/cd_primary_phase_b.py",
+      "blob_sha1": "6a9e14041d5d445141408aaf4df3ba673d34302f",
+      "arm_freeze_function": "_freeze_arm"
+    },
+    "historical_maintenance_summary_source": {
+      "head_sha": "bfa14b942e4a5b2fbfa8aa3c43728a7f1cd81645",
+      "path": "src/concept_drift_ids/cd_analysis.py",
+      "blob_sha1": "e074791f364e803eed74e322fa3b8fc8b9c7dfeb",
+      "summary_function": "summarize_symbolic_maintenance"
+    },
+    "historical_json_writer": {
+      "head_sha": "bfa14b942e4a5b2fbfa8aa3c43728a7f1cd81645",
+      "path": "src/concept_drift_ids/cd_control_plane.py",
+      "blob_sha1": "8006d2691be627d2a8ef8e35f08f235c39fab9eb",
+      "writer_function": "write_json_new"
+    },
+    "historical_jsonl_writer": {
+      "head_sha": "bfa14b942e4a5b2fbfa8aa3c43728a7f1cd81645",
+      "path": "src/concept_drift_ids/cd_evidence.py",
+      "blob_sha1": "2a4b9a77ff7e5380269740b34d9e249b27790af2",
+      "writer_function": "write_jsonl_new"
+    }
+  },
+  "historical_dependency_map": {
+    "direct_timing_dependencies": [
+      {
+        "field": "files.maintenance.sha256",
+        "reason": "This is the raw SHA-256 of maintenance.jsonl; the historical JSONL bytes include the four predeclared maintenance-record timing fields."
+      },
+      {
+        "field": "maintenance_summary.compute_seconds",
+        "reason": "Historical summarize_symbolic_maintenance computes this as shap_seconds + surrogate_seconds + lifecycle_seconds."
+      },
+      {
+        "field": "maintenance_summary.shap_seconds",
+        "reason": "Historical summarize_symbolic_maintenance sums record shap_seconds."
+      },
+      {
+        "field": "maintenance_summary.surrogate_seconds",
+        "reason": "Historical summarize_symbolic_maintenance sums record surrogate_seconds."
+      },
+      {
+        "field": "maintenance_summary.lifecycle_seconds",
+        "reason": "Historical summarize_symbolic_maintenance sums record lifecycle_seconds."
+      },
+      {
+        "field": "maintenance_summary.compute_seconds_per_opportunity",
+        "reason": "Derived from compute_seconds and opportunity_count."
+      },
+      {
+        "field": "maintenance_summary.compute_seconds_per_publication",
+        "reason": "Derived from compute_seconds and publication_count."
+      }
+    ],
+    "transitive_timing_dependencies": [
+      {
+        "field": "manifest_sha256",
+        "reason": "Historical _freeze_arm canonical-hashes the complete arm manifest, including files.maintenance.sha256 and maintenance_summary."
+      },
+      {
+        "field": "payload_sha256",
+        "reason": "Historical write_json_new adds payload_sha256 over the arm-manifest object after manifest_sha256 has already been inserted."
+      }
+    ],
+    "no_other_arm_manifest_timing_dependency_authorized": true
+  },
+  "raw_integrity_verification_before_projection": {
+    "required_order": [
+      "Load arm_manifest.json fail-closed as a JSON object with duplicate-key rejection.",
+      "Verify payload_sha256 against canonical JSON of the raw arm-manifest object with only payload_sha256 removed; manifest_sha256 remains present.",
+      "Verify manifest_sha256 against canonical JSON of the raw arm-manifest object with both payload_sha256 and manifest_sha256 removed.",
+      "Require files to be an object and require every descriptor path to remain inside the arm root.",
+      "Verify every files.*.sha256 against the referenced raw file bytes, including maintenance.jsonl, initial_state.json, final_state.json, and every versions/*.json descriptor.",
+      "Apply the separately frozen maintenance-record projection to accepted and fresh maintenance.jsonl and require ordered record-count-preserving exact projected equality before relaxing files.maintenance.sha256."
+    ],
+    "accepted_and_fresh_both_verified": true,
+    "raw_maintenance_sha256_equality_between_accepted_and_fresh_required": false,
+    "rationale_for_raw_maintenance_sha256_inequality": "The raw maintenance JSONL byte hash is allowed to differ only because its predeclared timing fields may differ; each side must still match its own verified descriptor before projection."
+  },
+  "permitted_arm_manifest_projection": {
+    "remove_after_raw_integrity_and_projected_maintenance_equality": [
+      "payload_sha256",
+      "manifest_sha256",
+      "files.maintenance.sha256"
+    ],
+    "remove_timing_only_summary_fields": [
+      "maintenance_summary.compute_seconds",
+      "maintenance_summary.shap_seconds",
+      "maintenance_summary.surrogate_seconds",
+      "maintenance_summary.lifecycle_seconds",
+      "maintenance_summary.compute_seconds_per_opportunity",
+      "maintenance_summary.compute_seconds_per_publication"
+    ],
+    "recomputation_rule": {
+      "projected_arm_manifest_canonical_sha256": "Compute as comparison evidence over the projected manifest after the permitted removals.",
+      "projected_maintenance_sequence_canonical_sha256": "May be retained as comparison evidence from the separately frozen ordered maintenance-record projection.",
+      "do_not_rewrite_historical_descriptor_semantics": true,
+      "rule": "Do not replace files.maintenance.sha256 with a projected semantic hash; the historical field is a raw byte SHA-256 and is removed only from the projected comparison object after its raw integrity has been verified."
+    },
+    "equality_rule": "Accepted and fresh projected arm manifests must have identical canonical JSON SHA-256 values and exact recursive content equality."
+  },
+  "exact_fields_and_hashes": {
+    "top_level_exact_fields": [
+      "schema_version",
+      "seed",
+      "arm",
+      "operator_config_sha256",
+      "shared_identity_sha256",
+      "initial_rule_base_version_id",
+      "initial_rule_base_sha256",
+      "final_rule_base_version_id",
+      "final_rule_base_sha256",
+      "final_history_sha256",
+      "publications"
+    ],
+    "maintenance_summary_exact_fields": [
+      "opportunity_count",
+      "completed_validation_count",
+      "publication_count",
+      "no_op_count",
+      "censored_or_blocked_count",
+      "candidate_count",
+      "publication_per_opportunity",
+      "mean_validation_wait_rows",
+      "lifecycle_decision_counts"
+    ],
+    "file_descriptor_rules": {
+      "descriptor_key_set": "exact",
+      "all_descriptor_paths": "exact",
+      "initial_state_sha256": "exact",
+      "final_state_sha256": "exact",
+      "version_descriptor_sha256_values": "exact",
+      "maintenance_sha256": "raw integrity required on each side, then removed only from projected arm-manifest equality after maintenance-record projected equality passes"
+    },
+    "state_and_version_content_rule": "Initial-state, final-state, publication metadata, rule-base canonical/history identities, version descriptor keys/paths, and version-file byte hashes are not timing diagnostics and remain exact.",
+    "no_additional_exclusion": true
+  },
+  "fail_closed_conditions": [
+    "arm-manifest payload_sha256 mismatch",
+    "arm-manifest manifest_sha256 mismatch",
+    "missing or extra file descriptor key",
+    "descriptor path escapes arm root",
+    "descriptor SHA-256 does not match referenced raw bytes",
+    "maintenance-record projection fails or projected ordered records differ",
+    "any initial-state descriptor difference",
+    "any final-state descriptor difference",
+    "any version descriptor/path/SHA-256 difference",
+    "any publication metadata difference",
+    "any non-timing maintenance-summary difference",
+    "any top-level arm-manifest difference outside the explicitly removed derived identities",
+    "any additional timing/hash exclusion not listed in this contract"
+  ],
+  "seed_level_phase_b_manifest_projection_frozen_by_this_contract": false,
+  "seed_level_phase_b_manifest_implementation_modified_by_this_contract": false,
+  "scientific_objects_modified": false,
+  "stage10_execution_permitted": false
+}

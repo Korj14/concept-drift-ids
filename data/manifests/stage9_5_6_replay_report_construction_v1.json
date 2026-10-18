@@ -330,7 +330,32 @@
           "arm",
           "status"
         ],
-        "equality_rule": "after raw integrity/binding checks and only the predeclared upstream/timing projections, accepted and fresh corrected Phase-C seed-0 arm evaluations and seed manifest must have identical canonical JSON SHA-256 values and exact recursive content equality"
+        "equality_rule": "after raw integrity/binding checks and only the predeclared upstream/timing projections, accepted and fresh corrected Phase-C seed-0 arm evaluations and seed manifest must have identical canonical JSON SHA-256 values and exact recursive content equality",
+        "standalone_comparison_contract": {
+          "contract_id": "stage9.5-6-phase-c-seed0-comparison-v1",
+          "contract_path": "data/manifests/stage9_5_6_phase_c_seed0_comparison_v1.json",
+          "contract_git_blob_sha1": "fb742009f96de39bff127a998607c93f63b2e485",
+          "document_path": "STAGE9_5_6_PHASE_C_SEED0_COMPARISON_CONTRACT_V1.md",
+          "document_git_blob_sha1": "7886f41a57f22cbe8bc234e0cfefcc49946e8f96",
+          "freeze_status": "prospectively_frozen_from_pre_outcome_sources",
+          "no_new_phase_c_diagnostic_exclusions": true,
+          "comparator_code_modified_in_this_freeze": false,
+          "existing_comparator_conformance_assessed_in_this_freeze": false,
+          "required_followup": "audit the existing comparator against the standalone contract before historical corrected Phase-C seed-0 replay outcomes are inspected; implementation corrections may tighten conformance only and may not add exclusions"
+        },
+        "allowed_phase_c_exclusions": {
+          "newly_added": [],
+          "inherited_phase_b_timing_only": [
+            "maintenance_summary.compute_seconds",
+            "maintenance_summary.shap_seconds",
+            "maintenance_summary.surrogate_seconds",
+            "maintenance_summary.lifecycle_seconds",
+            "maintenance_summary.compute_seconds_per_opportunity",
+            "maintenance_summary.compute_seconds_per_publication"
+          ]
+        },
+        "prediction_trace_rule": "exact accepted/fresh compressed-byte SHA-256 and exact decompressed canonical JSONL SHA-256; no projection or normalization",
+        "metrics_explanations_diagnostics_retention_rule": "exact recursive equality; no numeric tolerance or diagnostic exclusion"
       },
       "regenerated_correction_config_verifier": {
         "verifier_id": "stage9.5-6-regenerated-correction-config-verifier-v1",

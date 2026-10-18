@@ -10,8 +10,8 @@
     "producer_id": "stage9.5-6-replay-equivalence-assurance-v1",
     "comparator_id": "stage9.5-6-replay-equivalence-comparator-v1",
     "finalizer_id": "stage9.5-6-replay-report-finalizer-v1",
-    "comparator_status": "phase_a_b_c_integrated_recovery_gated_finalizer_bound_hostile_audited_frozen",
-    "finalizer_status": "implemented_prospectively_frozen",
+    "comparator_status": "phase_a_b_c_integrated_recovery_gated_finalizer_bound_hostile_audited_v2_frozen",
+    "finalizer_status": "implemented_prospectively_frozen_hostile_audited_v2",
     "comparator_and_finalizer_must_be_frozen_before_replay_outcomes": true,
     "post_outcome_projection_changes_permitted": false
   },
@@ -538,6 +538,93 @@
       "corrective_scope": "test-only source-layout reconstruction; production comparator binding was not relaxed"
     },
     "residual_trust_boundary": "External Stage-9.5-6 execution is allowed by frozen governance. Canonical hashes and source identities detect evidence mutation/substitution but do not cryptographically attest that a malicious operator actually invoked the comparator. GitHub Actions identities remain supplemental unless an authoritative execution/transfer mechanism is prospectively frozen.",
+    "real_replay_executed": false,
+    "replay_outcomes_inspected": false,
+    "stage10_outcomes_accessed": false,
+    "scientific_objects_modified": false
+  },
+  "hostile_audit_freeze_v2": {
+    "audit_id": "stage9.5-6-comparator-finalizer-hostile-audit-v2",
+    "status": "clean_frozen_after_targeted_hostile_audit",
+    "freeze_scope": "comparator_finalizer_pipeline_only",
+    "implementation_head": "c0a849f2323b8f4647f27b59f90a12f29c4c1fd0",
+    "exact_head_ci": {
+      "stage9_5_assurance_run_id": 39163502855,
+      "stage9_5_assurance_conclusion": "failure_expected_only_static_and_fresh_clone",
+      "assurance_contract_job_id": 117781562788,
+      "assurance_contract_conclusion": "success",
+      "assurance_test_result": "157 passed",
+      "stage9_robustness_run_id": 39163502922,
+      "stage9_robustness_conclusion": "success",
+      "order_gate_job_id": 117781563014,
+      "order_gate_conclusion": "success",
+      "fresh_clone_job_id": 117781562940,
+      "expected_fresh_clone_state": "0 identity failures / 2 external-artifact blockers",
+      "static_assurance_job_id": 117781562974,
+      "expected_static_state": "triage_required; ruff=154; mypy=55",
+      "later_packages_unlocked": false,
+      "stage9_5_7_8_9_state": "skipped"
+    },
+    "frozen_blobs": {
+      "comparator": {
+        "path": "tools/stage9_5/replay_equivalence_comparator.py",
+        "git_blob_sha1": "ead2820b66f9499d002277084f0aa660f1ba30f0",
+        "unchanged_from_v1_freeze": true
+      },
+      "finalizer": {
+        "path": "tools/stage9_5/replay_report_finalizer.py",
+        "git_blob_sha1": "c4a6406f9c642dc2ddffd526f517af3d14e902f8"
+      },
+      "comparator_tests": {
+        "path": "tests/stage9_5/test_replay_equivalence_comparator.py",
+        "git_blob_sha1": "f64e93bb0c02d104437b8670603c420ec460bd78",
+        "unchanged_from_v1_freeze": true
+      },
+      "finalizer_tests": {
+        "path": "tests/stage9_5/test_replay_report_finalizer.py",
+        "git_blob_sha1": "0b1a59d53be08e7781f196254efd78810be441a8"
+      }
+    },
+    "attacks_audited": [
+      "missing files",
+      "duplicate JSON keys",
+      "NaN/noncanonical JSON",
+      "path traversal",
+      "reordered records",
+      "forged self-hashes",
+      "timing-only differences",
+      "non-timing differences",
+      "incomplete seed/arm sets",
+      "wrong historical heads",
+      "manual success fields",
+      "nonzero hidden mismatches"
+    ],
+    "attack_results": {
+      "missing_files": "fail_closed",
+      "duplicate_json_keys": "fail_closed",
+      "noncanonical_json": "fail_closed_before_comparator_projection_or_no_success_report",
+      "path_traversal": "fail_closed",
+      "reordered_records": "fail_closed",
+      "forged_self_hashes": "fail_closed",
+      "timing_only_differences": "accepted_only_on_frozen_projection_surface",
+      "non_timing_differences": "fail_closed",
+      "incomplete_seed_arm_sets": "fail_closed",
+      "wrong_historical_heads": "fail_closed",
+      "manual_success_fields": "fail_closed",
+      "nonzero_hidden_mismatches": "fail_closed_after_v2_correction"
+    },
+    "new_concrete_fail_open_defects_corrected": [
+      {
+        "id": "hidden_nested_comparison_contradiction",
+        "defect": "A resealed comparison-evidence document could retain clean top-level mismatch/failure totals while embedding pass=false, nonzero mismatch_count, nonempty mismatches, failures, or blockers in nested comparator detail, allowing the finalizer to emit pass=true.",
+        "correction": "The finalizer now recursively scans the entire comparison-evidence tree and rejects any nested pass=false, dependency_gate_pass=false, nonempty failures/blockers/mismatches, or nonzero mismatch_count before success can be emitted.",
+        "production_commit": "94fa07be1162c34a23233bebfe9413fa4f2e7dda",
+        "full_tree_hardening_commit": "60e24b6c76d032323ca50d91fdd376186d870957",
+        "regression_test_commit": "c0a849f2323b8f4647f27b59f90a12f29c4c1fd0"
+      }
+    ],
+    "prior_v1_freeze_preserved": true,
+    "residual_trust_boundary": "External Stage-9.5-6 execution remains allowed by frozen governance. Canonical hashes, exact source identities, direct accepted-root binding, and nested semantic consistency checks detect evidence mutation/substitution and contradictory evidence, but do not cryptographically attest that a malicious operator actually invoked the comparator. GitHub Actions identities remain supplemental unless an authoritative execution/transfer mechanism is prospectively frozen.",
     "real_replay_executed": false,
     "replay_outcomes_inspected": false,
     "stage10_outcomes_accessed": false,

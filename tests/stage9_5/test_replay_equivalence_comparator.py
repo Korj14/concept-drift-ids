@@ -2935,8 +2935,11 @@ def _patch_synthetic_integrated_components(monkeypatch: Any) -> None:
         lambda *_args, **_kwargs: {
             "pass": True,
             "failures": [],
+            "compact_requirement_count": 109,
+            "compact_verified_count": 109,
             "requirement_count": 145,
             "verified_count": 145,
+            "compact_inventory_sha256": "8" * 64,
             "inventory_sha256": "9" * 64,
         },
     )
@@ -2999,6 +3002,22 @@ def test_integrated_pipeline_binds_recovery_comparator_and_finalizer(
     ).is_file()
 
 
+def test_accepted_root_binding_verifies_full_committed_compact_surface() -> None:
+    result = comparator_module._verify_accepted_stage8_archive_root(
+        comparator_module.PROJECT_ROOT / "results" / "frozen" / "cd_primary_v1"
+    )
+
+    assert result["compact_requirement_count"] == 109
+    assert result["compact_verified_count"] == 109
+    assert result["requirement_count"] == 145
+    assert result["pass"] is False
+    assert result["verified_count"] < 145
+    assert any(
+        failure.startswith("accepted_stage8_archive_missing_file:")
+        for failure in result["failures"]
+    )
+
+
 def test_integrated_pipeline_blocks_substituted_accepted_archive_root(
     monkeypatch: Any,
     tmp_path: Path,
@@ -3010,11 +3029,14 @@ def test_integrated_pipeline_blocks_substituted_accepted_archive_root(
         lambda *_args, **_kwargs: {
             "pass": False,
             "failures": [
-                "accepted_stage8_archive_sha256_mismatch:"
-                "phase_a_shared_control_plane/seed-0/predictions.jsonl"
+                "accepted_stage8_compact_sha256_mismatch:"
+                "phase_a_shared_control_plane/seed-0/run_manifest.json"
             ],
+            "compact_requirement_count": 109,
+            "compact_verified_count": 108,
             "requirement_count": 145,
-            "verified_count": 144,
+            "verified_count": 145,
+            "compact_inventory_sha256": "8" * 64,
             "inventory_sha256": "9" * 64,
         },
     )

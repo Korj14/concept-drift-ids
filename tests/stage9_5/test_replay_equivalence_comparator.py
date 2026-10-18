@@ -11,6 +11,9 @@ from tools.stage9_5.replay_equivalence_comparator import (
     ARM_NAMES,
     NORMALIZED_DIAGNOSTIC,
     PHASE_B_RECORD_TIMING_FIELDS,
+    PHASE_C_BOUNDARY_INDEX,
+    PHASE_C_STREAM_ROWS,
+    _blocked_phase_c_output_for_dependencies,
     _canonical_sha256,
     _project_phase_a_manifest,
     _project_phase_b_maintenance_record,
@@ -1288,7 +1291,7 @@ def _write_correction_config_fixture(
     path: Path,
     *,
     tag: str,
-    stream_rows: int = 2,
+    stream_rows: int = PHASE_C_STREAM_ROWS,
 ) -> dict[str, Any]:
     core: dict[str, Any] = {
         "schema_version": 1,
@@ -1304,19 +1307,73 @@ def _write_correction_config_fixture(
     return body
 
 
+_PHASE_C_TRACE_RAW = (
+    b'{"row_id":"r0","decision":0}\n' * PHASE_C_STREAM_ROWS
+)
+_PHASE_C_TRACE_COMPRESSED = gzip.compress(
+    _PHASE_C_TRACE_RAW,
+    compresslevel=9,
+    mtime=0,
+)
+
+
 def _write_phase_c_trace(path: Path) -> dict[str, Any]:
-    raw = (
-        b'{"row_id":"r0","decision":0}\n'
-        b'{"row_id":"r1","decision":1}\n'
-    )
-    compressed = gzip.compress(raw, compresslevel=9, mtime=0)
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_bytes(compressed)
+    path.write_bytes(_PHASE_C_TRACE_COMPRESSED)
     return {
         "path": path.name,
-        "row_count": 2,
-        "sha256": hashlib.sha256(compressed).hexdigest(),
-        "canonical_jsonl_sha256": hashlib.sha256(raw).hexdigest(),
+        "row_count": PHASE_C_STREAM_ROWS,
+        "sha256": hashlib.sha256(_PHASE_C_TRACE_COMPRESSED).hexdigest(),
+        "canonical_jsonl_sha256": hashlib.sha256(_PHASE_C_TRACE_RAW).hexdigest(),
+    }
+
+
+def _phase_c_metric_row(metric_value: float) -> dict[str, Any]:
+    return {
+        "accuracy": metric_value,
+        "balanced_accuracy": metric_value,
+        "precision": metric_value,
+        "recall": metric_value,
+        "f1": metric_value,
+        "fpr": 0.0,
+        "mcc": metric_value,
+        "roc_auc": metric_value,
+        "average_precision": metric_value,
+        "tp": 1,
+        "tn": 1,
+        "fp": 0,
+        "fn": 0,
+    }
+
+
+def _phase_c_explanation_row() -> dict[str, Any]:
+    return {
+        "benign_rows": 1,
+        "benign_coverage": 1.0,
+        "benign_symbolic_correctness_on_covered": 1.0,
+        "benign_correct_symbolic_coverage": 1.0,
+        "attack_rows": 1,
+        "attack_coverage": 1.0,
+        "attack_symbolic_correctness_on_covered": 1.0,
+        "attack_correct_symbolic_coverage": 1.0,
+        "mcsc": 1.0,
+        "resolved_coverage": 1.0,
+        "uncovered_rate": 0.0,
+        "conflict_abstain_rate": 0.0,
+    }
+
+
+def _phase_c_window_row(start: int, end: int) -> dict[str, Any]:
+    return {
+        "start_index": start,
+        "end_index_exclusive": end,
+        "row_count": end - start,
+        "mcc": 0.9,
+        "fpr": 0.0,
+        "f1": 0.9,
+        "mcsc": 0.9,
+        "resolved_coverage": 1.0,
+        "conflict_abstain_rate": 0.0,
     }
 
 
@@ -1331,6 +1388,17 @@ def _write_phase_c_evaluation_fixture(
     trace = _write_phase_c_trace(
         output_root / f"{arm}_prediction_trace.jsonl.gz"
     )
+    metrics = {
+        weight: {
+            domain: _phase_c_metric_row(metric_value)
+            for domain in ("full", "pre", "post")
+        }
+        for weight in ("0.5", "0.7", "0.9", "1.0")
+    }
+    explanation = {
+        domain: _phase_c_explanation_row()
+        for domain in ("full", "pre", "post")
+    }
     core: dict[str, Any] = {
         "seed": 0,
         "arm": arm,
@@ -1339,23 +1407,23 @@ def _write_phase_c_evaluation_fixture(
             "manifest_sha256"
         ],
         "shared_identity_sha256": "1" * 64,
-        "metrics_by_neural_weight": {
-            "0.5": {
-                "post": {
-                    "mcc": metric_value,
-                }
-            }
-        },
-        "explanation": {
-            "mcsc": 0.7,
-        },
+        "metrics_by_neural_weight": metrics,
+        "explanation": explanation,
         "primary_windows": {
-            "post": [],
+            "pre": [_phase_c_window_row(0, 5_000)],
+            "post": [
+                _phase_c_window_row(
+                    PHASE_C_BOUNDARY_INDEX,
+                    PHASE_C_BOUNDARY_INDEX + 5_000,
+                )
+            ],
         },
         "primary_recovery": {
-            "mcc": {
-                "recovery_rows_from_boundary": 0,
+            metric: {
+                "available": False,
+                "reason": "undefined_window_metric",
             }
+            for metric in ("mcc", "mcsc", "fpr")
         },
         "maintenance_summary": copy.deepcopy(
             phase_b_arm_manifest["maintenance_summary"]
@@ -1369,6 +1437,45 @@ def _write_phase_c_evaluation_fixture(
         output_root / f"{arm}_evaluation.json",
         body,
     )
+    return body
+
+
+def _phase_c_retention_metrics() -> dict[str, Any]:
+    metrics: dict[str, Any] = {}
+    for prefix in ("development_", "pre_reference_"):
+        for name in (
+            "accuracy",
+            "balanced_accuracy",
+            "precision",
+            "recall",
+            "f1",
+            "fpr",
+            "mcc",
+            "roc_auc",
+            "average_precision",
+        ):
+            metrics[f"{prefix}{name}"] = {
+                "value": 0.9,
+                "delta_from_initial": 0.0,
+                "descriptive_forgetting": 0.0,
+            }
+    return metrics
+
+
+def _write_phase_c_attempt_fixture(
+    output_root: Path,
+    *,
+    config_sha256: str,
+) -> dict[str, Any]:
+    core = {
+        "seed": 0,
+        "primary_config_manifest_sha256": config_sha256,
+        "phase": "offline_boundary_aware_evaluation",
+        "adaptive_components_received_boundary": False,
+    }
+    body = dict(core)
+    body["payload_sha256"] = _canonical_sha256(core)
+    _write_json_bytes(output_root / "attempt.json", body)
     return body
 
 
@@ -1393,12 +1500,25 @@ def _write_phase_c_seed_manifest_fixture(
         },
         "lambda_one_predictive_equality": True,
         "trigger_diagnostics": {
-            "publication_count": 3,
+            "detector_event_count": 1,
+            "pre_reference_alarm_count": 0,
+            "pre_reference_alarm_clocks": [],
+            "post_reference_event_count": 1,
+            "first_post_reference_confirmation_clock": PHASE_C_BOUNDARY_INDEX,
+            "first_post_reference_confirmation_delay_rows": 0,
+            "latency_adjusted_excess_delay_rows": 0,
+            "repeated_post_reference_events": 0,
+            "neural_publication_count": 1,
         },
-        "neural_retention_probes": {
-            "pre_mcc": 0.8,
-        },
-        "boundary_index": 69260,
+        "neural_retention_probes": [
+            {
+                "sequence": 0,
+                "checkpoint_file_sha256": "2" * 64,
+                "publication_effective_index": 0,
+                "metrics": _phase_c_retention_metrics(),
+            }
+        ],
+        "boundary_index": PHASE_C_BOUNDARY_INDEX,
         "adaptive_components_received_boundary": False,
     }
     body = dict(core)
@@ -1497,6 +1617,10 @@ def _phase_c_corrected_output_fixture(
             root / "phase_c_offline_evaluation_v1_1" / "seed-0"
         )
         output_root.mkdir(parents=True, exist_ok=True)
+        _write_phase_c_attempt_fixture(
+            output_root,
+            config_sha256=str(config["manifest_sha256"]),
+        )
         summaries: dict[str, dict[str, Any]] = {}
         for arm in ("c_frozen_symbolic", "d_drift", "d_periodic"):
             arm_manifest = json.loads(
@@ -1684,6 +1808,161 @@ def test_phase_c_corrected_output_rejects_seed_control_change(
 
     assert result["pass"] is False
     assert "fresh:phase_c_lambda_one_control_failed" in result["failures"]
+
+def test_phase_c_corrected_output_rejects_extra_success_surface_file(
+    tmp_path: Path,
+) -> None:
+    accepted_root, fresh_root, accepted_config_path, fresh_config_path = (
+        _phase_c_corrected_output_fixture(tmp_path)
+    )
+    output_root = (
+        fresh_root / "phase_c_offline_evaluation_v1_1" / "seed-0"
+    )
+    (output_root / "failure.json").write_text("{}\n", encoding="utf-8")
+
+    result = compare_phase_c_corrected_output(
+        accepted_root=accepted_root,
+        fresh_root=fresh_root,
+        accepted_config_path=accepted_config_path,
+        fresh_config_path=fresh_config_path,
+    )
+
+    assert result["pass"] is False
+    assert "fresh:corrected_output_file_set_mismatch" in result["failures"]
+
+
+def test_phase_c_corrected_output_rejects_attempt_boundary_contamination(
+    tmp_path: Path,
+) -> None:
+    accepted_root, fresh_root, accepted_config_path, fresh_config_path = (
+        _phase_c_corrected_output_fixture(tmp_path)
+    )
+    path = (
+        fresh_root
+        / "phase_c_offline_evaluation_v1_1"
+        / "seed-0"
+        / "attempt.json"
+    )
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    payload["adaptive_components_received_boundary"] = True
+    payload.pop("payload_sha256", None)
+    payload["payload_sha256"] = _canonical_sha256(payload)
+    _write_json_bytes(path, payload)
+
+    result = compare_phase_c_corrected_output(
+        accepted_root=accepted_root,
+        fresh_root=fresh_root,
+        accepted_config_path=accepted_config_path,
+        fresh_config_path=fresh_config_path,
+    )
+
+    assert result["pass"] is False
+    assert "fresh:attempt_boundary_contamination_flag" in result["failures"]
+
+
+def test_phase_c_corrected_output_rejects_boundary_index_change(
+    tmp_path: Path,
+) -> None:
+    accepted_root, fresh_root, accepted_config_path, fresh_config_path = (
+        _phase_c_corrected_output_fixture(tmp_path)
+    )
+    path = (
+        fresh_root
+        / "phase_c_offline_evaluation_v1_1"
+        / "seed-0"
+        / "phase_c_seed_manifest.json"
+    )
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    payload["boundary_index"] = PHASE_C_BOUNDARY_INDEX + 1
+    _rewrite_phase_c_seed_manifest(path, payload)
+
+    result = compare_phase_c_corrected_output(
+        accepted_root=accepted_root,
+        fresh_root=fresh_root,
+        accepted_config_path=accepted_config_path,
+        fresh_config_path=fresh_config_path,
+    )
+
+    assert result["pass"] is False
+    assert "fresh:phase_c_boundary_index_mismatch" in result["failures"]
+
+
+def test_phase_c_corrected_output_rejects_metric_schema_change(
+    tmp_path: Path,
+) -> None:
+    accepted_root, fresh_root, accepted_config_path, fresh_config_path = (
+        _phase_c_corrected_output_fixture(tmp_path)
+    )
+    output_root = (
+        fresh_root / "phase_c_offline_evaluation_v1_1" / "seed-0"
+    )
+    path = output_root / "d_drift_evaluation.json"
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    del payload["metrics_by_neural_weight"]["0.5"]["post"]["roc_auc"]
+    rewritten = _rewrite_phase_c_evaluation(path, payload)
+    seed_path = output_root / "phase_c_seed_manifest.json"
+    seed_payload = json.loads(seed_path.read_text(encoding="utf-8"))
+    seed_payload["arm_summary_sha256"]["d_drift"] = rewritten["summary_sha256"]
+    _rewrite_phase_c_seed_manifest(seed_path, seed_payload)
+
+    result = compare_phase_c_corrected_output(
+        accepted_root=accepted_root,
+        fresh_root=fresh_root,
+        accepted_config_path=accepted_config_path,
+        fresh_config_path=fresh_config_path,
+    )
+
+    assert result["pass"] is False
+    assert (
+        "fresh:d_drift:metrics_field_set_mismatch:0.5:post"
+        in result["failures"]
+    )
+
+
+def test_phase_c_corrected_output_rejects_retention_schema_change(
+    tmp_path: Path,
+) -> None:
+    accepted_root, fresh_root, accepted_config_path, fresh_config_path = (
+        _phase_c_corrected_output_fixture(tmp_path)
+    )
+    path = (
+        fresh_root
+        / "phase_c_offline_evaluation_v1_1"
+        / "seed-0"
+        / "phase_c_seed_manifest.json"
+    )
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    del payload["neural_retention_probes"][0]["metrics"][
+        "development_roc_auc"
+    ]
+    _rewrite_phase_c_seed_manifest(path, payload)
+
+    result = compare_phase_c_corrected_output(
+        accepted_root=accepted_root,
+        fresh_root=fresh_root,
+        accepted_config_path=accepted_config_path,
+        fresh_config_path=fresh_config_path,
+    )
+
+    assert result["pass"] is False
+    assert (
+        "fresh:retention_probe_metric_key_set_mismatch:0"
+        in result["failures"]
+    )
+
+
+def test_phase_c_dependency_gate_requires_verified_phase_a_b_and_preconditions() -> None:
+    blocked = _blocked_phase_c_output_for_dependencies(
+        phase_a_pass=True,
+        phase_b_pass=False,
+        preconditions_pass=True,
+    )
+    assert blocked["pass"] is False
+    assert blocked["dependency_gate_pass"] is False
+    assert blocked["failures"] == [
+        "phase_c_dependency_gate:phase_b_not_verified"
+    ]
+
 
 def _write_stage1_contract_and_report(
     tmp_path: Path,

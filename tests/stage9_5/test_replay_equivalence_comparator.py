@@ -307,6 +307,19 @@ def _write_phase_b_arm_fixture(
     return body
 
 
+def _rewrite_phase_b_arm_manifest(
+    root: Path,
+    payload: dict[str, Any],
+) -> dict[str, Any]:
+    body = copy.deepcopy(payload)
+    body.pop("payload_sha256", None)
+    body.pop("manifest_sha256", None)
+    body["manifest_sha256"] = _canonical_sha256(body)
+    body["payload_sha256"] = _canonical_sha256(body)
+    _write_json_bytes(root / "arm_manifest.json", body)
+    return body
+
+
 def _write_phase_b_seed_fixture(
     root: Path,
     *,
@@ -429,6 +442,88 @@ def test_phase_b_arm_rejects_nonmaintenance_state_change(
     assert result["pass"] is False
     assert (
         "nonmaintenance_file_descriptor_mismatch:initial_state"
+        in result["failures"]
+    )
+
+
+def test_phase_b_arm_rejects_forged_manifest_self_hash_before_projection(
+    tmp_path: Path,
+) -> None:
+    _write_phase_b_arm_fixture(
+        tmp_path / "accepted",
+        arm="d_drift",
+    )
+    fresh = _write_phase_b_arm_fixture(
+        tmp_path / "fresh",
+        arm="d_drift",
+    )
+    fresh["manifest_sha256"] = "9" * 64
+    fresh["payload_sha256"] = _canonical_sha256(
+        {key: value for key, value in fresh.items() if key != "payload_sha256"}
+    )
+    _write_json_bytes(tmp_path / "fresh" / "arm_manifest.json", fresh)
+
+    result = compare_phase_b_arm(
+        accepted_arm_root=tmp_path / "accepted",
+        fresh_arm_root=tmp_path / "fresh",
+        seed=0,
+        arm="d_drift",
+    )
+
+    assert result["pass"] is False
+    assert "fresh_arm:manifest_sha256_mismatch" in result["failures"]
+
+
+def test_phase_b_arm_keeps_version_descriptor_hash_exact(
+    tmp_path: Path,
+) -> None:
+    accepted_root = tmp_path / "accepted"
+    fresh_root = tmp_path / "fresh"
+    accepted = _write_phase_b_arm_fixture(
+        accepted_root,
+        arm="d_drift",
+    )
+    fresh = _write_phase_b_arm_fixture(
+        fresh_root,
+        arm="d_drift",
+    )
+
+    accepted_version = accepted_root / "versions" / "0001-d-s0-v0001.json"
+    fresh_version = fresh_root / "versions" / "0001-d-s0-v0001.json"
+    accepted_sha = _write_json_bytes(
+        accepted_version,
+        {"effective_index": 100, "state": {"rule": "accepted"}},
+    )
+    fresh_sha = _write_json_bytes(
+        fresh_version,
+        {"effective_index": 100, "state": {"rule": "fresh"}},
+    )
+
+    accepted_files = accepted["files"]
+    fresh_files = fresh["files"]
+    assert isinstance(accepted_files, dict)
+    assert isinstance(fresh_files, dict)
+    accepted_files["version_0001"] = {
+        "path": "versions/0001-d-s0-v0001.json",
+        "sha256": accepted_sha,
+    }
+    fresh_files["version_0001"] = {
+        "path": "versions/0001-d-s0-v0001.json",
+        "sha256": fresh_sha,
+    }
+    _rewrite_phase_b_arm_manifest(accepted_root, accepted)
+    _rewrite_phase_b_arm_manifest(fresh_root, fresh)
+
+    result = compare_phase_b_arm(
+        accepted_arm_root=accepted_root,
+        fresh_arm_root=fresh_root,
+        seed=0,
+        arm="d_drift",
+    )
+
+    assert result["pass"] is False
+    assert (
+        "nonmaintenance_file_descriptor_mismatch:version_0001"
         in result["failures"]
     )
 

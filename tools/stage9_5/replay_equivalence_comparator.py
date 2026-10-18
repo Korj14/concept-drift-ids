@@ -3017,6 +3017,11 @@ def run(
                         else []
                     ),
                     *(
+                        ["accepted_stage8_archive_identity_not_verified"]
+                        if not accepted_archive["pass"]
+                        else []
+                    ),
+                    *(
                         ["stage1_reconstruction_evidence_not_verified"]
                         if not stage1["pass"]
                         else []

@@ -352,6 +352,27 @@ def _verify_accepted_stage8_archive_root(
         stage8_cfg = identity.get("stage8_compact")
         if not isinstance(stage8_cfg, dict):
             raise TypeError("stage8_compact must be an object")
+
+        compact_manifest_path = PROJECT_ROOT / str(stage8_cfg["manifest_path"])
+        compact_manifest = _load_json(compact_manifest_path)
+        expected_manifest_sha = stage8_cfg.get("manifest_sha256")
+        if (
+            not isinstance(expected_manifest_sha, str)
+            or SHA256_RE.fullmatch(expected_manifest_sha) is None
+        ):
+            raise ValueError("invalid frozen Stage-8 compact manifest identity")
+        if compact_manifest.get("manifest_sha256") != expected_manifest_sha:
+            raise ValueError("Stage-8 compact manifest identity mismatch")
+        compact_hash_failures = _verify_run_manifest_hashes(
+            compact_manifest,
+            label="accepted_stage8_compact_manifest",
+        )
+        if compact_hash_failures:
+            raise ValueError(";".join(compact_hash_failures))
+
+        compact_files = compact_manifest.get("files")
+        if not isinstance(compact_files, list):
+            raise TypeError("Stage-8 compact files must be a list")
         requirements = _stage8_archive_requirements(stage8_cfg)
     except (OSError, json.JSONDecodeError, KeyError, TypeError, ValueError) as exc:
         return {
@@ -360,8 +381,11 @@ def _verify_accepted_stage8_archive_root(
                 "accepted_stage8_archive_inventory_invalid:"
                 f"{type(exc).__name__}:{exc}"
             ],
+            "compact_requirement_count": None,
+            "compact_verified_count": 0,
             "requirement_count": None,
             "verified_count": 0,
+            "compact_inventory_sha256": None,
             "inventory_sha256": None,
         }
 
@@ -377,10 +401,61 @@ def _verify_accepted_stage8_archive_root(
         return {
             "pass": False,
             "failures": failures,
+            "compact_requirement_count": len(compact_files),
+            "compact_verified_count": 0,
             "requirement_count": requirement_count,
             "verified_count": 0,
+            "compact_inventory_sha256": _canonical_sha256(compact_files),
             "inventory_sha256": _canonical_sha256(requirements),
         }
+
+    frozen_large_root = compact_manifest.get("large_artifact_root")
+    if frozen_large_root != "artifacts/cd_primary_v1":
+        failures.append("accepted_stage8_compact_large_root_mismatch")
+    large_root = Path("artifacts/cd_primary_v1")
+
+    compact_verified = 0
+    for descriptor in compact_files:
+        if not isinstance(descriptor, dict):
+            failures.append("accepted_stage8_compact_descriptor_invalid")
+            continue
+        source_path = descriptor.get("source_path")
+        expected_sha = descriptor.get("sha256")
+        if not isinstance(source_path, str):
+            failures.append("accepted_stage8_compact_source_path_invalid")
+            continue
+        if (
+            not isinstance(expected_sha, str)
+            or SHA256_RE.fullmatch(expected_sha) is None
+        ):
+            failures.append(
+                f"accepted_stage8_compact_sha256_invalid:{source_path}"
+            )
+            continue
+        try:
+            relative_path = Path(source_path).relative_to(large_root)
+        except ValueError:
+            failures.append(
+                f"accepted_stage8_compact_source_outside_root:{source_path}"
+            )
+            continue
+        path = (resolved_root / relative_path).resolve()
+        if not path.is_relative_to(resolved_root):
+            failures.append(
+                f"accepted_stage8_compact_path_escape:{source_path}"
+            )
+            continue
+        if not path.is_file():
+            failures.append(
+                f"accepted_stage8_compact_missing_file:{relative_path.as_posix()}"
+            )
+            continue
+        if _sha256_file(path) != expected_sha:
+            failures.append(
+                f"accepted_stage8_compact_sha256_mismatch:{relative_path.as_posix()}"
+            )
+            continue
+        compact_verified += 1
 
     verified = 0
     for item in requirements:
@@ -422,15 +497,18 @@ def _verify_accepted_stage8_archive_root(
     return {
         "pass": (
             not failures
+            and compact_verified == len(compact_files)
             and requirement_count == 145
             and verified == requirement_count
         ),
         "failures": failures,
+        "compact_requirement_count": len(compact_files),
+        "compact_verified_count": compact_verified,
         "requirement_count": requirement_count,
         "verified_count": verified,
+        "compact_inventory_sha256": _canonical_sha256(compact_files),
         "inventory_sha256": _canonical_sha256(requirements),
     }
-
 
 def _verify_stage9_5_1_recovery_report(
     report_path: Path,

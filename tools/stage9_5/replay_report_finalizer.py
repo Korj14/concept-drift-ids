@@ -80,6 +80,17 @@ def _comparison_failures(
     if not isinstance(audited_head, str) or SHA40_RE.fullmatch(audited_head) is None:
         failures.append("invalid_comparison_evidence_audited_head")
 
+    recovery_hash = evidence.get(
+        "stage9_5_1_recovery_report_canonical_sha256"
+    )
+    if (
+        not isinstance(recovery_hash, str)
+        or SHA256_RE.fullmatch(recovery_hash) is None
+    ):
+        failures.append(
+            "invalid_stage9_5_1_recovery_report_canonical_sha256"
+        )
+
     embedded_hash = evidence.get("canonical_sha256")
     if not isinstance(embedded_hash, str) or SHA256_RE.fullmatch(
         embedded_hash
@@ -149,6 +160,9 @@ def _build_report(
             "comparison_evidence_canonical_sha256": comparison_hash,
             "stage1_reconstruction_report_canonical_sha256": evidence.get(
                 "stage1_reconstruction_report_canonical_sha256"
+            ),
+            "stage9_5_1_recovery_report_canonical_sha256": evidence.get(
+                "stage9_5_1_recovery_report_canonical_sha256"
             ),
         },
         "replay_equivalence": {

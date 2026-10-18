@@ -111,7 +111,6 @@ def test_phase_a_projection_normalizes_only_frozen_runtime_diagnostics(
         accepted_seed_root=tmp_path / "accepted",
         fresh_seed_root=tmp_path / "fresh",
         seed=0,
-        phase_a_result=_verified_phase_a_result(),
     )
 
     assert result["pass"] is True
@@ -142,7 +141,6 @@ def test_phase_a_projection_rejects_non_diagnostic_runtime_change(
         accepted_seed_root=tmp_path / "accepted",
         fresh_seed_root=tmp_path / "fresh",
         seed=0,
-        phase_a_result=_verified_phase_a_result(),
     )
 
     assert result["pass"] is False
@@ -160,7 +158,6 @@ def test_phase_a_comparator_rejects_descriptor_linked_byte_mismatch(
         accepted_seed_root=tmp_path / "accepted",
         fresh_seed_root=tmp_path / "fresh",
         seed=0,
-        phase_a_result=_verified_phase_a_result(),
     )
 
     assert result["pass"] is False
@@ -185,7 +182,6 @@ def test_phase_a_comparator_rejects_forged_manifest_self_hash(
         accepted_seed_root=tmp_path / "accepted",
         fresh_seed_root=tmp_path / "fresh",
         seed=0,
-        phase_a_result=_verified_phase_a_result(),
     )
 
     assert result["pass"] is False

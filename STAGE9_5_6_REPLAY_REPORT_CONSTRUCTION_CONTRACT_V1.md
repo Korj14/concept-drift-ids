@@ -93,16 +93,21 @@ equality. All descriptor hashes, checkpoint identities, runtime fields other
 than the three above, protocol/configuration fields, and scientific content
 remain exact.
 
-For Phase B, all five seeds and all three arms are required. The comparator
-is now implemented and prospectively frozen in the same comparator module and
-test file. The original accepted `maintenance.jsonl` records remain mandatory.
+For Phase B, **all five seeds and exactly all three frozen arms per seed** are
+required. Phase B is considered implemented only under the seed-level contract
+`stage9.5-6-phase-b-seed-manifest-projection-v1` at
+`data/manifests/stage9_5_6_phase_b_seed_manifest_projection_v1.json`.
+
+The original accepted `maintenance.jsonl` records remain mandatory for every
+arm. There is **no summary fallback**: an intact maintenance summary cannot
+substitute for a missing or unreadable accepted maintenance archive.
 
 For each arm, raw `payload_sha256` and `manifest_sha256` values are verified
 first, every file descriptor is constrained to the arm root, and every
 descriptor SHA-256 is checked against the referenced bytes. Initial state,
 final state, and all version-file descriptors remain exact.
 
-The ordered maintenance records are then compared after removing only the
+The ordered maintenance records are compared after removing only the
 predeclared timing fields:
 
 - `shap_seconds`;
@@ -122,16 +127,41 @@ The arm-level maintenance summary removes only:
 After raw integrity verification, the arm projection removes the raw
 `files.maintenance.sha256`, `manifest_sha256`, and `payload_sha256`
 identities because those hashes are transitively timing-dependent. No other
-arm-level fields are relaxed.
+arm-level field is relaxed.
 
-At the seed-level Phase-B manifest, each arm descriptor's raw
-`sha256` and `manifest_sha256` values are likewise removed only after the
-referenced arm manifest has passed raw integrity verification and projected
-arm equality. The seed manifest's own `payload_sha256` and
-`manifest_sha256` are then removed for projected equality. All other fields
-remain exact, including `git_commit`, configuration identities, all shared
-Phase-A identities, operator identity, descriptor paths,
-`primary_boundary_scored`, and `arm_isolation_sha256`.
+The seed-level comparator now requires a **passed aggregate Phase-A comparator
+result** containing the verified five-seed
+`shared_identity.identity_sha256` map. For both accepted and fresh Phase-B
+seed manifests:
+
+- `shared_identity_sha256` must equal the verified Phase-A identity for that
+  seed;
+- `all_phase_a_shared_identity_sha256` must exactly equal the verified
+  five-seed Phase-A identity map;
+- the arm key set must be exactly
+  `c_frozen_symbolic`, `d_drift`, and `d_periodic`;
+- each arm descriptor path must be exactly
+  `<arm>/arm_manifest.json`;
+- each descriptor `manifest_sha256` must bind to the raw manifest identity
+  returned by that arm's fresh verification;
+- each corresponding accepted/fresh projected arm identity must be a valid,
+  equal SHA-256 before the seed-level transitive hashes may be projected away.
+
+Only after those bindings pass are the seed manifest's own
+`payload_sha256` / `manifest_sha256` and each arm descriptor's raw
+`sha256` / `manifest_sha256` removed from the seed projection. Those
+descriptor hashes are downstream solely of the already frozen timing
+projection. All other seed-manifest content remains exact, including
+`git_commit`, configuration identities, verified Phase-A identities,
+operator identity, descriptor paths, `primary_boundary_scored`, and
+`arm_isolation_sha256`.
+
+Phase-B completion therefore requires seeds 0-4, all three verified arms for
+every seed, mandatory accepted maintenance JSONL evidence, the exact frozen
+timing exclusions only, and zero missing/mismatched non-diagnostic content.
+Any missing seed, missing/extra arm, missing maintenance archive, Phase-A
+identity mismatch, descriptor/arm binding mismatch, projected-arm mismatch, or
+other seed-manifest difference fails closed.
 
 For Phase C, the frozen rerun seed is seed 0. The precondition layer is now
 implemented and prospectively frozen.

@@ -247,10 +247,12 @@ python tools/stage9_5/replay_equivalence_comparator.py \
   --accepted-correction-config data/manifests/cd_primary_run_config_v1_1.json \
   --fresh-correction-config <correction-worktree>/data/manifests/cd_primary_run_config_v1_1.json \
   --stage1-report results/audits/stage9_5_full_seed_rerun_v1/stage1_reconstruction_report.json \
-  --output results/audits/stage9_5_full_seed_rerun_v1/replay_comparison_evidence.json
+  --stage9-5-1-recovery-report results/audits/stage9_5_full_seed_rerun_v1/fresh_clone_reconstruction_report.json \
+  --output results/audits/stage9_5_full_seed_rerun_v1/replay_comparison_evidence.json \
+  --finalizer-output-dir results/audits/stage9_5_full_seed_rerun_v1
 ```
 
-Do not continue unless the comparator exits successfully and the generated evidence has:
+The comparator now verifies the Stage-9.5-1 recovery report before accepting the replay comparison and passes its exact generated comparison-evidence file directly into the frozen replay-report finalizer. Do not continue unless the integrated command exits successfully and the generated comparison evidence has:
 
 - all five Phase-A seeds complete;
 - all five Phase-B seeds complete;
@@ -267,21 +269,22 @@ Do not continue unless the comparator exits successfully and the generated evide
 - `unresolved_class_a = []`;
 - `stage10_outcomes_accessed = false`.
 
-## 12. Run the deterministic replay-report finalizer
+## 12. Verify the integrated replay-report finalizer output
 
-Using the comparator-produced evidence:
+The Stage-9.5-6 comparator command in Step 11 invokes the already-frozen replay-report finalizer directly on the exact comparison-evidence file it just wrote. There is no separate operator-authored success step.
 
-```bash
-python tools/stage9_5/replay_report_finalizer.py \
-  --comparison-evidence results/audits/stage9_5_full_seed_rerun_v1/replay_comparison_evidence.json \
-  --output-dir results/audits/stage9_5_full_seed_rerun_v1
-```
-
-This produces the canonical:
+Required output:
 
 `results/audits/stage9_5_full_seed_rerun_v1/replay_equivalence_report.json`
 
-Do not hand-edit that report.
+The replay report must bind:
+
+- the comparison-evidence canonical SHA-256;
+- the Stage-9.5-1 recovery-report canonical SHA-256;
+- the frozen comparator/finalizer identities;
+- zero mismatches, failures, blockers, and unresolved Class-A issues.
+
+Do not hand-edit or regenerate that report through a different path.
 
 ## 13. Construct closure metadata only from verified reports
 

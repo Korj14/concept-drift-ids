@@ -183,5 +183,24 @@
   "seed_level_phase_b_manifest_projection_frozen_by_this_contract": false,
   "seed_level_phase_b_manifest_implementation_modified_by_this_contract": false,
   "scientific_objects_modified": false,
-  "stage10_execution_permitted": false
+  "stage10_execution_permitted": false,
+  "implementation_binding": {
+    "comparator": {
+      "path": "tools/stage9_5/replay_equivalence_comparator.py",
+      "blob_sha1": "455fb8729851a37a797622599ecc77357c46661e",
+      "projection_function": "_project_phase_b_arm_manifest",
+      "comparator_function": "compare_phase_b_arm",
+      "summary_timing_field_constant": "PHASE_B_SUMMARY_TIMING_FIELDS"
+    },
+    "tests": {
+      "path": "tests/stage9_5/test_replay_equivalence_comparator.py",
+      "blob_sha1": "6e2f2d4f7fed7a3cbb0dc2c80fdd3b66768e2696",
+      "authoritative_arm_layer_tests": [
+        "test_phase_b_arm_accepts_only_predeclared_timing_differences",
+        "test_phase_b_arm_rejects_scientific_maintenance_change",
+        "test_phase_b_arm_rejects_nonmaintenance_state_change"
+      ],
+      "seed_level_phase_b_tests_are_not_authority_for_this_contract": true
+    }
+  }
 }

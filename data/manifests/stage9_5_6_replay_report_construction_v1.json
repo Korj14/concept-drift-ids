@@ -147,7 +147,7 @@
         "seed_manifest_projection": {
           "standalone_contract_id": "stage9.5-6-phase-b-seed-manifest-projection-v1",
           "standalone_contract_path": "data/manifests/stage9_5_6_phase_b_seed_manifest_projection_v1.json",
-          "standalone_contract_blob_sha1": "3a49eb75e5c24f9378787c420cc1a6c35e890fd6",
+          "standalone_contract_blob_sha1": "3ab53d1af9131a1147cee60df293ff3e2900fb47",
           "all_five_seeds_required": true,
           "exact_three_arms_per_seed_required": true,
           "phase_a_binding_rule": "each seed manifest shared_identity_sha256 and all_phase_a_shared_identity_sha256 must bind exactly to the passed aggregate Phase-A comparator result",

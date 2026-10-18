@@ -1560,3 +1560,83 @@ read-only revalidation of the connected Dropbox recovery surface, and explicit
 preservation of the remaining connector-to-verifier materialization boundary
 for the final reviewer-facing Stage-9.5 retrospective.
 
+## Integrated Stage-9.5-6 comparison-evidence producer tranche — 18 October 2026
+
+This chat resumed with an explicit instruction to keep the tranche small,
+re-read PR #21 before mutation, integrate the already-frozen Phase-A/Phase-B/
+Phase-C/failure-lineage/correction-config checks into the deterministic
+comparison-evidence producer, bind that output to the frozen replay-report
+finalizer, add synthetic-only integration tests, and **not execute the real
+historical replay**.
+
+The live PR head had advanced from the previously observed
+`cf78ba076a12693bc1b89ac52181fc8f20091fdc` to
+`2e67f176cf9ec4e9cf8499d1d489c29f0fe47b38`, a 154-commit descendant. That
+delta was reconciled before mutation. It showed that Phase-A, Phase-B,
+Phase-C preconditions, exact failed-v1 lineage, corrected Phase-C seed-0 output,
+Stage-1 reconstruction evidence, correction-config comparison, and the
+replay-report finalizer were already implemented with extensive synthetic
+tests. The tranche therefore did **not** reimplement those components.
+
+The integration gap was narrower:
+
+- the deterministic producer did not yet require the frozen Stage-9.5-1 v1.2
+  recovery report as an explicit upstream proof that both external artifact
+  families were verified;
+- the comparator and replay-report finalizer remained two operator steps rather
+  than one bound producer-to-finalizer path.
+
+The producer was therefore extended prospectively, before any historical replay
+outcome access, to verify a canonical Stage-9.5-1 v1.2 recovery report. It
+requires:
+
+- `audit_id = stage9.5-1-fresh-clone-reconstruction-v1_2`;
+- `status = pass` and `pass = true`;
+- zero report failures and blockers;
+- canonical report SHA-256 integrity;
+- a repository head in the current assurance ancestry;
+- System-A verified seeds exactly `[0,1,2,3,4]`, with no missing or
+  mismatched checkpoint bytes;
+- Stage-8 large-archive `requirement_count = 145` and
+  `verified_count = 145`, with no missing or mismatched descriptor-linked
+  files.
+
+A missing or incomplete checkpoint family produces the explicit
+`system_a_checkpoint_family_not_verified` blocker. A missing or incomplete
+Stage-8 heavy archive produces
+`stage8_large_artifact_archive_not_verified`. Either condition also produces
+the Class-A closure blocker `stage9_5_1_recovery_not_verified`.
+
+The integrated producer now also emits explicit blockers for failed Phase-A,
+failed Phase-B, unverified accepted Phase-B maintenance records, failed
+Phase-C preconditions, failed corrected Phase-C output, and unverified Stage-1
+reconstruction evidence. Any such state keeps
+`comparison_complete = false`, `source_evidence_complete = false`, and
+`unresolved_class_a` non-empty.
+
+The exact comparison-evidence file written by the producer is now passed
+directly to the already-frozen replay-report finalizer. The finalizer additionally
+requires and preserves the canonical SHA-256 of the successful Stage-9.5-1
+recovery report. This removes a manual handoff point between comparator output
+and replay-report construction.
+
+Synthetic integration tests were added for:
+
+- complete recovery + Phase-A/B/C + finalizer success;
+- each external artifact family missing independently;
+- incomplete Phase-B / unavailable accepted maintenance evidence;
+- failed exact failure-lineage or correction-config scientific-block equality;
+- direct Stage-9.5-1 recovery-report verification;
+- finalizer rejection when the recovery-report canonical SHA is absent.
+
+No recovered checkpoint bytes, Stage-8 heavy archive bytes, fresh replay
+artifacts, or historical Phase-A/B/C execution were accessed or produced in
+this tranche. The real historical replay remained unexecuted. No accepted
+Stage-8/9 scientific result, treatment, estimand, metric, or claim boundary was
+changed.
+
+This integration tranche must remain visible in the final reviewer-facing
+retrospective as the point where the previously separate frozen assurance
+components were joined into a single fail-closed producer/finalizer pipeline
+without outcome access.
+

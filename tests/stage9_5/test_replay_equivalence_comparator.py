@@ -3002,9 +3002,37 @@ def test_integrated_pipeline_binds_recovery_comparator_and_finalizer(
     ).is_file()
 
 
-def test_accepted_root_binding_verifies_full_committed_compact_surface() -> None:
+def test_accepted_root_binding_verifies_full_committed_compact_surface(
+    tmp_path: Path,
+) -> None:
+    compact_root = (
+        comparator_module.PROJECT_ROOT
+        / "results"
+        / "frozen"
+        / "cd_primary_v1"
+    )
+    compact_manifest = json.loads(
+        (compact_root / "compact_export_manifest.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    accepted_root = tmp_path / "accepted"
+    frozen_large_root = Path("artifacts/cd_primary_v1")
+
+    for descriptor in compact_manifest["files"]:
+        source_relative = Path(descriptor["source_path"]).relative_to(
+            frozen_large_root
+        )
+        export_relative = Path(descriptor["export_path"]).relative_to(
+            Path("results/frozen/cd_primary_v1")
+        )
+        source = compact_root / export_relative
+        target = accepted_root / source_relative
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes(source.read_bytes())
+
     result = comparator_module._verify_accepted_stage8_archive_root(
-        comparator_module.PROJECT_ROOT / "results" / "frozen" / "cd_primary_v1"
+        accepted_root
     )
 
     assert result["compact_requirement_count"] == 109

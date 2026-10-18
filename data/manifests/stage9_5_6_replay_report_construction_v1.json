@@ -463,7 +463,7 @@
     "accepted_stage8_archive_identity_verified": true
   },
   "hostile_audit": {
-    "accepted_root_binding_rule": "The comparator must independently verify the actual accepted_root against the same frozen 145-file Stage-8 descriptor-linked inventory used by Stage-9.5-1; a successful recovery report alone is insufficient.",
-    "noncanonical_json_rule": "Comparator JSON and JSONL inputs reject NaN, Infinity, and -Infinity before any diagnostic/timing projection."
+    "accepted_root_binding_rule": "Before comparison, the actual accepted_root must independently match the frozen accepted Stage-8 compact export surface (all 109 compact file descriptors by exact SHA-256) and the same frozen 145-file descriptor-linked heavy inventory used by Stage-9.5-1. A successful recovery report without this content binding is insufficient.",
+    "noncanonical_json_rule": "Comparator JSON and JSONL inputs reject NaN, Infinity, and -Infinity before any diagnostic or timing projection."
   }
 }

@@ -139,7 +139,10 @@
             "maintenance_summary.compute_seconds_per_opportunity",
             "maintenance_summary.compute_seconds_per_publication"
           ],
-          "equality_rule": "projected accepted and fresh arm manifests must have identical canonical JSON SHA-256 and exact recursive content equality"
+          "equality_rule": "projected accepted and fresh arm manifests must have identical canonical JSON SHA-256 and exact recursive content equality",
+          "standalone_contract_id": "stage9.5-6-phase-b-arm-manifest-projection-v1",
+          "standalone_contract_path": "data/manifests/stage9_5_6_phase_b_arm_manifest_projection_v1.json",
+          "standalone_contract_blob_sha1": "27a03ee19ccc31f27449be98da17120c01955cb1"
         },
         "seed_manifest_projection": {
           "removed_after_raw_integrity_and_arm_projection_verification": [

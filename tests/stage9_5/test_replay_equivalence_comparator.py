@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import Any
 
 from tools.stage9_5.replay_equivalence_comparator import (
+    ARM_NAMES,
     NORMALIZED_DIAGNOSTIC,
     PHASE_B_RECORD_TIMING_FIELDS,
     _canonical_sha256,
@@ -318,6 +319,70 @@ def _rewrite_phase_b_arm_manifest(
     body["payload_sha256"] = _canonical_sha256(body)
     _write_json_bytes(root / "arm_manifest.json", body)
     return body
+
+
+def _read_phase_b_maintenance_records(root: Path) -> list[dict[str, Any]]:
+    path = root / "maintenance.jsonl"
+    return [
+        json.loads(line)
+        for line in path.read_text(encoding="utf-8").splitlines()
+        if line
+    ]
+
+
+def _write_phase_b_maintenance_records(
+    root: Path,
+    payload: dict[str, Any],
+    records: list[dict[str, Any]],
+    *,
+    recompute_manifest_hash: bool,
+) -> dict[str, Any]:
+    path = root / "maintenance.jsonl"
+    path.write_text(
+        "".join(
+            json.dumps(item, sort_keys=True, separators=(",", ":")) + "\n"
+            for item in records
+        ),
+        encoding="utf-8",
+    )
+    body = copy.deepcopy(payload)
+    files = body["files"]
+    assert isinstance(files, dict)
+    maintenance = files["maintenance"]
+    assert isinstance(maintenance, dict)
+    maintenance["sha256"] = _sha256_file(path)
+
+    if recompute_manifest_hash:
+        return _rewrite_phase_b_arm_manifest(root, body)
+
+    # Deliberately preserve the stale manifest_sha256 to test the frozen
+    # transitive dependency from maintenance bytes into the arm manifest.
+    body["payload_sha256"] = _canonical_sha256(
+        {key: value for key, value in body.items() if key != "payload_sha256"}
+    )
+    _write_json_bytes(root / "arm_manifest.json", body)
+    return body
+
+
+def _add_phase_b_version_descriptor(
+    root: Path,
+    payload: dict[str, Any],
+    *,
+    rule_value: str,
+) -> dict[str, Any]:
+    version_path = root / "versions" / "0001-d-s0-v0001.json"
+    version_sha = _write_json_bytes(
+        version_path,
+        {"effective_index": 100, "state": {"rule": rule_value}},
+    )
+    body = copy.deepcopy(payload)
+    files = body["files"]
+    assert isinstance(files, dict)
+    files["version_0001"] = {
+        "path": "versions/0001-d-s0-v0001.json",
+        "sha256": version_sha,
+    }
+    return _rewrite_phase_b_arm_manifest(root, body)
 
 
 def _write_phase_b_seed_fixture(
@@ -1805,4 +1870,237 @@ def test_phase_b_maintenance_comparator_missing_accepted_evidence_fails_closed(
         )
         for failure in result["failures"]
     )
+
+def test_phase_b_arm_valid_timing_only_variation_all_frozen_arms(
+    tmp_path: Path,
+) -> None:
+    for arm in ARM_NAMES:
+        accepted_root = tmp_path / arm / "accepted"
+        fresh_root = tmp_path / arm / "fresh"
+        _write_phase_b_arm_fixture(
+            accepted_root,
+            arm=arm,
+            timing_scale=1.0,
+        )
+        _write_phase_b_arm_fixture(
+            fresh_root,
+            arm=arm,
+            timing_scale=7.0,
+        )
+
+        result = compare_phase_b_arm(
+            accepted_arm_root=accepted_root,
+            fresh_arm_root=fresh_root,
+            seed=0,
+            arm=arm,
+        )
+
+        assert result["pass"] is True
+        assert result["failures"] == []
+        assert result["mismatch_count"] == 0
+        assert (
+            result["maintenance_comparator"]
+            == "stage9.5-6-phase-b-maintenance-record-projection-v1"
+        )
+        assert (
+            result["arm_manifest_projection"]
+            == "stage9.5-6-phase-b-arm-manifest-projection-v1"
+        )
+
+
+def test_phase_b_arm_rejects_altered_lifecycle_scientific_field(
+    tmp_path: Path,
+) -> None:
+    accepted_root = tmp_path / "accepted"
+    fresh_root = tmp_path / "fresh"
+    _write_phase_b_arm_fixture(accepted_root, arm="d_drift")
+    fresh = _write_phase_b_arm_fixture(fresh_root, arm="d_drift")
+
+    records = _read_phase_b_maintenance_records(fresh_root)
+    records[0]["lifecycle"] = {
+        "decision": "retire",
+        "rule_id": "changed-rule",
+    }
+    _write_phase_b_maintenance_records(
+        fresh_root,
+        fresh,
+        records,
+        recompute_manifest_hash=True,
+    )
+
+    result = compare_phase_b_arm(
+        accepted_arm_root=accepted_root,
+        fresh_arm_root=fresh_root,
+        seed=0,
+        arm="d_drift",
+    )
+
+    assert result["pass"] is False
+    assert any(
+        path.startswith("maintenance[0].lifecycle")
+        for path in result["mismatches"]
+    )
+
+
+def test_phase_b_arm_rejects_altered_initial_or_final_state(
+    tmp_path: Path,
+) -> None:
+    for descriptor_name in ("initial_state", "final_state"):
+        accepted_root = tmp_path / descriptor_name / "accepted"
+        fresh_root = tmp_path / descriptor_name / "fresh"
+        _write_phase_b_arm_fixture(
+            accepted_root,
+            arm="d_periodic",
+        )
+        fresh = _write_phase_b_arm_fixture(
+            fresh_root,
+            arm="d_periodic",
+        )
+
+        files = fresh["files"]
+        assert isinstance(files, dict)
+        descriptor = files[descriptor_name]
+        assert isinstance(descriptor, dict)
+        state_path = fresh_root / str(descriptor["path"])
+        descriptor["sha256"] = _write_json_bytes(
+            state_path,
+            {"state": f"altered-{descriptor_name}"},
+        )
+        _rewrite_phase_b_arm_manifest(fresh_root, fresh)
+
+        result = compare_phase_b_arm(
+            accepted_arm_root=accepted_root,
+            fresh_arm_root=fresh_root,
+            seed=0,
+            arm="d_periodic",
+        )
+
+        assert result["pass"] is False
+        assert (
+            f"nonmaintenance_file_descriptor_mismatch:{descriptor_name}"
+            in result["failures"]
+        )
+
+
+def test_phase_b_arm_rejects_altered_rule_version_file(
+    tmp_path: Path,
+) -> None:
+    accepted_root = tmp_path / "accepted"
+    fresh_root = tmp_path / "fresh"
+    accepted = _write_phase_b_arm_fixture(
+        accepted_root,
+        arm="d_drift",
+    )
+    fresh = _write_phase_b_arm_fixture(
+        fresh_root,
+        arm="d_drift",
+    )
+    _add_phase_b_version_descriptor(
+        accepted_root,
+        accepted,
+        rule_value="same-rule",
+    )
+    fresh = _add_phase_b_version_descriptor(
+        fresh_root,
+        fresh,
+        rule_value="same-rule",
+    )
+
+    files = fresh["files"]
+    assert isinstance(files, dict)
+    version = files["version_0001"]
+    assert isinstance(version, dict)
+    version_path = fresh_root / str(version["path"])
+    version["sha256"] = _write_json_bytes(
+        version_path,
+        {"effective_index": 100, "state": {"rule": "altered-rule"}},
+    )
+    _rewrite_phase_b_arm_manifest(fresh_root, fresh)
+
+    result = compare_phase_b_arm(
+        accepted_arm_root=accepted_root,
+        fresh_arm_root=fresh_root,
+        seed=0,
+        arm="d_drift",
+    )
+
+    assert result["pass"] is False
+    assert (
+        "nonmaintenance_file_descriptor_mismatch:version_0001"
+        in result["failures"]
+    )
+
+
+def test_phase_b_arm_rejects_altered_descriptor_linked_bytes(
+    tmp_path: Path,
+) -> None:
+    accepted_root = tmp_path / "accepted"
+    fresh_root = tmp_path / "fresh"
+    _write_phase_b_arm_fixture(
+        accepted_root,
+        arm="c_frozen_symbolic",
+    )
+    _write_phase_b_arm_fixture(
+        fresh_root,
+        arm="c_frozen_symbolic",
+    )
+    (fresh_root / "initial_state.json").write_text(
+        '{"state":"tampered-after-freeze"}\n',
+        encoding="utf-8",
+    )
+
+    result = compare_phase_b_arm(
+        accepted_arm_root=accepted_root,
+        fresh_arm_root=fresh_root,
+        seed=0,
+        arm="c_frozen_symbolic",
+    )
+
+    assert result["pass"] is False
+    assert (
+        "fresh_arm:file_sha256_mismatch:initial_state"
+        in result["failures"]
+    )
+
+
+def test_phase_b_arm_rejects_incorrect_transitive_manifest_hash(
+    tmp_path: Path,
+) -> None:
+    accepted_root = tmp_path / "accepted"
+    fresh_root = tmp_path / "fresh"
+    _write_phase_b_arm_fixture(
+        accepted_root,
+        arm="d_drift",
+        timing_scale=1.0,
+    )
+    fresh = _write_phase_b_arm_fixture(
+        fresh_root,
+        arm="d_drift",
+        timing_scale=1.0,
+    )
+
+    records = _read_phase_b_maintenance_records(fresh_root)
+    records[0]["shap_seconds"] = 11.0
+    records[0]["surrogate_seconds"] = 12.0
+    records[0]["lifecycle_seconds"] = 13.0
+    generation = records[0]["generation_payload"]
+    assert isinstance(generation, dict)
+    generation["timing_seconds"] = {"shap": 11.0, "surrogate": 12.0}
+    _write_phase_b_maintenance_records(
+        fresh_root,
+        fresh,
+        records,
+        recompute_manifest_hash=False,
+    )
+
+    result = compare_phase_b_arm(
+        accepted_arm_root=accepted_root,
+        fresh_arm_root=fresh_root,
+        seed=0,
+        arm="d_drift",
+    )
+
+    assert result["pass"] is False
+    assert "fresh_arm:manifest_sha256_mismatch" in result["failures"]
+    assert result["mismatch_count"] == 0
 

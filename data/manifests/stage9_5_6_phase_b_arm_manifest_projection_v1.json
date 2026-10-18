@@ -24,7 +24,7 @@
     "maintenance_record_projection": {
       "contract_id": "stage9.5-6-phase-b-maintenance-record-projection-v1",
       "path": "data/manifests/stage9_5_6_phase_b_maintenance_record_projection_v1.json",
-      "blob_sha1": "0fe70a82f1f70f968feefb3d2ef19cb67f517440"
+      "blob_sha1": "c4b26ee4c698dfffb8cb2548c02a03b3db129c79"
     },
     "historical_phase_b_source": {
       "head_sha": "bfa14b942e4a5b2fbfa8aa3c43728a7f1cd81645",
@@ -187,20 +187,21 @@
   "implementation_binding": {
     "comparator": {
       "path": "tools/stage9_5/replay_equivalence_comparator.py",
-      "blob_sha1": "455fb8729851a37a797622599ecc77357c46661e",
+      "blob_sha1": "8b0e45a5f0130026c6c6d54595c936008119b285",
       "projection_function": "_project_phase_b_arm_manifest",
       "comparator_function": "compare_phase_b_arm",
       "summary_timing_field_constant": "PHASE_B_SUMMARY_TIMING_FIELDS"
     },
     "tests": {
       "path": "tests/stage9_5/test_replay_equivalence_comparator.py",
-      "blob_sha1": "7d58d96c4c5ec21ea64e60160e480416f7b37e62",
+      "blob_sha1": "db9925979a5e2a08f119b99bf1ce54d46a2c2742",
       "authoritative_arm_layer_tests": [
-        "test_phase_b_arm_accepts_only_predeclared_timing_differences",
-        "test_phase_b_arm_rejects_scientific_maintenance_change",
-        "test_phase_b_arm_rejects_nonmaintenance_state_change",
-        "test_phase_b_arm_rejects_forged_manifest_self_hash_before_projection",
-        "test_phase_b_arm_keeps_version_descriptor_hash_exact"
+        "test_phase_b_arm_valid_timing_only_variation_all_frozen_arms",
+        "test_phase_b_arm_rejects_altered_lifecycle_scientific_field",
+        "test_phase_b_arm_rejects_altered_initial_or_final_state",
+        "test_phase_b_arm_rejects_altered_rule_version_file",
+        "test_phase_b_arm_rejects_altered_descriptor_linked_bytes",
+        "test_phase_b_arm_rejects_incorrect_transitive_manifest_hash"
       ],
       "seed_level_phase_b_tests_are_not_authority_for_this_contract": true
     }

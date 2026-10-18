@@ -27,7 +27,7 @@
   },
   "implementation_binding": {
     "path": "tools/stage9_5/replay_equivalence_comparator.py",
-    "blob_sha1": "455fb8729851a37a797622599ecc77357c46661e",
+    "blob_sha1": "8b0e45a5f0130026c6c6d54595c936008119b285",
     "projection_function": "_project_phase_b_maintenance_record",
     "loader_function": "_load_jsonl",
     "timing_field_constant": "PHASE_B_RECORD_TIMING_FIELDS",

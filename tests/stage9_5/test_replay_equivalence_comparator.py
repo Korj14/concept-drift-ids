@@ -15,6 +15,7 @@ from tools.stage9_5.replay_equivalence_comparator import (
     _project_phase_a_manifest,
     _project_phase_b_maintenance_record,
     _git_head,
+    _verify_phase_c_failed_lineage,
     _verify_stage1_reconstruction_report,
     compare_phase_a_seed,
     compare_phase_b,
@@ -972,6 +973,52 @@ def _copy_failed_phase_c_lineage(root: Path) -> None:
         (target / name).write_bytes((ACCEPTED_FAILED_PHASE_C / name).read_bytes())
 
 
+def _failed_lineage_expected_identity() -> dict[str, Any]:
+    config = json.loads(
+        ACCEPTED_CORRECTION_CONFIG.read_text(encoding="utf-8")
+    )
+    return copy.deepcopy(config["correction"]["failed_phase_c_v1"])
+
+
+def _rewrite_failed_lineage_payload(
+    roots: tuple[Path, Path],
+    *,
+    name: str,
+    mutate: dict[str, Any],
+    expected_identity: dict[str, Any],
+) -> None:
+    for root in roots:
+        path = root / "phase_c_offline_evaluation" / "seed-0" / name
+        payload = json.loads(path.read_text(encoding="utf-8"))
+        payload.update(mutate)
+        payload.pop("payload_sha256", None)
+        payload["payload_sha256"] = _canonical_sha256(payload)
+        path.write_text(
+            json.dumps(payload, indent=2, sort_keys=True) + "\n",
+            encoding="utf-8",
+        )
+
+    stem = name.removesuffix(".json")
+    reference = (
+        roots[0] / "phase_c_offline_evaluation" / "seed-0" / name
+    )
+    reference_payload = json.loads(reference.read_text(encoding="utf-8"))
+    expected_identity[f"{stem}_payload_sha256"] = reference_payload[
+        "payload_sha256"
+    ]
+    expected_identity[f"{stem}_file_sha256"] = _sha256_file(reference)
+
+
+def _direct_failed_lineage_fixture(
+    tmp_path: Path,
+) -> tuple[Path, Path, dict[str, Any]]:
+    accepted_root = tmp_path / "accepted"
+    fresh_root = tmp_path / "fresh"
+    _copy_failed_phase_c_lineage(accepted_root)
+    _copy_failed_phase_c_lineage(fresh_root)
+    return accepted_root, fresh_root, _failed_lineage_expected_identity()
+
+
 def _phase_c_precondition_fixture(
     tmp_path: Path,
 ) -> tuple[Path, Path, Path]:
@@ -990,6 +1037,147 @@ def _phase_c_precondition_fixture(
     fresh_config_path = tmp_path / "fresh_config.json"
     _rewrite_hashed_json(fresh_config_path, fresh)
     return accepted_root, fresh_root, fresh_config_path
+
+
+def test_phase_c_failed_v1_lineage_accepts_exact_frozen_identity(
+    tmp_path: Path,
+) -> None:
+    accepted_root, fresh_root, expected_identity = _direct_failed_lineage_fixture(
+        tmp_path
+    )
+
+    result = _verify_phase_c_failed_lineage(
+        accepted_root=accepted_root,
+        fresh_root=fresh_root,
+        expected_identity=expected_identity,
+    )
+
+    assert result["pass"] is True
+    assert result["failures"] == []
+    assert result["frozen_identity"] == {
+        "seed": 0,
+        "original_config_manifest_sha256": (
+            "3e3f768b5aa32f469440bb334508f747bbf2f7f5b08d9570a7aef2dbb9cb0257"
+        ),
+        "phase": "offline_boundary_aware_evaluation",
+        "adaptive_components_received_boundary": False,
+        "exception_type": "NameError",
+        "message": "name 'read_jsonl' is not defined",
+        "successful_scoring_artifacts_present": False,
+        "entries": ["attempt.json", "failure.json"],
+    }
+
+
+def test_phase_c_failed_v1_lineage_rejects_wrong_original_config_even_with_rehashed_files(
+    tmp_path: Path,
+) -> None:
+    accepted_root, fresh_root, expected_identity = _direct_failed_lineage_fixture(
+        tmp_path
+    )
+    _rewrite_failed_lineage_payload(
+        (accepted_root, fresh_root),
+        name="attempt.json",
+        mutate={"primary_config_manifest_sha256": "f" * 64},
+        expected_identity=expected_identity,
+    )
+
+    result = _verify_phase_c_failed_lineage(
+        accepted_root=accepted_root,
+        fresh_root=fresh_root,
+        expected_identity=expected_identity,
+    )
+
+    assert result["pass"] is False
+    assert "accepted:attempt:original_config_identity_mismatch" in result["failures"]
+    assert "fresh:attempt:original_config_identity_mismatch" in result["failures"]
+
+
+def test_phase_c_failed_v1_lineage_rejects_seed_phase_and_boundary_mutation(
+    tmp_path: Path,
+) -> None:
+    accepted_root, fresh_root, expected_identity = _direct_failed_lineage_fixture(
+        tmp_path
+    )
+    _rewrite_failed_lineage_payload(
+        (accepted_root, fresh_root),
+        name="attempt.json",
+        mutate={
+            "seed": 1,
+            "phase": "different_phase",
+            "adaptive_components_received_boundary": True,
+        },
+        expected_identity=expected_identity,
+    )
+
+    result = _verify_phase_c_failed_lineage(
+        accepted_root=accepted_root,
+        fresh_root=fresh_root,
+        expected_identity=expected_identity,
+    )
+
+    assert result["pass"] is False
+    for label in ("accepted", "fresh"):
+        assert f"{label}:attempt:seed_mismatch" in result["failures"]
+        assert f"{label}:attempt:phase_mismatch" in result["failures"]
+        assert f"{label}:attempt:boundary_metadata_not_false" in result["failures"]
+
+
+def test_phase_c_failed_v1_lineage_rejects_wrong_nameerror_identity(
+    tmp_path: Path,
+) -> None:
+    accepted_root, fresh_root, expected_identity = _direct_failed_lineage_fixture(
+        tmp_path
+    )
+    _rewrite_failed_lineage_payload(
+        (accepted_root, fresh_root),
+        name="failure.json",
+        mutate={
+            "exception_type": "ValueError",
+            "message": "different failure",
+            "adaptive_components_received_boundary": True,
+        },
+        expected_identity=expected_identity,
+    )
+
+    result = _verify_phase_c_failed_lineage(
+        accepted_root=accepted_root,
+        fresh_root=fresh_root,
+        expected_identity=expected_identity,
+    )
+
+    assert result["pass"] is False
+    for label in ("accepted", "fresh"):
+        assert f"{label}:failure:exception_type_mismatch" in result["failures"]
+        assert f"{label}:failure:message_mismatch" in result["failures"]
+        assert f"{label}:failure:boundary_metadata_not_false" in result["failures"]
+
+
+def test_phase_c_failed_v1_lineage_rejects_successful_or_extra_outcome_file(
+    tmp_path: Path,
+) -> None:
+    accepted_root, fresh_root, expected_identity = _direct_failed_lineage_fixture(
+        tmp_path
+    )
+    extra = (
+        fresh_root
+        / "phase_c_offline_evaluation"
+        / "seed-0"
+        / "c_frozen_symbolic_evaluation.json"
+    )
+    extra.write_text("{}\n", encoding="utf-8")
+
+    result = _verify_phase_c_failed_lineage(
+        accepted_root=accepted_root,
+        fresh_root=fresh_root,
+        expected_identity=expected_identity,
+    )
+
+    assert result["pass"] is False
+    assert "fresh:failed_lineage_entries_mismatch" in result["failures"]
+    assert (
+        "fresh:unexpected_outcome_bearing_file:c_frozen_symbolic_evaluation.json"
+        in result["failures"]
+    )
 
 
 def test_phase_c_preconditions_accept_only_rebound_upstream_manifest_hashes(

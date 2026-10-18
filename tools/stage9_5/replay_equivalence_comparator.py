@@ -328,6 +328,99 @@ def _verify_stage1_reconstruction_report(
     }
 
 
+def _verify_stage9_5_1_recovery_report(
+    report_path: Path,
+) -> dict[str, Any]:
+    failures: list[str] = []
+    blockers: list[str] = []
+    try:
+        report = _load_json(report_path)
+    except (OSError, json.JSONDecodeError, TypeError, ValueError) as exc:
+        return {
+            "pass": False,
+            "failures": [
+                f"stage9_5_1_recovery_report_invalid:{type(exc).__name__}:{exc}"
+            ],
+            "blockers": [
+                "system_a_checkpoint_family_not_verified",
+                "stage8_large_artifact_archive_not_verified",
+            ],
+            "canonical_sha256": None,
+            "repository_head": None,
+            "system_a_checkpoints_verified": False,
+            "stage8_archive_verified": False,
+        }
+
+    if report.get("audit_id") != "stage9.5-1-fresh-clone-reconstruction-v1_2":
+        failures.append("stage9_5_1_recovery_audit_id_mismatch")
+    if report.get("status") != "pass" or report.get("pass") is not True:
+        failures.append("stage9_5_1_recovery_status_not_pass")
+    if report.get("failures") != []:
+        failures.append("stage9_5_1_recovery_failures_not_empty")
+    if report.get("blockers") != []:
+        failures.append("stage9_5_1_recovery_blockers_not_empty")
+
+    embedded_hash = report.get("canonical_sha256")
+    if (
+        not isinstance(embedded_hash, str)
+        or SHA256_RE.fullmatch(embedded_hash) is None
+    ):
+        failures.append("stage9_5_1_recovery_canonical_sha256_invalid")
+        embedded_hash = None
+    else:
+        core = dict(report)
+        core.pop("canonical_sha256", None)
+        if _canonical_sha256(core) != embedded_hash:
+            failures.append("stage9_5_1_recovery_canonical_sha256_mismatch")
+
+    repository_head = report.get("repository_head")
+    if (
+        not isinstance(repository_head, str)
+        or SHA40_RE.fullmatch(repository_head) is None
+    ):
+        failures.append("stage9_5_1_recovery_repository_head_invalid")
+    elif not _git_is_ancestor(repository_head, _git_head()):
+        failures.append("stage9_5_1_recovery_repository_head_not_ancestor")
+
+    external = report.get("external_artifacts")
+    if not isinstance(external, dict):
+        external = {}
+        failures.append("stage9_5_1_recovery_external_artifacts_invalid")
+
+    system_a = external.get("system_a_checkpoints")
+    system_a_verified = bool(
+        isinstance(system_a, dict)
+        and system_a.get("required") is True
+        and system_a.get("verified_seeds") == list(SEEDS)
+        and system_a.get("missing") == []
+        and system_a.get("mismatches") == []
+    )
+    if not system_a_verified:
+        blockers.append("system_a_checkpoint_family_not_verified")
+
+    stage8 = external.get("stage8_large_artifact_archive")
+    stage8_verified = bool(
+        isinstance(stage8, dict)
+        and stage8.get("required") is True
+        and stage8.get("requirement_count") == 145
+        and stage8.get("verified_count") == 145
+        and stage8.get("missing") == []
+        and stage8.get("mismatches") == []
+    )
+    if not stage8_verified:
+        blockers.append("stage8_large_artifact_archive_not_verified")
+
+    return {
+        "pass": not failures and not blockers,
+        "failures": failures,
+        "blockers": blockers,
+        "canonical_sha256": embedded_hash,
+        "repository_head": repository_head,
+        "system_a_checkpoints_verified": system_a_verified,
+        "stage8_archive_verified": stage8_verified,
+    }
+
+
 def _verify_run_manifest_hashes(
     manifest: dict[str, Any],
     *,
@@ -2607,9 +2700,13 @@ def run(
     accepted_correction_config_path: Path,
     fresh_correction_config_path: Path,
     stage1_report_path: Path,
+    stage9_5_1_recovery_report_path: Path,
     output_path: Path,
 ) -> dict[str, Any]:
     contract = _load_json(CONSTRUCTION_CONTRACT_PATH)
+    recovery = _verify_stage9_5_1_recovery_report(
+        stage9_5_1_recovery_report_path
+    )
     phase_a = compare_phase_a(accepted_root=accepted_root, fresh_root=fresh_root)
     phase_b = compare_phase_b(
         accepted_root=accepted_root,
@@ -2623,7 +2720,8 @@ def run(
         fresh_config_path=fresh_correction_config_path,
     )
     if (
-        phase_a["pass"]
+        recovery["pass"]
+        and phase_a["pass"]
         and phase_b["pass"]
         and phase_c_preconditions["pass"]
     ):
@@ -2681,8 +2779,17 @@ def run(
         + list(phase_c_preconditions["failures"])
         + list(phase_c_output["failures"])
         + list(stage1["failures"])
+        + list(recovery["failures"])
     )
-    blockers: list[str] = []
+    blockers: list[str] = list(recovery["blockers"])
+    if not recovery["pass"]:
+        blockers.append("stage9_5_1_recovery_not_verified")
+    if not phase_a["pass"]:
+        blockers.append("phase_a_comparison_failed")
+    if not phase_b["pass"]:
+        blockers.append("phase_b_comparison_failed")
+    if not phase_b["accepted_maintenance_archive_verified"]:
+        blockers.append("accepted_phase_b_maintenance_records_not_verified")
     if not stage1["pass"]:
         blockers.append("stage1_reconstruction_evidence_not_verified")
     if not phase_c_preconditions["pass"]:
@@ -2718,6 +2825,11 @@ def run(
         "mismatches": mismatches,
         "failures": failures,
         "blockers": blockers,
+        "stage9_5_1_recovery_verified": recovery["pass"],
+        "stage9_5_1_recovery": recovery,
+        "stage9_5_1_recovery_report_canonical_sha256": recovery[
+            "canonical_sha256"
+        ],
         "phase_a": {
             "complete_seeds": phase_a["complete_seeds"],
             "pass": phase_a["pass"],
@@ -2782,16 +2894,34 @@ def run(
         "unresolved_class_a": (
             []
             if all_components_pass
-            else (
-                ["stage1_reconstruction_evidence_not_verified"]
-                if (
-                    phase_c_preconditions["pass"]
-                    and phase_c_output["pass"]
-                    and not stage1["pass"]
-                )
-                else [
-                    "replay_equivalence_comparison_incomplete"
-                ]
+            else sorted(
+                {
+                    *(
+                        ["stage9_5_1_recovery_not_verified"]
+                        if not recovery["pass"]
+                        else []
+                    ),
+                    *(
+                        ["stage1_reconstruction_evidence_not_verified"]
+                        if not stage1["pass"]
+                        else []
+                    ),
+                    *(
+                        ["accepted_phase_b_maintenance_records_not_verified"]
+                        if not phase_b["accepted_maintenance_archive_verified"]
+                        else []
+                    ),
+                    *(
+                        ["replay_equivalence_comparison_incomplete"]
+                        if not (
+                            phase_a["pass"]
+                            and phase_b["pass"]
+                            and phase_c_preconditions["pass"]
+                            and phase_c_output["pass"]
+                        )
+                        else []
+                    ),
+                }
             )
         ),
         "scientific_objects_modified": False,
@@ -2806,6 +2936,38 @@ def run(
         encoding="utf-8",
     )
     return evidence
+
+
+def run_integrated(
+    *,
+    accepted_root: Path,
+    fresh_root: Path,
+    accepted_correction_config_path: Path,
+    fresh_correction_config_path: Path,
+    stage1_report_path: Path,
+    stage9_5_1_recovery_report_path: Path,
+    output_path: Path,
+    finalizer_output_dir: Path,
+) -> dict[str, Any]:
+    evidence = run(
+        accepted_root=accepted_root,
+        fresh_root=fresh_root,
+        accepted_correction_config_path=accepted_correction_config_path,
+        fresh_correction_config_path=fresh_correction_config_path,
+        stage1_report_path=stage1_report_path,
+        stage9_5_1_recovery_report_path=stage9_5_1_recovery_report_path,
+        output_path=output_path,
+    )
+    from tools.stage9_5.replay_report_finalizer import run as finalize_report
+
+    replay_report = finalize_report(
+        output_path,
+        finalizer_output_dir,
+    )
+    return {
+        "comparison_evidence": evidence,
+        "replay_report": replay_report,
+    }
 
 
 def main() -> None:
@@ -2830,6 +2992,16 @@ def main() -> None:
         required=True,
     )
     parser.add_argument(
+        "--stage9-5-1-recovery-report",
+        type=Path,
+        required=True,
+    )
+    parser.add_argument(
+        "--finalizer-output-dir",
+        type=Path,
+        default=Path("results/audits/stage9_5_full_seed_rerun_v1"),
+    )
+    parser.add_argument(
         "--output",
         type=Path,
         default=Path(
@@ -2839,14 +3011,23 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    evidence = run(
+    integrated = run_integrated(
         accepted_root=args.accepted_root,
         fresh_root=args.fresh_root,
         accepted_correction_config_path=args.accepted_correction_config,
         fresh_correction_config_path=args.fresh_correction_config,
         stage1_report_path=args.stage1_report,
+        stage9_5_1_recovery_report_path=args.stage9_5_1_recovery_report,
         output_path=args.output,
+        finalizer_output_dir=args.finalizer_output_dir,
     )
+    evidence = integrated["comparison_evidence"]
+    replay_report = integrated["replay_report"]
+    if not evidence["stage9_5_1_recovery_verified"]:
+        raise SystemExit(
+            "Stage 9.5-6 remains blocked: Stage-9.5-1 external-artifact "
+            "recovery is not verified."
+        )
     if not evidence["phase_a"]["pass"]:
         raise SystemExit("Stage 9.5-6 Phase-A replay comparison failed.")
     if not evidence["phase_b"]["pass"]:
@@ -2862,7 +3043,9 @@ def main() -> None:
         )
     if not evidence["comparison_complete"]:
         raise SystemExit("Stage 9.5-6 replay comparison is incomplete.")
-    print(json.dumps(evidence, sort_keys=True, indent=2))
+    if not replay_report["pass"]:
+        raise SystemExit("Stage 9.5-6 replay finalizer did not accept comparison evidence.")
+    print(json.dumps(integrated, sort_keys=True, indent=2))
 
 
 if __name__ == "__main__":

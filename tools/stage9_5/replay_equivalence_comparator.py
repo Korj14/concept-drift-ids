@@ -23,6 +23,12 @@ STAGE1_CONTRACT_PATH = (
     / "manifests"
     / "stage9_5_6_stage1_reconstruction_evidence_v1.json"
 )
+FRESH_CLONE_IDENTITY_PATH = (
+    PROJECT_ROOT
+    / "data"
+    / "manifests"
+    / "stage9_5_fresh_clone_reconstruction_v1_2.json"
+)
 SEEDS = (0, 1, 2, 3, 4)
 PHASE_A_SUBDIR = "phase_a_shared_control_plane"
 PHASE_B_SUBDIR = "phase_b_symbolic_arms"
@@ -146,6 +152,10 @@ SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
 SHA40_RE = re.compile(r"^[0-9a-f]{40}$")
 
 
+def _reject_noncanonical_constant(value: str) -> Any:
+    raise ValueError(f"Non-canonical JSON constant: {value}")
+
+
 def _reject_duplicate_pairs(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
     payload: dict[str, Any] = {}
     for key, value in pairs:
@@ -159,6 +169,7 @@ def _load_json(path: Path) -> dict[str, Any]:
     payload = json.loads(
         path.read_text(encoding="utf-8"),
         object_pairs_hook=_reject_duplicate_pairs,
+        parse_constant=_reject_noncanonical_constant,
     )
     if not isinstance(payload, dict):
         raise TypeError(f"Expected JSON object: {path}")
@@ -325,6 +336,99 @@ def _verify_stage1_reconstruction_report(
             else None
         ),
         "repository_head": repository_head,
+    }
+
+
+def _verify_accepted_stage8_archive_root(
+    accepted_root: Path,
+) -> dict[str, Any]:
+    failures: list[str] = []
+    try:
+        from tools.stage9_5.fresh_clone_reconstruction import (
+            _stage8_archive_requirements,
+        )
+
+        identity = _load_json(FRESH_CLONE_IDENTITY_PATH)
+        stage8_cfg = identity.get("stage8_compact")
+        if not isinstance(stage8_cfg, dict):
+            raise TypeError("stage8_compact must be an object")
+        requirements = _stage8_archive_requirements(stage8_cfg)
+    except (OSError, json.JSONDecodeError, KeyError, TypeError, ValueError) as exc:
+        return {
+            "pass": False,
+            "failures": [
+                "accepted_stage8_archive_inventory_invalid:"
+                f"{type(exc).__name__}:{exc}"
+            ],
+            "requirement_count": None,
+            "verified_count": 0,
+            "inventory_sha256": None,
+        }
+
+    requirement_count = len(requirements)
+    if requirement_count != 145:
+        failures.append(
+            "accepted_stage8_archive_requirement_count_mismatch"
+        )
+
+    resolved_root = accepted_root.resolve()
+    if not resolved_root.is_dir():
+        failures.append("accepted_stage8_archive_root_missing")
+        return {
+            "pass": False,
+            "failures": failures,
+            "requirement_count": requirement_count,
+            "verified_count": 0,
+            "inventory_sha256": _canonical_sha256(requirements),
+        }
+
+    verified = 0
+    for item in requirements:
+        relative = item.get("path")
+        expected_sha = item.get("sha256")
+        if not isinstance(relative, str):
+            failures.append("accepted_stage8_archive_invalid_requirement_path")
+            continue
+        if (
+            not isinstance(expected_sha, str)
+            or SHA256_RE.fullmatch(expected_sha) is None
+        ):
+            failures.append(
+                f"accepted_stage8_archive_invalid_requirement_sha256:{relative}"
+            )
+            continue
+        relative_path = Path(relative)
+        if relative_path.is_absolute():
+            failures.append(
+                f"accepted_stage8_archive_absolute_requirement_path:{relative}"
+            )
+            continue
+        path = (resolved_root / relative_path).resolve()
+        if not path.is_relative_to(resolved_root):
+            failures.append(
+                f"accepted_stage8_archive_requirement_path_escape:{relative}"
+            )
+            continue
+        if not path.is_file():
+            failures.append(f"accepted_stage8_archive_missing_file:{relative}")
+            continue
+        if _sha256_file(path) != expected_sha:
+            failures.append(
+                f"accepted_stage8_archive_sha256_mismatch:{relative}"
+            )
+            continue
+        verified += 1
+
+    return {
+        "pass": (
+            not failures
+            and requirement_count == 145
+            and verified == requirement_count
+        ),
+        "failures": failures,
+        "requirement_count": requirement_count,
+        "verified_count": verified,
+        "inventory_sha256": _canonical_sha256(requirements),
     }
 
 
@@ -559,7 +663,11 @@ def _load_jsonl(path: Path) -> list[dict[str, Any]]:
         if not line.strip():
             continue
         try:
-            payload = json.loads(line, object_pairs_hook=_reject_duplicate_pairs)
+            payload = json.loads(
+                line,
+                object_pairs_hook=_reject_duplicate_pairs,
+                parse_constant=_reject_noncanonical_constant,
+            )
         except (json.JSONDecodeError, ValueError) as exc:
             raise ValueError(
                 f"Invalid JSONL record at {path}:{line_number}: {exc}"
@@ -2707,6 +2815,7 @@ def run(
     recovery = _verify_stage9_5_1_recovery_report(
         stage9_5_1_recovery_report_path
     )
+    accepted_archive = _verify_accepted_stage8_archive_root(accepted_root)
     phase_a = compare_phase_a(accepted_root=accepted_root, fresh_root=fresh_root)
     phase_b = compare_phase_b(
         accepted_root=accepted_root,
@@ -2780,10 +2889,13 @@ def run(
         + list(phase_c_output["failures"])
         + list(stage1["failures"])
         + list(recovery["failures"])
+        + list(accepted_archive["failures"])
     )
     blockers: list[str] = list(recovery["blockers"])
     if not recovery["pass"]:
         blockers.append("stage9_5_1_recovery_not_verified")
+    if not accepted_archive["pass"]:
+        blockers.append("accepted_stage8_archive_identity_not_verified")
     if not phase_a["pass"]:
         blockers.append("phase_a_comparison_failed")
     if not phase_b["pass"]:
@@ -2798,7 +2910,8 @@ def run(
         blockers.append("phase_c_corrected_output_failed")
 
     all_components_pass = bool(
-        phase_a["pass"]
+        accepted_archive["pass"]
+        and phase_a["pass"]
         and phase_b["pass"]
         and phase_c_preconditions["pass"]
         and phase_c_output["pass"]
@@ -2827,6 +2940,8 @@ def run(
         "blockers": blockers,
         "stage9_5_1_recovery_verified": recovery["pass"],
         "stage9_5_1_recovery": recovery,
+        "accepted_stage8_archive_identity_verified": accepted_archive["pass"],
+        "accepted_stage8_archive_identity": accepted_archive,
         "stage9_5_1_recovery_report_canonical_sha256": recovery[
             "canonical_sha256"
         ],

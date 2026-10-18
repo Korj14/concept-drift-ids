@@ -7,6 +7,7 @@ import json
 from pathlib import Path
 from typing import Any
 
+import tools.stage9_5.replay_equivalence_comparator as comparator_module
 from tools.stage9_5.replay_equivalence_comparator import (
     ARM_NAMES,
     NORMALIZED_DIAGNOSTIC,
@@ -20,6 +21,7 @@ from tools.stage9_5.replay_equivalence_comparator import (
     _git_head,
     _verify_phase_c_failed_lineage,
     _verify_stage1_reconstruction_report,
+    _verify_stage9_5_1_recovery_report,
     compare_phase_a_seed,
     compare_phase_b,
     compare_phase_b_arm,
@@ -27,6 +29,7 @@ from tools.stage9_5.replay_equivalence_comparator import (
     compare_phase_b_seed,
     compare_phase_c_corrected_output,
     compare_phase_c_preconditions,
+    run_integrated,
 )
 
 
@@ -2759,4 +2762,350 @@ def test_phase_b_arm_rejects_incorrect_transitive_manifest_hash(
     assert result["pass"] is False
     assert "fresh_arm:manifest_sha256_mismatch" in result["failures"]
     assert result["mismatch_count"] == 0
+
+def _write_stage9_5_1_recovery_fixture(
+    tmp_path: Path,
+    *,
+    system_a_verified: bool = True,
+    stage8_verified: bool = True,
+) -> Path:
+    blockers: list[str] = []
+    if not system_a_verified:
+        blockers.append("system_a_checkpoint_bytes_missing")
+    if not stage8_verified:
+        blockers.append("stage8_large_artifact_archive_missing")
+    report: dict[str, Any] = {
+        "audit_id": "stage9.5-1-fresh-clone-reconstruction-v1_2",
+        "status": "pass" if not blockers else "blocked",
+        "pass": not blockers,
+        "repository_head": _git_head(),
+        "failures": [],
+        "blockers": blockers,
+        "external_artifacts": {
+            "system_a_checkpoints": {
+                "required": True,
+                "verified_seeds": (
+                    [0, 1, 2, 3, 4]
+                    if system_a_verified
+                    else [0, 1, 2, 3]
+                ),
+                "missing": (
+                    []
+                    if system_a_verified
+                    else [{"seed": 4, "path": "seed_4.pt"}]
+                ),
+                "mismatches": [],
+            },
+            "stage8_large_artifact_archive": {
+                "required": True,
+                "requirement_count": 145,
+                "verified_count": 145 if stage8_verified else 144,
+                "missing": (
+                    []
+                    if stage8_verified
+                    else [{"path": "phase_b/seed-4/maintenance.jsonl"}]
+                ),
+                "mismatches": [],
+            },
+        },
+    }
+    report["canonical_sha256"] = _canonical_sha256(report)
+    path = tmp_path / "fresh_clone_reconstruction_report.json"
+    path.write_text(
+        json.dumps(report, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+    return path
+
+
+def _synthetic_phase_a_result() -> dict[str, Any]:
+    return {
+        "pass": True,
+        "complete_seeds": [0, 1, 2, 3, 4],
+        "mismatch_count": 0,
+        "failures": [],
+        "seed_results": [
+            {"seed": seed, "mismatches": []}
+            for seed in range(5)
+        ],
+        "shared_identity_by_seed": {
+            str(seed): f"{seed + 1:064x}" for seed in range(5)
+        },
+    }
+
+
+def _synthetic_phase_b_result() -> dict[str, Any]:
+    return {
+        "pass": True,
+        "complete_seeds": [0, 1, 2, 3, 4],
+        "mismatch_count": 0,
+        "failures": [],
+        "seed_results": [
+            {"seed": seed, "mismatches": []}
+            for seed in range(5)
+        ],
+        "accepted_maintenance_archive_verified": True,
+    }
+
+
+def _synthetic_phase_c_preconditions() -> dict[str, Any]:
+    return {
+        "pass": True,
+        "failures": [],
+        "mismatch_count": 0,
+        "mismatches": [],
+        "failed_lineage_preserved": True,
+        "scientific_blocks_equal": True,
+    }
+
+
+def _synthetic_phase_c_output() -> dict[str, Any]:
+    return {
+        "pass": True,
+        "failures": [],
+        "mismatch_count": 0,
+        "mismatches": [],
+    }
+
+
+def _patch_synthetic_integrated_components(monkeypatch: Any) -> None:
+    monkeypatch.setattr(
+        comparator_module,
+        "compare_phase_a",
+        lambda **_: _synthetic_phase_a_result(),
+    )
+    monkeypatch.setattr(
+        comparator_module,
+        "compare_phase_b",
+        lambda **_: _synthetic_phase_b_result(),
+    )
+    monkeypatch.setattr(
+        comparator_module,
+        "compare_phase_c_preconditions",
+        lambda **_: _synthetic_phase_c_preconditions(),
+    )
+    monkeypatch.setattr(
+        comparator_module,
+        "compare_phase_c_corrected_output",
+        lambda **_: _synthetic_phase_c_output(),
+    )
+    monkeypatch.setattr(
+        comparator_module,
+        "_verify_stage1_reconstruction_report",
+        lambda *_args, **_kwargs: {
+            "pass": True,
+            "failures": [],
+            "canonical_sha256": "a" * 64,
+            "repository_head": _git_head(),
+        },
+    )
+
+
+def _run_synthetic_integrated_pipeline(
+    tmp_path: Path,
+    recovery_report: Path,
+) -> dict[str, Any]:
+    return run_integrated(
+        accepted_root=tmp_path / "accepted",
+        fresh_root=tmp_path / "fresh",
+        accepted_correction_config_path=tmp_path / "accepted_config.json",
+        fresh_correction_config_path=tmp_path / "fresh_config.json",
+        stage1_report_path=tmp_path / "stage1_report.json",
+        stage9_5_1_recovery_report_path=recovery_report,
+        output_path=tmp_path / "replay_comparison_evidence.json",
+        finalizer_output_dir=tmp_path / "finalized",
+    )
+
+
+def test_integrated_pipeline_binds_recovery_comparator_and_finalizer(
+    monkeypatch: Any,
+    tmp_path: Path,
+) -> None:
+    _patch_synthetic_integrated_components(monkeypatch)
+    recovery_path = _write_stage9_5_1_recovery_fixture(tmp_path)
+
+    integrated = _run_synthetic_integrated_pipeline(
+        tmp_path,
+        recovery_path,
+    )
+
+    evidence = integrated["comparison_evidence"]
+    report = integrated["replay_report"]
+    assert evidence["comparison_complete"] is True
+    assert evidence["source_evidence_complete"] is True
+    assert evidence["stage9_5_1_recovery_verified"] is True
+    assert evidence["accepted_maintenance_archive_verified"] is True
+    assert evidence["unresolved_class_a"] == []
+    assert report["pass"] is True
+    assert (
+        report["construction"][
+            "comparison_evidence_canonical_sha256"
+        ]
+        == evidence["canonical_sha256"]
+    )
+    assert (
+        report["construction"][
+            "stage9_5_1_recovery_report_canonical_sha256"
+        ]
+        == evidence["stage9_5_1_recovery_report_canonical_sha256"]
+    )
+    assert (tmp_path / "replay_comparison_evidence.json").is_file()
+    assert (
+        tmp_path
+        / "finalized"
+        / "replay_equivalence_report.json"
+    ).is_file()
+
+
+def test_integrated_pipeline_blocks_each_missing_external_family(
+    monkeypatch: Any,
+    tmp_path: Path,
+) -> None:
+    _patch_synthetic_integrated_components(monkeypatch)
+    cases = (
+        (
+            False,
+            True,
+            "system_a_checkpoint_family_not_verified",
+        ),
+        (
+            True,
+            False,
+            "stage8_large_artifact_archive_not_verified",
+        ),
+    )
+    for index, (system_ok, archive_ok, expected_blocker) in enumerate(cases):
+        case_root = tmp_path / f"case-{index}"
+        case_root.mkdir()
+        recovery_path = _write_stage9_5_1_recovery_fixture(
+            case_root,
+            system_a_verified=system_ok,
+            stage8_verified=archive_ok,
+        )
+        integrated = _run_synthetic_integrated_pipeline(
+            case_root,
+            recovery_path,
+        )
+        evidence = integrated["comparison_evidence"]
+        assert evidence["comparison_complete"] is False
+        assert evidence["stage9_5_1_recovery_verified"] is False
+        assert expected_blocker in evidence["blockers"]
+        assert "stage9_5_1_recovery_not_verified" in evidence[
+            "unresolved_class_a"
+        ]
+        assert integrated["replay_report"]["pass"] is False
+
+
+def test_integrated_pipeline_blocks_incomplete_phase_b_and_maintenance(
+    monkeypatch: Any,
+    tmp_path: Path,
+) -> None:
+    _patch_synthetic_integrated_components(monkeypatch)
+    monkeypatch.setattr(
+        comparator_module,
+        "compare_phase_b",
+        lambda **_: {
+            "pass": False,
+            "complete_seeds": [0, 1, 2, 3],
+            "mismatch_count": 0,
+            "failures": [
+                "seed4:accepted_maintenance_invalid:FileNotFoundError"
+            ],
+            "seed_results": [
+                {"seed": seed, "mismatches": []}
+                for seed in range(4)
+            ],
+            "accepted_maintenance_archive_verified": False,
+        },
+    )
+    recovery_path = _write_stage9_5_1_recovery_fixture(tmp_path)
+
+    integrated = _run_synthetic_integrated_pipeline(
+        tmp_path,
+        recovery_path,
+    )
+
+    evidence = integrated["comparison_evidence"]
+    assert evidence["comparison_complete"] is False
+    assert "phase_b_comparison_failed" in evidence["blockers"]
+    assert (
+        "accepted_phase_b_maintenance_records_not_verified"
+        in evidence["blockers"]
+    )
+    assert (
+        "accepted_phase_b_maintenance_records_not_verified"
+        in evidence["unresolved_class_a"]
+    )
+    assert integrated["replay_report"]["pass"] is False
+
+
+def test_integrated_pipeline_blocks_failure_lineage_or_correction_mismatch(
+    monkeypatch: Any,
+    tmp_path: Path,
+) -> None:
+    _patch_synthetic_integrated_components(monkeypatch)
+    monkeypatch.setattr(
+        comparator_module,
+        "compare_phase_c_preconditions",
+        lambda **_: {
+            "pass": False,
+            "failures": [
+                "accepted:failure.json:accepted_file_identity_mismatch",
+                "scientific_block_mismatch:fusion",
+            ],
+            "mismatch_count": 1,
+            "mismatches": ["correction_config.fusion"],
+            "failed_lineage_preserved": False,
+            "scientific_blocks_equal": False,
+        },
+    )
+    recovery_path = _write_stage9_5_1_recovery_fixture(tmp_path)
+
+    integrated = _run_synthetic_integrated_pipeline(
+        tmp_path,
+        recovery_path,
+    )
+
+    evidence = integrated["comparison_evidence"]
+    assert evidence["comparison_complete"] is False
+    assert evidence["phase_c"]["original_failure_lineage_preserved"] is False
+    assert (
+        evidence[
+            "regenerated_correction_config_all_scientific_blocks_equal"
+        ]
+        is False
+    )
+    assert "phase_c_preconditions_failed" in evidence["blockers"]
+    assert "replay_equivalence_comparison_incomplete" in evidence[
+        "unresolved_class_a"
+    ]
+    assert integrated["replay_report"]["pass"] is False
+
+
+def test_recovery_report_verifier_rejects_unverified_external_families(
+    tmp_path: Path,
+) -> None:
+    system_missing = _write_stage9_5_1_recovery_fixture(
+        tmp_path,
+        system_a_verified=False,
+    )
+    system_result = _verify_stage9_5_1_recovery_report(system_missing)
+    assert system_result["pass"] is False
+    assert (
+        "system_a_checkpoint_family_not_verified"
+        in system_result["blockers"]
+    )
+
+    archive_root = tmp_path / "archive-case"
+    archive_root.mkdir()
+    archive_missing = _write_stage9_5_1_recovery_fixture(
+        archive_root,
+        stage8_verified=False,
+    )
+    archive_result = _verify_stage9_5_1_recovery_report(archive_missing)
+    assert archive_result["pass"] is False
+    assert (
+        "stage8_large_artifact_archive_not_verified"
+        in archive_result["blockers"]
+    )
 

@@ -15,6 +15,7 @@ on:
       - "data/manifests/stage9_5_6_current_status_v1.json"
       - "data/manifests/stage9_5_6_closure_order_gate_v1.json"
       - "data/manifests/stage9_5_6_replay_report_construction_v1.json"
+      - "data/manifests/stage9_5_6_phase_b_arm_manifest_projection_v1.json"
       - "data/manifests/stage9_5_6_phase_b_maintenance_record_projection_v1.json"
       - "data/manifests/stage9_5_1_zero_byte_transport_reconstruction_v1.json"
       - "data/manifests/stage9_5_1_dropbox_restore_event_forensics_v1.json"

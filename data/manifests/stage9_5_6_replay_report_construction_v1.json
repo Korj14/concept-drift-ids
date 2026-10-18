@@ -459,6 +459,11 @@
     "stage10_outcomes_accessed": false,
     "stage9_5_1_recovery_verified": true,
     "stage9_5_1_recovery.system_a_checkpoints_verified": true,
-    "stage9_5_1_recovery.stage8_archive_verified": true
+    "stage9_5_1_recovery.stage8_archive_verified": true,
+    "accepted_stage8_archive_identity_verified": true
+  },
+  "hostile_audit": {
+    "accepted_root_binding_rule": "The comparator must independently verify the actual accepted_root against the same frozen 145-file Stage-8 descriptor-linked inventory used by Stage-9.5-1; a successful recovery report alone is insufficient.",
+    "noncanonical_json_rule": "Comparator JSON and JSONL inputs reject NaN, Infinity, and -Infinity before any diagnostic/timing projection."
   }
 }

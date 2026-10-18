@@ -17,6 +17,7 @@ from tools.stage9_5.replay_equivalence_comparator import (
     _git_head,
     _verify_stage1_reconstruction_report,
     compare_phase_a_seed,
+    compare_phase_b,
     compare_phase_b_arm,
     compare_phase_b_maintenance_jsonl,
     compare_phase_b_seed,
@@ -110,6 +111,7 @@ def test_phase_a_projection_normalizes_only_frozen_runtime_diagnostics(
         accepted_seed_root=tmp_path / "accepted",
         fresh_seed_root=tmp_path / "fresh",
         seed=0,
+        phase_a_result=_verified_phase_a_result(),
     )
 
     assert result["pass"] is True
@@ -140,6 +142,7 @@ def test_phase_a_projection_rejects_non_diagnostic_runtime_change(
         accepted_seed_root=tmp_path / "accepted",
         fresh_seed_root=tmp_path / "fresh",
         seed=0,
+        phase_a_result=_verified_phase_a_result(),
     )
 
     assert result["pass"] is False
@@ -157,6 +160,7 @@ def test_phase_a_comparator_rejects_descriptor_linked_byte_mismatch(
         accepted_seed_root=tmp_path / "accepted",
         fresh_seed_root=tmp_path / "fresh",
         seed=0,
+        phase_a_result=_verified_phase_a_result(),
     )
 
     assert result["pass"] is False
@@ -181,6 +185,7 @@ def test_phase_a_comparator_rejects_forged_manifest_self_hash(
         accepted_seed_root=tmp_path / "accepted",
         fresh_seed_root=tmp_path / "fresh",
         seed=0,
+        phase_a_result=_verified_phase_a_result(),
     )
 
     assert result["pass"] is False
@@ -195,6 +200,17 @@ def _write_json_bytes(path: Path, payload: dict[str, Any]) -> str:
     return _sha256_file(path)
 
 
+def _phase_a_shared_identity_map() -> dict[str, str]:
+    return {str(seed): str(seed + 1) * 64 for seed in range(5)}
+
+
+def _verified_phase_a_result() -> dict[str, Any]:
+    return {
+        "pass": True,
+        "shared_identity_by_seed": _phase_a_shared_identity_map(),
+    }
+
+
 def _write_phase_b_arm_fixture(
     root: Path,
     *,
@@ -203,6 +219,7 @@ def _write_phase_b_arm_fixture(
     timing_scale: float = 1.0,
     scientific_value: str = "stable",
     state_value: str = "same-state",
+    shared_identity_sha256: str = "1" * 64,
 ) -> dict[str, Any]:
     root.mkdir(parents=True, exist_ok=True)
     initial_sha = _write_json_bytes(
@@ -262,7 +279,7 @@ def _write_phase_b_arm_fixture(
         "seed": seed,
         "arm": arm,
         "operator_config_sha256": "f" * 64,
-        "shared_identity_sha256": "1" * 64,
+        "shared_identity_sha256": shared_identity_sha256,
         "initial_rule_base_version_id": "r0",
         "initial_rule_base_sha256": "2" * 64,
         "final_rule_base_version_id": "r1",
@@ -388,16 +405,21 @@ def _add_phase_b_version_descriptor(
 def _write_phase_b_seed_fixture(
     root: Path,
     *,
+    seed: int = 0,
     timing_scale: float = 1.0,
     arm_isolation_sha256: str = "5" * 64,
 ) -> dict[str, Any]:
     root.mkdir(parents=True, exist_ok=True)
+    phase_a_map = _phase_a_shared_identity_map()
+    shared_identity_sha256 = phase_a_map[str(seed)]
     arms: dict[str, dict[str, str]] = {}
     for arm in ("c_frozen_symbolic", "d_drift", "d_periodic"):
         manifest = _write_phase_b_arm_fixture(
             root / arm,
             arm=arm,
+            seed=seed,
             timing_scale=timing_scale,
+            shared_identity_sha256=shared_identity_sha256,
         )
         arm_path = root / arm / "arm_manifest.json"
         arms[arm] = {
@@ -408,15 +430,13 @@ def _write_phase_b_seed_fixture(
 
     core: dict[str, Any] = {
         "schema_version": 1,
-        "run_id": "cd-primary-v1-phase-b-seed-0",
-        "seed": 0,
+        "run_id": f"cd-primary-v1-phase-b-seed-{seed}",
+        "seed": seed,
         "git_commit": "bfa14b942e4a5b2fbfa8aa3c43728a7f1cd81645",
         "status": "complete_unscored_symbolic_trajectories",
         "primary_config_manifest_sha256": "6" * 64,
-        "shared_identity_sha256": "1" * 64,
-        "all_phase_a_shared_identity_sha256": {
-            str(seed): f"{seed}" * 64 for seed in range(5)
-        },
+        "shared_identity_sha256": shared_identity_sha256,
+        "all_phase_a_shared_identity_sha256": phase_a_map,
         "operator_config_sha256": "f" * 64,
         "arm_isolation_sha256": arm_isolation_sha256,
         "arms": arms,
@@ -609,6 +629,7 @@ def test_phase_b_seed_removes_only_timing_dependent_arm_hashes(
         accepted_seed_root=tmp_path / "accepted",
         fresh_seed_root=tmp_path / "fresh",
         seed=0,
+        phase_a_result=_verified_phase_a_result(),
     )
 
     assert result["pass"] is True
@@ -632,6 +653,7 @@ def test_phase_b_seed_keeps_arm_isolation_identity_exact(
         accepted_seed_root=tmp_path / "accepted",
         fresh_seed_root=tmp_path / "fresh",
         seed=0,
+        phase_a_result=_verified_phase_a_result(),
     )
 
     assert result["pass"] is False
@@ -665,6 +687,7 @@ def test_phase_b_seed_rejects_forged_arm_manifest_identity(
         accepted_seed_root=tmp_path / "accepted",
         fresh_seed_root=tmp_path / "fresh",
         seed=0,
+        phase_a_result=_verified_phase_a_result(),
     )
 
     assert result["pass"] is False
@@ -696,10 +719,158 @@ def test_phase_b_seed_rejects_redirected_arm_descriptor_path(
         accepted_seed_root=tmp_path / "accepted",
         fresh_seed_root=tmp_path / "fresh",
         seed=0,
+        phase_a_result=_verified_phase_a_result(),
     )
 
     assert result["pass"] is False
     assert "phase_b_manifest.arms.d_drift.path" in result["mismatches"]
+
+def test_phase_b_seed_rejects_missing_required_arm(
+    tmp_path: Path,
+) -> None:
+    _write_phase_b_seed_fixture(tmp_path / "accepted")
+    fresh = _write_phase_b_seed_fixture(tmp_path / "fresh")
+    arms = fresh["arms"]
+    assert isinstance(arms, dict)
+    arms.pop("d_periodic")
+    _rewrite_phase_b_seed_manifest(tmp_path / "fresh", fresh)
+
+    result = compare_phase_b_seed(
+        accepted_seed_root=tmp_path / "accepted",
+        fresh_seed_root=tmp_path / "fresh",
+        seed=0,
+        phase_a_result=_verified_phase_a_result(),
+    )
+
+    assert result["pass"] is False
+    assert "fresh:arm_key_set_mismatch" in result["failures"]
+    assert "fresh:missing_arm_descriptor:d_periodic" in result["failures"]
+
+
+def test_phase_b_seed_rejects_extra_arm(
+    tmp_path: Path,
+) -> None:
+    _write_phase_b_seed_fixture(tmp_path / "accepted")
+    fresh = _write_phase_b_seed_fixture(tmp_path / "fresh")
+    arms = fresh["arms"]
+    assert isinstance(arms, dict)
+    arms["unexpected_arm"] = copy.deepcopy(arms["c_frozen_symbolic"])
+    _rewrite_phase_b_seed_manifest(tmp_path / "fresh", fresh)
+
+    result = compare_phase_b_seed(
+        accepted_seed_root=tmp_path / "accepted",
+        fresh_seed_root=tmp_path / "fresh",
+        seed=0,
+        phase_a_result=_verified_phase_a_result(),
+    )
+
+    assert result["pass"] is False
+    assert "fresh:arm_key_set_mismatch" in result["failures"]
+
+
+def test_phase_b_seed_rejects_phase_a_shared_identity_mismatch(
+    tmp_path: Path,
+) -> None:
+    _write_phase_b_seed_fixture(tmp_path / "accepted")
+    fresh = _write_phase_b_seed_fixture(tmp_path / "fresh")
+    fresh["shared_identity_sha256"] = "a" * 64
+    _rewrite_phase_b_seed_manifest(tmp_path / "fresh", fresh)
+
+    result = compare_phase_b_seed(
+        accepted_seed_root=tmp_path / "accepted",
+        fresh_seed_root=tmp_path / "fresh",
+        seed=0,
+        phase_a_result=_verified_phase_a_result(),
+    )
+
+    assert result["pass"] is False
+    assert "fresh:phase_a_shared_identity_binding_mismatch" in result["failures"]
+
+
+def test_phase_b_seed_requires_accepted_maintenance_archive_no_summary_fallback(
+    tmp_path: Path,
+) -> None:
+    _write_phase_b_seed_fixture(tmp_path / "accepted")
+    _write_phase_b_seed_fixture(tmp_path / "fresh")
+    (tmp_path / "accepted" / "d_drift" / "maintenance.jsonl").unlink()
+
+    result = compare_phase_b_seed(
+        accepted_seed_root=tmp_path / "accepted",
+        fresh_seed_root=tmp_path / "fresh",
+        seed=0,
+        phase_a_result=_verified_phase_a_result(),
+    )
+
+    assert result["pass"] is False
+    assert any(
+        "d_drift:accepted_arm:missing_file:maintenance" in failure
+        or "d_drift:maintenance:accepted_maintenance_invalid" in failure
+        for failure in result["failures"]
+    )
+
+
+def test_phase_b_all_five_seeds_integrate_three_verified_arms(
+    tmp_path: Path,
+) -> None:
+    accepted_root = tmp_path / "accepted"
+    fresh_root = tmp_path / "fresh"
+    for seed in range(5):
+        _write_phase_b_seed_fixture(
+            accepted_root / "phase_b_symbolic_arms" / f"seed-{seed}",
+            seed=seed,
+            timing_scale=1.0,
+        )
+        _write_phase_b_seed_fixture(
+            fresh_root / "phase_b_symbolic_arms" / f"seed-{seed}",
+            seed=seed,
+            timing_scale=9.0,
+        )
+
+    result = compare_phase_b(
+        accepted_root=accepted_root,
+        fresh_root=fresh_root,
+        phase_a_result=_verified_phase_a_result(),
+    )
+
+    assert result["pass"] is True
+    assert result["complete_seeds"] == [0, 1, 2, 3, 4]
+    assert result["accepted_maintenance_archive_verified"] is True
+    assert all(
+        set(item["verified_projected_arm_sha256"]) == set(ARM_NAMES)
+        for item in result["seed_results"]
+    )
+
+
+def test_phase_b_all_five_seeds_fail_closed_when_one_seed_missing(
+    tmp_path: Path,
+) -> None:
+    accepted_root = tmp_path / "accepted"
+    fresh_root = tmp_path / "fresh"
+    for seed in range(5):
+        _write_phase_b_seed_fixture(
+            accepted_root / "phase_b_symbolic_arms" / f"seed-{seed}",
+            seed=seed,
+        )
+        if seed != 4:
+            _write_phase_b_seed_fixture(
+                fresh_root / "phase_b_symbolic_arms" / f"seed-{seed}",
+                seed=seed,
+            )
+
+    result = compare_phase_b(
+        accepted_root=accepted_root,
+        fresh_root=fresh_root,
+        phase_a_result=_verified_phase_a_result(),
+    )
+
+    assert result["pass"] is False
+    assert result["complete_seeds"] == [0, 1, 2, 3]
+    assert result["accepted_maintenance_archive_verified"] is False
+    assert any(
+        failure.startswith("seed4:fresh_phase_b_manifest_invalid:FileNotFoundError")
+        for failure in result["failures"]
+    )
+
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 ACCEPTED_CORRECTION_CONFIG = (

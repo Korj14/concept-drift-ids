@@ -203,6 +203,9 @@ def _phase_a_shared_identity_map() -> dict[str, str]:
 def _verified_phase_a_result() -> dict[str, Any]:
     return {
         "pass": True,
+        "complete_seeds": [0, 1, 2, 3, 4],
+        "mismatch_count": 0,
+        "failures": [],
         "shared_identity_by_seed": _phase_a_shared_identity_map(),
     }
 
@@ -762,6 +765,25 @@ def test_phase_b_seed_rejects_extra_arm(
 
     assert result["pass"] is False
     assert "fresh:arm_key_set_mismatch" in result["failures"]
+
+
+def test_phase_b_seed_rejects_incomplete_phase_a_aggregate(
+    tmp_path: Path,
+) -> None:
+    _write_phase_b_seed_fixture(tmp_path / "accepted")
+    _write_phase_b_seed_fixture(tmp_path / "fresh")
+    phase_a = _verified_phase_a_result()
+    phase_a["complete_seeds"] = [0, 1, 2, 3]
+
+    result = compare_phase_b_seed(
+        accepted_seed_root=tmp_path / "accepted",
+        fresh_seed_root=tmp_path / "fresh",
+        seed=0,
+        phase_a_result=phase_a,
+    )
+
+    assert result["pass"] is False
+    assert "verified_phase_a_complete_seeds_mismatch" in result["failures"]
 
 
 def test_phase_b_seed_rejects_phase_a_shared_identity_mismatch(

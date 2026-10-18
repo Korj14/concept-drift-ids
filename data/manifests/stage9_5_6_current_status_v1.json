@@ -1,14 +1,14 @@
 {
   "schema_version": 1,
   "status_id": "stage9.5-6-current-status-v1",
-  "status_observed_at_head": "f1a383ea084255e086b925f56aabe15e24d9f82d",
-  "status_date": "2026-10-17",
+  "status_observed_at_head": "b10b5581a9b76f924867e9da82e02cb1e808b423",
+  "status_date": "2026-10-18",
   "purpose": "Additive current-status overlay. Does not modify the prospectively frozen replay construction contract, accepted Stage-8/9 science, or closure authority.",
   "frozen_replay_construction_contract": {
     "path": "data/manifests/stage9_5_6_replay_report_construction_v1.json",
-    "git_blob_sha1": "e7bbb6a68c1cc9e7ae2610122626974052b465e2",
+    "git_blob_sha1": "43d625972bff4b59a22b1f46983cd37d642e8b87",
     "contract_id": "stage9.5-6-replay-report-construction-v1",
-    "historical_status_fields_note": "The frozen contract's deterministic_producer.comparator_status and current_blocker fields record an earlier prospective execution state in which Stage-1 evidence had not yet been verified. They are preserved as historical freeze state and are not the current blocker statement."
+    "historical_status_fields_note": "The replay construction contract was prospectively extended before any historical replay outcome access to bind the deterministic comparison-evidence producer to a successful Stage-9.5-1 recovery report and to invoke the already-frozen finalizer directly. Phase-A/B/C projection semantics and accepted Stage-8/9 science were not changed."
   },
   "stage1_reconstruction": {
     "status": "closed_authoritative_verified",
@@ -25,11 +25,13 @@
       "phase_a": "implemented_prospectively_frozen",
       "phase_b": "implemented_prospectively_frozen",
       "phase_c_preconditions_and_failure_lineage": "implemented_prospectively_frozen",
-      "phase_c_corrected_seed0_output_comparison": "implemented_prospectively_frozen"
+      "phase_c_corrected_seed0_output_comparison": "implemented_prospectively_frozen",
+      "integration": "stage9_5_1_recovery_gated_phase_a_b_c_failure_lineage_correction_config_integrated"
     },
     "finalizer": {
       "id": "stage9.5-6-replay-report-finalizer-v1",
-      "status": "implemented_prospectively_frozen"
+      "status": "implemented_prospectively_frozen",
+      "integration": "directly_invoked_on_exact_comparator_output"
     },
     "historical_execution_handoff": {
       "path": "STAGE9_5_6_HISTORICAL_REPLAY_EXECUTION_HANDOFF.md",
@@ -43,7 +45,7 @@
   ],
   "work_package_state": {
     "stage9.5-1": "historical_negative_closure_preserved_reopening_route_frozen_pending_materialization_and_verifier",
-    "stage9.5-6": "blocked_until_stage9.5-1_frozen_v1_2_verifier_success",
+    "stage9.5-6": "blocked_until_stage9.5-1_frozen_v1_2_verifier_success_then_integrated_historical_replay_pipeline",
     "stage9.5-7": "locked",
     "stage9.5-8": "locked",
     "stage9.5-9": "locked",
@@ -112,5 +114,25 @@
     "reconstructible_route_frozen": true,
     "frozen_stage9_5_1_verifier_unchanged": true,
     "verifier_success_still_required": true
+  },
+  "integration_tranche_2026_10_18": {
+    "status": "implemented_prospectively_no_historical_replay_executed",
+    "live_head_reconciled_from": "cf78ba076a12693bc1b89ac52181fc8f20091fdc",
+    "live_head_at_start": "2e67f176cf9ec4e9cf8499d1d489c29f0fe47b38",
+    "recovery_gate": "successful_stage9.5-1-v1_2-report-required",
+    "integrated_components": [
+      "phase_a",
+      "phase_b",
+      "accepted_phase_b_maintenance",
+      "exact_phase_c_failure_lineage",
+      "correction_config_scientific_block_and_upstream_binding_verification",
+      "corrected_phase_c_seed0",
+      "stage1_reconstruction_evidence",
+      "direct_replay_report_finalizer_handoff"
+    ],
+    "tests": "synthetic_fixtures_only",
+    "historical_replay_executed": false,
+    "scientific_objects_modified": false,
+    "stage10_outcomes_accessed": false
   }
 }

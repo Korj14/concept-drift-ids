@@ -58,6 +58,45 @@ def _get_path(payload: dict[str, Any], dotted: str) -> Any:
     return node
 
 
+def _nested_comparison_consistency_failures(
+    value: Any,
+    *,
+    path: str,
+) -> list[str]:
+    failures: list[str] = []
+    if isinstance(value, dict):
+        if "pass" in value and value["pass"] is not True:
+            failures.append(f"nested_comparison_pass_not_true:{path}")
+        if "dependency_gate_pass" in value and value["dependency_gate_pass"] is not True:
+            failures.append(f"nested_comparison_dependency_gate_not_true:{path}")
+        for field in ("failures", "blockers", "mismatches"):
+            if field in value and value[field] != []:
+                failures.append(
+                    f"nested_comparison_{field}_nonempty:{path}"
+                )
+        if "mismatch_count" in value and value["mismatch_count"] != 0:
+            failures.append(
+                f"nested_comparison_mismatch_count_nonzero:{path}"
+            )
+        for key, child in value.items():
+            child_path = f"{path}.{key}" if path else str(key)
+            failures.extend(
+                _nested_comparison_consistency_failures(
+                    child,
+                    path=child_path,
+                )
+            )
+    elif isinstance(value, list):
+        for index, child in enumerate(value):
+            failures.extend(
+                _nested_comparison_consistency_failures(
+                    child,
+                    path=f"{path}[{index}]",
+                )
+            )
+    return failures
+
+
 def _comparison_failures(
     contract: dict[str, Any],
     evidence: dict[str, Any],
@@ -101,6 +140,22 @@ def _comparison_failures(
         core.pop("canonical_sha256", None)
         if _canonical_sha256(core) != embedded_hash:
             failures.append("comparison_evidence_canonical_sha256_mismatch")
+
+    for field in (
+        "phase_a",
+        "phase_b",
+        "phase_c",
+        "stage1_reconstruction",
+        "stage9_5_1_recovery",
+        "accepted_stage8_archive_identity",
+    ):
+        if field in evidence:
+            failures.extend(
+                _nested_comparison_consistency_failures(
+                    evidence[field],
+                    path=field,
+                )
+            )
     return failures
 
 

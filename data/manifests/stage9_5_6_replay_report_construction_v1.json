@@ -241,7 +241,38 @@
           "payload_sha256",
           "manifest_sha256"
         ],
-        "equality_rule": "after only the ten rebound upstream raw manifest identities are normalized, accepted and regenerated correction configs must have identical canonical JSON SHA-256 and exact recursive content equality"
+        "equality_rule": "after only the ten rebound upstream raw manifest identities are normalized, accepted and regenerated correction configs must have identical canonical JSON SHA-256 and exact recursive content equality",
+        "failed_v1_seed0_lineage_identity": {
+          "implementation_status": "implemented_prospectively_frozen",
+          "seed": 0,
+          "original_config_manifest_sha256": "3e3f768b5aa32f469440bb334508f747bbf2f7f5b08d9570a7aef2dbb9cb0257",
+          "phase": "offline_boundary_aware_evaluation",
+          "adaptive_components_received_boundary": false,
+          "exception_type": "NameError",
+          "message": "name 'read_jsonl' is not defined",
+          "successful_scoring_artifacts_present": false,
+          "exact_directory_entries": [
+            "attempt.json",
+            "failure.json"
+          ],
+          "semantic_requirements": [
+            "attempt.json seed must equal 0",
+            "attempt.json primary_config_manifest_sha256 must equal the frozen original config identity",
+            "attempt.json phase must equal offline_boundary_aware_evaluation",
+            "attempt.json adaptive_components_received_boundary must be false",
+            "failure.json seed must equal 0",
+            "failure.json phase must equal offline_boundary_aware_evaluation",
+            "failure.json adaptive_components_received_boundary must be false",
+            "failure.json exception_type must equal NameError",
+            "failure.json message must equal name 'read_jsonl' is not defined",
+            "the failed-v1 seed-0 directory must contain exactly attempt.json and failure.json; any extra outcome-bearing or successful-scoring artifact is forbidden"
+          ],
+          "raw_integrity_requirements": [
+            "accepted and fresh attempt.json file SHA-256 must match the frozen correction identity",
+            "accepted and fresh failure.json file SHA-256 must match the frozen correction identity",
+            "attempt.json and failure.json payload_sha256 must recompute exactly before semantic acceptance"
+          ]
+        }
       },
       "corrected_output_projection": {
         "implementation_status": "implemented_prospectively_frozen",

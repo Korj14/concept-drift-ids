@@ -10,7 +10,7 @@
     "producer_id": "stage9.5-6-replay-equivalence-assurance-v1",
     "comparator_id": "stage9.5-6-replay-equivalence-comparator-v1",
     "finalizer_id": "stage9.5-6-replay-report-finalizer-v1",
-    "comparator_status": "phase_a_b_c_integrated_recovery_gated_finalizer_bound",
+    "comparator_status": "phase_a_b_c_integrated_recovery_gated_finalizer_bound_hostile_audited_frozen",
     "finalizer_status": "implemented_prospectively_frozen",
     "comparator_and_finalizer_must_be_frozen_before_replay_outcomes": true,
     "post_outcome_projection_changes_permitted": false
@@ -465,5 +465,82 @@
   "hostile_audit": {
     "accepted_root_binding_rule": "Before comparison, the actual accepted_root must independently match the frozen accepted Stage-8 compact export surface (all 109 compact file descriptors by exact SHA-256) and the same frozen 145-file descriptor-linked heavy inventory used by Stage-9.5-1. A successful recovery report without this content binding is insufficient.",
     "noncanonical_json_rule": "Comparator JSON and JSONL inputs reject NaN, Infinity, and -Infinity before any diagnostic or timing projection."
+  },
+  "hostile_audit_freeze": {
+    "audit_id": "stage9.5-6-comparator-finalizer-hostile-audit-v1",
+    "status": "clean_frozen_after_targeted_hostile_audit",
+    "implementation_head": "d4b9a3680b5fc4c85fb5016fc1cd2389236a94a1",
+    "exact_head_ci": {
+      "stage9_5_assurance_run_id": 39162361032,
+      "assurance_contract_job_id": 117778144027,
+      "assurance_test_result": "155 passed",
+      "stage9_robustness_run_id": 39162360963,
+      "stage9_robustness_conclusion": "success",
+      "order_gate_job_id": 117778144057,
+      "order_gate_conclusion": "success",
+      "expected_fresh_clone_state": "0 identity failures / 2 external-artifact blockers",
+      "expected_static_state": "triage_required; ruff=154; mypy=55",
+      "later_packages_unlocked": false,
+      "stage9_5_7_8_9_state": "skipped"
+    },
+    "frozen_blobs": {
+      "comparator": {
+        "path": "tools/stage9_5/replay_equivalence_comparator.py",
+        "git_blob_sha1": "ead2820b66f9499d002277084f0aa660f1ba30f0"
+      },
+      "finalizer": {
+        "path": "tools/stage9_5/replay_report_finalizer.py",
+        "git_blob_sha1": "6498663ede2ead6ed62dc26abe84b888f0b5587a"
+      },
+      "comparator_tests": {
+        "path": "tests/stage9_5/test_replay_equivalence_comparator.py",
+        "git_blob_sha1": "f64e93bb0c02d104437b8670603c420ec460bd78"
+      },
+      "finalizer_tests": {
+        "path": "tests/stage9_5/test_replay_report_finalizer.py",
+        "git_blob_sha1": "4b45ab3cdcc49327a7e875fb676cb12d88f038c9"
+      }
+    },
+    "attacks_audited": [
+      "missing files",
+      "duplicate JSON keys",
+      "NaN/noncanonical JSON",
+      "path traversal",
+      "reordered records",
+      "forged self-hashes",
+      "timing-only differences",
+      "non-timing differences",
+      "incomplete seed/arm sets",
+      "wrong historical heads",
+      "manual success fields",
+      "nonzero hidden mismatches"
+    ],
+    "concrete_fail_open_defects_corrected": [
+      {
+        "id": "noncanonical_timing_json_projection_bypass",
+        "correction": "Comparator JSON and JSONL inputs now reject NaN, Infinity, and -Infinity before diagnostic/timing projection."
+      },
+      {
+        "id": "accepted_root_substitution",
+        "correction": "The comparator now independently verifies the actual accepted_root against all 109 exact compact Stage-8 export descriptors and the frozen 145 descriptor-linked heavy-file requirements before comparison success is possible."
+      }
+    ],
+    "accepted_root_binding": {
+      "compact_exact_file_count": 109,
+      "heavy_descriptor_linked_file_count": 145,
+      "recovery_report_alone_sufficient": false
+    },
+    "audit_history": {
+      "initial_live_head": "581263aa966a94371684b676f5f1419796004356",
+      "failed_candidate_head": "7b6ce1790df5fda29bf1e78204f13d54adbcd2f7",
+      "failed_candidate_reason": "Test incorrectly treated the compact export layout as identical to the original source layout; exactly two preserved failed Phase-C files are intentionally renamed in compact export.",
+      "corrective_commit": "d4b9a3680b5fc4c85fb5016fc1cd2389236a94a1",
+      "corrective_scope": "test-only source-layout reconstruction; production comparator binding was not relaxed"
+    },
+    "residual_trust_boundary": "External Stage-9.5-6 execution is allowed by frozen governance. Canonical hashes and source identities detect evidence mutation/substitution but do not cryptographically attest that a malicious operator actually invoked the comparator. GitHub Actions identities remain supplemental unless an authoritative execution/transfer mechanism is prospectively frozen.",
+    "real_replay_executed": false,
+    "replay_outcomes_inspected": false,
+    "stage10_outcomes_accessed": false,
+    "scientific_objects_modified": false
   }
 }

@@ -2509,6 +2509,36 @@ def test_phase_b_maintenance_comparator_malformed_and_duplicate_key_fail_closed(
     )
 
 
+def test_phase_b_maintenance_comparator_rejects_noncanonical_nan_before_projection(
+    tmp_path: Path,
+) -> None:
+    accepted_path = tmp_path / "accepted" / "maintenance.jsonl"
+    fresh_path = tmp_path / "fresh" / "maintenance.jsonl"
+    _write_maintenance_jsonl(accepted_path, _maintenance_records())
+    fresh_path.parent.mkdir(parents=True)
+    fresh_path.write_text(
+        '{"record_id":"r-1","scientific_value":{"decision":"publish","score":0.75},'
+        '"shap_seconds":NaN,"surrogate_seconds":2.0,"lifecycle_seconds":3.0,'
+        '"generation_payload":{"generation_evidence_id":"'
+        + "a" * 64
+        + '","timing_seconds":{"shap":1.25,"surrogate":2.25},'
+        '"scientific_value":{"kept":true}}}\n',
+        encoding="utf-8",
+    )
+
+    result = compare_phase_b_maintenance_jsonl(
+        accepted_path=accepted_path,
+        fresh_path=fresh_path,
+    )
+
+    assert result["pass"] is False
+    assert any(
+        failure.startswith("fresh_maintenance_invalid:ValueError:")
+        and "Non-canonical JSON constant: NaN" in failure
+        for failure in result["failures"]
+    )
+
+
 def test_phase_b_maintenance_comparator_missing_accepted_evidence_fails_closed(
     tmp_path: Path,
 ) -> None:
@@ -2899,6 +2929,17 @@ def _patch_synthetic_integrated_components(monkeypatch: Any) -> None:
             "repository_head": _git_head(),
         },
     )
+    monkeypatch.setattr(
+        comparator_module,
+        "_verify_accepted_stage8_archive_root",
+        lambda *_args, **_kwargs: {
+            "pass": True,
+            "failures": [],
+            "requirement_count": 145,
+            "verified_count": 145,
+            "inventory_sha256": "9" * 64,
+        },
+    )
 
 
 def _run_synthetic_integrated_pipeline(
@@ -2934,6 +2975,7 @@ def test_integrated_pipeline_binds_recovery_comparator_and_finalizer(
     assert evidence["comparison_complete"] is True
     assert evidence["source_evidence_complete"] is True
     assert evidence["stage9_5_1_recovery_verified"] is True
+    assert evidence["accepted_stage8_archive_identity_verified"] is True
     assert evidence["accepted_maintenance_archive_verified"] is True
     assert evidence["unresolved_class_a"] == []
     assert report["pass"] is True
@@ -2955,6 +2997,47 @@ def test_integrated_pipeline_binds_recovery_comparator_and_finalizer(
         / "finalized"
         / "replay_equivalence_report.json"
     ).is_file()
+
+
+def test_integrated_pipeline_blocks_substituted_accepted_archive_root(
+    monkeypatch: Any,
+    tmp_path: Path,
+) -> None:
+    _patch_synthetic_integrated_components(monkeypatch)
+    monkeypatch.setattr(
+        comparator_module,
+        "_verify_accepted_stage8_archive_root",
+        lambda *_args, **_kwargs: {
+            "pass": False,
+            "failures": [
+                "accepted_stage8_archive_sha256_mismatch:"
+                "phase_a_shared_control_plane/seed-0/predictions.jsonl"
+            ],
+            "requirement_count": 145,
+            "verified_count": 144,
+            "inventory_sha256": "9" * 64,
+        },
+    )
+    recovery_path = _write_stage9_5_1_recovery_fixture(tmp_path)
+
+    integrated = _run_synthetic_integrated_pipeline(
+        tmp_path,
+        recovery_path,
+    )
+
+    evidence = integrated["comparison_evidence"]
+    assert evidence["stage9_5_1_recovery_verified"] is True
+    assert evidence["accepted_stage8_archive_identity_verified"] is False
+    assert evidence["comparison_complete"] is False
+    assert (
+        "accepted_stage8_archive_identity_not_verified"
+        in evidence["blockers"]
+    )
+    assert (
+        "accepted_stage8_archive_identity_not_verified"
+        in evidence["unresolved_class_a"]
+    )
+    assert integrated["replay_report"]["pass"] is False
 
 
 def test_integrated_pipeline_blocks_each_missing_external_family(

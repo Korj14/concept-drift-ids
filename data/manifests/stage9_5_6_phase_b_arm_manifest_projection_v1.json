@@ -194,11 +194,13 @@
     },
     "tests": {
       "path": "tests/stage9_5/test_replay_equivalence_comparator.py",
-      "blob_sha1": "6e2f2d4f7fed7a3cbb0dc2c80fdd3b66768e2696",
+      "blob_sha1": "7d58d96c4c5ec21ea64e60160e480416f7b37e62",
       "authoritative_arm_layer_tests": [
         "test_phase_b_arm_accepts_only_predeclared_timing_differences",
         "test_phase_b_arm_rejects_scientific_maintenance_change",
-        "test_phase_b_arm_rejects_nonmaintenance_state_change"
+        "test_phase_b_arm_rejects_nonmaintenance_state_change",
+        "test_phase_b_arm_rejects_forged_manifest_self_hash_before_projection",
+        "test_phase_b_arm_keeps_version_descriptor_hash_exact"
       ],
       "seed_level_phase_b_tests_are_not_authority_for_this_contract": true
     }

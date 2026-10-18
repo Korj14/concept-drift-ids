@@ -755,6 +755,12 @@ def compare_phase_b_arm(
         "failures": failures,
         "mismatch_count": len(mismatches),
         "mismatches": mismatches,
+        "accepted_manifest_sha256": accepted.get("manifest_sha256"),
+        "fresh_manifest_sha256": fresh.get("manifest_sha256"),
+        "accepted_shared_identity_sha256": accepted.get(
+            "shared_identity_sha256"
+        ),
+        "fresh_shared_identity_sha256": fresh.get("shared_identity_sha256"),
         "accepted_projected_maintenance_sha256": (
             accepted_projected_maintenance_sha256
         ),
@@ -796,6 +802,7 @@ def compare_phase_b_seed(
     accepted_seed_root: Path,
     fresh_seed_root: Path,
     seed: int,
+    phase_a_result: dict[str, Any],
 ) -> dict[str, Any]:
     failures: list[str] = []
     try:
@@ -808,6 +815,7 @@ def compare_phase_b_seed(
             "mismatch_count": 0,
             "mismatches": [],
             "arm_results": [],
+            "verified_projected_arm_sha256": {},
         }
     try:
         fresh = _load_json(fresh_seed_root / "phase_b_manifest.json")
@@ -819,6 +827,7 @@ def compare_phase_b_seed(
             "mismatch_count": 0,
             "mismatches": [],
             "arm_results": [],
+            "verified_projected_arm_sha256": {},
         }
 
     failures.extend(
@@ -828,14 +837,45 @@ def compare_phase_b_seed(
         _verify_run_manifest_hashes(fresh, label="fresh_phase_b")
     )
 
+    phase_a_map = phase_a_result.get("shared_identity_by_seed")
+    expected_phase_a_keys = {str(item) for item in SEEDS}
+    if phase_a_result.get("pass") is not True:
+        failures.append("verified_phase_a_result_not_passed")
+    if not isinstance(phase_a_map, dict):
+        failures.append("verified_phase_a_shared_identity_map_missing")
+        phase_a_map = {}
+    elif set(phase_a_map) != expected_phase_a_keys:
+        failures.append("verified_phase_a_shared_identity_key_set_mismatch")
+    else:
+        for key, value in phase_a_map.items():
+            if not isinstance(value, str) or SHA256_RE.fullmatch(value) is None:
+                failures.append(
+                    f"verified_phase_a_shared_identity_invalid:{key}"
+                )
+
+    expected_current_shared = phase_a_map.get(str(seed))
+    for label, payload in (("accepted", accepted), ("fresh", fresh)):
+        if payload.get("shared_identity_sha256") != expected_current_shared:
+            failures.append(f"{label}:phase_a_shared_identity_binding_mismatch")
+        if payload.get("all_phase_a_shared_identity_sha256") != phase_a_map:
+            failures.append(
+                f"{label}:all_phase_a_shared_identity_binding_mismatch"
+            )
+
     accepted_arms = accepted.get("arms")
     fresh_arms = fresh.get("arms")
     if not isinstance(accepted_arms, dict) or not isinstance(fresh_arms, dict):
         failures.append("phase_b_arms_not_objects")
         accepted_arms = {}
         fresh_arms = {}
+    required_arm_keys = set(ARM_NAMES)
+    if set(accepted_arms) != required_arm_keys:
+        failures.append("accepted:arm_key_set_mismatch")
+    if set(fresh_arms) != required_arm_keys:
+        failures.append("fresh:arm_key_set_mismatch")
 
     arm_results: list[dict[str, Any]] = []
+    verified_projected_arm_sha256: dict[str, str] = {}
     for arm in ARM_NAMES:
         accepted_desc = accepted_arms.get(arm)
         fresh_desc = fresh_arms.get(arm)
@@ -845,6 +885,13 @@ def compare_phase_b_seed(
         if not isinstance(fresh_desc, dict):
             failures.append(f"fresh:missing_arm_descriptor:{arm}")
             continue
+
+        expected_path = f"{arm}/arm_manifest.json"
+        if accepted_desc.get("path") != expected_path:
+            failures.append(f"accepted:{arm}:arm_descriptor_path_mismatch")
+        if fresh_desc.get("path") != expected_path:
+            failures.append(f"fresh:{arm}:arm_descriptor_path_mismatch")
+
         failures.extend(
             _verify_phase_b_arm_descriptor(
                 accepted_seed_root,
@@ -861,14 +908,55 @@ def compare_phase_b_seed(
                 label="fresh",
             )
         )
-        arm_results.append(
-            compare_phase_b_arm(
-                accepted_arm_root=accepted_seed_root / arm,
-                fresh_arm_root=fresh_seed_root / arm,
-                seed=seed,
-                arm=arm,
-            )
+
+        arm_result = compare_phase_b_arm(
+            accepted_arm_root=accepted_seed_root / arm,
+            fresh_arm_root=fresh_seed_root / arm,
+            seed=seed,
+            arm=arm,
         )
+        arm_results.append(arm_result)
+
+        if (
+            accepted_desc.get("manifest_sha256")
+            != arm_result.get("accepted_manifest_sha256")
+        ):
+            failures.append(
+                f"accepted:{arm}:descriptor_to_arm_manifest_binding_mismatch"
+            )
+        if (
+            fresh_desc.get("manifest_sha256")
+            != arm_result.get("fresh_manifest_sha256")
+        ):
+            failures.append(
+                f"fresh:{arm}:descriptor_to_arm_manifest_binding_mismatch"
+            )
+        if (
+            arm_result.get("accepted_shared_identity_sha256")
+            != expected_current_shared
+        ):
+            failures.append(
+                f"accepted:{arm}:phase_a_shared_identity_binding_mismatch"
+            )
+        if (
+            arm_result.get("fresh_shared_identity_sha256")
+            != expected_current_shared
+        ):
+            failures.append(
+                f"fresh:{arm}:phase_a_shared_identity_binding_mismatch"
+            )
+
+        accepted_projected = arm_result.get("accepted_projected_arm_sha256")
+        fresh_projected = arm_result.get("fresh_projected_arm_sha256")
+        if (
+            arm_result.get("pass") is True
+            and isinstance(accepted_projected, str)
+            and SHA256_RE.fullmatch(accepted_projected) is not None
+            and accepted_projected == fresh_projected
+        ):
+            verified_projected_arm_sha256[arm] = accepted_projected
+        else:
+            failures.append(f"{arm}:projected_arm_identity_not_verified")
 
     seed_mismatches: list[str] = []
     accepted_projected_sha256: str | None = None
@@ -902,6 +990,7 @@ def compare_phase_b_seed(
     mismatches = arm_mismatches + seed_mismatches
     arms_complete = (
         len(arm_results) == len(ARM_NAMES)
+        and set(verified_projected_arm_sha256) == required_arm_keys
         and all(item["pass"] is True for item in arm_results)
     )
     return {
@@ -911,8 +1000,12 @@ def compare_phase_b_seed(
         "mismatch_count": len(mismatches),
         "mismatches": mismatches,
         "arm_results": arm_results,
+        "verified_projected_arm_sha256": verified_projected_arm_sha256,
         "accepted_projected_sha256": accepted_projected_sha256,
         "fresh_projected_sha256": fresh_projected_sha256,
+        "seed_manifest_projection": (
+            "stage9.5-6-phase-b-seed-manifest-projection-v1"
+        ),
     }
 
 
@@ -920,6 +1013,7 @@ def compare_phase_b(
     *,
     accepted_root: Path,
     fresh_root: Path,
+    phase_a_result: dict[str, Any],
 ) -> dict[str, Any]:
     results: list[dict[str, Any]] = []
     for seed in SEEDS:
@@ -930,6 +1024,7 @@ def compare_phase_b(
                 accepted_seed_root=accepted_seed_root,
                 fresh_seed_root=fresh_seed_root,
                 seed=seed,
+                phase_a_result=phase_a_result,
             )
         )
     complete = [int(item["seed"]) for item in results if item["pass"] is True]
@@ -945,6 +1040,13 @@ def compare_phase_b(
         "mismatch_count": mismatch_count,
         "failures": failures,
         "seed_results": results,
+        "accepted_maintenance_archive_verified": (
+            len(complete) == len(SEEDS)
+            and all(
+                set(item["verified_projected_arm_sha256"]) == set(ARM_NAMES)
+                for item in results
+            )
+        ),
     }
 
 
@@ -1866,22 +1968,110 @@ def compare_phase_a_seed(
     }
 
 
+def _load_phase_a_shared_identity_for_binding(
+    seed_root: Path,
+    *,
+    seed: int,
+    label: str,
+) -> tuple[str | None, list[str]]:
+    failures: list[str] = []
+    try:
+        payload = _load_json(seed_root / "shared_identity.json")
+    except (OSError, json.JSONDecodeError, TypeError, ValueError) as exc:
+        return None, [
+            f"{label}:shared_identity_invalid:{type(exc).__name__}"
+        ]
+
+    payload_hash = payload.get("payload_sha256")
+    core = dict(payload)
+    core.pop("payload_sha256", None)
+    if (
+        not isinstance(payload_hash, str)
+        or SHA256_RE.fullmatch(payload_hash) is None
+        or _canonical_sha256(core) != payload_hash
+    ):
+        failures.append(f"{label}:shared_identity_payload_sha256_mismatch")
+    if payload.get("seed") != seed:
+        failures.append(f"{label}:shared_identity_seed_mismatch")
+
+    shared = payload.get("shared_identity")
+    required_keys = {
+        "label_schedule_sha256",
+        "detector_events_sha256",
+        "replay_evidence_sha256",
+        "checkpoint_chain_sha256",
+        "identity_sha256",
+    }
+    identity_sha: str | None = None
+    if not isinstance(shared, dict):
+        failures.append(f"{label}:shared_identity_object_missing")
+    elif set(shared) != required_keys:
+        failures.append(f"{label}:shared_identity_key_set_mismatch")
+    else:
+        identity_sha = shared.get("identity_sha256")
+        identity_core = dict(shared)
+        identity_core.pop("identity_sha256", None)
+        if (
+            not isinstance(identity_sha, str)
+            or SHA256_RE.fullmatch(identity_sha) is None
+            or _canonical_sha256(identity_core) != identity_sha
+        ):
+            failures.append(f"{label}:shared_identity_canonical_hash_mismatch")
+            identity_sha = None
+    return identity_sha, failures
+
+
 def compare_phase_a(
     *,
     accepted_root: Path,
     fresh_root: Path,
 ) -> dict[str, Any]:
     results: list[dict[str, Any]] = []
+    shared_identity_by_seed: dict[str, str] = {}
     for seed in SEEDS:
         accepted_seed_root = accepted_root / PHASE_A_SUBDIR / f"seed-{seed}"
         fresh_seed_root = fresh_root / PHASE_A_SUBDIR / f"seed-{seed}"
-        results.append(
-            compare_phase_a_seed(
-                accepted_seed_root=accepted_seed_root,
-                fresh_seed_root=fresh_seed_root,
+        result = compare_phase_a_seed(
+            accepted_seed_root=accepted_seed_root,
+            fresh_seed_root=fresh_seed_root,
+            seed=seed,
+        )
+        accepted_identity, accepted_failures = (
+            _load_phase_a_shared_identity_for_binding(
+                accepted_seed_root,
                 seed=seed,
+                label="accepted",
             )
         )
+        fresh_identity, fresh_failures = _load_phase_a_shared_identity_for_binding(
+            fresh_seed_root,
+            seed=seed,
+            label="fresh",
+        )
+        result["failures"].extend(accepted_failures)
+        result["failures"].extend(fresh_failures)
+        if (
+            accepted_identity is not None
+            and fresh_identity is not None
+            and accepted_identity != fresh_identity
+        ):
+            result["mismatches"].append(
+                "shared_identity.identity_sha256"
+            )
+        if (
+            accepted_identity is not None
+            and accepted_identity == fresh_identity
+            and not accepted_failures
+            and not fresh_failures
+        ):
+            result["shared_identity_sha256"] = accepted_identity
+            shared_identity_by_seed[str(seed)] = accepted_identity
+        else:
+            result["shared_identity_sha256"] = None
+        result["mismatch_count"] = len(result["mismatches"])
+        result["pass"] = not result["failures"] and not result["mismatches"]
+        results.append(result)
+
     complete = [int(item["seed"]) for item in results if item["pass"] is True]
     mismatch_count = sum(int(item["mismatch_count"]) for item in results)
     failures = [
@@ -1889,12 +2079,22 @@ def compare_phase_a(
         for item in results
         for failure in item["failures"]
     ]
+    required_identity_keys = {str(seed) for seed in SEEDS}
+    identities_complete = set(shared_identity_by_seed) == required_identity_keys
+    if not identities_complete:
+        failures.append("phase_a_shared_identity_map_incomplete")
     return {
-        "pass": len(complete) == len(SEEDS) and mismatch_count == 0 and not failures,
+        "pass": (
+            len(complete) == len(SEEDS)
+            and mismatch_count == 0
+            and not failures
+            and identities_complete
+        ),
         "complete_seeds": complete,
         "mismatch_count": mismatch_count,
         "failures": failures,
         "seed_results": results,
+        "shared_identity_by_seed": shared_identity_by_seed,
     }
 
 
@@ -1909,7 +2109,11 @@ def run(
 ) -> dict[str, Any]:
     contract = _load_json(CONSTRUCTION_CONTRACT_PATH)
     phase_a = compare_phase_a(accepted_root=accepted_root, fresh_root=fresh_root)
-    phase_b = compare_phase_b(accepted_root=accepted_root, fresh_root=fresh_root)
+    phase_b = compare_phase_b(
+        accepted_root=accepted_root,
+        fresh_root=fresh_root,
+        phase_a_result=phase_a,
+    )
     phase_c_preconditions = compare_phase_c_preconditions(
         accepted_root=accepted_root,
         fresh_root=fresh_root,
@@ -2040,7 +2244,9 @@ def run(
                 )
             ),
         },
-        "accepted_maintenance_archive_verified": phase_b["pass"],
+        "accepted_maintenance_archive_verified": (
+            phase_b["accepted_maintenance_archive_verified"]
+        ),
         "stage1_reconstructed_under_historical_environment": stage1["pass"],
         "stage1_reconstruction": stage1,
         "stage1_reconstruction_report_canonical_sha256": stage1[

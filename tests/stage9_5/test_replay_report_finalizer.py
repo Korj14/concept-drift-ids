@@ -47,6 +47,7 @@ def _comparison_evidence() -> dict[str, Any]:
     for dotted, value in expected.items():
         _set_path(payload, dotted, value)
     payload["stage1_reconstruction_report_canonical_sha256"] = "b" * 64
+    payload["stage9_5_1_recovery_report_canonical_sha256"] = "c" * 64
     return _seal(payload)
 
 
@@ -87,6 +88,10 @@ def test_valid_comparison_evidence_finalizes_canonical_success(
     assert (
         construction["stage1_reconstruction_report_canonical_sha256"]
         == "b" * 64
+    )
+    assert (
+        construction["stage9_5_1_recovery_report_canonical_sha256"]
+        == "c" * 64
     )
     core = dict(report)
     observed = core.pop("canonical_sha256")
@@ -149,6 +154,20 @@ def test_stale_comparison_evidence_canonical_hash_is_blocked(
     assert report["pass"] is False
     assert (
         "comparison_evidence_canonical_sha256_mismatch"
+        in report["failures"]
+    )
+
+def test_missing_recovery_report_hash_is_blocked(tmp_path: Path) -> None:
+    evidence = _comparison_evidence()
+    evidence.pop("stage9_5_1_recovery_report_canonical_sha256")
+    _seal(evidence)
+    path = _write_evidence(tmp_path, evidence)
+
+    report = run(path, tmp_path / "out")
+
+    assert report["pass"] is False
+    assert (
+        "invalid_stage9_5_1_recovery_report_canonical_sha256"
         in report["failures"]
     )
 

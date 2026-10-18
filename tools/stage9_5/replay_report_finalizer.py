@@ -141,21 +141,12 @@ def _comparison_failures(
         if _canonical_sha256(core) != embedded_hash:
             failures.append("comparison_evidence_canonical_sha256_mismatch")
 
-    for field in (
-        "phase_a",
-        "phase_b",
-        "phase_c",
-        "stage1_reconstruction",
-        "stage9_5_1_recovery",
-        "accepted_stage8_archive_identity",
-    ):
-        if field in evidence:
-            failures.extend(
-                _nested_comparison_consistency_failures(
-                    evidence[field],
-                    path=field,
-                )
-            )
+    failures.extend(
+        _nested_comparison_consistency_failures(
+            evidence,
+            path="comparison_evidence",
+        )
+    )
     return failures
 
 

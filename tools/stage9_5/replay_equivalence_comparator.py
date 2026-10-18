@@ -65,6 +65,83 @@ PHASE_C_FROZEN_SCIENTIFIC_BLOCKS = (
     "fusion",
     "analysis",
 )
+PHASE_C_BOUNDARY_INDEX = 69_260
+PHASE_C_STREAM_ROWS = 138_530
+PHASE_C_SUCCESS_FILES = (
+    "attempt.json",
+    "c_frozen_symbolic_evaluation.json",
+    "c_frozen_symbolic_prediction_trace.jsonl.gz",
+    "d_drift_evaluation.json",
+    "d_drift_prediction_trace.jsonl.gz",
+    "d_periodic_evaluation.json",
+    "d_periodic_prediction_trace.jsonl.gz",
+    "phase_c_seed_manifest.json",
+)
+PHASE_C_METRIC_WEIGHTS = ("0.5", "0.7", "0.9", "1.0")
+PHASE_C_METRIC_DOMAINS = ("full", "pre", "post")
+PHASE_C_METRIC_FIELDS = (
+    "accuracy",
+    "balanced_accuracy",
+    "precision",
+    "recall",
+    "f1",
+    "fpr",
+    "mcc",
+    "roc_auc",
+    "average_precision",
+    "tp",
+    "tn",
+    "fp",
+    "fn",
+)
+PHASE_C_EXPLANATION_FIELDS = (
+    "benign_rows",
+    "benign_coverage",
+    "benign_symbolic_correctness_on_covered",
+    "benign_correct_symbolic_coverage",
+    "attack_rows",
+    "attack_coverage",
+    "attack_symbolic_correctness_on_covered",
+    "attack_correct_symbolic_coverage",
+    "mcsc",
+    "resolved_coverage",
+    "uncovered_rate",
+    "conflict_abstain_rate",
+)
+PHASE_C_WINDOW_FIELDS = (
+    "start_index",
+    "end_index_exclusive",
+    "row_count",
+    "mcc",
+    "fpr",
+    "f1",
+    "mcsc",
+    "resolved_coverage",
+    "conflict_abstain_rate",
+)
+PHASE_C_TRIGGER_DIAGNOSTIC_FIELDS = (
+    "detector_event_count",
+    "pre_reference_alarm_count",
+    "pre_reference_alarm_clocks",
+    "post_reference_event_count",
+    "first_post_reference_confirmation_clock",
+    "first_post_reference_confirmation_delay_rows",
+    "latency_adjusted_excess_delay_rows",
+    "repeated_post_reference_events",
+    "neural_publication_count",
+)
+PHASE_C_RETENTION_PREFIXES = ("development_", "pre_reference_")
+PHASE_C_RETENTION_METRIC_NAMES = (
+    "accuracy",
+    "balanced_accuracy",
+    "precision",
+    "recall",
+    "f1",
+    "fpr",
+    "mcc",
+    "roc_auc",
+    "average_precision",
+)
 SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
 SHA40_RE = re.compile(r"^[0-9a-f]{40}$")
 
@@ -1406,6 +1483,293 @@ def compare_phase_c_preconditions(
 
 
 
+def _verify_phase_c_success_surface(
+    output_root: Path,
+    *,
+    label: str,
+) -> list[str]:
+    if not output_root.is_dir():
+        return [f"{label}:corrected_output_root_missing"]
+    entries = sorted(path.name for path in output_root.iterdir())
+    expected = sorted(PHASE_C_SUCCESS_FILES)
+    failures: list[str] = []
+    if entries != expected:
+        failures.append(f"{label}:corrected_output_file_set_mismatch")
+    for name in PHASE_C_SUCCESS_FILES:
+        path = output_root / name
+        if path.exists() and not path.is_file():
+            failures.append(f"{label}:corrected_output_entry_not_file:{name}")
+    return failures
+
+
+def _verify_phase_c_attempt(
+    output_root: Path,
+    correction_config: dict[str, Any],
+    *,
+    label: str,
+) -> tuple[dict[str, Any] | None, dict[str, Any] | None, list[str]]:
+    path = output_root / "attempt.json"
+    try:
+        attempt = _load_json(path)
+    except (OSError, json.JSONDecodeError, TypeError, ValueError) as exc:
+        return None, None, [f"{label}:attempt_invalid:{type(exc).__name__}"]
+
+    failures: list[str] = []
+    expected_keys = {
+        "seed",
+        "primary_config_manifest_sha256",
+        "phase",
+        "adaptive_components_received_boundary",
+        "payload_sha256",
+    }
+    if set(attempt) != expected_keys:
+        failures.append(f"{label}:attempt_key_set_mismatch")
+
+    payload_hash = attempt.get("payload_sha256")
+    core = dict(attempt)
+    core.pop("payload_sha256", None)
+    if (
+        not isinstance(payload_hash, str)
+        or SHA256_RE.fullmatch(payload_hash) is None
+        or _canonical_sha256(core) != payload_hash
+    ):
+        failures.append(f"{label}:attempt_payload_sha256_mismatch")
+    if attempt.get("seed") != 0:
+        failures.append(f"{label}:attempt_seed_mismatch")
+    if attempt.get("phase") != PHASE_C_FAILED_PHASE:
+        failures.append(f"{label}:attempt_phase_mismatch")
+    if attempt.get("adaptive_components_received_boundary") is not False:
+        failures.append(f"{label}:attempt_boundary_contamination_flag")
+    if (
+        attempt.get("primary_config_manifest_sha256")
+        != correction_config.get("manifest_sha256")
+    ):
+        failures.append(f"{label}:attempt_correction_config_binding_mismatch")
+
+    projected = copy.deepcopy(attempt)
+    projected.pop("payload_sha256", None)
+    if "primary_config_manifest_sha256" not in projected:
+        failures.append(f"{label}:attempt_config_identity_missing")
+        projected = None
+    else:
+        projected["primary_config_manifest_sha256"] = PHASE_C_TRANSITIVE_IDENTITY
+    return attempt, projected, failures
+
+
+def _verify_phase_c_evaluation_schema(
+    summary: dict[str, Any],
+    *,
+    label: str,
+) -> list[str]:
+    failures: list[str] = []
+    expected_top_level = {
+        "seed",
+        "arm",
+        "primary_config_manifest_sha256",
+        "phase_b_arm_manifest_sha256",
+        "shared_identity_sha256",
+        "metrics_by_neural_weight",
+        "explanation",
+        "primary_windows",
+        "primary_recovery",
+        "maintenance_summary",
+        "prediction_trace",
+        "summary_sha256",
+        "payload_sha256",
+    }
+    if set(summary) != expected_top_level:
+        failures.append(f"{label}:evaluation_key_set_mismatch")
+
+    metrics = summary.get("metrics_by_neural_weight")
+    if not isinstance(metrics, dict) or set(metrics) != set(PHASE_C_METRIC_WEIGHTS):
+        failures.append(f"{label}:metrics_weight_key_set_mismatch")
+    else:
+        for weight in PHASE_C_METRIC_WEIGHTS:
+            domains = metrics.get(weight)
+            if (
+                not isinstance(domains, dict)
+                or set(domains) != set(PHASE_C_METRIC_DOMAINS)
+            ):
+                failures.append(f"{label}:metrics_domain_key_set_mismatch:{weight}")
+                continue
+            for domain in PHASE_C_METRIC_DOMAINS:
+                values = domains.get(domain)
+                if (
+                    not isinstance(values, dict)
+                    or set(values) != set(PHASE_C_METRIC_FIELDS)
+                ):
+                    failures.append(
+                        f"{label}:metrics_field_set_mismatch:{weight}:{domain}"
+                    )
+
+    explanation = summary.get("explanation")
+    if (
+        not isinstance(explanation, dict)
+        or set(explanation) != set(PHASE_C_METRIC_DOMAINS)
+    ):
+        failures.append(f"{label}:explanation_domain_key_set_mismatch")
+    else:
+        for domain in PHASE_C_METRIC_DOMAINS:
+            values = explanation.get(domain)
+            if (
+                not isinstance(values, dict)
+                or set(values) != set(PHASE_C_EXPLANATION_FIELDS)
+            ):
+                failures.append(f"{label}:explanation_field_set_mismatch:{domain}")
+
+    windows = summary.get("primary_windows")
+    if not isinstance(windows, dict) or set(windows) != {"pre", "post"}:
+        failures.append(f"{label}:primary_windows_domain_key_set_mismatch")
+    else:
+        for domain in ("pre", "post"):
+            rows = windows.get(domain)
+            if not isinstance(rows, list):
+                failures.append(f"{label}:primary_windows_not_list:{domain}")
+                continue
+            for index, row in enumerate(rows):
+                if (
+                    not isinstance(row, dict)
+                    or set(row) != set(PHASE_C_WINDOW_FIELDS)
+                ):
+                    failures.append(
+                        f"{label}:primary_window_field_set_mismatch:{domain}:{index}"
+                    )
+
+    recovery = summary.get("primary_recovery")
+    if not isinstance(recovery, dict) or set(recovery) != {"mcc", "mcsc", "fpr"}:
+        failures.append(f"{label}:primary_recovery_metric_key_set_mismatch")
+    else:
+        for metric in ("mcc", "mcsc", "fpr"):
+            item = recovery.get(metric)
+            if not isinstance(item, dict) or "available" not in item:
+                failures.append(f"{label}:primary_recovery_invalid:{metric}")
+                continue
+            if item.get("available") is False:
+                if set(item) != {"available", "reason"}:
+                    failures.append(
+                        f"{label}:primary_recovery_unavailable_shape_mismatch:{metric}"
+                    )
+                if item.get("reason") != "undefined_window_metric":
+                    failures.append(
+                        f"{label}:primary_recovery_unavailable_reason_mismatch:{metric}"
+                    )
+            elif item.get("available") is True:
+                expected_fields = {
+                    "available",
+                    "baseline",
+                    "recovered",
+                    "recovery_clock",
+                    "right_censored",
+                    "recovery_rows_from_boundary",
+                }
+                if set(item) != expected_fields:
+                    failures.append(
+                        f"{label}:primary_recovery_available_shape_mismatch:{metric}"
+                    )
+            else:
+                failures.append(f"{label}:primary_recovery_available_not_boolean:{metric}")
+    return failures
+
+
+def _verify_phase_c_seed_manifest_schema(
+    manifest: dict[str, Any],
+    *,
+    label: str,
+) -> list[str]:
+    failures: list[str] = []
+    expected_top_level = {
+        "schema_version",
+        "seed",
+        "status",
+        "primary_config_manifest_sha256",
+        "phase_a_run_manifest_sha256",
+        "phase_b_seed_manifest_sha256",
+        "arm_summary_sha256",
+        "lambda_one_predictive_equality",
+        "trigger_diagnostics",
+        "neural_retention_probes",
+        "boundary_index",
+        "adaptive_components_received_boundary",
+        "manifest_sha256",
+        "payload_sha256",
+    }
+    if set(manifest) != expected_top_level:
+        failures.append(f"{label}:phase_c_seed_key_set_mismatch")
+    if manifest.get("boundary_index") != PHASE_C_BOUNDARY_INDEX:
+        failures.append(f"{label}:phase_c_boundary_index_mismatch")
+
+    trigger = manifest.get("trigger_diagnostics")
+    if (
+        not isinstance(trigger, dict)
+        or set(trigger) != set(PHASE_C_TRIGGER_DIAGNOSTIC_FIELDS)
+    ):
+        failures.append(f"{label}:trigger_diagnostics_field_set_mismatch")
+
+    probes = manifest.get("neural_retention_probes")
+    if not isinstance(probes, list):
+        failures.append(f"{label}:neural_retention_probes_not_list")
+        return failures
+
+    expected_metric_keys = {
+        f"{prefix}{metric}"
+        for prefix in PHASE_C_RETENTION_PREFIXES
+        for metric in PHASE_C_RETENTION_METRIC_NAMES
+    }
+    for index, row in enumerate(probes):
+        if not isinstance(row, dict) or set(row) != {
+            "sequence",
+            "checkpoint_file_sha256",
+            "publication_effective_index",
+            "metrics",
+        }:
+            failures.append(f"{label}:retention_probe_field_set_mismatch:{index}")
+            continue
+        checkpoint_sha = row.get("checkpoint_file_sha256")
+        if (
+            not isinstance(checkpoint_sha, str)
+            or SHA256_RE.fullmatch(checkpoint_sha) is None
+        ):
+            failures.append(f"{label}:retention_probe_checkpoint_sha_invalid:{index}")
+        metrics = row.get("metrics")
+        if not isinstance(metrics, dict) or set(metrics) != expected_metric_keys:
+            failures.append(f"{label}:retention_probe_metric_key_set_mismatch:{index}")
+            continue
+        for metric_name, metric_payload in metrics.items():
+            if (
+                not isinstance(metric_payload, dict)
+                or set(metric_payload)
+                != {"value", "delta_from_initial", "descriptive_forgetting"}
+            ):
+                failures.append(
+                    f"{label}:retention_probe_metric_shape_mismatch:"
+                    f"{index}:{metric_name}"
+                )
+    return failures
+
+
+def _blocked_phase_c_output_for_dependencies(
+    *,
+    phase_a_pass: bool,
+    phase_b_pass: bool,
+    preconditions_pass: bool,
+) -> dict[str, Any]:
+    failures: list[str] = []
+    if not phase_a_pass:
+        failures.append("phase_c_dependency_gate:phase_a_not_verified")
+    if not phase_b_pass:
+        failures.append("phase_c_dependency_gate:phase_b_not_verified")
+    if not preconditions_pass:
+        failures.append("phase_c_dependency_gate:preconditions_not_verified")
+    return {
+        "pass": False,
+        "failures": failures,
+        "mismatch_count": 0,
+        "mismatches": [],
+        "arm_results": [],
+        "dependency_gate_pass": False,
+    }
+
+
 def _verify_phase_c_evaluation_hashes(
     summary: dict[str, Any],
     *,
@@ -1444,6 +1808,7 @@ def _verify_phase_c_prediction_trace(
     trace: Any,
     *,
     label: str,
+    expected_path: str,
 ) -> list[str]:
     failures: list[str] = []
     if not isinstance(trace, dict):
@@ -1452,12 +1817,16 @@ def _verify_phase_c_prediction_trace(
     raw_sha = trace.get("sha256")
     content_sha = trace.get("canonical_jsonl_sha256")
     row_count = trace.get("row_count")
+    if trace.get("path") != expected_path:
+        failures.append(f"{label}:prediction_trace_path_mismatch")
     if not isinstance(raw_sha, str) or SHA256_RE.fullmatch(raw_sha) is None:
         failures.append(f"{label}:prediction_trace_invalid_sha256")
     if not isinstance(content_sha, str) or SHA256_RE.fullmatch(content_sha) is None:
         failures.append(f"{label}:prediction_trace_invalid_content_sha256")
     if not isinstance(row_count, int) or isinstance(row_count, bool) or row_count < 0:
         failures.append(f"{label}:prediction_trace_invalid_row_count")
+    elif row_count != PHASE_C_STREAM_ROWS:
+        failures.append(f"{label}:prediction_trace_frozen_row_count_mismatch")
 
     try:
         path = _safe_descriptor_path(output_root, trace)
@@ -1640,6 +2009,12 @@ def compare_phase_c_arm_output(
             label=f"{label}:{arm}",
         )
     )
+    failures.extend(
+        _verify_phase_c_evaluation_schema(
+            summary,
+            label=f"{label}:{arm}",
+        )
+    )
     if summary.get("seed") != 0:
         failures.append(f"{label}:{arm}:seed_mismatch")
     if summary.get("arm") != arm:
@@ -1685,6 +2060,7 @@ def compare_phase_c_arm_output(
             output_root,
             trace,
             label=f"{label}:{arm}",
+            expected_path=f"{arm}_prediction_trace.jsonl.gz",
         )
     )
     scenario = correction_config.get("scenario")
@@ -1693,6 +2069,8 @@ def compare_phase_c_arm_output(
         if isinstance(scenario, dict)
         else None
     )
+    if expected_rows != PHASE_C_STREAM_ROWS:
+        failures.append(f"{label}:{arm}:scenario_stream_rows_mismatch")
     if (
         not isinstance(trace, dict)
         or trace.get("row_count") != expected_rows
@@ -1817,6 +2195,47 @@ def compare_phase_c_corrected_output(
         accepted_root / PHASE_C_CORRECTED_SUBDIR / "seed-0"
     )
     fresh_output_root = fresh_root / PHASE_C_CORRECTED_SUBDIR / "seed-0"
+    failures.extend(
+        _verify_phase_c_success_surface(
+            accepted_output_root,
+            label="accepted",
+        )
+    )
+    failures.extend(
+        _verify_phase_c_success_surface(
+            fresh_output_root,
+            label="fresh",
+        )
+    )
+
+    _, accepted_attempt_projection, accepted_attempt_failures = (
+        _verify_phase_c_attempt(
+            accepted_output_root,
+            accepted_config,
+            label="accepted",
+        )
+    )
+    _, fresh_attempt_projection, fresh_attempt_failures = _verify_phase_c_attempt(
+        fresh_output_root,
+        fresh_config,
+        label="fresh",
+    )
+    failures.extend(accepted_attempt_failures)
+    failures.extend(fresh_attempt_failures)
+    if (
+        isinstance(accepted_attempt_projection, dict)
+        and isinstance(fresh_attempt_projection, dict)
+        and _canonical_sha256(accepted_attempt_projection)
+        != _canonical_sha256(fresh_attempt_projection)
+    ):
+        arm_mismatches.extend(
+            "attempt:" + path
+            for path in _difference_paths(
+                accepted_attempt_projection,
+                fresh_attempt_projection,
+                "attempt",
+            )
+        )
     try:
         accepted_seed = _load_json(
             accepted_output_root / "phase_c_seed_manifest.json"
@@ -1843,11 +2262,23 @@ def compare_phase_c_corrected_output(
                 label="accepted_phase_c_seed",
             )
         )
+        failures.extend(
+            _verify_phase_c_seed_manifest_schema(
+                accepted_seed,
+                label="accepted",
+            )
+        )
     if fresh_seed:
         failures.extend(
             _verify_run_manifest_hashes(
                 fresh_seed,
                 label="fresh_phase_c_seed",
+            )
+        )
+        failures.extend(
+            _verify_phase_c_seed_manifest_schema(
+                fresh_seed,
+                label="fresh",
             )
         )
 
@@ -1868,6 +2299,8 @@ def compare_phase_c_corrected_output(
             is not False
         ):
             failures.append(f"{label}:phase_c_boundary_contamination_flag")
+        if seed_manifest.get("boundary_index") != PHASE_C_BOUNDARY_INDEX:
+            failures.append(f"{label}:phase_c_boundary_index_mismatch")
         if (
             seed_manifest.get("primary_config_manifest_sha256")
             != config.get("manifest_sha256")
@@ -2189,12 +2622,24 @@ def run(
         accepted_config_path=accepted_correction_config_path,
         fresh_config_path=fresh_correction_config_path,
     )
-    phase_c_output = compare_phase_c_corrected_output(
-        accepted_root=accepted_root,
-        fresh_root=fresh_root,
-        accepted_config_path=accepted_correction_config_path,
-        fresh_config_path=fresh_correction_config_path,
-    )
+    if (
+        phase_a["pass"]
+        and phase_b["pass"]
+        and phase_c_preconditions["pass"]
+    ):
+        phase_c_output = compare_phase_c_corrected_output(
+            accepted_root=accepted_root,
+            fresh_root=fresh_root,
+            accepted_config_path=accepted_correction_config_path,
+            fresh_config_path=fresh_correction_config_path,
+        )
+        phase_c_output["dependency_gate_pass"] = True
+    else:
+        phase_c_output = _blocked_phase_c_output_for_dependencies(
+            phase_a_pass=bool(phase_a["pass"]),
+            phase_b_pass=bool(phase_b["pass"]),
+            preconditions_pass=bool(phase_c_preconditions["pass"]),
+        )
     stage1 = _verify_stage1_reconstruction_report(stage1_report_path)
     mismatches = [
         {

@@ -601,6 +601,25 @@ def compare_phase_b_arm(
     seed: int,
     arm: str,
 ) -> dict[str, Any]:
+    if seed not in SEEDS:
+        return {
+            "seed": seed,
+            "arm": arm,
+            "pass": False,
+            "failures": [f"unsupported_phase_b_seed:{seed}"],
+            "mismatch_count": 0,
+            "mismatches": [],
+        }
+    if arm not in ARM_NAMES:
+        return {
+            "seed": seed,
+            "arm": arm,
+            "pass": False,
+            "failures": [f"unsupported_phase_b_arm:{arm}"],
+            "mismatch_count": 0,
+            "mismatches": [],
+        }
+
     failures: list[str] = []
     try:
         accepted = _load_json(accepted_arm_root / "arm_manifest.json")
@@ -624,6 +643,12 @@ def compare_phase_b_arm(
             "mismatch_count": 0,
             "mismatches": [],
         }
+
+    for label, payload in (("accepted_arm", accepted), ("fresh_arm", fresh)):
+        if payload.get("seed") != seed:
+            failures.append(f"{label}:seed_mismatch")
+        if payload.get("arm") != arm:
+            failures.append(f"{label}:arm_mismatch")
 
     failures.extend(
         _verify_run_manifest_hashes(accepted, label="accepted_arm")
@@ -669,35 +694,27 @@ def compare_phase_b_arm(
         fresh_desc = fresh_files["maintenance"]
         if not isinstance(accepted_desc, dict) or not isinstance(fresh_desc, dict):
             raise TypeError("maintenance descriptors must be objects")
-        accepted_records = _load_jsonl(
-            _safe_descriptor_path(accepted_arm_root, accepted_desc)
+        maintenance_result = compare_phase_b_maintenance_jsonl(
+            accepted_path=_safe_descriptor_path(
+                accepted_arm_root,
+                accepted_desc,
+            ),
+            fresh_path=_safe_descriptor_path(
+                fresh_arm_root,
+                fresh_desc,
+            ),
         )
-        fresh_records = _load_jsonl(
-            _safe_descriptor_path(fresh_arm_root, fresh_desc)
+        failures.extend(
+            f"maintenance:{failure}"
+            for failure in maintenance_result["failures"]
         )
-        accepted_projected_records = [
-            _project_phase_b_maintenance_record(item)
-            for item in accepted_records
+        maintenance_mismatches = list(maintenance_result["mismatches"])
+        accepted_projected_maintenance_sha256 = maintenance_result[
+            "accepted_projected_sha256"
         ]
-        fresh_projected_records = [
-            _project_phase_b_maintenance_record(item)
-            for item in fresh_records
+        fresh_projected_maintenance_sha256 = maintenance_result[
+            "fresh_projected_sha256"
         ]
-        accepted_projected_maintenance_sha256 = _canonical_sha256(
-            accepted_projected_records
-        )
-        fresh_projected_maintenance_sha256 = _canonical_sha256(
-            fresh_projected_records
-        )
-        if (
-            accepted_projected_maintenance_sha256
-            != fresh_projected_maintenance_sha256
-        ):
-            maintenance_mismatches = _difference_paths(
-                accepted_projected_records,
-                fresh_projected_records,
-                "maintenance",
-            )
     except (
         KeyError,
         OSError,
@@ -746,8 +763,13 @@ def compare_phase_b_arm(
         ),
         "accepted_projected_arm_sha256": accepted_projected_arm_sha256,
         "fresh_projected_arm_sha256": fresh_projected_arm_sha256,
+        "maintenance_comparator": (
+            "stage9.5-6-phase-b-maintenance-record-projection-v1"
+        ),
+        "arm_manifest_projection": (
+            "stage9.5-6-phase-b-arm-manifest-projection-v1"
+        ),
     }
-
 
 def _project_phase_b_seed_manifest(
     manifest: dict[str, Any],

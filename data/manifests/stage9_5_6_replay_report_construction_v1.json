@@ -100,7 +100,7 @@
       ],
       "self_hash_and_transitive_hash_handling_must_be_explicitly_implemented_before_execution": false,
       "projection_implementation": {
-        "implementation_status": "implemented_prospectively_frozen",
+        "implementation_status": "implemented_prospectively_frozen_with_seed_binding",
         "tool_path": "tools/stage9_5/replay_equivalence_comparator.py",
         "test_path": "tests/stage9_5/test_replay_equivalence_comparator.py",
         "historical_phase_b_head": "bfa14b942e4a5b2fbfa8aa3c43728a7f1cd81645",
@@ -145,25 +145,57 @@
           "standalone_contract_blob_sha1": "140b123c706be6d2bcb60bfeb98b8aad3e6be1e8"
         },
         "seed_manifest_projection": {
+          "standalone_contract_id": "stage9.5-6-phase-b-seed-manifest-projection-v1",
+          "standalone_contract_path": "data/manifests/stage9_5_6_phase_b_seed_manifest_projection_v1.json",
+          "standalone_contract_blob_sha1": "3a49eb75e5c24f9378787c420cc1a6c35e890fd6",
+          "all_five_seeds_required": true,
+          "exact_three_arms_per_seed_required": true,
+          "phase_a_binding_rule": "each seed manifest shared_identity_sha256 and all_phase_a_shared_identity_sha256 must bind exactly to the passed aggregate Phase-A comparator result",
+          "arm_binding_rule": "each descriptor must target its expected arm path, bind to that arm comparator raw manifest identity, and the corresponding projected arm identities must be valid and equal",
           "removed_after_raw_integrity_and_arm_projection_verification": [
             "payload_sha256",
             "manifest_sha256",
-            "arms.*.sha256",
-            "arms.*.manifest_sha256"
+            "arms.c_frozen_symbolic.sha256",
+            "arms.c_frozen_symbolic.manifest_sha256",
+            "arms.d_drift.sha256",
+            "arms.d_drift.manifest_sha256",
+            "arms.d_periodic.sha256",
+            "arms.d_periodic.manifest_sha256"
           ],
-          "exact_fields_include": [
-            "git_commit",
-            "primary_config_manifest_sha256",
-            "shared_identity_sha256",
-            "all_phase_a_shared_identity_sha256",
-            "operator_config_sha256",
-            "arm_isolation_sha256",
-            "primary_boundary_scored",
-            "all non-derived arm descriptor paths"
-          ],
+          "all_other_seed_manifest_content_exact": true,
           "equality_rule": "projected accepted and fresh seed manifests must have identical canonical JSON SHA-256 and exact recursive content equality"
         }
-      }
+      },
+      "summary_fallback_permitted": false,
+      "completion_predicate": {
+        "seeds_exactly": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "arms_exactly": [
+          "c_frozen_symbolic",
+          "d_drift",
+          "d_periodic"
+        ],
+        "every_arm_projected_comparison_passes": true,
+        "every_seed_projected_comparison_passes": true,
+        "accepted_maintenance_archive_required": true,
+        "summary_fallback_permitted": false,
+        "timing_exclusions_exactly_frozen": true,
+        "phase_a_identity_binding_required": true,
+        "missing_or_mismatch_fails_closed": true
+      },
+      "test_coverage_required": [
+        "missing required arm fails closed",
+        "extra arm fails closed",
+        "Phase-A shared identity mismatch fails closed",
+        "accepted maintenance JSONL missing while summary remains fails closed",
+        "all five seeds with all three verified arms pass only under frozen timing projection",
+        "missing fifth seed fails closed"
+      ]
     },
     "phase_c": {
       "rerun_seed": 0,

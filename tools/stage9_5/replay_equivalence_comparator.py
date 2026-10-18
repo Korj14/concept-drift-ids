@@ -47,6 +47,13 @@ PHASE_C_CORRECTION_MANIFEST_SHA256 = (
     "d380fce5f9db8f0b639dc999298a263b10a10a3d02e35def226a121d098e2222"
 )
 PHASE_C_CORRECTION_SOURCE_HEAD = "79ddc4c6d6dea52c7cabc55a6d082448fc24fcf9"
+PHASE_C_ORIGINAL_CONFIG_MANIFEST_SHA256 = (
+    "3e3f768b5aa32f469440bb334508f747bbf2f7f5b08d9570a7aef2dbb9cb0257"
+)
+PHASE_C_FAILED_PHASE = "offline_boundary_aware_evaluation"
+PHASE_C_FAILED_EXCEPTION_TYPE = "NameError"
+PHASE_C_FAILED_MESSAGE = "name 'read_jsonl' is not defined"
+PHASE_C_FAILED_ENTRIES = ("attempt.json", "failure.json")
 PHASE_C_TRANSITIVE_IDENTITY = "<stage9.5-6-upstream-identity-normalized>"
 PHASE_C_FROZEN_SCIENTIFIC_BLOCKS = (
     "governing_source_hashes",
@@ -1153,8 +1160,19 @@ def _verify_phase_c_failed_lineage(
 ) -> dict[str, Any]:
     accepted_dir = accepted_root / PHASE_C_FAILED_SUBDIR / "seed-0"
     fresh_dir = fresh_root / PHASE_C_FAILED_SUBDIR / "seed-0"
-    expected_entries = ["attempt.json", "failure.json"]
+    expected_entries = list(PHASE_C_FAILED_ENTRIES)
     failures: list[str] = []
+
+    frozen_identity = {
+        "seed": 0,
+        "entries": expected_entries,
+        "exception_type": PHASE_C_FAILED_EXCEPTION_TYPE,
+        "message": PHASE_C_FAILED_MESSAGE,
+        "successful_scoring_artifacts_present": False,
+    }
+    for field, expected in frozen_identity.items():
+        if expected_identity.get(field) != expected:
+            failures.append(f"expected_identity_mismatch:{field}")
 
     expected_files = {
         "attempt.json": (
@@ -1171,10 +1189,16 @@ def _verify_phase_c_failed_lineage(
         if not root.is_dir():
             failures.append(f"{label}:failed_lineage_directory_missing")
             continue
+
         entries = sorted(path.name for path in root.iterdir())
         if entries != expected_entries:
             failures.append(f"{label}:failed_lineage_entries_mismatch")
+            extras = sorted(set(entries) - set(expected_entries))
+            for name in extras:
+                failures.append(f"{label}:unexpected_outcome_bearing_file:{name}")
             continue
+
+        loaded: dict[str, dict[str, Any]] = {}
         for name in expected_entries:
             path = root / name
             expected_file_sha, expected_payload_sha = expected_files[name]
@@ -1191,6 +1215,7 @@ def _verify_phase_c_failed_lineage(
                     f"{label}:{name}:invalid:{type(exc).__name__}"
                 )
                 continue
+            loaded[name] = payload
             payload_hash = payload.get("payload_sha256")
             core = dict(payload)
             core.pop("payload_sha256", None)
@@ -1208,12 +1233,50 @@ def _verify_phase_c_failed_lineage(
             ):
                 failures.append(f"{label}:{name}:accepted_payload_identity_mismatch")
 
+        attempt = loaded.get("attempt.json")
+        if isinstance(attempt, dict):
+            if attempt.get("seed") != 0:
+                failures.append(f"{label}:attempt:seed_mismatch")
+            if (
+                attempt.get("primary_config_manifest_sha256")
+                != PHASE_C_ORIGINAL_CONFIG_MANIFEST_SHA256
+            ):
+                failures.append(f"{label}:attempt:original_config_identity_mismatch")
+            if attempt.get("phase") != PHASE_C_FAILED_PHASE:
+                failures.append(f"{label}:attempt:phase_mismatch")
+            if attempt.get("adaptive_components_received_boundary") is not False:
+                failures.append(f"{label}:attempt:boundary_metadata_not_false")
+
+        failure = loaded.get("failure.json")
+        if isinstance(failure, dict):
+            if failure.get("seed") != 0:
+                failures.append(f"{label}:failure:seed_mismatch")
+            if failure.get("phase") != PHASE_C_FAILED_PHASE:
+                failures.append(f"{label}:failure:phase_mismatch")
+            if failure.get("adaptive_components_received_boundary") is not False:
+                failures.append(f"{label}:failure:boundary_metadata_not_false")
+            if failure.get("exception_type") != PHASE_C_FAILED_EXCEPTION_TYPE:
+                failures.append(f"{label}:failure:exception_type_mismatch")
+            if failure.get("message") != PHASE_C_FAILED_MESSAGE:
+                failures.append(f"{label}:failure:message_mismatch")
+
     return {
         "pass": not failures,
         "failures": failures,
         "entries": expected_entries,
+        "frozen_identity": {
+            "seed": 0,
+            "original_config_manifest_sha256": (
+                PHASE_C_ORIGINAL_CONFIG_MANIFEST_SHA256
+            ),
+            "phase": PHASE_C_FAILED_PHASE,
+            "adaptive_components_received_boundary": False,
+            "exception_type": PHASE_C_FAILED_EXCEPTION_TYPE,
+            "message": PHASE_C_FAILED_MESSAGE,
+            "successful_scoring_artifacts_present": False,
+            "entries": expected_entries,
+        },
     }
-
 
 def compare_phase_c_preconditions(
     *,

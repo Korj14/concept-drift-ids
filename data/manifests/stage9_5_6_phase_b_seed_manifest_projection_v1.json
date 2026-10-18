@@ -28,7 +28,16 @@
       "4"
     ],
     "seed_manifest_shared_identity_rule": "shared_identity_sha256 must equal verified Phase-A shared_identity.identity_sha256 for the current seed",
-    "all_phase_a_map_rule": "all_phase_a_shared_identity_sha256 must exactly equal the five-seed verified Phase-A identity map"
+    "all_phase_a_map_rule": "all_phase_a_shared_identity_sha256 must exactly equal the five-seed verified Phase-A identity map",
+    "require_complete_seeds": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "require_mismatch_count": 0,
+    "require_failures": []
   },
   "arm_binding": {
     "every_arm_must_pass_projected_arm_comparator": true,

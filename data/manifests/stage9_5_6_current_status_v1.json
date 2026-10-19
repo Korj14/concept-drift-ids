@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
   "status_id": "stage9.5-6-current-status-v1",
-  "status_observed_at_head": "b10b5581a9b76f924867e9da82e02cb1e808b423",
-  "status_date": "2026-10-18",
+  "status_observed_at_head": "fcd5028afe89102142a13900cfe001a1e81816cd",
+  "status_date": "2026-10-19",
   "purpose": "Additive current-status overlay. Does not modify the prospectively frozen replay construction contract, accepted Stage-8/9 science, or closure authority.",
   "frozen_replay_construction_contract": {
     "path": "data/manifests/stage9_5_6_replay_report_construction_v1.json",
@@ -134,5 +134,50 @@
     "historical_replay_executed": false,
     "scientific_objects_modified": false,
     "stage10_outcomes_accessed": false
+  },
+  "runtime_materialization_attempt_2026_10_19": {
+    "status": "blocked_by_current_chatgpt_connector_to_verifier_transport_boundary",
+    "dropbox_source_revalidated": true,
+    "checkpoint_objects_revalidated": {
+      "paths": [
+        "/seed_0.pt",
+        "/seed_1.pt",
+        "/seed_2.pt",
+        "/seed_3.pt",
+        "/seed_4.pt"
+      ],
+      "each_size_bytes": 76105,
+      "temporary_download_links_issued": true
+    },
+    "archive_snapshot_revalidated": {
+      "path": "/cd_primary_v1",
+      "recursive_listing_complete": true,
+      "entry_count": 253,
+      "file_count": 203,
+      "folder_count": 50,
+      "total_file_bytes": 1863975043
+    },
+    "transfer_attempts": [
+      {
+        "method": "container_direct_http_get",
+        "outcome": "failed_before_byte_transfer",
+        "reason": "execution_container_has_no_external_dns_resolution"
+      },
+      {
+        "method": "platform_container_downloader",
+        "outcome": "not_authorized_for_private_temporary_url",
+        "reason": "downloader_requires_prior_web_registration_but_web_fetch_layer_cannot_access_dropbox_private_single_use_binary_url"
+      }
+    ],
+    "dropbox_mutation_performed": false,
+    "local_checkpoint_bytes_materialized": false,
+    "stage8_archive_bytes_materialized": false,
+    "zero_byte_transport_reconstruction_executed": false,
+    "frozen_stage9_5_1_verifier_rerun_complete": false,
+    "governing_external_blockers_changed": false,
+    "scientific_objects_modified": false,
+    "accepted_stage8_9_evidence_replaced": false,
+    "stage10_outcomes_accessed": false,
+    "disposition": "A verifier-capable filesystem with direct access to the recovered Dropbox byte streams is still required. Do not weaken, bypass, or replace the frozen Stage-9.5-1 verifier."
   }
 }

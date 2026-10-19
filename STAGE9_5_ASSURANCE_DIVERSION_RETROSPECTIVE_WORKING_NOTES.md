@@ -1640,3 +1640,65 @@ retrospective as the point where the previously separate frozen assurance
 components were joined into a single fail-closed producer/finalizer pipeline
 without outcome access.
 
+## Part-2 continuation: live-head reconciliation and second materialization transport audit — 19 October 2026
+
+This continuation resumed after the user explicitly requested “part 2” and reiterated the standing requirement that the complete multi-chat Stage-9.5 assurance diversion be preserved for final closure documentation.
+
+Before mutation, PR #21 was re-read and found at `fcd5028afe89102142a13900cfe001a1e81816cd`, **177 commits ahead** of the previously remembered Phase-A-era head `cf78ba076a12693bc1b89ac52181fc8f20091fdc`. The delta was reconciled before any change.
+
+That reconciliation showed that the apparent Phase-B design task was obsolete. The live branch already contains prospectively frozen deterministic replay comparison for Phase A, Phase B, exact Phase-C failure lineage and correction-config preconditions, corrected Phase-C seed-0 output comparison, the deterministic replay-report finalizer, authoritative Stage-1 reconstruction evidence, the frozen historical replay execution handoff, Dropbox recovery discovery and restore-event forensics, the zero-byte transport-reconstruction correction, and this retrospective.
+
+The additive current-status overlay identifies **no remaining non-external Stage-9.5-6 implementation/evidence blocker**. The live bottleneck is Stage-9.5-1 materialization and frozen-verifier success.
+
+### Exact-head assurance state
+
+At `fcd5028afe89102142a13900cfe001a1e81816cd`:
+
+- Stage-9 robustness run `39164178722` passed;
+- Stage-9.5 assurance run `39164178721` had the expected fail-closed top-level conclusion;
+- assurance-contract passed with **157 tests**;
+- statistical oracle, causal properties, targeted mutations, and the semantic work-package order gate passed;
+- static discovery remained the accepted `ruff=154, mypy=55` baseline;
+- fresh-clone reconstruction tests reported **13 passed** and the unchanged verifier remained **0 identity failures / 2 external-artifact blockers**;
+- `later_packages_unlocked=false`;
+- Stage-9.5-7/8/9 remained skipped/locked.
+
+### Read-only Dropbox revalidation
+
+The connected Dropbox recovery surface was revalidated without mutation.
+
+The five checkpoint objects remain present at `/seed_0.pt` through `/seed_4.pt`, each with size **76,105 bytes**. Dropbox issued fresh single-use raw-byte download URLs for all five.
+
+A new recursive snapshot of `/cd_primary_v1` completed with no pagination remainder and matched the frozen discovery summary:
+
+- **253 entries**;
+- **203 files**;
+- **50 folders**;
+- **1,863,975,043 total file bytes**.
+
+No Dropbox object was created, copied, moved, restored, shared, or modified.
+
+### Second verifier-container transfer attempt
+
+This continuation tested both available byte-transfer paths.
+
+First, the execution container attempted direct HTTP GET against the connector-issued Dropbox temporary URLs. It failed before any byte transfer because the container has no external DNS resolution.
+
+Second, the platform-sanctioned container downloader was tested. That downloader requires the target URL to have been registered through the web-fetch layer first. The web-fetch layer cannot access the private Dropbox single-use binary temporary URL, so the downloader refused materialization. No checkpoint bytes were written and no hash claim was made.
+
+This is a **runtime transport boundary**, not a change to scientific or assurance criteria. The Dropbox source remains authoritative and accessible through the connector, but this particular ChatGPT execution environment cannot bridge the private raw-byte stream into the verifier filesystem.
+
+No shared-link workaround was created because doing so would mutate Dropbox sharing state and is not necessary to the frozen assurance design.
+
+### Unchanged authority and next step
+
+The governing blockers remain unchanged:
+
+- recovered Dropbox byte streams must be materialized onto a verifier-capable filesystem;
+- the frozen zero-byte transport reconstruction must complete the five manifest-bound empty C-arm maintenance streams;
+- the unchanged Stage-9.5-1 v1.2 verifier must then independently produce `pass=true`, verified checkpoint seeds 0-4, **145/145** archive verification, zero failures, and zero blockers.
+
+Only verifier-produced success may supersede the historical negative Stage-9.5-1 closure and authorize the already-frozen Stage-9.5-6 historical replay handoff.
+
+No accepted Stage-8/9 science, comparator semantics, verifier success criteria, closure authority, or Stage-10 gate changed in this continuation.
+

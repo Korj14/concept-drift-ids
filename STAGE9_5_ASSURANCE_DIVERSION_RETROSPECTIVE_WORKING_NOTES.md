@@ -1753,3 +1753,70 @@ The next legitimate Phase-A replay attempt requires the successful unchanged
 Stage-9.5-1 v1.2 verifier report first. This stop must remain visible in the
 final reviewer-facing Stage-9.5 assurance-diversion retrospective.
 
+## Phase-B-only replay request stopped at disconnected execution surface — 19 October 2026
+
+This bounded tranche began with an explicit instruction to assume as a
+prerequisite that all five historical Phase-A replay seeds had already passed
+the frozen comparator, then execute only historical Phase B for seeds 0-4/all
+three arms and run the frozen Phase-B comparator against the recovered accepted
+maintenance archive. Corrected Phase C was explicitly prohibited for this
+tranche, and any mismatch outside the frozen timing projection was to stop the
+work without comparator relaxation.
+
+PR #21 was re-read before execution and was at
+`3770f0d165767a5429b8b1fbb3f313b4dd2aea93`, 180 commits ahead of the
+previously remembered Phase-A-era head
+`cf78ba076a12693bc1b89ac52181fc8f20091fdc`. The delta was reconciled before
+any mutation. It showed that Phase-B record, arm-manifest, and seed-manifest
+projection semantics, Phase-C comparison, the integrated comparator/finalizer,
+Stage-1 reconstruction closure, the historical replay handoff, and the running
+assurance-diversion retrospective were already prospectively frozen.
+
+The user's Phase-A-pass prerequisite was accepted as the intended current
+execution state for the tranche. However, the connected execution surfaces did
+not expose the fresh historical Phase-A replay worktree required by the frozen
+handoff:
+
+- the Git repository contains no fresh replay heavy tree or committed replay
+  comparison evidence, as intended;
+- the connected Project/conversation file surface contains only the original
+  project inputs/evidence and no fresh replay package;
+- Dropbox contains the recovered accepted `/cd_primary_v1` tree and the five
+  checkpoint candidates, but no separately named fresh replay worktree or
+  replay-comparison package;
+- recent GitHub Actions runs contain no preserved fresh historical Phase-A
+  replay artifact from which Phase B could validly continue.
+
+The accepted Dropbox Phase-B tree was inspected recursively. It currently
+contains ten physical `maintenance.jsonl` files: the five `d_drift` and five
+`d_periodic` streams. The five `c_frozen_symbolic` maintenance streams
+remain absent from the Dropbox physical tree, matching the already-documented
+zero-byte transport omission. The frozen zero-byte reconstruction correction
+must therefore be applied on a verifier-capable filesystem before that Dropbox
+tree constitutes the complete 15-stream accepted maintenance input. No empty
+files were silently synthesized in Dropbox.
+
+Live exact-head CI was also checked. Stage-9 robustness was successful;
+Stage-9.5 assurance-contract, statistical-oracle, causal-properties,
+targeted-mutations, and work-package-order-gate jobs were green. The remaining
+fresh-clone/static failures were the expected gate states. No Phase-B comparator
+implementation/test defect was observed.
+
+Execution disposition for this tranche:
+
+- historical Phase-B seeds executed: **none**;
+- Phase-B arms executed: **none**;
+- frozen Phase-B comparator executed on real replay outputs: **no**;
+- non-timing Phase-B mismatch observed: **none — comparator did not run**;
+- corrected Phase C executed: **no**;
+- Stage-10 outcomes accessed: **no**;
+- accepted Stage-8/9 scientific objects modified: **no**;
+- comparator/projection/finalizer semantics modified: **no**.
+
+Classification: **execution-surface/materialization stop, not a replay
+mismatch and not a scientific defect**. The next legitimate Phase-B execution
+must resume from the actual fresh Phase-A replay worktree that passed the frozen
+comparator and the verifier-complete accepted maintenance archive. The
+comparator must remain unchanged after those real Phase-B outcomes are
+observed.
+

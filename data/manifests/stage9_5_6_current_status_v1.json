@@ -179,5 +179,53 @@
     "accepted_stage8_9_evidence_replaced": false,
     "stage10_outcomes_accessed": false,
     "disposition": "A verifier-capable filesystem with direct access to the recovered Dropbox byte streams is still required. Do not weaken, bypass, or replace the frozen Stage-9.5-1 verifier."
+  },
+  "recovery_ab_historical_replay_task_2026_10_19": {
+    "status": "engineering_ready_execution_blocked_by_external_byte_materialization_and_stage9_5_1_verifier",
+    "scope": [
+      "Stage-9.5-1 recovered-byte materialization and unchanged v1.2 verifier",
+      "historical Phase-A replay seeds 0-4 at bfa14b942e4a5b2fbfa8aa3c43728a7f1cd81645",
+      "historical Phase-B replay seeds 0-4 across c_frozen_symbolic, d_drift, and d_periodic",
+      "frozen Phase-A/B deterministic replay comparison"
+    ],
+    "recovery_state": {
+      "checkpoint_candidates": "all_five_exact_byte_identities_located_in_dropbox",
+      "stage8_archive": "140_of_145_physical_paths_plus_frozen_reconstructible_route_for_five_zero_byte_c_frozen_maintenance_streams",
+      "raw_bytes_materialized_on_verifier_filesystem": false,
+      "zero_byte_transport_reconstruction_executed": false,
+      "frozen_stage9_5_1_v1_2_verifier_success": false,
+      "latest_single_checkpoint_transfer_probe": "temporary Dropbox raw-download URL issued; container downloader refused before byte transfer because private URL was not web-registered; no byte accepted as verifier evidence"
+    },
+    "phase_a": {
+      "comparator_semantics": "implemented_prospectively_frozen",
+      "synthetic_assurance_tests": "covered_by_exact_predecessor_assurance_contract",
+      "historical_seeds_executed": [],
+      "real_historical_comparator_output_produced": false,
+      "block_reason": "Stage-9.5-1 verifier success prerequisite unsatisfied"
+    },
+    "phase_b": {
+      "maintenance_record_projection": "prospectively_frozen",
+      "arm_manifest_projection": "prospectively_frozen",
+      "seed_manifest_projection": "prospectively_frozen",
+      "synthetic_assurance_tests": "covered_by_exact_predecessor assurance-contract run 39164178721 with 157 tests passed",
+      "historical_seeds_executed": [],
+      "historical_arms_executed": [],
+      "real_historical_comparator_output_produced": false,
+      "block_reason": "No verifier-complete accepted archive and no fresh Phase-A replay worktree"
+    },
+    "code_validation_basis": {
+      "tested_head": "fcd5028afe89102142a13900cfe001a1e81816cd",
+      "stage9_run_id": 39164178722,
+      "stage9_conclusion": "success",
+      "stage9_5_run_id": 39164178721,
+      "assurance_contract_tests_passed": 157,
+      "live_head_delta_to_6b009b29": "retrospective/current-status documentation only; no comparator, verifier, or projection semantics changed"
+    },
+    "task_disposition": "No further valid A/B historical execution is possible in the current ChatGPT environment without first materializing the recovered Dropbox bytes on a verifier-capable filesystem and obtaining the unchanged Stage-9.5-1 v1.2 success report. The recovery+A/B engineering path is complete and frozen to that external execution boundary.",
+    "phase_c_started_by_this_task": false,
+    "phase_c_scope_authorized_by_this_task": false,
+    "scientific_objects_modified": false,
+    "accepted_stage8_9_evidence_replaced": false,
+    "stage10_outcomes_accessed": false
   }
 }

@@ -1702,3 +1702,54 @@ Only verifier-produced success may supersede the historical negative Stage-9.5-1
 
 No accepted Stage-8/9 science, comparator semantics, verifier success criteria, closure authority, or Stage-10 gate changed in this continuation.
 
+## Phase-A-only replay request stopped at unsatisfied recovery prerequisite — 19 October 2026
+
+This bounded tranche began with an explicit instruction to execute **only** the
+frozen historical Phase-A replay for seeds 0-4, run the frozen Phase-A
+comparator, preserve its machine comparison evidence, and stop on any
+non-normalized mismatch. The instruction also stated a prerequisite that
+Stage-9.5-1 recovery was closed.
+
+PR #21 was re-read before execution and was at
+`eec4b78acd1bce284af03c7d0acaad2362bf60fc`.
+
+The live authoritative repository state did not support interpreting that
+prerequisite as a **successful** Stage-9.5-1 recovery closure. The preserved
+Stage-9.5-1 disposition remains a closed-failed negative closure unless and
+until the unchanged v1.2 fresh-clone verifier produces its frozen success
+record: `pass=true`, checkpoint seeds 0-4 verified, Stage-8 archive
+`145/145`, zero failures, and zero blockers. No such successful
+`fresh_clone_reconstruction_report.json` was present at the live head.
+
+The frozen historical replay handoff explicitly prohibits proceeding to
+Phase A before that verifier-produced success. Therefore the replay was stopped
+at the prerequisite boundary rather than bypassing the existing Class-A
+provenance interlock.
+
+The connected Dropbox recovery surface was checked read-only during the
+preflight. The authoritative root `/seed_0.pt` remained present and Dropbox
+could issue a single-use raw-byte download link, but the existing
+connector-to-verifier materialization boundary remained unchanged. No temporary
+download URL was exposed as evidence, no recovered byte stream was accepted by
+the verifier, and no Dropbox object was mutated.
+
+Execution disposition for this tranche:
+
+- historical Phase-A seeds executed: **none**;
+- Phase-A comparator executed: **no**;
+- Phase-A machine comparison evidence produced: **no**;
+- Phase-A mismatch classification: **not applicable — comparator never ran**;
+- Phase B executed: **no**;
+- Phase C executed: **no**;
+- Stage-10 outcomes accessed: **no**;
+- accepted Stage-8/9 scientific objects modified: **no**;
+- comparator/verifier/projection semantics modified: **no**.
+
+Classification: **precondition stop under the existing unresolved Class-A
+provenance/recovery gate**, not a replay mismatch and not a new scientific
+defect.
+
+The next legitimate Phase-A replay attempt requires the successful unchanged
+Stage-9.5-1 v1.2 verifier report first. This stop must remain visible in the
+final reviewer-facing Stage-9.5 assurance-diversion retrospective.
+

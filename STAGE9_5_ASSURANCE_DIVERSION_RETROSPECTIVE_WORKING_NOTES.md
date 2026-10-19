@@ -1820,3 +1820,87 @@ comparator and the verifier-complete accepted maintenance archive. The
 comparator must remain unchanged after those real Phase-B outcomes are
 observed.
 
+## Recovery + historical Phase-A/B replay boundary consolidated — 19 October 2026
+
+The user explicitly required the current recovery plus historical Phase-A/B
+replay task to be finished before beginning any new Phase-C tranche.
+
+PR #21 was re-read at live head
+`6b009b29316cb39a40be939e64f26fdcad9cb493`. The 181-commit delta from the
+older Phase-A-era working head was reconciled before mutation. The live branch
+already contained the prospectively frozen Phase-A and Phase-B replay
+comparators, Stage-1 reconstruction closure, Dropbox recovery/transport
+forensics, zero-byte transport reconstruction correction, historical replay
+handoff, and this retrospective.
+
+The authoritative recovery picture was rechecked:
+
+- all five System-A checkpoint byte identities are located in Dropbox;
+- the Dropbox Stage-8 tree contains 140/145 descriptor-linked physical paths;
+- the only five missing paths are the manifest-bound zero-byte
+  `c_frozen_symbolic/maintenance.jsonl` streams;
+- the reconstructible-route correction for those five exact empty streams is
+  frozen but has not executed;
+- the unchanged Stage-9.5-1 v1.2 verifier has not yet produced a successful
+  145/145 recovery report.
+
+A new single-checkpoint transfer probe used the connected Dropbox
+`download_link` capability. Dropbox successfully issued a single-use raw
+binary URL for `/seed_0.pt` with the expected 76,105-byte metadata and frozen
+Dropbox content hash. The model execution container then attempted to
+materialize that URL through the platform downloader. The downloader refused
+before byte transfer because the private URL had not been registered through
+the web-fetch layer. The single-use Dropbox URL was not preflighted through
+that layer, because doing so would consume it and would not constitute an
+authorized verifier materialization route. No checkpoint byte was accepted,
+written, or promoted to evidence.
+
+The historical Phase-A/B implementation state was then revalidated against the
+live repository. Phase-B has three separately frozen comparison layers:
+
+1. ordered `maintenance.jsonl` record projection;
+2. per-arm manifest projection with raw descriptor verification and
+   timing-derived hash handling;
+3. seed-manifest projection with exact Phase-A identity binding and
+   timing-derived arm-hash removal only after arm comparison passes.
+
+The exact predecessor head
+`fcd5028afe89102142a13900cfe001a1e81816cd` carries the same A/B comparator,
+verifier, and projection semantics as the current live head; the later delta
+changes only the retrospective/current-status overlays. At that tested head:
+
+- Stage-9 robustness run `39164178722` passed;
+- Stage-9.5 assurance run `39164178721` executed the full assurance-contract
+  suite;
+- **157 tests passed**, including the replay comparator, Stage-1 evidence,
+  zero-byte transport reconstruction, and regenerated-correction-config
+  verifier tests;
+- the frozen fresh-clone verifier remained **0 identity failures / 2 external
+  blockers**;
+- the work-package order gate remained locked.
+
+No real historical Phase-A seed and no real historical Phase-B arm was executed
+in this consolidation, because the frozen handoff prohibits doing so before
+Stage-9.5-1 verifier-produced success. No real A/B comparator output was
+manufactured from synthetic fixtures.
+
+Disposition of this task:
+
+- recovery tooling/provenance route: **frozen and ready**;
+- Phase-A replay comparator: **frozen and ready**;
+- Phase-B replay comparator: **frozen and ready**;
+- actual recovery-byte materialization: **externally blocked**;
+- Stage-9.5-1 v1.2 success report: **not yet available**;
+- historical Phase-A/B replay execution: **not yet authorized**;
+- new Phase-C work begun by this task: **no**;
+- Stage-10 outcome access: **no**;
+- accepted Stage-8/9 scientific objects changed: **no**.
+
+Therefore the recovery + historical Phase-A/B task is complete to the strongest
+valid boundary available in the present environment: all software/projection
+semantics and the operator handoff are frozen, but real A/B execution must wait
+for recovered Dropbox bytes to be placed on a verifier-capable filesystem and
+for the unchanged Stage-9.5-1 verifier to pass. The final reviewer-facing
+Stage-9.5 retrospective must preserve this boundary rather than implying that
+A/B replay actually ran in ChatGPT.
+

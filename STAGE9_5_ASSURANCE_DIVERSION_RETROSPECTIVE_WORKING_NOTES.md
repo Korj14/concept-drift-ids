@@ -1989,3 +1989,100 @@ treatment, endpoint, or result was modified.
 - `/seed_0.pt` had no pre-existing shared link. No new shared link was created because doing so would mutate sharing state and was not required for this read-only tranche. No Dropbox mutation occurred.
 - Disposition: all non-mutating connector-to-verifier byte-transfer routes exposed in this chat runtime are now exhausted. The authoritative blockers remain unchanged: materialize the recovered Dropbox bytes on a verifier-capable filesystem, execute the frozen zero-byte transport correction for the five permitted empty C-arm maintenance paths, and obtain an unchanged Stage-9.5-1 v1.2 verifier success before historical A/B execution or Phase-C pre-rerun verification.
 - No scientific object changed, no accepted Stage-8/9 evidence was replaced, and no Stage-10 outcome was accessed. Machine-detail record: `data/manifests/stage9_5_6_current_status_v1.json`.
+
+## 20 October 2026 — Dropbox-to-GitHub runner transport breakthrough
+
+This entry preserves the transport diversion needed to move the recovered
+authoritative Dropbox byte streams onto a verifier-capable filesystem without
+committing recovered bytes or weakening the frozen Stage-9.5-1 verifier.
+
+### Literal temporary-URL probe
+
+A dedicated additive workflow,
+`.github/workflows/stage9-5-dropbox-transport-probe.yml`, was introduced on
+assurance head `6d1f8f913491aa6cd6a614459b3aa87643eec8b0`.
+
+The first real seed-0 rerun used a Dropbox single-use raw-download URL placed
+literally in a temporary PR-body transport envelope:
+
+- workflow run: `39389046529`;
+- rerun job: `118516249459`;
+- expected checkpoint: `/seed_0.pt`;
+- expected SHA-256:
+  `514c6d552b3cd680ae966bbb568105bd2871bc68d3a47aded070a70ba0615bd1`;
+- expected size: 76,105 bytes.
+
+The runner reached the download step but received HTTP 403. The failure was
+consistent with the Dropbox single-use URL having been consumed before the
+runner GET, plausibly by intermediary URL inspection after the literal link was
+placed in the PR body. The temporary envelope was removed immediately. No
+checkpoint byte was accepted as verifier evidence, no scientific object was
+changed, and no Stage-10 outcome was accessed.
+
+### Encoded-envelope correction
+
+The harness was corrected prospectively at
+`14e71d869da1fa29c5765c584ef7074f095eb811` so the PR body carried only a
+base64-encoded Dropbox URL. The runner decoded the URL locally immediately
+before the first HTTP GET; the URL was never printed to logs.
+
+The corrected seed-0 rerun succeeded:
+
+- workflow run: `39389355506`;
+- rerun job: `118517262866`;
+- preserved small artifact ID: `12249186146`;
+- artifact ZIP digest:
+  `sha256:c8227bec2ed330fda23ddecdeb98f34c846b3a4843d9a59e09fe30b1b5e89d27`;
+- artifact size: 433 bytes.
+
+The job could exit successfully only after the downloaded byte stream matched
+both the frozen 76,105-byte size and the frozen ordinary SHA-256 above. The
+checkpoint file was deleted before artifact upload; the artifact contains only
+the small transport-verification report.
+
+### Five-checkpoint family proof
+
+The probe was then expanded prospectively to the complete System-A checkpoint
+family at assurance head
+`eb1346cb5a0c4e68b60d0b5f35f43f88acb602f8`.
+
+A fresh encoded transport envelope carried one single-use Dropbox URL for each
+of `/seed_0.pt` through `/seed_4.pt`. The rerun succeeded:
+
+- workflow run: `39390132701`;
+- rerun job: `118519754731`;
+- total downloaded checkpoint bytes: 380,525;
+- all five frozen checkpoint SHA-256 identities and 76,105-byte per-file sizes
+  were required for job success;
+- preserved small artifact ID: `12249605482`;
+- artifact ZIP digest:
+  `sha256:d0602647abc5794cf4f3e3bde72eefab19adc3179c00b8b363cc5af1ca98c1d5`;
+- artifact size: 722 bytes.
+
+Every downloaded checkpoint file was deleted before artifact upload. The
+temporary PR-body envelope was removed immediately after the run. No recovered
+checkpoint bytes were committed to Git or retained in the uploaded evidence
+artifact.
+
+### Disposition
+
+This resolves the previously observed connector-to-verifier transport
+*mechanism uncertainty* for the System-A checkpoint family. It does **not**
+close Stage-9.5-1.
+
+The remaining authoritative sequence is unchanged:
+
+1. transport the recovered Stage-8 archive bytes onto the verifier-capable
+   runner;
+2. execute the already-frozen five-file zero-byte transport reconstruction;
+3. run the unchanged Stage-9.5-1 v1.2 verifier and require all five checkpoint
+   seeds verified, 145/145 Stage-8 archive requirements verified, zero
+   failures, and zero blockers;
+4. only then execute the frozen historical Phase-A/B replay;
+5. only after the real A/B comparator passes may the Phase-C pre-rerun tranche
+   begin.
+
+The transport probes changed assurance mechanics only. Accepted Stage-8/9
+scientific evidence, estimands, treatments, metrics, numerical results, and
+claim boundaries were not changed.
+

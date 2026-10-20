@@ -256,11 +256,22 @@ jobs:
                   f"archive_verified={archive_count}/140\n"
                   f"checkpoints_verified={checkpoint_count}/5"
               )
-              api_json(
-                  f"https://api.github.com/repos/{repo}/issues/21/comments",
-                  method="POST",
-                  body={"body": body},
-              )
+              print(body, flush=True)
+              try:
+                  api_json(
+                      f"https://api.github.com/repos/{repo}/issues/21/comments",
+                      method="POST",
+                      body={"body": body},
+                  )
+              except urllib.error.HTTPError as exc:
+                  if exc.code == 403:
+                      print(
+                          "ACK comment unavailable (HTTP 403); "
+                          "continuing verified transport",
+                          flush=True,
+                      )
+                      return
+                  raise
 
           def decrypt_comment(body: str) -> dict[str, Any] | None:
               if marker not in body:

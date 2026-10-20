@@ -37,6 +37,8 @@ jobs:
           python -m pip install -r requirements-lock.txt
 
       - name: Generate one-time checkpoint transport certificate
+        env:
+          MSYS_NO_PATHCONV: "1"
         shell: bash
         run: |
           set -euo pipefail

@@ -23,6 +23,10 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 AUDIT_ID = "stage9.5-6-phase-c-pre-rerun-verification-v1"
 SEEDS = [0, 1, 2, 3, 4]
 ARMS = ["c_frozen_symbolic", "d_drift", "d_periodic"]
+CORRECTION_SOURCE_HEAD = "79ddc4c6d6dea52c7cabc55a6d082448fc24fcf9"
+CORRECTION_CONFIG_RELATIVE_PATH = Path(
+    "data/manifests/cd_primary_run_config_v1_1.json"
+)
 
 
 def _canonical_sha256(payload: object) -> str:
@@ -44,6 +48,82 @@ def _git_head() -> str:
         capture_output=True,
         text=True,
     ).stdout.strip()
+
+
+def _git(
+    repo_root: Path,
+    *args: str,
+    check: bool = True,
+) -> subprocess.CompletedProcess[str]:
+    return subprocess.run(
+        ["git", *args],
+        cwd=repo_root,
+        check=check,
+        capture_output=True,
+        text=True,
+    )
+
+
+def _verify_correction_worktree_provenance(
+    correction_worktree_root: Path,
+    regenerated_config_path: Path,
+) -> dict[str, Any]:
+    failures: list[str] = []
+    root = correction_worktree_root.resolve()
+    config = regenerated_config_path.resolve()
+    expected_config = (root / CORRECTION_CONFIG_RELATIVE_PATH).resolve()
+
+    if config != expected_config:
+        failures.append("regenerated_config_not_at_frozen_relative_path")
+
+    try:
+        head = _git(root, "rev-parse", "HEAD").stdout.strip()
+        parent = _git(root, "rev-parse", "HEAD^").stdout.strip()
+        changed = [
+            line.strip()
+            for line in _git(
+                root,
+                "diff-tree",
+                "--no-commit-id",
+                "--name-only",
+                "-r",
+                "HEAD",
+            ).stdout.splitlines()
+            if line.strip()
+        ]
+        tracked_status = _git(
+            root,
+            "status",
+            "--porcelain",
+            "--untracked-files=no",
+        ).stdout.strip()
+    except (OSError, subprocess.CalledProcessError) as exc:
+        return {
+            "pass": False,
+            "failures": [f"correction_worktree_git_error:{type(exc).__name__}"],
+            "head": None,
+            "parent": None,
+            "changed_paths": [],
+            "tracked_worktree_clean": False,
+        }
+
+    if parent != CORRECTION_SOURCE_HEAD:
+        failures.append("correction_freeze_parent_not_frozen_source")
+    if changed != [CORRECTION_CONFIG_RELATIVE_PATH.as_posix()]:
+        failures.append("correction_freeze_commit_not_config_only")
+    if tracked_status:
+        failures.append("correction_worktree_has_tracked_changes")
+
+    return {
+        "pass": not failures,
+        "failures": failures,
+        "head": head,
+        "parent": parent,
+        "changed_paths": changed,
+        "tracked_worktree_clean": not tracked_status,
+        "expected_parent": CORRECTION_SOURCE_HEAD,
+        "expected_only_changed_path": CORRECTION_CONFIG_RELATIVE_PATH.as_posix(),
+    }
 
 
 def _phase_b_shape_passed(phase_b: dict[str, Any]) -> bool:
@@ -94,6 +174,7 @@ def verify_pre_rerun_state(
     accepted_correction_config: Path,
     regenerated_correction_config: Path,
     stage9_5_1_recovery_report: Path,
+    correction_worktree_root: Path,
 ) -> dict[str, Any]:
     failures: list[str] = []
 
@@ -147,6 +228,7 @@ def verify_pre_rerun_state(
             "phase_b": phase_b,
             "phase_c_preconditions": None,
             "regenerated_correction_config_verification": None,
+            "regenerated_correction_config_commit_provenance": None,
             "corrected_phase_c_seed0_output_absent": corrected_absent,
             "corrected_phase_c_seed0_existing_entries": corrected_entries,
             "corrected_phase_c_seed0_rerun_executed_by_this_tool": False,
@@ -154,6 +236,13 @@ def verify_pre_rerun_state(
         }
         report["canonical_sha256"] = _canonical_sha256(report)
         return report
+
+    correction_provenance = _verify_correction_worktree_provenance(
+        correction_worktree_root,
+        regenerated_correction_config,
+    )
+    if correction_provenance.get("pass") is not True:
+        failures.append("regenerated_correction_config_commit_provenance_not_verified")
 
     preconditions = compare_phase_c_preconditions(
         accepted_root=accepted_root,
@@ -194,6 +283,7 @@ def verify_pre_rerun_state(
         "phase_b": phase_b,
         "phase_c_preconditions": preconditions,
         "regenerated_correction_config_verification": regenerated,
+        "regenerated_correction_config_commit_provenance": correction_provenance,
         "original_phase_c_v1_seed0_failure_lineage_verified": bool(
             preconditions.get("failed_lineage_preserved") is True
         ),
@@ -227,6 +317,7 @@ def main() -> None:
     parser.add_argument("--accepted-correction-config", type=Path, required=True)
     parser.add_argument("--regenerated-correction-config", type=Path, required=True)
     parser.add_argument("--stage9-5-1-recovery-report", type=Path, required=True)
+    parser.add_argument("--correction-worktree-root", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
 
@@ -236,6 +327,7 @@ def main() -> None:
         accepted_correction_config=args.accepted_correction_config,
         regenerated_correction_config=args.regenerated_correction_config,
         stage9_5_1_recovery_report=args.stage9_5_1_recovery_report,
+        correction_worktree_root=args.correction_worktree_root,
     )
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(

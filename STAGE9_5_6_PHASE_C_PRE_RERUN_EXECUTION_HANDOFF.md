@@ -112,9 +112,16 @@ This must create:
 
 `data/manifests/cd_primary_run_config_v1_1.json`.
 
-Before committing it, verify that it is the **only tracked change**. If a frozen
-execution artifact commit is needed, create a config-only child commit whose
-parent is exactly `79dd...`.
+Before committing it, verify that it is the **only tracked change**. Preserve
+it in a config-only child commit whose parent is exactly `79dd...`.
+
+The pre-rerun verifier checks this provenance directly:
+
+- the correction worktree HEAD parent must equal
+  `79ddc4c6d6dea52c7cabc55a6d082448fc24fcf9`;
+- the HEAD commit must change exactly
+  `data/manifests/cd_primary_run_config_v1_1.json`;
+- the tracked worktree must be clean.
 
 Do not amend accepted historical commits.
 
@@ -137,6 +144,7 @@ python tools/stage9_5/phase_c_pre_rerun_verifier.py \
   --accepted-correction-config <accepted-cd_primary_run_config_v1_1.json> \
   --regenerated-correction-config <fresh-cd_primary_run_config_v1_1.json> \
   --stage9-5-1-recovery-report <successful-fresh_clone_reconstruction_report.json> \
+  --correction-worktree-root <correction-worktree> \
   --output results/audits/stage9_5_full_seed_rerun_v1/phase_c_pre_rerun_verification_report.json
 ```
 
@@ -154,6 +162,8 @@ The report is acceptable only if all of these hold:
 - `hard_prerequisites_pass = true`;
 - `original_phase_c_v1_seed0_failure_lineage_verified = true`;
 - `regenerated_correction_config_scientific_blocks_equal = true`;
+- `regenerated_correction_config_commit_provenance.pass = true`;
+- `regenerated_correction_config_commit_provenance.parent = 79ddc4c6d6dea52c7cabc55a6d082448fc24fcf9`;
 - `corrected_phase_c_seed0_output_absent = true`;
 - `corrected_phase_c_seed0_rerun_executed_by_this_tool = false`;
 - `stage10_outcomes_accessed = false`;

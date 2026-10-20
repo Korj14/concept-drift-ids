@@ -2144,3 +2144,77 @@ five-file zero-byte transport reconstruction and then the unchanged
 Stage-9.5-1 verifier. No historical A/B replay or Phase-C pre-rerun execution is
 authorized until that verifier passes.
 
+### Run-bound encrypted checkpoint transport + unchanged-verifier proof
+
+A stronger checkpoint-recovery path was then exercised using the prospectively
+added run-bound CMS transport workflow
+`.github/workflows/stage9-5-secure-checkpoint-recovery-v1.yml`.
+
+The first attempt generated a one-time public certificate but timed out because
+no matching encrypted payload arrived. That failed attempt is preserved as
+workflow run `39395612306`, original job `118537497702`, with handshake
+artifact `12250924865`.
+
+The failed job was rerun without changing scientific or verifier code. The fresh
+rerun job was `118592521593`. It generated a new one-time certificate and
+uploaded handshake artifact:
+
+- artifact ID: `12260590855`;
+- artifact digest:
+  `sha256:010dad0fba88ee08bac20586c313f78dedbdc3a147c6186da544aa34e85c9b57`;
+- certificate SHA-256:
+  `d52d42a6a80b2667f05f10981445499dc4650a5916274afd2f3284af906601a4`.
+
+Five fresh Dropbox single-use raw-download URLs were generated for
+`/seed_0.pt` through `/seed_4.pt`. They were never preflighted or published
+in cleartext. A JSON envelope binding the workflow run ID, exact frozen
+checkpoint SHA-256 values, expected 76,105-byte sizes, and the five temporary
+URLs was encrypted locally to the run's one-time public certificate using CMS.
+Only the CMS ciphertext was committed at:
+
+`0995fba62abcf53e17149227ac1ec6a04458a35e`
+
+in the already-designated transport file
+`data/transport/stage9_5_dropbox_secure_checkpoints_v1.b64`.
+
+The GitHub runner decrypted that envelope with its non-exported one-time private
+key, performed the first GETs against the Dropbox URLs, and required every
+downloaded checkpoint byte stream to match the frozen ordinary SHA-256 and
+76,105-byte size. All five passed.
+
+The runner then restored a clean checkout and invoked the **unchanged
+Stage-9.5-1 v1.2 verifier** with only the recovered checkpoint root supplied.
+The verifier implementation blob used by the rerun was independently checked
+against the then-live branch verifier and was identical:
+`a63a02d5abc739737951826da062580b3166e5ee`.
+
+Preserved proof artifact:
+
+- artifact ID: `12260321808`;
+- artifact ZIP digest:
+  `sha256:18c8ffd4510b9ac364bedadd5f4f72dbbaeb53d104c5bc990e1709e86ad68cbc`.
+
+The unchanged verifier produced canonical SHA-256:
+
+`01f7ef5b2e62c7318995c915b79e53737448c0747e95a4e29513242fa88b7f69`
+
+with:
+
+- verified System-A seeds `[0,1,2,3,4]`;
+- checkpoint missing `[]`;
+- checkpoint mismatches `[]`;
+- verifier failures `[]`;
+- the **sole remaining blocker**
+  `stage8_large_artifact_archive_missing`.
+
+This is stronger than the earlier checkpoint-family transport proof because it
+binds the recovered bytes directly into the unchanged frozen verifier on a clean
+runner. It still does not close Stage-9.5-1: the Stage-8 large artifact archive
+must be transported/completed, the five frozen zero-byte maintenance streams
+must follow their already-frozen reconstruction correction, and the unchanged
+v1.2 verifier must then pass at 145/145 with zero failures and zero blockers.
+
+No recovered checkpoint bytes were committed or uploaded as assurance
+artifacts, no accepted Stage-8/9 scientific object changed, and no Stage-10
+outcome was accessed.
+

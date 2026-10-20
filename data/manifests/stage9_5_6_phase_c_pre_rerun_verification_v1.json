@@ -69,7 +69,15 @@
       "execution_head": "79ddc4c6d6dea52c7cabc55a6d082448fc24fcf9",
       "command": "python run.py cd-primary-correction-prepare",
       "output": "data/manifests/cd_primary_run_config_v1_1.json",
-      "only_tracked_change_permitted": "data/manifests/cd_primary_run_config_v1_1.json"
+      "only_tracked_change_permitted": "data/manifests/cd_primary_run_config_v1_1.json",
+      "preservation_provenance": {
+        "required": true,
+        "commit_parent": "79ddc4c6d6dea52c7cabc55a6d082448fc24fcf9",
+        "commit_changed_paths": [
+          "data/manifests/cd_primary_run_config_v1_1.json"
+        ],
+        "tracked_worktree_clean": true
+      }
     },
     {
       "order": 3,
@@ -109,7 +117,9 @@
         "corrected_phase_c_seed0_output_absent": true,
         "corrected_phase_c_seed0_rerun_executed_by_this_tool": false,
         "stage10_outcomes_accessed": false,
-        "next_authorized_step": "corrected_phase_c_seed0_rerun"
+        "next_authorized_step": "corrected_phase_c_seed0_rerun",
+        "regenerated_correction_config_commit_provenance.pass": true,
+        "regenerated_correction_config_commit_provenance.parent": "79ddc4c6d6dea52c7cabc55a6d082448fc24fcf9"
       }
     }
   ],

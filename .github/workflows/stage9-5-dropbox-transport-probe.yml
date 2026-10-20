@@ -1,0 +1,149 @@
+name: Stage 9.5 Dropbox transport probe
+
+on:
+  push:
+    branches:
+      - "stage9-5-q1-assurance"
+
+jobs:
+  seed0-transport-probe:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.sha }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11.9"
+
+      - name: Read current PR 21 transport envelope
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api "repos/${GITHUB_REPOSITORY}/pulls/21" --jq .body > pr_body.txt
+
+      - name: Download and verify exact seed-0 checkpoint
+        id: probe
+        shell: bash
+        run: |
+          python - <<'PY'
+          from __future__ import annotations
+
+          import hashlib
+          import json
+          import os
+          import re
+          import urllib.request
+          from pathlib import Path
+
+          START = "<!-- STAGE9_5_DROPBOX_TRANSPORT_BEGIN"
+          END = "STAGE9_5_DROPBOX_TRANSPORT_END -->"
+          EXPECTED_PATH = "/seed_0.pt"
+          EXPECTED_SHA256 = "514c6d552b3cd680ae966bbb568105bd2871bc68d3a47aded070a70ba0615bd1"
+          EXPECTED_SIZE = 76105
+
+          report_path = Path("transport_probe_report.json")
+          body = Path("pr_body.txt").read_text(encoding="utf-8")
+          report = {
+              "audit_id": "stage9.5-dropbox-transport-probe-seed0-v1",
+              "repository_head": os.environ["GITHUB_SHA"],
+              "expected_path": EXPECTED_PATH,
+              "expected_sha256": EXPECTED_SHA256,
+              "expected_size_bytes": EXPECTED_SIZE,
+              "raw_bytes_preserved_after_probe": False,
+              "stage10_outcomes_accessed": False,
+          }
+
+          if START not in body or END not in body:
+              report.update(
+                  {
+                      "status": "no_transport_envelope",
+                      "pass": False,
+                      "actual_sha256": None,
+                      "actual_size_bytes": None,
+                  }
+              )
+              report_path.write_text(
+                  json.dumps(report, indent=2, sort_keys=True) + "\n",
+                  encoding="utf-8",
+              )
+              raise SystemExit(0)
+
+          payload_text = body.split(START, 1)[1].split(END, 1)[0].strip()
+          try:
+              envelope = json.loads(payload_text)
+          except json.JSONDecodeError as exc:
+              report.update(
+                  {
+                      "status": "invalid_transport_envelope",
+                      "pass": False,
+                      "error": type(exc).__name__,
+                  }
+              )
+              report_path.write_text(
+                  json.dumps(report, indent=2, sort_keys=True) + "\n",
+                  encoding="utf-8",
+              )
+              raise
+
+          if not isinstance(envelope, dict):
+              raise TypeError("Transport envelope must be a JSON object.")
+          if envelope.get("path") != EXPECTED_PATH:
+              raise ValueError("Transport envelope path is not the frozen seed-0 path.")
+          url = envelope.get("download_url")
+          if not isinstance(url, str) or not re.match(r"^https://[^/]+\.dl\.dropboxusercontent\.com/", url):
+              raise ValueError("Transport envelope URL is not a Dropbox raw-download URL.")
+
+          target = Path("seed_0.pt")
+          try:
+              request = urllib.request.Request(
+                  url,
+                  headers={"User-Agent": "stage9.5-dropbox-transport-probe-v1"},
+                  method="GET",
+              )
+              with urllib.request.urlopen(request, timeout=120) as response:
+                  with target.open("wb") as handle:
+                      while True:
+                          chunk = response.read(1024 * 1024)
+                          if not chunk:
+                              break
+                          handle.write(chunk)
+
+              data = target.read_bytes()
+              actual_sha256 = hashlib.sha256(data).hexdigest()
+              actual_size = len(data)
+              passed = (
+                  actual_sha256 == EXPECTED_SHA256
+                  and actual_size == EXPECTED_SIZE
+              )
+              report.update(
+                  {
+                      "status": "pass" if passed else "identity_mismatch",
+                      "pass": passed,
+                      "actual_sha256": actual_sha256,
+                      "actual_size_bytes": actual_size,
+                  }
+              )
+          finally:
+              target.unlink(missing_ok=True)
+
+          report_path.write_text(
+              json.dumps(report, indent=2, sort_keys=True) + "\n",
+              encoding="utf-8",
+          )
+          if not report["pass"]:
+              raise SystemExit("Recovered seed-0 bytes failed frozen identity verification.")
+          PY
+
+      - name: Upload small transport verification evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: stage9-5-dropbox-transport-probe-seed0-v1
+          path: transport_probe_report.json
+          if-no-files-found: error

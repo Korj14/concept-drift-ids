@@ -16,6 +16,8 @@ on:
       - "data/manifests/stage9_5_6_closure_order_gate_v1.json"
       - "data/manifests/stage9_5_6_replay_report_construction_v1.json"
       - "data/manifests/stage9_5_6_phase_c_seed0_comparison_v1.json"
+      - "data/manifests/stage9_5_6_phase_c_pre_rerun_verification_v1.json"
+      - "STAGE9_5_6_PHASE_C_PRE_RERUN_EXECUTION_HANDOFF.md"
       - "STAGE9_5_6_PHASE_C_SEED0_COMPARISON_CONTRACT_V1.md"
       - "data/manifests/stage9_5_6_phase_b_arm_manifest_projection_v1.json"
       - "data/manifests/stage9_5_6_phase_b_seed_manifest_projection_v1.json"
@@ -90,7 +92,7 @@ jobs:
       - name: Run Stage 9.5 scanner and order-gate unit tests
         shell: pwsh
         run: |
-          python -m pytest tests/stage9_5/test_parameter_scan.py tests/stage9_5/test_work_package_order_gate.py tests/stage9_5/test_replay_report_finalizer.py tests/stage9_5/test_replay_equivalence_comparator.py tests/stage9_5/test_stage1_reconstruction_evidence.py tests/stage9_5/test_zero_byte_transport_reconstruction.py tests/stage9_5/test_regenerated_correction_config_verifier.py -q
+          python -m pytest tests/stage9_5/test_parameter_scan.py tests/stage9_5/test_work_package_order_gate.py tests/stage9_5/test_replay_report_finalizer.py tests/stage9_5/test_replay_equivalence_comparator.py tests/stage9_5/test_stage1_reconstruction_evidence.py tests/stage9_5/test_zero_byte_transport_reconstruction.py tests/stage9_5/test_regenerated_correction_config_verifier.py tests/stage9_5/test_phase_c_pre_rerun_verifier.py -q
 
       - name: Run Stage 9.5-0 parameter/control scan
         shell: pwsh

@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "status_id": "stage9.5-6-current-status-v1",
-  "status_observed_at_head": "051d3fdd96ebb6d204ac468ad34124b7be066cdd",
+  "status_observed_at_head": "0f9358252de80804b99ece8ca5325915579546d7",
   "status_date": "2026-10-20",
   "purpose": "Additive current-status overlay. Does not modify the prospectively frozen replay construction contract, accepted Stage-8/9 science, or closure authority.",
   "frozen_replay_construction_contract": {
@@ -254,5 +254,55 @@
     "stage10_outcomes_accessed": false,
     "accepted_stage8_9_evidence_replaced": false,
     "scientific_objects_modified": false
+  },
+  "runtime_connector_materialization_probe_2026_10_20": {
+    "status": "non_mutating_connector_routes_exhausted_no_raw_bytes_materialized",
+    "live_head_reconciled": "0f9358252de80804b99ece8ca5325915579546d7",
+    "target": "materialize authoritative Dropbox recovery bytes onto verifier-capable filesystem without changing bytes",
+    "dropbox_fetch_probe": {
+      "path": "/seed_0.pt",
+      "size_bytes": 76105,
+      "connector_result": "binary archive text extraction succeeded and exposed a stable Dropbox content URL, but did not expose raw checkpoint bytes",
+      "extracted_text_observation": "seed_0/data.pkl",
+      "raw_bytes_obtained": false
+    },
+    "stable_content_url_probe": {
+      "outcome": "not_materializable",
+      "reason": "web access layer could not access the Dropbox stable content URL, so the execution-container downloader would not accept it",
+      "raw_bytes_obtained": false
+    },
+    "connector_file_id_materialization_probe": {
+      "dropbox_file_id_surface_observed": true,
+      "project_files_materializer_outcome": "rejected",
+      "reason": "Dropbox file ID was not visible in the Project Files surface; files.materialize requires a Files-surface reference",
+      "raw_bytes_obtained": false
+    },
+    "project_files_index_probe": {
+      "title_queries": [
+        "seed_0.pt",
+        "seed_0"
+      ],
+      "results": 0,
+      "raw_bytes_obtained": false
+    },
+    "existing_shared_link_probe": {
+      "path": "/seed_0.pt",
+      "existing_links": 0,
+      "new_shared_link_created": false
+    },
+    "preview_surface": {
+      "invoked": false,
+      "reason": "Dropbox file_preview generates a private shared link; no sharing mutation was authorized or required for this non-mutating recovery tranche"
+    },
+    "dropbox_mutation_performed": false,
+    "local_checkpoint_bytes_materialized": false,
+    "stage8_archive_bytes_materialized": false,
+    "zero_byte_transport_reconstruction_executed": false,
+    "frozen_stage9_5_1_v1_2_verifier_rerun_complete": false,
+    "hard_prerequisite_state_changed": false,
+    "disposition": "Repository engineering is ready through the Phase-C pre-rerun boundary, but authoritative execution remains blocked until the recovered Dropbox byte streams are placed on a verifier-capable filesystem and the unchanged Stage-9.5-1 v1.2 verifier passes.",
+    "scientific_objects_modified": false,
+    "accepted_stage8_9_evidence_replaced": false,
+    "stage10_outcomes_accessed": false
   }
 }

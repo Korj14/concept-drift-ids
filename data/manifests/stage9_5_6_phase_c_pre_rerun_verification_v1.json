@@ -1,0 +1,125 @@
+{
+  "schema_version": 1,
+  "contract_id": "stage9.5-6-phase-c-pre-rerun-verification-v1",
+  "status": "prospectively_frozen_before_authoritative_phase_c_pre_rerun_execution",
+  "purpose": "Freeze the exact stop-before-corrected-Phase-C verification boundary after successful Stage-9.5-1 recovery and complete deterministic Phase-A/B historical replay.",
+  "hard_prerequisites": {
+    "stage9_5_1": {
+      "audit_id": "stage9.5-1-fresh-clone-reconstruction-v1_2",
+      "pass": true,
+      "failures": [],
+      "blockers": [],
+      "verified_seeds": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "stage8_archive_requirement_count": 145,
+      "stage8_archive_verified_count": 145
+    },
+    "phase_a_replay": {
+      "historical_head": "bfa14b942e4a5b2fbfa8aa3c43728a7f1cd81645",
+      "complete_seeds": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "comparator_pass": true
+    },
+    "phase_b_replay": {
+      "historical_head": "bfa14b942e4a5b2fbfa8aa3c43728a7f1cd81645",
+      "complete_seeds": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "required_arms": [
+        "c_frozen_symbolic",
+        "d_drift",
+        "d_periodic"
+      ],
+      "comparator_pass": true,
+      "accepted_maintenance_archive_verified": true
+    }
+  },
+  "tranche_steps": [
+    {
+      "order": 1,
+      "action": "reproduce_and_verify_original_phase_c_v1_seed0_failure_lineage",
+      "execution_head": "bfa14b942e4a5b2fbfa8aa3c43728a7f1cd81645",
+      "command": "python run.py cd-primary-phase-c --seed 0",
+      "expected_entries": [
+        "attempt.json",
+        "failure.json"
+      ],
+      "expected_exception_type": "NameError",
+      "expected_message": "name 'read_jsonl' is not defined",
+      "successful_scoring_artifacts_permitted": false,
+      "unexpected_output_permitted": false
+    },
+    {
+      "order": 2,
+      "action": "regenerate_correction_config_from_fresh_phase_a_b_identities",
+      "execution_head": "79ddc4c6d6dea52c7cabc55a6d082448fc24fcf9",
+      "command": "python run.py cd-primary-correction-prepare",
+      "output": "data/manifests/cd_primary_run_config_v1_1.json",
+      "only_tracked_change_permitted": "data/manifests/cd_primary_run_config_v1_1.json"
+    },
+    {
+      "order": 3,
+      "action": "verify_regenerated_correction_config_fail_closed",
+      "accepted_stage8_evidence_commit": "c2ded83b8195b9321e715626c1f305f9627936e8",
+      "accepted_correction_manifest_sha256": "d380fce5f9db8f0b639dc999298a263b10a10a3d02e35def226a121d098e2222",
+      "frozen_scientific_blocks": [
+        "preprocessing",
+        "scenario",
+        "system_a",
+        "r0_v2",
+        "primary_control_plane",
+        "primary_symbolic_operator",
+        "fusion",
+        "analysis"
+      ],
+      "permitted_difference_scope": [
+        "correction.reused_upstream_artifacts.phase_a.*.run_manifest_sha256",
+        "correction.reused_upstream_artifacts.phase_b.*.phase_b_manifest_sha256",
+        "payload_sha256",
+        "manifest_sha256"
+      ],
+      "post_outcome_scientific_changes_permitted": false
+    },
+    {
+      "order": 4,
+      "action": "preserve_canonical_pre_rerun_verification_evidence",
+      "tool": "tools/stage9_5/phase_c_pre_rerun_verifier.py",
+      "report_path": "results/audits/stage9_5_full_seed_rerun_v1/phase_c_pre_rerun_verification_report.json",
+      "required_report_values": {
+        "audit_id": "stage9.5-6-phase-c-pre-rerun-verification-v1",
+        "status": "pass",
+        "pass": true,
+        "hard_prerequisites_pass": true,
+        "original_phase_c_v1_seed0_failure_lineage_verified": true,
+        "regenerated_correction_config_scientific_blocks_equal": true,
+        "corrected_phase_c_seed0_output_absent": true,
+        "corrected_phase_c_seed0_rerun_executed_by_this_tool": false,
+        "stage10_outcomes_accessed": false,
+        "next_authorized_step": "corrected_phase_c_seed0_rerun"
+      }
+    }
+  ],
+  "stop_boundary": {
+    "corrected_phase_c_seed0_rerun_authorized_by_successful_report": true,
+    "corrected_phase_c_seed0_rerun_executed_in_this_tranche": false,
+    "corrected_output_path": "phase_c_offline_evaluation_v1_1/seed-0",
+    "corrected_output_must_be_absent_when_report_is_created": true,
+    "stage10_outcomes_accessed": false
+  },
+  "scientific_objects_modified": false,
+  "accepted_stage8_9_evidence_replaced": false
+}

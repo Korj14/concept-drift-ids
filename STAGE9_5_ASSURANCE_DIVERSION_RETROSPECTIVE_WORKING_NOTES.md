@@ -2086,3 +2086,61 @@ The transport probes changed assurance mechanics only. Accepted Stage-8/9
 scientific evidence, estimands, treatments, metrics, numerical results, and
 claim boundaries were not changed.
 
+### Stage-8 archive comment-transport proof
+
+The checkpoint-family proof established that opaque base64 transport envelopes
+could move recovered Dropbox bytes onto a GitHub Actions runner. The next
+bounded transport risk was the larger Stage-8 archive: carrying many
+single-use URLs would exceed a single practical PR-body envelope.
+
+A dedicated one-file archive probe therefore tested PR conversation comments
+as short-lived opaque transport chunks. The workflow was changed prospectively
+at:
+
+`3a82541d2495ba729a1e6df90ede9d27b2388932`
+
+The frozen descriptor-linked probe target was:
+
+`/cd_primary_v1/phase_a_shared_control_plane/seed-0/shared_identity.json`
+
+with accepted Stage-8 SHA-256:
+
+`e30d6ef41d074ce2e0e91fec83e55ce920d719e77ba443911ac34fceb2cba98d`.
+
+The Dropbox object size observed before transport was 977 bytes.
+
+The runner read a temporary PR comment carrying a doubly opaque transport
+envelope: the comment payload was base64-encoded JSON and the Dropbox
+single-use URL inside that JSON was itself base64 encoded. The runner decoded
+both layers locally immediately before the first HTTP GET.
+
+Authoritative probe execution:
+
+- workflow run: `39390762810`;
+- rerun job: `118521777970`;
+- result: **success**;
+- preserved small rerun artifact ID: `12248934944`;
+- artifact ZIP digest:
+  `sha256:941b9dc0614e327f65840c9c79cf09d5e9fc36aeb728e06db219f485444fcbcd`;
+- artifact size: 474 bytes.
+
+Job success required the downloaded byte stream to match the frozen ordinary
+SHA-256 exactly. The recovered file was deleted before artifact upload. The
+transport comment (GitHub issue-comment ID `6286392434`) was immediately
+overwritten with a neutral cleared marker after runner consumption.
+
+The same workflow's initial no-comment baseline produced only a
+`no_transport_comment` report and is not recovery evidence.
+
+This proves that PR conversation comments can be used as temporary encoded
+transport chunks for descriptor-linked Stage-8 archive bytes without
+committing the recovered bytes or leaving the single-use Dropbox URLs in the
+final comment text. It does not close Stage-9.5-1 and does not substitute for
+the unchanged v1.2 verifier.
+
+The next transport step may scale this exact mechanism to the 140 physically
+present descriptor-linked Stage-8 archive files, followed by the already-frozen
+five-file zero-byte transport reconstruction and then the unchanged
+Stage-9.5-1 verifier. No historical A/B replay or Phase-C pre-rerun execution is
+authorized until that verifier passes.
+

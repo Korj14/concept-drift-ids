@@ -271,6 +271,18 @@ jobs:
               )
           PY
 
+      - name: Restore clean checkout before unchanged verifier
+        shell: pwsh
+        run: |
+          $TransportReport = Join-Path $env:RUNNER_TEMP "checkpoint_transport_report.json"
+          Move-Item checkpoint_transport_report.json $TransportReport -Force
+          Remove-Item transport_public_cert.pem -Force -ErrorAction SilentlyContinue
+          Remove-Item checkpoint_transport_handshake.json -Force -ErrorAction SilentlyContinue
+          $Dirty = git status --porcelain
+          if ($Dirty) {
+            throw "Secure transport left unexpected checkout changes before verifier: $Dirty"
+          }
+
       - name: Run unchanged Stage 9.5-1 verifier with recovered checkpoints
         shell: pwsh
         run: |
@@ -325,6 +337,7 @@ jobs:
           assert summary["pass"], json.dumps(summary, sort_keys=True)
           '@ | python -
 
+          Copy-Item (Join-Path $env:RUNNER_TEMP "checkpoint_transport_report.json") .
           Remove-Item -Recurse -Force $CheckpointRoot
 
       - name: Upload checkpoint recovery verification evidence

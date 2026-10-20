@@ -98,6 +98,18 @@ def _patch_success(monkeypatch) -> None:
         "verify_regenerated_correction_config",
         lambda *_args, **_kwargs: _regenerated_pass(),
     )
+    monkeypatch.setattr(
+        verifier,
+        "_verify_correction_worktree_provenance",
+        lambda *_args, **_kwargs: {
+            "pass": True,
+            "failures": [],
+            "head": "d" * 40,
+            "parent": verifier.CORRECTION_SOURCE_HEAD,
+            "changed_paths": [verifier.CORRECTION_CONFIG_RELATIVE_PATH.as_posix()],
+            "tracked_worktree_clean": True,
+        },
+    )
 
 
 def test_successful_pre_rerun_verification_stops_before_corrected_phase_c(
@@ -112,6 +124,7 @@ def test_successful_pre_rerun_verification_stops_before_corrected_phase_c(
         accepted_correction_config=tmp_path / "accepted.json",
         regenerated_correction_config=tmp_path / "fresh.json",
         stage9_5_1_recovery_report=tmp_path / "recovery.json",
+        correction_worktree_root=tmp_path / "correction-worktree",
     )
 
     assert report["pass"] is True
@@ -119,6 +132,7 @@ def test_successful_pre_rerun_verification_stops_before_corrected_phase_c(
     assert report["hard_prerequisites_pass"] is True
     assert report["original_phase_c_v1_seed0_failure_lineage_verified"] is True
     assert report["regenerated_correction_config_scientific_blocks_equal"] is True
+    assert report["regenerated_correction_config_commit_provenance"]["pass"] is True
     assert report["corrected_phase_c_seed0_output_absent"] is True
     assert report["corrected_phase_c_seed0_rerun_executed_by_this_tool"] is False
     assert report["stage10_outcomes_accessed"] is False
@@ -175,6 +189,7 @@ def test_failed_hard_prerequisite_prevents_phase_c_inspection(
         accepted_correction_config=tmp_path / "accepted.json",
         regenerated_correction_config=tmp_path / "fresh.json",
         stage9_5_1_recovery_report=tmp_path / "recovery.json",
+        correction_worktree_root=tmp_path / "correction-worktree",
     )
 
     assert report["pass"] is False
@@ -207,6 +222,7 @@ def test_preexisting_corrected_phase_c_output_forces_stop_boundary(
         accepted_correction_config=tmp_path / "accepted.json",
         regenerated_correction_config=tmp_path / "fresh.json",
         stage9_5_1_recovery_report=tmp_path / "recovery.json",
+        correction_worktree_root=tmp_path / "correction-worktree",
     )
 
     assert report["pass"] is False
@@ -227,3 +243,82 @@ def test_phase_b_shape_requires_all_seeds_and_all_arms() -> None:
         {"arm": "d_drift", "pass": True},
     ]
     assert verifier._phase_b_shape_passed(payload) is False
+
+def test_correction_worktree_provenance_requires_config_only_child(
+    monkeypatch,
+    tmp_path: Path,
+) -> None:
+    root = tmp_path / "correction"
+    config = root / verifier.CORRECTION_CONFIG_RELATIVE_PATH
+    config.parent.mkdir(parents=True)
+    config.write_text("{}\n", encoding="utf-8")
+
+    outputs = {
+        ("rev-parse", "HEAD"): "e" * 40 + "\n",
+        ("rev-parse", "HEAD^"): verifier.CORRECTION_SOURCE_HEAD + "\n",
+        (
+            "diff-tree",
+            "--no-commit-id",
+            "--name-only",
+            "-r",
+            "HEAD",
+        ): verifier.CORRECTION_CONFIG_RELATIVE_PATH.as_posix() + "\n",
+        (
+            "status",
+            "--porcelain",
+            "--untracked-files=no",
+        ): "",
+    }
+
+    class Result:
+        def __init__(self, stdout: str) -> None:
+            self.stdout = stdout
+
+    def fake_git(_root: Path, *args: str, check: bool = True):
+        del check
+        return Result(outputs[args])
+
+    monkeypatch.setattr(verifier, "_git", fake_git)
+    report = verifier._verify_correction_worktree_provenance(root, config)
+
+    assert report["pass"] is True
+    assert report["parent"] == verifier.CORRECTION_SOURCE_HEAD
+    assert report["changed_paths"] == [
+        verifier.CORRECTION_CONFIG_RELATIVE_PATH.as_posix()
+    ]
+
+
+def test_correction_worktree_provenance_rejects_extra_tracked_change(
+    monkeypatch,
+    tmp_path: Path,
+) -> None:
+    root = tmp_path / "correction"
+    config = root / verifier.CORRECTION_CONFIG_RELATIVE_PATH
+    config.parent.mkdir(parents=True)
+    config.write_text("{}\n", encoding="utf-8")
+
+    class Result:
+        def __init__(self, stdout: str) -> None:
+            self.stdout = stdout
+
+    def fake_git(_root: Path, *args: str, check: bool = True):
+        del check
+        if args == ("rev-parse", "HEAD"):
+            return Result("e" * 40 + "\n")
+        if args == ("rev-parse", "HEAD^"):
+            return Result(verifier.CORRECTION_SOURCE_HEAD + "\n")
+        if args[:4] == ("diff-tree", "--no-commit-id", "--name-only", "-r"):
+            return Result(
+                verifier.CORRECTION_CONFIG_RELATIVE_PATH.as_posix()
+                + "\nREADME.md\n"
+            )
+        if args == ("status", "--porcelain", "--untracked-files=no"):
+            return Result("")
+        raise AssertionError(args)
+
+    monkeypatch.setattr(verifier, "_git", fake_git)
+    report = verifier._verify_correction_worktree_provenance(root, config)
+
+    assert report["pass"] is False
+    assert "correction_freeze_commit_not_config_only" in report["failures"]
+

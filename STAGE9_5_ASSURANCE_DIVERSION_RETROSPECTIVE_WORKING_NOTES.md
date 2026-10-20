@@ -1904,3 +1904,80 @@ for the unchanged Stage-9.5-1 verifier to pass. The final reviewer-facing
 Stage-9.5 retrospective must preserve this boundary rather than implying that
 A/B replay actually ran in ChatGPT.
 
+## Phase-C pre-rerun execution boundary made explicit — 20 October 2026
+
+A later bounded task asked to close the gap between the current Stage-9.5-6
+state and the exact tranche that must reproduce the original Phase-C v1 seed-0
+failure lineage, regenerate the correction config from freshly replayed A/B
+identities, verify frozen scientific-block equality, preserve evidence, and
+stop before the corrected Phase-C seed-0 rerun.
+
+PR #21 was re-read first. The live head had advanced substantially to
+`0c2ec544d10793fd3124c04f59f9029c67644311`. That 183-commit external delta
+was reconciled before mutation. It already contained the frozen Phase-B
+projection/comparator implementation, Phase-C seed-0 comparison contract,
+regenerated-correction-config verifier, Stage-1 reconstruction closure,
+historical replay handoff, recovery/transport forensics, and this retrospective.
+The current exact-head CI state was scientifically/assurance-consistent:
+Stage-9 robustness passed; Stage-9.5 assurance-contract, oracle, causal,
+mutation, and order-gate jobs passed; fresh-clone/static remained in their
+expected blocked/triage states; 7/8/9 remained skipped.
+
+The remaining engineering gap was not missing comparison semantics. The
+underlying functions already verified:
+
+- unchanged Stage-9.5-1 recovery-report success;
+- complete Phase-A replay;
+- complete Phase-B replay across all seeds/arms;
+- accepted Stage-8 archive identity and maintenance records;
+- exact original Phase-C v1 seed-0 failed lineage;
+- regenerated correction-config frozen scientific blocks;
+- fresh upstream A/B identity rebinding.
+
+The gap was the public execution boundary. The integrated replay-comparator CLI
+continued through corrected Phase-C output verification, while the requested
+tranche explicitly required a mandatory stop **before** corrected Phase C.
+
+To remove that ambiguity without changing replay semantics, the following
+additive assurance artifacts were introduced prospectively:
+
+- `tools/stage9_5/phase_c_pre_rerun_verifier.py`;
+- `tests/stage9_5/test_phase_c_pre_rerun_verifier.py`;
+- `data/manifests/stage9_5_6_phase_c_pre_rerun_verification_v1.json`;
+- `STAGE9_5_6_PHASE_C_PRE_RERUN_EXECUTION_HANDOFF.md`.
+
+The new verifier does not execute Phase C. It first re-runs the frozen
+Stage-9.5-1 recovery, accepted-archive, Phase-A, and Phase-B checks. If any hard
+prerequisite fails, it returns a blocked report **without inspecting** the
+Phase-C precondition/config evidence. After prerequisites pass, it invokes the
+already-frozen Phase-C precondition comparator and independent regenerated
+correction-config verifier. It also requires the corrected
+`phase_c_offline_evaluation_v1_1/seed-0` surface to be absent. A successful
+canonical report therefore proves that the exact failed-v1 lineage and
+correction-config equality have been verified while the corrected rerun has not
+yet occurred.
+
+Synthetic tests freeze three important behaviors:
+
+1. successful pre-rerun readiness ends with
+   `next_authorized_step = corrected_phase_c_seed0_rerun`;
+2. failed Stage-9.5-1/A/B hard prerequisites prevent Phase-C precondition/config
+   inspection;
+3. any already-present corrected Phase-C seed-0 output forces a stop-boundary
+   failure.
+
+The Stage-9.5 assurance workflow was updated to watch the new contract/handoff
+and execute the new test module.
+
+This tranche does **not** claim that the hard prerequisites have executed in
+the current ChatGPT environment. The external recovered bytes still have to be
+materialized on a verifier-capable filesystem, the unchanged Stage-9.5-1 v1.2
+verifier still has to pass, and the complete historical A/B replay still has to
+pass its frozen comparator on real outputs. The contribution of this tranche is
+that once those prerequisites are true, the requested Phase-C pre-rerun tranche
+has a single fail-closed operator path and canonical evidence boundary, with no
+need to invoke or inspect corrected Phase C.
+
+No Stage-10 outcomes were accessed. No accepted Stage-8/9 scientific object,
+treatment, endpoint, or result was modified.
+

@@ -1981,3 +1981,11 @@ need to invoke or inspect corrected Phase C.
 No Stage-10 outcomes were accessed. No accepted Stage-8/9 scientific object,
 treatment, endpoint, or result was modified.
 
+## 2026-10-20 — Connector-native Dropbox transport probe
+
+- Live PR #21 head was reconciled at `0f9358252de80804b99ece8ca5325915579546d7`; the repository had already advanced through Dropbox recovery discovery, Stage-1 reconstruction closure, full Phase-A/B comparator engineering, and the frozen Phase-C pre-rerun verification boundary.
+- A new non-mutating Dropbox transport probe tested surfaces not represented by the earlier temporary-link attempt. `Dropbox.fetch` on `/seed_0.pt` exposed archive text (`seed_0/data.pkl`) and a stable Dropbox content URL, but not raw checkpoint bytes.
+- The stable content URL remained inaccessible to the web/container download boundary. The Dropbox-issued file ID was also rejected by `files.materialize` because it was not visible in the Project Files surface; Project Files title searches for `seed_0.pt` / `seed_0` returned no entry.
+- `/seed_0.pt` had no pre-existing shared link. No new shared link was created because doing so would mutate sharing state and was not required for this read-only tranche. No Dropbox mutation occurred.
+- Disposition: all non-mutating connector-to-verifier byte-transfer routes exposed in this chat runtime are now exhausted. The authoritative blockers remain unchanged: materialize the recovered Dropbox bytes on a verifier-capable filesystem, execute the frozen zero-byte transport correction for the five permitted empty C-arm maintenance paths, and obtain an unchanged Stage-9.5-1 v1.2 verifier success before historical A/B execution or Phase-C pre-rerun verification.
+- No scientific object changed, no accepted Stage-8/9 evidence was replaced, and no Stage-10 outcome was accessed. Machine-detail record: `data/manifests/stage9_5_6_current_status_v1.json`.

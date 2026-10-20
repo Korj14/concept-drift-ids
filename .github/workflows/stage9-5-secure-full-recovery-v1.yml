@@ -1,0 +1,573 @@
+name: Stage 9.5 secure full recovery proof
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/stage9-5-secure-full-recovery-v1.yml"
+
+permissions:
+  contents: read
+  pull-requests: read
+  issues: write
+
+jobs:
+  secure-full-recovery:
+    runs-on: windows-latest
+    timeout-minutes: 60
+    env:
+      PYTHONHASHSEED: "0"
+      OMP_NUM_THREADS: "1"
+      MKL_NUM_THREADS: "1"
+      OPENBLAS_NUM_THREADS: "1"
+      NUMEXPR_NUM_THREADS: "1"
+      TRANSPORT_MARKER: "STAGE9_5_SECURE_FULL_RECOVERY_CHUNK_V1"
+      ACK_MARKER: "STAGE9_5_SECURE_FULL_RECOVERY_ACK_V1"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11.9"
+
+      - name: Install frozen runtime
+        shell: pwsh
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements-lock.txt
+
+      - name: Generate run-bound transport handshake
+        shell: bash
+        run: |
+          set -euo pipefail
+          HANDSHAKE_DIR="${RUNNER_TEMP}/stage9_5_full_recovery_handshake"
+          mkdir -p "${HANDSHAKE_DIR}"
+          openssl req -x509 -newkey rsa:4096 -sha256 -nodes \
+            -keyout "${HANDSHAKE_DIR}/transport_private.pem" \
+            -out "${HANDSHAKE_DIR}/transport_public_cert.pem" \
+            -subj "/CN=stage9-5-full-recovery-${GITHUB_RUN_ID}" \
+            -days 1
+
+          python - <<'PY'
+          from __future__ import annotations
+
+          import hashlib
+          import json
+          import os
+          from pathlib import Path
+
+          from tools.stage9_5.fresh_clone_reconstruction import (
+              IDENTITY_PATH,
+              _load_json,
+              _stage8_archive_requirements,
+          )
+
+          root = Path(os.environ["RUNNER_TEMP"])
+          handshake_dir = root / "stage9_5_full_recovery_handshake"
+          cfg = _load_json(IDENTITY_PATH)
+          requirements = _stage8_archive_requirements(cfg["stage8_compact"])
+
+          zero_contract = json.loads(
+              Path(
+                  "data/manifests/"
+                  "stage9_5_1_zero_byte_transport_reconstruction_v1.json"
+              ).read_text(encoding="utf-8")
+          )
+          zero_paths = {
+              str(item["path"])
+              for item in zero_contract["allowed_reconstructions"]
+          }
+          physical = [
+              {"path": item["path"], "sha256": item["sha256"]}
+              for item in requirements
+              if item["path"] not in zero_paths
+          ]
+          if len(requirements) != 145:
+              raise ValueError(f"Unexpected verifier requirement count: {len(requirements)}")
+          if len(zero_paths) != 5:
+              raise ValueError(f"Unexpected zero-byte reconstruction count: {len(zero_paths)}")
+          if len(physical) != 140:
+              raise ValueError(f"Unexpected physical archive count: {len(physical)}")
+
+          cert = (handshake_dir / "transport_public_cert.pem").read_bytes()
+          expected_checkpoints = {
+              "/seed_0.pt": "514c6d552b3cd680ae966bbb568105bd2871bc68d3a47aded070a70ba0615bd1",
+              "/seed_1.pt": "07696c3f580645d9c96ac3e736cfb5eeaa8033f148bf64822e8ee105861cf552",
+              "/seed_2.pt": "7630514cf409256bd2bbe27eca59f881acb238be698b5fdb1ee12bca8e402491",
+              "/seed_3.pt": "cce1ce47db047b9d441bbe6dad9bd53f1ee6ff3ad7d404521cae72a38bccd4b4",
+              "/seed_4.pt": "9b9e56371f3246482998c4efea4829e1e6d5aaf549bb43e1af05e471dfcb9e93",
+          }
+          payload = {
+              "audit_id": "stage9.5-secure-full-recovery-handshake-v1",
+              "run_id": os.environ["GITHUB_RUN_ID"],
+              "repository_head": os.environ["GITHUB_SHA"],
+              "certificate_sha256": hashlib.sha256(cert).hexdigest(),
+              "checkpoint_requirements": [
+                  {
+                      "path": path,
+                      "sha256": sha256,
+                      "size": 76105,
+                  }
+                  for path, sha256 in expected_checkpoints.items()
+              ],
+              "archive_physical_requirements": physical,
+              "archive_physical_requirement_count": len(physical),
+              "zero_byte_reconstruction_paths": sorted(zero_paths),
+              "full_verifier_requirement_count": len(requirements),
+              "private_key_exported": False,
+              "stage10_outcomes_accessed": False,
+          }
+          (handshake_dir / "full_recovery_handshake.json").write_text(
+              json.dumps(payload, indent=2, sort_keys=True) + "\n",
+              encoding="utf-8",
+          )
+          PY
+
+      - name: Upload full-recovery handshake
+        uses: actions/upload-artifact@v4
+        with:
+          name: stage9-5-secure-full-recovery-handshake-v1
+          path: |
+            ${{ runner.temp }}/stage9_5_full_recovery_handshake/transport_public_cert.pem
+            ${{ runner.temp }}/stage9_5_full_recovery_handshake/full_recovery_handshake.json
+          if-no-files-found: error
+
+      - name: Receive encrypted chunks and materialize exact recovery surface
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from __future__ import annotations
+
+          import base64
+          import concurrent.futures
+          import hashlib
+          import json
+          import os
+          import re
+          import subprocess
+          import time
+          import urllib.error
+          import urllib.parse
+          import urllib.request
+          from pathlib import Path
+          from typing import Any
+
+          from tools.stage9_5.fresh_clone_reconstruction import (
+              IDENTITY_PATH,
+              _load_json,
+              _stage8_archive_requirements,
+          )
+
+          repo = os.environ["GITHUB_REPOSITORY"]
+          run_id = os.environ["GITHUB_RUN_ID"]
+          token = os.environ["GH_TOKEN"]
+          marker = os.environ["TRANSPORT_MARKER"]
+          ack_marker = os.environ["ACK_MARKER"]
+          runner_temp = Path(os.environ["RUNNER_TEMP"])
+          handshake_dir = runner_temp / "stage9_5_full_recovery_handshake"
+          checkpoint_root = runner_temp / "stage9_5_full_recovery_checkpoints"
+          archive_root = runner_temp / "stage9_5_full_recovery_archive"
+          checkpoint_root.mkdir(parents=True, exist_ok=False)
+          archive_root.mkdir(parents=True, exist_ok=False)
+
+          cfg = _load_json(IDENTITY_PATH)
+          requirements = _stage8_archive_requirements(cfg["stage8_compact"])
+          required_by_path = {
+              str(item["path"]): str(item["sha256"])
+              for item in requirements
+          }
+          zero_contract = json.loads(
+              Path(
+                  "data/manifests/"
+                  "stage9_5_1_zero_byte_transport_reconstruction_v1.json"
+              ).read_text(encoding="utf-8")
+          )
+          zero_paths = {
+              str(item["path"])
+              for item in zero_contract["allowed_reconstructions"]
+          }
+          physical_expected = {
+              path: sha256
+              for path, sha256 in required_by_path.items()
+              if path not in zero_paths
+          }
+          if len(required_by_path) != 145 or len(physical_expected) != 140:
+              raise ValueError("Frozen archive requirement cardinality mismatch")
+
+          checkpoint_expected = {
+              "/seed_0.pt": "514c6d552b3cd680ae966bbb568105bd2871bc68d3a47aded070a70ba0615bd1",
+              "/seed_1.pt": "07696c3f580645d9c96ac3e736cfb5eeaa8033f148bf64822e8ee105861cf552",
+              "/seed_2.pt": "7630514cf409256bd2bbe27eca59f881acb238be698b5fdb1ee12bca8e402491",
+              "/seed_3.pt": "cce1ce47db047b9d441bbe6dad9bd53f1ee6ff3ad7d404521cae72a38bccd4b4",
+              "/seed_4.pt": "9b9e56371f3246482998c4efea4829e1e6d5aaf549bb43e1af05e471dfcb9e93",
+          }
+
+          def api_json(url: str, *, method: str = "GET", body: object | None = None) -> object:
+              data = None
+              headers = {
+                  "Authorization": f"Bearer {token}",
+                  "Accept": "application/vnd.github+json",
+                  "User-Agent": "stage9.5-secure-full-recovery-v1",
+              }
+              if body is not None:
+                  data = json.dumps(body).encode("utf-8")
+                  headers["Content-Type"] = "application/json"
+              req = urllib.request.Request(
+                  url,
+                  data=data,
+                  headers=headers,
+                  method=method,
+              )
+              with urllib.request.urlopen(req, timeout=30) as response:
+                  return json.load(response)
+
+          def fetch_comments() -> list[dict[str, Any]]:
+              comments: list[dict[str, Any]] = []
+              page = 1
+              while True:
+                  payload = api_json(
+                      f"https://api.github.com/repos/{repo}/issues/21/comments"
+                      f"?per_page=100&page={page}"
+                  )
+                  if not isinstance(payload, list):
+                      raise TypeError("Issue comments response is not a list")
+                  if not payload:
+                      break
+                  comments.extend(
+                      item for item in payload if isinstance(item, dict)
+                  )
+                  if len(payload) < 100:
+                      break
+                  page += 1
+              return comments
+
+          def post_ack(chunk_index: int, archive_count: int, checkpoint_count: int) -> None:
+              body = (
+                  f"{ack_marker}\n"
+                  f"run_id={run_id}\n"
+                  f"chunk_index={chunk_index}\n"
+                  f"archive_verified={archive_count}/140\n"
+                  f"checkpoints_verified={checkpoint_count}/5"
+              )
+              api_json(
+                  f"https://api.github.com/repos/{repo}/issues/21/comments",
+                  method="POST",
+                  body={"body": body},
+              )
+
+          def decrypt_comment(body: str) -> dict[str, Any] | None:
+              if marker not in body:
+                  return None
+              encoded = body.split(marker, 1)[1].strip()
+              try:
+                  cms = base64.b64decode(encoded, validate=True)
+              except Exception:
+                  return None
+              cms_path = runner_temp / "stage9_5_full_recovery_chunk.cms"
+              cms_path.write_bytes(cms)
+              decrypt = subprocess.run(
+                  [
+                      "openssl", "cms", "-decrypt", "-inform", "DER",
+                      "-in", str(cms_path),
+                      "-recip", str(handshake_dir / "transport_public_cert.pem"),
+                      "-inkey", str(handshake_dir / "transport_private.pem"),
+                  ],
+                  check=False,
+                  capture_output=True,
+              )
+              cms_path.unlink(missing_ok=True)
+              if decrypt.returncode != 0:
+                  return None
+              try:
+                  payload = json.loads(decrypt.stdout.decode("utf-8"))
+              except Exception:
+                  return None
+              return payload if isinstance(payload, dict) else None
+
+          def validate_url(url: object) -> str:
+              if not isinstance(url, str) or not re.match(
+                  r"^https://[^/]+\.dl\.dropboxusercontent\.com/", url
+              ):
+                  raise ValueError("Invalid Dropbox raw-download URL")
+              return url
+
+          def download_one(
+              *,
+              url: str,
+              target: Path,
+              expected_sha256: str,
+          ) -> dict[str, object]:
+              target.parent.mkdir(parents=True, exist_ok=True)
+              if target.exists():
+                  raise FileExistsError(f"Transport target already exists: {target}")
+              request = urllib.request.Request(
+                  url,
+                  headers={"User-Agent": "stage9.5-secure-full-recovery-v1"},
+              )
+              digest = hashlib.sha256()
+              size = 0
+              with urllib.request.urlopen(request, timeout=300) as response:
+                  with target.open("xb") as handle:
+                      while True:
+                          chunk = response.read(1024 * 1024)
+                          if not chunk:
+                              break
+                          handle.write(chunk)
+                          digest.update(chunk)
+                          size += len(chunk)
+              actual = digest.hexdigest()
+              if actual != expected_sha256:
+                  target.unlink(missing_ok=True)
+                  raise ValueError(
+                      f"Downloaded byte identity mismatch for {target.name}"
+                  )
+              return {
+                  "sha256": actual,
+                  "size": size,
+              }
+
+          downloaded_archive: dict[str, dict[str, object]] = {}
+          downloaded_checkpoints: dict[str, dict[str, object]] = {}
+          processed_comment_ids: set[int] = set()
+          next_chunk_index = 0
+          started = time.monotonic()
+          timeout_seconds = 45 * 60
+
+          while (
+              set(downloaded_archive) != set(physical_expected)
+              or set(downloaded_checkpoints) != set(checkpoint_expected)
+          ):
+              if time.monotonic() - started > timeout_seconds:
+                  raise TimeoutError("Timed out waiting for complete encrypted recovery chunks")
+
+              candidates: list[tuple[int, dict[str, Any]]] = []
+              for comment in fetch_comments():
+                  comment_id = int(comment.get("id", 0))
+                  if comment_id in processed_comment_ids:
+                      continue
+                  body = str(comment.get("body", ""))
+                  payload = decrypt_comment(body)
+                  if payload is None:
+                      continue
+                  if str(payload.get("run_id")) != run_id:
+                      continue
+                  try:
+                      chunk_index = int(payload.get("chunk_index"))
+                  except Exception:
+                      continue
+                  if chunk_index != next_chunk_index:
+                      continue
+                  candidates.append((comment_id, payload))
+
+              if not candidates:
+                  time.sleep(2)
+                  continue
+
+              comment_id, payload = max(candidates, key=lambda item: item[0])
+              if payload.get("stage10_outcomes_accessed") is not False:
+                  raise ValueError("Transport payload Stage-10 flag is not false")
+
+              checkpoint_entries = payload.get("checkpoints", [])
+              archive_entries = payload.get("archive", [])
+              if not isinstance(checkpoint_entries, list) or not isinstance(archive_entries, list):
+                  raise TypeError("Transport entry collections must be lists")
+              if len(checkpoint_entries) > 5 or len(archive_entries) > 15:
+                  raise ValueError("Transport chunk exceeds frozen cardinality")
+
+              if next_chunk_index == 0:
+                  if len(checkpoint_entries) != 5:
+                      raise ValueError("Chunk 0 must contain all five checkpoints")
+              elif checkpoint_entries:
+                  raise ValueError("Checkpoint entries are permitted only in chunk 0")
+
+              checkpoint_jobs: list[tuple[str, str, Path, str]] = []
+              seen_checkpoint_paths: set[str] = set()
+              for entry in checkpoint_entries:
+                  if not isinstance(entry, dict):
+                      raise TypeError("Checkpoint transport entry must be an object")
+                  path = entry.get("path")
+                  if not isinstance(path, str) or path in seen_checkpoint_paths:
+                      raise ValueError("Invalid or duplicate checkpoint path")
+                  seen_checkpoint_paths.add(path)
+                  if path not in checkpoint_expected or path in downloaded_checkpoints:
+                      raise ValueError(f"Unexpected checkpoint path: {path}")
+                  expected_sha = checkpoint_expected[path]
+                  if entry.get("expected_sha256") != expected_sha:
+                      raise ValueError(f"Checkpoint expected SHA mismatch: {path}")
+                  if int(entry.get("expected_size", -1)) != 76105:
+                      raise ValueError(f"Checkpoint expected size mismatch: {path}")
+                  url = validate_url(entry.get("download_url"))
+                  checkpoint_jobs.append(
+                      (path, url, checkpoint_root / path.lstrip("/"), expected_sha)
+                  )
+
+              archive_jobs: list[tuple[str, str, Path, str]] = []
+              seen_archive_paths: set[str] = set()
+              archive_root_resolved = archive_root.resolve()
+              for entry in archive_entries:
+                  if not isinstance(entry, dict):
+                      raise TypeError("Archive transport entry must be an object")
+                  path = entry.get("path")
+                  if not isinstance(path, str) or path in seen_archive_paths:
+                      raise ValueError("Invalid or duplicate archive path")
+                  seen_archive_paths.add(path)
+                  if path not in physical_expected or path in downloaded_archive:
+                      raise ValueError(f"Unexpected archive path: {path}")
+                  expected_sha = physical_expected[path]
+                  if entry.get("expected_sha256") != expected_sha:
+                      raise ValueError(f"Archive expected SHA mismatch: {path}")
+                  url = validate_url(entry.get("download_url"))
+                  target = (archive_root_resolved / Path(path)).resolve()
+                  if not target.is_relative_to(archive_root_resolved):
+                      raise ValueError(f"Archive path escapes root: {path}")
+                  archive_jobs.append((path, url, target, expected_sha))
+
+              all_jobs = [
+                  ("checkpoint",) + job for job in checkpoint_jobs
+              ] + [
+                  ("archive",) + job for job in archive_jobs
+              ]
+
+              def execute(job: tuple[str, str, str, Path, str]) -> tuple[str, str, dict[str, object]]:
+                  kind, path, url, target, expected_sha = job
+                  result = download_one(
+                      url=url,
+                      target=target,
+                      expected_sha256=expected_sha,
+                  )
+                  return kind, path, result
+
+              with concurrent.futures.ThreadPoolExecutor(max_workers=6) as executor:
+                  futures = [executor.submit(execute, job) for job in all_jobs]
+                  for future in concurrent.futures.as_completed(futures):
+                      kind, path, result = future.result()
+                      if kind == "checkpoint":
+                          if int(result["size"]) != 76105:
+                              raise ValueError(f"Checkpoint size mismatch after download: {path}")
+                          downloaded_checkpoints[path] = result
+                      else:
+                          downloaded_archive[path] = result
+
+              processed_comment_ids.add(comment_id)
+              post_ack(
+                  next_chunk_index,
+                  len(downloaded_archive),
+                  len(downloaded_checkpoints),
+              )
+              next_chunk_index += 1
+
+          report = {
+              "audit_id": "stage9.5-secure-full-recovery-transport-v1",
+              "run_id": run_id,
+              "repository_head": os.environ["GITHUB_SHA"],
+              "pass": True,
+              "checkpoint_verified_count": len(downloaded_checkpoints),
+              "archive_physical_verified_count": len(downloaded_archive),
+              "zero_byte_reconstruction_pending": True,
+              "checkpoint_verified": [
+                  {
+                      "path": path,
+                      "sha256": str(downloaded_checkpoints[path]["sha256"]),
+                      "size": int(downloaded_checkpoints[path]["size"]),
+                  }
+                  for path in sorted(downloaded_checkpoints)
+              ],
+              "archive_verified": [
+                  {
+                      "path": path,
+                      "sha256": str(downloaded_archive[path]["sha256"]),
+                      "size": int(downloaded_archive[path]["size"]),
+                  }
+                  for path in sorted(downloaded_archive)
+              ],
+              "private_dropbox_urls_published": False,
+              "downloaded_recovery_bytes_uploaded": False,
+              "stage10_outcomes_accessed": False,
+          }
+          (runner_temp / "stage9_5_full_recovery_transport_report.json").write_text(
+              json.dumps(report, indent=2, sort_keys=True) + "\n",
+              encoding="utf-8",
+          )
+          post_ack(
+              next_chunk_index,
+              len(downloaded_archive),
+              len(downloaded_checkpoints),
+          )
+          PY
+
+      - name: Execute frozen zero-byte transport reconstruction
+        shell: pwsh
+        run: |
+          $ArchiveRoot = Join-Path $env:RUNNER_TEMP "stage9_5_full_recovery_archive"
+          $Report = Join-Path $env:RUNNER_TEMP "zero_byte_transport_reconstruction_report.json"
+          python tools/stage9_5/zero_byte_transport_reconstruction.py `
+            --stage8-archive-root $ArchiveRoot `
+            --output $Report
+
+      - name: Run unchanged Stage 9.5-1 v1.2 verifier
+        shell: pwsh
+        run: |
+          $CheckpointRoot = Join-Path $env:RUNNER_TEMP "stage9_5_full_recovery_checkpoints"
+          $ArchiveRoot = Join-Path $env:RUNNER_TEMP "stage9_5_full_recovery_archive"
+          $VerifierOut = Join-Path $env:RUNNER_TEMP "stage9_5_full_recovery_verifier"
+
+          $Dirty = git status --porcelain
+          if ($Dirty) {
+            throw "Full recovery transport left tracked checkout changes: $Dirty"
+          }
+
+          python tools/stage9_5/fresh_clone_reconstruction.py `
+            --output-dir $VerifierOut `
+            --checkpoint-root $CheckpointRoot `
+            --stage8-archive-root $ArchiveRoot
+
+          Copy-Item (Join-Path $VerifierOut "fresh_clone_reconstruction_report.json") (Join-Path $env:RUNNER_TEMP "fresh_clone_reconstruction_report.json")
+          Copy-Item (Join-Path $VerifierOut "FRESH_CLONE_RECONSTRUCTION_REPORT.md") (Join-Path $env:RUNNER_TEMP "FRESH_CLONE_RECONSTRUCTION_REPORT.md")
+
+          $env:VERIFIER_REPORT = Join-Path $env:RUNNER_TEMP "fresh_clone_reconstruction_report.json"
+          @'
+          import json, os
+          from pathlib import Path
+
+          report = json.loads(Path(os.environ["VERIFIER_REPORT"]).read_text(encoding="utf-8"))
+          archive = report["external_artifacts"]["stage8_large_artifact_archive"]
+          checkpoints = report["external_artifacts"]["system_a_checkpoints"]
+          assert report["audit_id"] == "stage9.5-1-fresh-clone-reconstruction-v1_2"
+          assert report["pass"] is True
+          assert report["status"] == "pass"
+          assert report["failures"] == []
+          assert report["blockers"] == []
+          assert checkpoints["verified_seeds"] == [0, 1, 2, 3, 4]
+          assert checkpoints["missing"] == []
+          assert checkpoints["mismatches"] == []
+          assert archive["requirement_count"] == 145
+          assert archive["verified_count"] == 145
+          assert archive["missing"] == []
+          assert archive["mismatches"] == []
+          assert report.get("repository_head")
+          '@ | python -
+
+      - name: Remove recovered heavy bytes before evidence upload
+        if: always()
+        shell: pwsh
+        run: |
+          Remove-Item -Recurse -Force (Join-Path $env:RUNNER_TEMP "stage9_5_full_recovery_checkpoints") -ErrorAction SilentlyContinue
+          Remove-Item -Recurse -Force (Join-Path $env:RUNNER_TEMP "stage9_5_full_recovery_archive") -ErrorAction SilentlyContinue
+          Remove-Item -Force (Join-Path $env:RUNNER_TEMP "stage9_5_full_recovery_handshake" "transport_private.pem") -ErrorAction SilentlyContinue
+
+      - name: Upload full-recovery verification evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: stage9-5-secure-full-recovery-proof-v1
+          path: |
+            ${{ runner.temp }}/stage9_5_full_recovery_transport_report.json
+            ${{ runner.temp }}/zero_byte_transport_reconstruction_report.json
+            ${{ runner.temp }}/fresh_clone_reconstruction_report.json
+            ${{ runner.temp }}/FRESH_CLONE_RECONSTRUCTION_REPORT.md
+          if-no-files-found: warn

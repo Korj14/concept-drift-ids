@@ -1,0 +1,45 @@
+{
+  "audit_id": "stage9.5-0-v1.4-parameter-scan-block",
+  "classification": "registry_and_scanner_completeness_block",
+  "scientific_class": "not_Class_A_by_itself",
+  "accepted_as_closure_evidence": false,
+  "exact_head": "861d5d3e47d9bbfb5e803969241956f6e1bcb961",
+  "workflow_run_id": 38432228523,
+  "scan_canonical_sha256": "62061baee1c29f508ec4f087058177af3800471ff2921327f7547e7c3ca9cc37",
+  "artifact_zip_sha256": "8c5062c4a5f4681532197fe92179e786aca9d85d32e1294fbb1e9b7e10ae8668",
+  "counts": {
+    "registered_entries": 63,
+    "material_candidates": 257,
+    "excluded_candidates": 996,
+    "unclassified_material_candidates": 4,
+    "unclassified_high_leverage_candidates": 0
+  },
+  "residuals": [
+    [
+      "data/manifests/cd_primary_run_config_v1_1.json",
+      "execution.arms[0]",
+      "c_frozen_symbolic"
+    ],
+    [
+      "data/manifests/cd_stage9_run_config_v1_1.json",
+      "scenario.post_reference_rows",
+      69270
+    ],
+    [
+      "data/manifests/cd_stage9_run_config_v1_1.json",
+      "scenario.stream_rows",
+      138530
+    ],
+    [
+      "src/concept_drift_ids/cd_stage9_phase_c.py",
+      "neural_weight",
+      1
+    ]
+  ],
+  "additional_methodology_findings": [
+    "47 material candidates had ambiguous multi-entry mappings under permissive value-only/pattern-bypass matching.",
+    "The hand-curated scientific-source scan root omitted files hash-bound by accepted Stage-8/Stage-9 configs.",
+    "Locator patterns could register a candidate without verifying its accepted value."
+  ],
+  "correction_protocol": "STAGE9_5_V1_5_STRICT_MATCHING_AND_SCOPE_CORRECTION.md"
+}

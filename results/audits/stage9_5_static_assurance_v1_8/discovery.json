@@ -1,0 +1,31 @@
+{
+  "audit_id": "stage9.5-5-supplemental-static-v1_8-triage",
+  "status": "valid_discovery_not_closed",
+  "classification": "single_cosmetic_import_block_finding",
+  "exact_head": "14139b4402f7097011a5d132715f46b0383b18ae",
+  "workflow_run_id": 38660885536,
+  "job_id": 116181567749,
+  "artifact": {
+    "id": 11938807476,
+    "name": "stage9-5-static-assurance-v1-8-delta",
+    "zip_sha256": "0abae3fb460e0b61b96c629d63a71c711ec01400bca6c959292bd7bc802d0406",
+    "report_canonical_sha256": "a72a906767ca069cfa14e454bd155e87b3e5f58208ca806674699c3973fa5fc2"
+  },
+  "result": {
+    "tool_execution_valid": true,
+    "ruff_findings": 1,
+    "mypy_findings": 0,
+    "finding": {
+      "path": "tests/stage9_5/test_supplemental_static_assurance.py",
+      "line": 1,
+      "code": "I001",
+      "message": "Import block is un-sorted or un-formatted"
+    }
+  },
+  "correction": "Apply Ruff's exact safe import-block normalization only.",
+  "scientific_source_changes": false,
+  "reporting_logic_changes": false,
+  "accepted_evidence_changes": false,
+  "historical_runtime_lock_changes": false,
+  "stage10_outcomes_accessed": false
+}

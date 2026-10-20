@@ -1,0 +1,24 @@
+{
+  "audit_id": "stage9.5-8-independent-reporting-v1-first-run",
+  "status": "failed_harness_iteration_preserved",
+  "classification": "workflow_module_invocation_defect",
+  "scientific_class": "not_Class_A",
+  "exact_head": "f582a377cbae8e36804148786e986b90ae485c1c",
+  "workflow_run_id": 38650032906,
+  "job_id": 116146254079,
+  "test_result": {
+    "passed": 3,
+    "failed": 0
+  },
+  "execution_failure": {
+    "exception": "ModuleNotFoundError",
+    "message": "No module named 'tools'",
+    "command": "python tools/stage9_5/independent_reporting.py --output-dir artifacts/stage9_5_reporting_v1",
+    "output_artifact_created": false
+  },
+  "diagnosis": "Direct file-path execution places tools/stage9_5 on sys.path rather than the repository root, while independent_reporting imports tools.stage9_5.claim_traceability and tools.stage9_5.statistical_oracle. Pytest passed because it executes from the repository root.",
+  "correction": "Invoke the reporting package with python -m tools.stage9_5.independent_reporting so the repository root is importable.",
+  "evidence_mismatch_established": false,
+  "scientific_source_changes": false,
+  "stage10_outcomes_accessed": false
+}

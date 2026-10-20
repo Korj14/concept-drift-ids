@@ -1,0 +1,155 @@
+{
+  "schema_version": 1,
+  "protocol_id": "stage10-plus-master-replication-sensitivity-v1_1",
+  "status": "prospectively_frozen_before_any_stage10_treatment_execution",
+  "supersedes_for_future_stage10_governance": "stage10-plus-master-replication-sensitivity-v1",
+  "historical_v1_preserved": true,
+  "governing_stage9_5_protocol": "STAGE9_5_Q1_INDEPENDENT_ASSURANCE_PROTOCOL.md",
+  "freeze_basis": "MAIN doctrine + reconciled Stage-3/Stage-9.5 plan obligations + pre-outcome audit; no Stage-10 treatment outcomes accessed.",
+  "hard_gate": {
+    "stage10_execution_permitted": false,
+    "prerequisite": "Close Stage 9.5 legitimately, including exact checkpoint recovery/verification, valid 9.5-6 rerun, and in-order 9.5-9 with zero unresolved Class-A defects."
+  },
+  "immutable_stage8_9_objects": [
+    "primary scenario row ranges/boundary/source assembly",
+    "original preprocessing state",
+    "System-A accepted checkpoints/seeds/threshold procedure",
+    "Stage-8/9 primary lambda=0.50",
+    "primary five seeds",
+    "E1/E2/E3 definitions",
+    "MCSC definition",
+    "5000-row primary reporting window",
+    "t interval/sign/Holm definitions",
+    "primary periodic schedule",
+    "accepted ADWIN primary defaults",
+    "primary replay policy",
+    "accepted lifecycle result",
+    "accepted Stage-8/9 evidence values"
+  ],
+  "stage_specific_pre_outcome_freeze_required": [
+    "scenario/dataset identity and rationale",
+    "source/provenance and inclusion/exclusion criteria",
+    "chronology or pseudo-chronology construction",
+    "label semantics and target mapping",
+    "attack/transition mechanism",
+    "source rows or withheld-class/introduction rules",
+    "boundary/reference convention and detector interpretation",
+    "prevalence handling and exclusions",
+    "train/development/adaptation/test partitions",
+    "preprocessing and feature semantics",
+    "exact seeds and paired treatment structure",
+    "endpoints and explanation metrics",
+    "information timing and label availability",
+    "exact neural-update identity and C/D matched isolation",
+    "symbolic generation-validation separation and lifecycle semantics",
+    "comparator policy",
+    "missing/invalid-run handling",
+    "primary/secondary/diagnostic status",
+    "inferential family and multiplicity treatment"
+  ],
+  "master_obligations": [
+    {
+      "id": "S10-01",
+      "type": "replication",
+      "requirement": "Direct attack-pattern / conditional-label-change scenario frozen before outcomes."
+    },
+    {
+      "id": "S10-02",
+      "type": "replication",
+      "requirement": "Gradual drift design frozen before outcomes where scientifically defensible."
+    },
+    {
+      "id": "S10-03",
+      "type": "replication",
+      "requirement": "Unseen/evolving-attack design frozen before outcomes where scientifically defensible."
+    },
+    {
+      "id": "S10-04",
+      "type": "external_replication",
+      "requirement": "Second flow-oriented dataset inclusion/exclusion criteria frozen before outcomes; materially different operating context required."
+    },
+    {
+      "id": "S10-05",
+      "type": "data_sensitivity",
+      "requirement": "Corrected-CICIDS/improved-reconstruction sensitivity frozen where useful; never counted as independent second-environment replication."
+    },
+    {
+      "id": "S10-06",
+      "type": "selection_assurance",
+      "requirement": "Candidate selection strengthened using independent confirmation or nested equivalent."
+    },
+    {
+      "id": "S10-07",
+      "type": "mechanism_sensitivity",
+      "requirement": "Prospectively test withdrawal/lifecycle authority semantics because the accepted mechanism is withdrawal-dominant."
+    },
+    {
+      "id": "S10-08",
+      "type": "symbolic_horizon_sensitivity",
+      "requirement": "Test a defensible alternative symbolic evidence horizon."
+    },
+    {
+      "id": "S10-09",
+      "type": "explanation_triangulation",
+      "requirement": "Retain MCSC unchanged while triangulating coverage, correctness, fidelity, conflict, stability, complexity, churn/version persistence, and temporal continuity."
+    },
+    {
+      "id": "S10-10",
+      "type": "bootstrap_sensitivity",
+      "requirement": "Quantify 100-bootstrap gate granularity and higher-replicate sensitivity where feasible."
+    },
+    {
+      "id": "S10-11",
+      "type": "comparator_sensitivity_conditional",
+      "requirement": "Alternative periodic/random-clock schedules required before any trigger-superiority claim."
+    },
+    {
+      "id": "S10-12",
+      "type": "operational_robustness_conditional",
+      "requirement": "Label-noise, missing-label, variable-delay, and replay/label-poisoning stress required before operational/deployment robustness claims."
+    },
+    {
+      "id": "S10-13",
+      "type": "architecture_replication_conditional",
+      "requirement": "Second materially different neural backbone required before architecture-invariant claims."
+    },
+    {
+      "id": "S10-14",
+      "type": "monitor_replication",
+      "requirement": "Label-free monitor may be added only as separately frozen diagnostic/replication; primary monitor is not retrospectively replaced."
+    },
+    {
+      "id": "S10-15",
+      "type": "novelty_refresh",
+      "requirement": "Refresh literature adversarially before each major replication milestone and immediately before submission."
+    },
+    {
+      "id": "S10-16",
+      "type": "claim_boundaries",
+      "requirement": "Preserve no-natural-drift-ground-truth, no real-time/deployment, no adversarial-robustness, no analyst-usefulness, and no first-ever claim boundaries unless separately evidenced."
+    }
+  ],
+  "selection_rules": [
+    "Scenario/dataset choice is based on scientific compatibility and reconstructible semantics, not treatment-effect favorability.",
+    "Second-dataset inclusion/exclusion criteria are frozen before C/D outcomes.",
+    "Do not force incompatible cross-dataset feature or symbolic semantics; narrow claims instead.",
+    "Corrected/reconstructed CICIDS is a data-quality sensitivity, not an independent environment."
+  ],
+  "causal_and_reporting_rules": [
+    "Paired seed is the within-scenario causal replication unit unless prospectively replaced by a justified unit.",
+    "Windows, rules, events, opportunities, and bootstrap/explanation records are not independent causal replicates.",
+    "Report every scenario/dataset separately before any pooled summary.",
+    "Any pooled summary is secondary and requires a defensible common estimand.",
+    "Five seeds in one scenario are stochastic replication, not environmental replication."
+  ],
+  "inferential_rules": [
+    "No robustness/replication result may replace an inconvenient accepted primary result.",
+    "No test chosen after outcome access may be called prospectively confirmatory.",
+    "Primary n=5 is not extended after inspection to chase significance.",
+    "Trigger superiority requires separately frozen comparator-clock sensitivity.",
+    "Architecture-invariant and operational-security claims activate conditional obligations before claim use.",
+    "Null, mixed, and unfavorable replication findings are preserved and reported."
+  ],
+  "future_hostile_review_requirement": "In-order Stage 9.5-9 must verify v1.1 or a later prospectively justified master protocol.",
+  "stage10_treatment_outcomes_accessed": false
+}

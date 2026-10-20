@@ -1,0 +1,66 @@
+{
+  "audit_id": "stage9.5-1-fresh-clone-reconstruction-v1_1-blocked",
+  "status": "blocked",
+  "classification": "Class A — material provenance/reconstructibility blocker",
+  "interpretation": "The accepted Stage-8/9 numerical evidence did not mismatch. The blocking defect is inability to retrieve the exact five frozen System-A checkpoint byte files required by the frozen System-A identity chain.",
+  "exact_head": "3f421e92cf81704570c0155eff94047b7bf989e0",
+  "workflow_run_id": 38453776937,
+  "fresh_clone_job_id": 115491107852,
+  "same_head_stage9_run_id": 38453776839,
+  "same_head_stage9_conclusion": "success",
+  "stage9_5_0_job_conclusion": "success",
+  "verifier_tests": {
+    "passed": 8,
+    "failed": 0
+  },
+  "artifact": {
+    "id": 11840779084,
+    "name": "stage9-5-fresh-clone-reconstruction-v1-1",
+    "zip_sha256": "bdbd872fcbf1bc6adddc44be825e6618dd61643c18d6c609e0adb52f32c2d803",
+    "report_canonical_sha256": "498853d837581bfcd39028f033421bc66438b7ffdd376f9d187b296a5c32b917"
+  },
+  "reconstruction": {
+    "identity_failures": 0,
+    "external_artifact_blockers": 1,
+    "blocker": "system_a_checkpoint_bytes_missing",
+    "passed": {
+      "git_clean": true,
+      "stage9_5_0_closure_ancestry": true,
+      "historical_runtime": true,
+      "scenario_identity": true,
+      "preprocessing_identity": true,
+      "system_a_manifest_identity": true,
+      "system_a_checkpoint_declarations": true,
+      "r0_manifest_and_rule_bytes": true,
+      "stage8_compact_manifest": true,
+      "stage8_compact_files": "109/109",
+      "stage8_confirmatory_identity": true,
+      "stage9_compact_manifest": true,
+      "stage9_compact_files": "357/357",
+      "stage9_aggregate_identity": true,
+      "stage9_execution_plan_identity": true
+    }
+  },
+  "checkpoint_retrieval_review": {
+    "repository_committed": false,
+    "checkpoint_paths_in_git_history": false,
+    "github_releases_found": 0,
+    "system_a_branches": [
+      "stage3-system-a"
+    ],
+    "checkpoint_directory_on_stage3_system_a_branch": false,
+    "provenance_critical_stage3_actions_artifacts_found": false,
+    "current_project_session_checkpoint_files_found": false,
+    "note": "A connector-wide sweep of every historical Stage-3 run was attempted but exceeded the connector per-call ceiling; no claim of exhaustive per-run enumeration is made."
+  },
+  "checkpoint_hashes": {
+    "0": "514c6d552b3cd680ae966bbb568105bd2871bc68d3a47aded070a70ba0615bd1",
+    "1": "07696c3f580645d9c96ac3e736cfb5eeaa8033f148bf64822e8ee105861cf552",
+    "2": "7630514cf409256bd2bbe27eca59f881acb238be698b5fdb1ee12bca8e402491",
+    "3": "cce1ce47db047b9d441bbe6dad9bd53f1ee6ff3ad7d404521cae72a38bccd4b4",
+    "4": "9b9e56371f3246482998c4efea4829e1e6d5aaf549bb43e1af05e471dfcb9e93"
+  },
+  "scientific_objects_modified": false,
+  "stage10_outcomes_accessed": false,
+  "disposition": "Stage 9.5-1 remains OPEN/BLOCKED. Do not substitute regenerated checkpoints. Exact frozen bytes may resolve the blocker if later recovered and hash-verified. Stage 10 remains prohibited."
+}

@@ -1,0 +1,46 @@
+{
+  "audit_id": "stage9.5-5-static-software-assurance-v1_1-discovery",
+  "status": "triage_required",
+  "accepted_as_closure_evidence": false,
+  "exact_head": "a0b6e1017dbe583505d2089d5b4bc16e401e82de",
+  "workflow_run_id": 38552771589,
+  "static_job_id": 115814472392,
+  "artifact": {
+    "id": 11887119457,
+    "name": "stage9-5-static-assurance-v1-1",
+    "zip_sha256": "802813650986e202c45fd11aabd1b7034b2113c10c54686702db4eaa4b4a2405",
+    "report_canonical_sha256": "dfa26db75345f54ec4eafedf31d0899575cd9616a5a3ad3f4037c074de20507e"
+  },
+  "toolchain": {
+    "ruff": "0.17.0",
+    "mypy": "2.4.0"
+  },
+  "scope": {
+    "ruff_files": 51,
+    "mypy_files": 44,
+    "missing_files": 0,
+    "self_scoped": true
+  },
+  "findings": {
+    "ruff": 167,
+    "mypy": 59,
+    "new_since_v1": {
+      "ruff": 3,
+      "mypy": 0,
+      "details": [
+        "tools/stage9_5/static_assurance.py:I001",
+        "tools/stage9_5/static_assurance.py:TRY004",
+        "tools/stage9_5/static_assurance.py:BLE001"
+      ]
+    }
+  },
+  "assurance_risks_selected_for_v1_2_correction": [
+    "parameter_scan broad Exception swallowing around ast.literal_eval may hide unexpected scanner defects",
+    "static_assurance broad Exception catch while parsing Ruff output obscures parser/tooling failures",
+    "fresh_clone scenario_version typing permits Any|None before int conversion",
+    "statistical_oracle local inference/type annotations produce four assurance mypy errors"
+  ],
+  "scientific_source_changes": false,
+  "historical_runtime_lock_changes": false,
+  "stage10_outcomes_accessed": false
+}

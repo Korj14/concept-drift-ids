@@ -1,0 +1,27 @@
+{
+  "audit_id": "stage9.5-3-causal-information-properties-v1-success",
+  "status": "accepted_stage9_5_3_closure_evidence",
+  "audited_head": "ed2ea612b06d48c6880f54d8048cd3357a9234ec",
+  "workflow_run_id": 38544323625,
+  "job_id": 115786498737,
+  "same_head_stage9": {
+    "workflow_run_id": 38544323749,
+    "run_number": 416,
+    "conclusion": "success"
+  },
+  "artifact": {
+    "id": 11884001912,
+    "name": "stage9-5-causal-properties-v1",
+    "zip_sha256": "24fa95251939b69d092bc5cb05836f86237879c9f27ba34d7dd9f7cb74a03940",
+    "report_canonical_sha256": "e80084fc8d1972d26955f22331585e9501954a9dea7ca03a2966cc8640fb6c8d"
+  },
+  "required_property_count": 13,
+  "collected_property_count": 13,
+  "missing_nodeids": [],
+  "extra_nodeids": [],
+  "all_properties_fail_closed": true,
+  "scientific_source_modified_for_test_convenience": false,
+  "stage10_outcomes_accessed": false,
+  "stage9_5_1_status": "open_blocked_system_a_checkpoint_bytes_missing",
+  "closure_scope": "Stage 9.5-3 only"
+}

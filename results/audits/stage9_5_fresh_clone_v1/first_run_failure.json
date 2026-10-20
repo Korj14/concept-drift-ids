@@ -1,0 +1,51 @@
+{
+  "audit_id": "stage9.5-1-fresh-clone-reconstruction-v1-first-run",
+  "classification": "assurance_harness_hash_semantics_defect_plus_external_checkpoint_blocker",
+  "scientific_class": "not_Class_A",
+  "accepted_as_closure_evidence": false,
+  "exact_head": "29ed8900946266efd643d2fa070885f42760062f",
+  "workflow_run_id": 38452707344,
+  "fresh_clone_job_id": 115487417958,
+  "stage9_same_head_run_id": 38452707289,
+  "stage9_same_head_conclusion": "success",
+  "stage9_5_0_same_head_job_conclusion": "success",
+  "verifier_tests": "6 passed",
+  "artifact": {
+    "id": 11841950111,
+    "name": "stage9-5-fresh-clone-reconstruction-v1",
+    "zip_sha256": "e91f5b69fcec2703f94a7bb8fa195dc7e9c1ef5d1762f484272bbe1f962f6935",
+    "report_canonical_sha256": "a7e0683fdd28e583d13909a54e667ca57423276d4d7435edd413d01e28c79858"
+  },
+  "report": {
+    "identity_failures": 6,
+    "external_artifact_blockers": 1,
+    "blocker": "system_a_checkpoint_bytes_missing",
+    "passing_substantive_byte_checks": {
+      "stage8_compact_files": "109/109",
+      "stage9_compact_files": "357/357",
+      "r0_rules": "5/5",
+      "runtime": true,
+      "preprocessing": true,
+      "system_a_manifest_and_checkpoint_declarations": true
+    },
+    "hash_semantics_failures": [
+      "scenario_identity raw SHA on Windows CRLF checkout",
+      "stage8_compact_manifest_identity",
+      "stage8_confirmatory_analysis_identity",
+      "stage9_compact_manifest_identity",
+      "stage9_aggregate_identity",
+      "stage9_execution_plan_identity"
+    ]
+  },
+  "diagnosis": {
+    "scenario": {
+      "frozen_repository_lf_sha256": "c864cd53b155ae1b29f2321d28b18562381fb6d1a77dc563b5f5eba3ec3eb82c",
+      "windows_checkout_crlf_sha256": "1771b2dbdf0f6b8b47207af04d31a6d6b015f8ea2bdadfe5dfdb293f0a552fd1",
+      "canonical_json_sha256": "3d1c3f9775ac5c8a73053634784be513bb1714ef7f26fa9db406ccd78c4344e3",
+      "disposition": "verify frozen repository text identity via LF-normalized bytes on cross-platform checkout"
+    },
+    "writer_hashes": "write_json_new appends payload_sha256 after inner manifest/aggregate/plan identity is frozen; verifier must remove/verify payload_sha256 before recomputing the inner identity"
+  },
+  "scientific_value_changes": false,
+  "correction": "v1.1 verifier hash-semantics correction only"
+}

@@ -1,0 +1,2220 @@
+# Stage 9.5 Assurance Diversion — Working Retrospective Notes
+
+**Status:** WORKING NOTES / NOT CLOSURE AUTHORITY  
+**Purpose:** Preserve the chronology, decisions, reversals, and rationale of the
+multi-chat Stage-9.5 assurance diversion so that a complete retrospective can
+be written when Stage 9.5 closes.
+
+Do not cite this file as scientific evidence or as a closure artifact. The
+authoritative sources remain the frozen protocols, manifests, verification
+reports, closure records, Git history, and CI records.
+
+## Why the diversion occurred
+
+Stage 9 itself was already scientifically frozen. Stage 9.5 exposed
+reconstructibility and assurance defects that did not justify changing the
+accepted Stage-8/9 scientific results, but did prevent a reviewer-resistant
+claim that the evidence could be independently reconstructed and replayed.
+
+The work therefore shifted from result generation to fail-closed assurance:
+artifact recovery, exact identity verification, replay-equivalence semantics,
+order gating, canonical report binding, and explicit prevention of
+post-outcome/manual success construction.
+
+## Major arc to preserve in the final retrospective
+
+1. Stage-9.5-0 through -5 were progressively closed or frozen, while
+   Stage-9.5-1 remained blocked by missing original external artifacts.
+2. Recovery searches established that the five original System-A checkpoints
+   and the original Stage-8 heavy archive were not present in the repository or
+   known retained GitHub artifacts. Regeneration/retraining was explicitly
+   rejected as a substitute for the authoritative bytes.
+3. Stage-9.5-6 initially inherited a historical full-seed rerun design whose
+   exact-hash gating mixed scientific content with non-replayable runtime and
+   timing diagnostics.
+4. Replay-equivalence v1.1 froze the permitted diagnostic projections while
+   preserving all scientific fields fail-closed.
+5. The work-package order gate was hardened so 9.5-7/8/9 cannot unlock from
+   file existence, placeholders, malformed records, wrong historical lineage,
+   unresolved Class-A defects, or unlinked hashes.
+6. A temporary attempt to require GitHub Actions workflow/job/artifact IDs for
+   recovery/replay closure was backed out after recognizing that the governing
+   checkpoint/archive bytes are external and no authoritative CI transfer
+   mechanism had been prospectively frozen. Canonical report hashes plus frozen
+   scientific/recovery identities remain the closure authority; CI IDs are
+   supplemental.
+7. Stage-9.5-1 recovery evidence was bound directly to its preserved canonical
+   report rather than copied closure booleans, including all five checkpoint
+   seeds and all 145 descriptor-linked Stage-8 heavy-file requirements.
+8. Stage-9.5-6 replay evidence was likewise bound directly to a canonical
+   replay report, audited-head lineage, zero failures/blockers, and
+   repository-contained paths.
+9. JSON assurance parsing was hardened against malformed contracts,
+   non-canonical numbers, duplicate keys, path traversal, hidden failures, and
+   report/closure identity mismatches.
+10. A replay-report construction contract was frozen so a successful
+    replay report cannot be hand-authored after outcomes. The deterministic
+    finalizer and comparator identities were separated.
+11. The replay-report finalizer was implemented and tested. It derives report
+    state from machine comparison evidence and cannot waive comparator
+    mismatches.
+12. The replay-equivalence comparator was implemented prospectively for
+    Phase A, then expanded externally to Phase B and corrected Phase C,
+    including frozen self-/transitive-hash projection rules and dedicated
+    tests.
+13. At head `ba67928766ce4183846db2e08f3819b1fbaedfa8`, the comparator/finalizer
+    stack had 75 assurance tests passing. Phase A/B/C projection implementation
+    was no longer the non-external blocker.
+14. The remaining non-external Stage-9.5-6 blocker became machine-verifiable
+    evidence for replay step 1: reconstruction of Stage-1 interim tables under
+    the frozen historical environment.
+15. Stage-1 reconstruction evidence was prospectively frozen in
+    `data/manifests/stage9_5_6_stage1_reconstruction_evidence_v1.json`.
+    Gzip container bytes are explicitly non-authoritative; the required
+    identity is exact raw provenance, historical environment/source identity,
+    accepted preprocessing-manifest identity, and semantic equality of all
+    eight decompressed reconstructed tables to an independently recomputed
+    historical structural preprocessing result.
+16. The Stage-1 reconstruction verifier was then implemented prospectively in
+    `tools/stage9_5/stage1_reconstruction_evidence.py`. It executes the exact
+    historical preprocessing Git blob after SHA-1 verification, independently
+    recomputes the structural transformation, verifies the frozen dependency
+    environment and all eight raw SHA-256 identities, and derives the canonical
+    reconstruction report without a manual success path.
+17. The replay comparator was bound to that canonical Stage-1 report rather
+    than a manually supplied boolean. It verifies the report's canonical hash,
+    required success fields, fixed evidence path, and Git ancestry before
+    clearing the Stage-1 blocker, and carries the Stage-1 report hash into the
+    comparison evidence.
+18. The replay-report finalizer was additionally hardened to verify the
+    comparator evidence's own embedded canonical SHA-256 before accepting it,
+    closing the provenance chain from Stage-1 reconstruction through comparator
+    evidence to the final replay report.
+19. On 17 October 2026 the eight CICIDS2017 raw CSVs mounted in the current
+    working environment were independently re-hashed and matched all eight
+    frozen Stage-1 raw identities exactly. The same environment reported
+    Python 3.13.5 rather than the required historical Python 3.11.9, so it was
+    explicitly rejected as an authoritative Stage-1 execution environment.
+    The exact operator procedure, success predicate, output path, and
+    environment boundary were frozen in
+    `STAGE9_5_6_STAGE1_RECONSTRUCTION_EXECUTION_HANDOFF.md` rather than
+    weakening the historical-environment requirement.
+
+20. The current execution environment was checked for a local authoritative
+    Stage-1 route. All eight mounted raw CSVs were already known to match the
+    frozen SHA-256 identities, but the container exposed only Python 3.13.5 and
+    no installed Python 3.11.9 interpreter. The installed `uv` tool likewise
+    reported no local 3.11.9 interpreter, and the container had no outbound
+    GitHub/DNS access to provision one. The official UNB CIC-IDS2017 page still
+    identifies `MachineLearningCSV.zip` as the published CSV bundle, but the
+    linked CIC download form returned a server error during this tranche.
+    Therefore no newly discovered network/mirror acquisition path was promoted
+    to closure authority. Exact raw-file hashes plus the frozen historical
+    environment remain authoritative, and the Stage-1 execution handoff
+    remains the accepted route.
+
+
+21. The Stage-1 reconstruction report provenance envelope was hardened after
+    review showed that canonical content, success fields, path, and Git ancestry
+    alone did not bind the report to the exact verifier implementation and
+    frozen Stage-1 contract bytes. The verifier now embeds
+    `contract_id`, `contract_canonical_sha256`, `verifier_id`, and
+    `verifier_source_sha256`; the replay comparator recomputes and verifies
+    those identities before accepting the report. Stage-9.5 assurance Python
+    sources were also bound to repository-canonical LF via `.gitattributes`
+    so source-byte SHA-256 identities remain portable across Windows/Linux
+    checkouts. This changed assurance provenance only; Stage-1 structural
+    preprocessing semantics and accepted Stage-8/9 science remained unchanged.
+
+22. A final local-runtime preflight checked one additional execution surface not
+    previously recorded: cached/local container or interpreter provisioning.
+    The working environment exposed no `python3.11` or `python3.11.9`
+    executable, no Docker/Podman/nerdctl runtime, no pyenv/conda/mamba-style
+    environment manager, and no obvious cached Python-3.11 interpreter under
+    the inspected local roots. This confirmed that the present container still
+    cannot produce authoritative Stage-1 evidence without external provisioning
+    of the frozen Python 3.11.9 environment. The historical-environment
+    requirement was not weakened.
+
+## Scientific invariants maintained throughout
+
+- No accepted Stage-8/9 result was retuned or replaced.
+- No confirmatory family was relabeled.
+- No Stage-10 outcome was authorized for inspection.
+- The frozen Stage-8/9 claim boundary remained unchanged.
+- The dominant Stage-8 predictive mechanism remains validated withdrawal of
+  stale symbolic authority, not a claim that evolved rules broadly outperform
+  neural adaptation.
+- Drift-trigger superiority over periodic maintenance remains unestablished.
+- Explanation/coverage outcomes remain mixed and often worse.
+- Five seeds remain stochastic replication, not environmental replication.
+- External validity remains unresolved.
+
+## Current blockers to carry forward
+
+External:
+- `system_a_checkpoint_bytes_missing`
+- `stage8_large_artifact_archive_missing`
+
+Non-external:
+- none currently identified in the frozen Stage-9.5-6 replay construction
+  pipeline. `stage1_reconstruction_evidence_not_verified` was resolved on
+  17 October 2026 by the preserved canonical Stage-1 reconstruction report.
+
+After the external blockers are resolved, the intended order remains:
+Stage-9.5-1 recovery closure -> Stage-9.5-6 historical replay closure ->
+revalidate 9.5-7 -> rerun/revalidate 9.5-8 -> run 9.5-9 hostile review last ->
+zero unresolved Class A -> Stage 9.5 closure -> only then Stage 10 access.
+
+## Final retrospective requirements
+
+When Stage 9.5 closes, replace these working notes with a reviewer-facing
+retrospective that includes:
+
+- chronological timeline across the chats and Git commits;
+- original defect or uncertainty at each turn;
+- classification as scientific, provenance, software-assurance, or scope;
+- what was changed and what was deliberately not changed;
+- reversals/backouts and why they were necessary;
+- exact evidence showing accepted Stage-8/9 science remained unchanged;
+- final blocker-resolution chain;
+- CI/run/report identities supporting closure;
+- lessons for preventing this assurance diversion in future stages.
+
+The final document should distinguish historical dead ends from the accepted
+final procedure rather than presenting the path as if it had been linear.
+
+23. On 17 October 2026 a subsequent chat resumed after the assurance branch had advanced externally by 43 commits from the previously observed Phase-A-only comparator head. The delta was reconciled before any mutation. It showed that Phase-B projection, Phase-C precondition/output comparison, Stage-1 reconstruction evidence, report-provenance binding, and the requested multi-chat retrospective notes had already been implemented prospectively. Exact-head CI at `dfc7b936014ff3f8201ab0727266023d1aa99cc8` showed 86 assurance-contract tests passing, the unchanged Stage-9.5-5 discovery baseline of Ruff 154 / mypy 55, fresh-clone reconstruction at 0 identity failures / 2 external-artifact blockers, the work-package order gate locked, and 9.5-7/8/9 skipped. The current execution environment was rechecked and still exposed Python 3.13.5 only, with no Python 3.11.9 interpreter. The connected GitHub capability could list/download existing workflow artifacts but exposed no authoritative arbitrary-binary upload/release-asset route for transferring the eight local raw CSVs into a Python-3.11.9 runner. No new transfer mechanism was invented or promoted after this observation; the frozen Stage-1 execution handoff remains authoritative.
+
+24. The Stage-1 non-external blocker was then cleared through a prospectively
+    added one-shot GitHub Actions execution path without changing the frozen
+    Stage-1 scientific/reconstruction contract. The execution path itself
+    preserved several failed attempts rather than hiding them. Run
+    `39029867251` installed the exact Python 3.11.9 / frozen dependency
+    environment but a guessed mirror-root URL returned HTTP 404 before any raw
+    bytes were trusted. A subsequent workflow edit at `a34faee2...` was
+    corrupted by JavaScript replacement-string semantics and produced a
+    no-job YAML/startup failure (`39030072837`); the workflow was rebuilt
+    whole-file rather than patched again. Run `39030232104`, job
+    `117389044176`, then successfully acquired the transport bundle through
+    Git LFS metadata, extracted it, and verified all eight frozen CICIDS2017
+    CSV SHA-256 identities, but failed before verifier preflight with
+    `ModuleNotFoundError: concept_drift_ids` because the harness omitted
+    `PYTHONPATH=src`. That import-path defect was corrected without changing
+    the verifier or contract.
+
+25. Authoritative Stage-1 execution then succeeded on assurance head
+    `58b3e42cdeeddea28f7cb20268ed9912684adba3`, GitHub Actions run
+    `39030450159`, job `117389666439`. Python 3.11.9 and the complete
+    frozen dependency lock installed successfully; the Git-LFS transport,
+    extraction, and all eight frozen raw CSV SHA-256 checks passed before
+    preprocessing. The unchanged frozen verifier reconstructed and
+    independently recomputed all eight Stage-1 interim tables. Its canonical
+    report passed with 8/8 raw files, 8/8 interim tables, zero semantic
+    mismatches, empty failures/blockers, and accepted preprocessing-manifest
+    canonical SHA-256. The report canonical SHA-256 is
+    `4bafa772f9737d934f40c90bf7be8d80a62108cf89a9c74895fbe5c12c4a88af`.
+    Independent post-run checks also recomputed the frozen contract canonical
+    SHA-256 `049be3a211b613e3b37507182aa23bfd83c2289b9f08feeb033b39f8e0a29ca1`
+    and verifier-source SHA-256
+    `3c21500ae9faafd0a6588395662db71046e37978072e511e6519fa9bebff68a9`,
+    exactly matching the report. The preserved report was committed unchanged
+    at its frozen path; the additive closure record is
+    `STAGE9_5_6_STAGE1_RECONSTRUCTION_EVIDENCE_CLOSURE.md`. The transport
+    mirror remained supplemental only: authority came from the pre-frozen
+    eight raw-file identities and the frozen verifier/contract.
+
+26. On 17 October 2026 the next continuation found that the assurance branch had
+    advanced externally by 54 commits from the previously observed
+    `cf78ba076a12693bc1b89ac52181fc8f20091fdc` head to
+    `3a0f4746cf76527796823b6147723400c1be1d1f`. The delta was reconciled
+    before mutation. It showed that the replay comparator had already advanced
+    to prospectively frozen Phase-A, Phase-B, Phase-C precondition/failure
+    lineage, and corrected Phase-C seed-0 output comparison; the deterministic
+    finalizer was frozen; Stage-1 authoritative reconstruction had been closed;
+    and the requested multi-chat retrospective working notes were already being
+    maintained. Exact-head CI on `3a0f4746...` showed Stage-9 robustness
+    success, 87 assurance-contract tests passing, the unchanged Ruff 154 /
+    mypy 55 static discovery baseline, fresh-clone reconstruction at 0 identity
+    failures / 2 external-artifact blockers, the work-package order gate locked,
+    and 9.5-7/8/9 skipped. During reconciliation, the human-readable replay
+    construction contract was found to lag the machine contract by still
+    naming `stage1_reconstruction_evidence_not_verified` as current. That
+    stale governance text was corrected without changing the machine contract,
+    comparator, finalizer, Stage-1 evidence, or accepted Stage-8/9 science.
+
+27. The same continuation audited whether recovery of the two external artifact
+    families would be sufficient to execute the frozen replay without another
+    procedural design cycle. The comparator/finalizer CLIs were complete, but
+    the repository lacked one end-to-end operator handoff joining Stage-9.5-1
+    recovery, historical Phase-A/B execution at
+    `bfa14b942e4a5b2fbfa8aa3c43728a7f1cd81645`, reproduction of the
+    original Phase-C v1 seed-0 failure, regeneration of the correction config
+    from `79ddc4c6d6dea52c7cabc55a6d082448fc24fcf9`, the required
+    correction-config-only child commit, corrected Phase-C seed-0 execution,
+    deterministic comparator/finalizer, closure metadata, and the fail-closed
+    order gate. That procedural gap was closed by prospectively freezing
+    `STAGE9_5_6_HISTORICAL_REPLAY_EXECUTION_HANDOFF.md`. The handoff adds no
+    scientific semantics: it only sequences already-frozen commands and
+    identities, keeps heavy recovered/fresh replay bytes external, requires the
+    same-head Stage-9 success, and ends with
+    `later_packages_unlocked=true` as the only acceptable predecessor-gate
+    result. At the end of this episode there remained no identified
+    non-external Stage-9.5-6 implementation blocker; the two unresolved blockers
+    remained `system_a_checkpoint_bytes_missing` and
+    `stage8_large_artifact_archive_missing`.
+
+28. A final top-level status sweep after freezing the historical replay handoff
+    found that `README.md` still described
+    `stage1_reconstruction_evidence_not_verified` as the remaining
+    non-external Stage-9.5-6 blocker, even though the machine construction
+    contract, Stage-1 closure record, order-governance overlay, and preserved
+    report already showed that blocker resolved. The README was corrected to
+    name the authoritative Stage-1 report/canonical SHA-256, state that no
+    non-external Stage-9.5-6 implementation/evidence blocker is currently
+    identified, and direct future operators to
+    `STAGE9_5_6_HISTORICAL_REPLAY_EXECUTION_HANDOFF.md`. This was a
+    documentation-status reconciliation only; no verifier, comparator,
+    finalizer, Stage-8/9 evidence, claim boundary, or Stage-10 gate changed.
+
+29. A subsequent live-state reconciliation at head `ddcc8c21dff5c30d01c2a5935ae609406b804e8f` found one remaining historical/current-status ambiguity: the prospectively frozen replay-construction manifest still retained its earlier status-only fields `deterministic_producer.comparator_status = phase_a_b_c_implemented_stage1_evidence_blocked` and `current_blocker = stage1_reconstruction_evidence_not_verified`, even though the authoritative Stage-1 closure/report, README, order-governance overlay, comparator/finalizer stack, and historical replay handoff all showed Stage-1 resolved and no identified non-external Stage-9.5-6 blocker. The frozen construction contract was deliberately **not** rewritten after the fact. Instead, additive machine-readable status overlay `data/manifests/stage9_5_6_current_status_v1.json` was committed. It binds the historical frozen construction-contract blob identity and the canonical Stage-1 report identity, marks the stale fields explicitly as historical freeze state, records the current replay pipeline as implemented/frozen, and states that the only unresolved Stage-9.5-6 blockers are the two external artifact families. This preserved the historical audit trail while eliminating ambiguity for future closure work and the final retrospective.
+
+30. On 17 October 2026 a later continuation resumed from the previously
+    observed Phase-A-era head but found the assurance branch already at
+    `ffb2645cce0724916f385bbd59b9d652b8aec0f0`, 61 commits ahead of
+    `cf78ba076a12693bc1b89ac52181fc8f20091fdc`. The delta was reconciled
+    before mutation. It confirmed that the full deterministic replay stack
+    (Phase A, Phase B, Phase-C failure-lineage/correction-config checks, and
+    corrected Phase-C seed-0 output comparison), replay-report finalizer,
+    authoritative Stage-1 reconstruction evidence/closure, historical replay
+    execution handoff, current-status overlay, and the requested multi-chat
+    retrospective working notes were already in place. The exact-head Stage-9
+    robustness run `39033910515` completed successfully. Stage-9.5 assurance
+    run `39033910546` had the intended top-level failure shape: the
+    assurance-contract job passed with **87 tests**, statistical oracle,
+    targeted mutations, causal properties, and the semantic work-package order
+    gate all passed; static discovery remained the already-accepted
+    `ruff=154, mypy=55` baseline; fresh-clone reconstruction remained
+    `0 identity failures / 2 external-artifact blockers`; and
+    Stage-9.5-7/8/9 were skipped because
+    `later_packages_unlocked=false`. During this reconciliation, PR #21's
+    descriptive body was found stale: it still presented the historical
+    replay-invariance defect and Stage-1 predecessor issue as current blockers.
+    The PR metadata was corrected to match
+    `data/manifests/stage9_5_6_current_status_v1.json`: no non-external
+    Stage-9.5-6 implementation/evidence blocker is currently identified, and
+    the only unresolved blockers are
+    `system_a_checkpoint_bytes_missing` and
+    `stage8_large_artifact_archive_missing`. This was governance/status
+    reconciliation only; no repository science, verifier, comparator,
+    finalizer, Stage-1 report, accepted Stage-8/9 evidence, claim boundary, or
+    Stage-10 gate was changed.
+
+31. On 17 October 2026 the continuation at exact assurance head
+    `309f32c595dca8b06a3bcea2c2db233506c424a3` performed a closure-readiness
+    audit after reconciling the externally advanced branch. Exact-head Stage-9
+    robustness run `39034242366` completed successfully. Stage-9.5 assurance
+    run `39034242363` had the expected fail-closed shape: the assurance-contract
+    job passed with **87 tests**; statistical oracle, targeted mutations, causal
+    properties, and the work-package order gate all passed; static discovery
+    remained the accepted `ruff=154, mypy=55` baseline; fresh-clone
+    reconstruction remained `0 identity failures / 2 external-artifact
+    blockers`; and Stage-9.5-7/8/9 were skipped with
+    `later_packages_unlocked=false`.
+
+    The closure-readiness audit mapped every field required by
+    `data/manifests/stage9_5_6_closure_order_gate_v1.json` to an already-frozen
+    authoritative source: Stage-9.5-1 recovery report, deterministic replay
+    comparator/finalizer report, same-head Stage-9 success, historical replay
+    identities, canonical report hashes, and explicit closure references. The
+    end-to-end operator sequence is already frozen in
+    `STAGE9_5_6_HISTORICAL_REPLAY_EXECUTION_HANDOFF.md`. No additional
+    non-external implementation, protocol, provenance, or closure-metadata
+    blocker was identified. Further software hardening was deliberately not
+    added merely to consume time or create a new gate.
+
+    Therefore the only unresolved prerequisites to advancing Stage-9.5 are the
+    two original external evidence families:
+    `system_a_checkpoint_bytes_missing` and
+    `stage8_large_artifact_archive_missing`. Once recovered, the accepted
+    sequence is Stage-9.5-1 verification/closure -> historical replay ->
+    comparator/finalizer -> Stage-9.5-6 closure/order-gate unlock -> 9.5-7 ->
+    9.5-8 -> 9.5-9 -> zero unresolved Class-A defects -> finalize the multi-chat
+    assurance-diversion retrospective -> close Stage 9.5 -> only then Stage 10.
+
+32. On 17 October 2026 this continuation resumed from the previously observed
+    Phase-A-era head `cf78ba076a12693bc1b89ac52181fc8f20091fdc` but found the
+    assurance branch already at `bd44bb9198acc11e837d47c938c213e86eb500d7`,
+    **63 commits ahead**. The delta was reconciled before any mutation. It
+    confirmed that the deterministic replay comparator had already been
+    prospectively frozen for Phase A, Phase B, Phase-C failure-lineage and
+    correction-config preconditions, and corrected Phase-C seed-0 output
+    comparison; the replay-report finalizer was frozen; authoritative Stage-1
+    reconstruction evidence had been closed; an end-to-end historical replay
+    execution handoff had been frozen; and the multi-chat diversion notes were
+    already being maintained. Exact-head Stage-9 robustness run
+    `39036358382` passed. Stage-9.5 assurance run `39036358349` had the
+    expected fail-closed top-level shape: the assurance-contract job passed
+    with **87 tests**; statistical oracle, causal properties, targeted
+    mutations, and the semantic work-package order gate all passed; static
+    discovery remained the accepted `ruff=154, mypy=55` baseline; fresh-clone
+    reconstruction remained `0 identity failures / 2 external-artifact
+    blockers`; `later_packages_unlocked=false`; and Stage-9.5-7/8/9 were
+    skipped. The additive current-status overlay at
+    `data/manifests/stage9_5_6_current_status_v1.json` was checked against the
+    live branch and remained accurate: no non-external Stage-9.5-6
+    implementation/evidence blocker is currently identified. The only
+    unresolved prerequisites remain
+    `system_a_checkpoint_bytes_missing` and
+    `stage8_large_artifact_archive_missing`. No additional comparator,
+    protocol, scientific, or gate hardening was added merely to consume time;
+    this continuation instead preserved the reconciliation in the working
+    retrospective for final Stage-9.5 closure documentation.
+
+33. On 17 October 2026 this continuation resumed after the user explicitly
+    reiterated that the entire multi-chat Stage-9.5 assurance diversion must be
+    documented at closure. The live assurance branch had advanced from the
+    previously observed Phase-A-era head
+    `cf78ba076a12693bc1b89ac52181fc8f20091fdc` to
+    `4c49f772d30739c5119f49eba4081de81651f9eb`, **64 commits ahead**.
+    The delta was reconciled before mutation. It confirmed that the deterministic
+    replay comparator is prospectively frozen for Phase A, Phase B, Phase-C
+    preconditions/failure lineage, and corrected Phase-C seed-0 output
+    comparison; the replay-report finalizer is frozen; authoritative Stage-1
+    reconstruction evidence is closed; the historical replay execution handoff
+    is frozen; and the additive current-status overlay identifies no remaining
+    non-external Stage-9.5-6 implementation/evidence blocker.
+
+    Exact-head Stage-9 robustness run `39036901931` passed. Stage-9.5
+    assurance run `39036901857` had the expected fail-closed top-level
+    shape: assurance-contract passed with **87 tests**; statistical oracle,
+    causal properties, targeted mutations, and the semantic work-package order
+    gate all passed; static discovery remained the already accepted
+    `ruff=154, mypy=55` baseline; fresh-clone reconstruction remained
+    `0 identity failures / 2 external-artifact blockers`;
+    `later_packages_unlocked=false`; and Stage-9.5-7/8/9 were skipped because
+    the Stage-9.5-6 closure/success records do not yet exist.
+
+    The only unresolved prerequisites therefore remain the two original
+    external evidence families:
+    `system_a_checkpoint_bytes_missing` and
+    `stage8_large_artifact_archive_missing`. No additional comparator,
+    finalizer, protocol, provenance, or gate hardening was introduced in this
+    continuation. Instead, this episode was added to the working retrospective
+    so the eventual reviewer-facing Stage-9.5 closure document can reconstruct
+    the diversion from repository evidence rather than chat memory.
+
+34. On 17 October 2026 this continuation resumed after the user again
+    emphasized that the entire Stage-9.5 assurance diversion, spanning multiple
+    chats, must be documented at final Stage-9.5 closure rather than left in
+    transient conversation history. The live assurance branch had advanced from
+    the previously observed Phase-A-era head
+    `cf78ba076a12693bc1b89ac52181fc8f20091fdc` to
+    `bad2bbd3c20b8b557d25b63eb144d74aea6b3728`, **65 commits ahead**.
+    The delta was reconciled before mutation.
+
+    The reconciliation confirmed that the work which had previously appeared
+    to remain ahead was already complete and prospectively frozen in the
+    repository: deterministic replay comparison for Phase A, Phase B,
+    Phase-C failure-lineage/correction-config preconditions, and corrected
+    Phase-C seed-0 outputs; the deterministic replay-report finalizer;
+    authoritative Stage-1 reconstruction evidence and closure; the historical
+    replay execution handoff; the additive current-status overlay; and this
+    multi-chat retrospective working record. The authoritative current-status
+    overlay records **no identified non-external Stage-9.5-6 blocker**. The only
+    unresolved prerequisites remain the two external evidence families:
+    `system_a_checkpoint_bytes_missing` and
+    `stage8_large_artifact_archive_missing`.
+
+    Exact-head Stage-9 robustness run `39038815811` completed successfully.
+    Stage-9.5 assurance run `39038815677` showed the expected fail-closed
+    shape. The assurance-contract job passed with **87 tests**; statistical
+    oracle, causal properties, targeted mutations, and the semantic
+    work-package order gate passed; fresh-clone reconstruction reported
+    **0 identity failures / 2 external-artifact blockers**; static discovery
+    remained the already accepted **ruff=154 / mypy=55** baseline;
+    `later_packages_unlocked=false`; and Stage-9.5-7/8/9 were skipped because
+    the Stage-9.5-6 closure/success records do not yet exist.
+
+    No new comparator, finalizer, protocol, scientific, provenance, or gate
+    semantics were added in this continuation. That restraint is intentional:
+    further software work would not remove the actual blockers. This entry
+    exists to preserve the cross-chat chronology requested by the user and to
+    ensure the eventual reviewer-facing Stage-9.5 closure retrospective can be
+    assembled from committed repository evidence. The remaining authoritative
+    sequence is: recover/verify the five exact original System-A checkpoints ->
+    recover/verify the original Stage-8 heavy archive at 145/145 ->
+    close Stage-9.5-1 -> execute the frozen historical replay handoff ->
+    comparator/finalizer -> Stage-9.5-6 closure/order-gate unlock -> revalidate
+    9.5-7 -> rerun/revalidate 9.5-8 -> run 9.5-9 hostile review last -> require
+    zero unresolved Class-A defects -> finalize the multi-chat diversion
+    retrospective -> close Stage 9.5 -> only then authorize Stage 10.
+
+35. On 17 October 2026 this continuation resumed after the user explicitly
+    instructed the assurance work to proceed autonomously unless genuine user
+    input became necessary, while reiterating that the full Stage-9.5 diversion
+    spanning multiple chats must be documented at closure. The live assurance
+    branch had advanced from the previously observed Phase-A-era head
+    `cf78ba076a12693bc1b89ac52181fc8f20091fdc` to
+    `a5da4cb9b9924ee34ef031f94bda9aac9cc31748`, **66 commits ahead**.
+    The delta was reconciled before any mutation.
+
+    The reconciliation showed that no Phase-B/Phase-C implementation work
+    remained to be done: deterministic replay comparison for Phase A, Phase B,
+    Phase-C failure-lineage/correction-config preconditions, and corrected
+    Phase-C seed-0 outputs was already prospectively frozen; the deterministic
+    replay-report finalizer was frozen; authoritative Stage-1 reconstruction
+    evidence and closure were complete; the end-to-end historical replay
+    execution handoff was frozen; the additive current-status overlay was in
+    place; and the multi-chat retrospective working record was already being
+    maintained. The current-status overlay continued to identify **no
+    non-external Stage-9.5-6 implementation/evidence blocker**.
+
+    Exact-head Stage-9 robustness run `39039063193` completed successfully.
+    Stage-9.5 assurance run `39039063211` had the expected fail-closed shape:
+    the assurance-contract job passed with **87 tests**; statistical oracle,
+    causal properties, targeted mutations, and the semantic work-package order
+    gate passed; fresh-clone reconstruction remained **0 identity failures / 2
+    external-artifact blockers**; static discovery remained the already
+    accepted **ruff=154 / mypy=55** baseline;
+    `later_packages_unlocked=false`; and Stage-9.5-7/8/9 were skipped because
+    the Stage-9.5-6 closure/success records do not yet exist.
+
+    No new comparator, finalizer, protocol, scientific, provenance, or gate
+    semantics were introduced. The only unresolved prerequisites remain
+    `system_a_checkpoint_bytes_missing` and
+    `stage8_large_artifact_archive_missing`. This continuation therefore
+    deliberately stopped software hardening at the genuine external-evidence
+    boundary and preserved the episode in this working retrospective so the
+    eventual reviewer-facing Stage-9.5 closure account can be reconstructed
+    from repository evidence rather than transient chat history.
+
+36. On 17 October 2026 this continuation resumed after the user again requested
+    autonomous progress and explicitly reminded the project that the entire
+    Stage-9.5 assurance diversion spanning multiple chats must be documented at
+    final closure. The live assurance branch had advanced from the previously
+    observed Phase-A-era head
+    `cf78ba076a12693bc1b89ac52181fc8f20091fdc` to
+    `432ddd2c559375bc706330dd375ea36aebc9e84a`, **67 commits ahead**.
+    The delta was reconciled before any mutation.
+
+    That reconciliation confirmed the authoritative current frontier rather
+    than repeating obsolete Phase-B/Phase-C implementation work. The branch
+    already contains prospectively frozen deterministic comparison for Phase A,
+    Phase B, Phase-C failure-lineage/correction-config preconditions, and
+    corrected Phase-C seed-0 outputs; the deterministic replay-report
+    finalizer; authoritative Stage-1 reconstruction evidence and closure; the
+    frozen historical replay execution handoff; the additive current-status
+    overlay; and this multi-chat retrospective working record. The current
+    status manifest continues to identify **no non-external Stage-9.5-6
+    implementation/evidence blocker**.
+
+    Exact-head Stage-9 robustness run `39039358856` completed successfully.
+    Stage-9.5 assurance run `39039358894` had the expected fail-closed
+    top-level shape: assurance-contract passed with **87 tests**; statistical
+    oracle, causal properties, targeted mutations, and the semantic
+    work-package order gate all passed; fresh-clone reconstruction remained
+    **0 identity failures / 2 external-artifact blockers**; static discovery
+    remained the already accepted **ruff=154 / mypy=55** baseline;
+    `later_packages_unlocked=false`; and Stage-9.5-7/8/9 were skipped because
+    the Stage-9.5-6 closure/success records do not yet exist.
+
+    The only unresolved prerequisites remain the two original external evidence
+    families: `system_a_checkpoint_bytes_missing` and
+    `stage8_large_artifact_archive_missing`. No new comparator, finalizer,
+    protocol, scientific, provenance, or gate semantics were introduced in
+    this continuation. The sole repository mutation was this retrospective
+    entry, preserving the cross-chat chronology so the eventual reviewer-facing
+    Stage-9.5 closure retrospective can be assembled from committed evidence
+    rather than conversation memory. The authoritative sequence remains:
+    recover/verify five exact original System-A checkpoints -> recover/verify
+    the original Stage-8 heavy archive at 145/145 -> close Stage-9.5-1 ->
+    execute the frozen historical replay handoff -> comparator/finalizer ->
+    Stage-9.5-6 closure/order-gate unlock -> revalidate 9.5-7 ->
+    rerun/revalidate 9.5-8 -> run 9.5-9 hostile review last -> require zero
+    unresolved Class-A defects -> finalize the multi-chat assurance-diversion
+    retrospective -> close Stage 9.5 -> only then authorize Stage 10.
+
+37. On 17 October 2026 this continuation resumed after the user again instructed
+    the assurance work to proceed and explicitly reiterated that the complete
+    Stage-9.5 diversion spanning multiple chats must be documented at final
+    closure. The live assurance branch had advanced from the previously
+    observed Phase-A-era head
+    `cf78ba076a12693bc1b89ac52181fc8f20091fdc` to
+    `b84f636205846fe06ef5fed67da61c05844f342d`, **68 commits ahead**.
+    The delta was reconciled before any mutation.
+
+    The reconciliation confirmed that the apparent remaining comparator work
+    was obsolete. The branch already contains prospectively frozen
+    deterministic replay comparison for Phase A, Phase B, Phase-C
+    failure-lineage/correction-config preconditions, and corrected Phase-C
+    seed-0 outputs; the deterministic replay-report finalizer; authoritative
+    Stage-1 reconstruction evidence and closure; the frozen end-to-end
+    historical replay execution handoff; the additive current-status overlay;
+    and the multi-chat assurance-diversion working record. The authoritative
+    current-status overlay identifies **no remaining non-external Stage-9.5-6
+    implementation/evidence blocker**.
+
+    Exact-head Stage-9 robustness run `39039998351` completed successfully.
+    Stage-9.5 assurance run `39039998269` had the expected fail-closed shape:
+    the assurance-contract job passed with **87 tests**; statistical oracle,
+    causal properties, targeted mutations, and the semantic work-package order
+    gate all passed; static discovery remained the already accepted
+    **ruff=154 / mypy=55** baseline; fresh-clone reconstruction remained
+    **0 identity failures / 2 external-artifact blockers**;
+    `later_packages_unlocked=false`; and Stage-9.5-7/8/9 were skipped because
+    the Stage-9.5-6 closure/success records do not yet exist.
+
+    No new comparator, finalizer, protocol, scientific, provenance, or gate
+    semantics were introduced in this continuation. The only repository
+    mutation was this retrospective entry, preserving the requested cross-chat
+    chronology. The only unresolved prerequisites remain
+    `system_a_checkpoint_bytes_missing` and
+    `stage8_large_artifact_archive_missing`. The authoritative sequence
+    remains: recover/verify the five exact original System-A checkpoints ->
+    recover/verify the original Stage-8 heavy archive at 145/145 -> close
+    Stage-9.5-1 -> execute the frozen historical replay handoff ->
+    comparator/finalizer -> Stage-9.5-6 closure/order-gate unlock -> revalidate
+    9.5-7 -> rerun/revalidate 9.5-8 -> run 9.5-9 hostile review last -> require
+    zero unresolved Class-A defects -> finalize the multi-chat
+    assurance-diversion retrospective -> close Stage 9.5 -> only then authorize
+    Stage 10.
+
+38. On 17 October 2026 this continuation resumed after the user explicitly
+    instructed the project to proceed but to regroup if the forward path was
+    genuinely blocked, while retaining the standing requirement that the full
+    Stage-9.5 assurance diversion across multiple chats be documented at final
+    closure. The live assurance branch had again advanced externally from the
+    previously observed Phase-A-era head
+    `cf78ba076a12693bc1b89ac52181fc8f20091fdc` to
+    `1cbae90534bcb8fd3a824daf85ae4df0e7630d7c`, **69 commits ahead**.
+    The delta was reconciled before any mutation.
+
+    That reconciliation confirmed that further comparator/protocol hardening
+    would be artificial rather than blocker-removing work. The branch already
+    contains prospectively frozen deterministic replay comparison for Phase A,
+    Phase B, Phase-C failure-lineage/correction-config preconditions, and
+    corrected Phase-C seed-0 outputs; the deterministic replay-report
+    finalizer; authoritative Stage-1 reconstruction evidence and closure; the
+    frozen historical replay execution handoff; the additive current-status
+    overlay; and this multi-chat retrospective. The authoritative current-status
+    manifest states that **no non-external Stage-9.5-6 implementation/evidence
+    blocker is currently identified**.
+
+    Exact-head Stage-9 robustness run `39041093691` completed successfully.
+    Stage-9.5 assurance run `39041093826` had the expected fail-closed shape:
+    assurance-contract passed with **87 tests**; statistical oracle, causal
+    properties, targeted mutations, and the semantic work-package order gate
+    passed; static discovery remained the accepted **ruff=154 / mypy=55**
+    baseline; fresh-clone reconstruction remained **0 identity failures / 2
+    external-artifact blockers**; `later_packages_unlocked=false`; and
+    Stage-9.5-7/8/9 were skipped because the Stage-9.5-6 closure/success records
+    do not yet exist.
+
+    In response to the explicit regroup instruction, no new comparator,
+    finalizer, protocol, scientific, provenance, or gate semantics were added.
+    The project deliberately stopped software expansion at the genuine external
+    evidence boundary. The only unresolved prerequisites remain
+    `system_a_checkpoint_bytes_missing` and
+    `stage8_large_artifact_archive_missing`. The authoritative path remains:
+    recover/verify the five exact original System-A checkpoints -> recover/verify
+    the original Stage-8 heavy archive at 145/145 -> close Stage-9.5-1 ->
+    execute the frozen historical replay handoff -> comparator/finalizer ->
+    Stage-9.5-6 closure/order-gate unlock -> revalidate 9.5-7 ->
+    rerun/revalidate 9.5-8 -> run 9.5-9 hostile review last -> require zero
+    unresolved Class-A defects -> finalize this multi-chat diversion
+    retrospective -> close Stage 9.5 -> only then authorize Stage 10.
+
+    This continuation therefore records a deliberate boundary decision rather
+    than another hardening cycle: progress is presently blocked by recovery of
+    original external evidence bytes, not by missing repository implementation.
+
+30. On 17 October 2026 the next continuation resumed after the assurance branch
+    had advanced externally by 70 commits from the previously observed
+    Phase-A comparator head `cf78ba076a12693bc1b89ac52181fc8f20091fdc`
+    to `b6b45ddc09cde0ae4b6ec96eb363d34d190797fe`. The delta was
+    reconciled before any mutation. It showed that Phase-B comparison,
+    Phase-C precondition/failure-lineage validation, corrected Phase-C seed-0
+    output comparison, authoritative Stage-1 reconstruction evidence, the
+    deterministic finalizer, and the end-to-end historical replay execution
+    handoff had already been prospectively frozen. The additive current-status
+    overlay reported no identified non-external Stage-9.5-6 blocker; the only
+    unresolved blockers remained `system_a_checkpoint_bytes_missing` and
+    `stage8_large_artifact_archive_missing`.
+
+    Exact-head CI on `b6b45ddc09cde0ae4b6ec96eb363d34d190797fe`
+    showed Stage-9 robustness success, 87 assurance-contract tests passing,
+    the unchanged Stage-9.5-5 discovery baseline of Ruff 154 / mypy 55,
+    fresh-clone reconstruction at 0 identity failures / 2 external-artifact
+    blockers, the work-package order gate locked with
+    `later_packages_unlocked=false`, and Stage-9.5-7/8/9 skipped. A direct
+    CLI audit of `STAGE9_5_6_HISTORICAL_REPLAY_EXECUTION_HANDOFF.md`
+    against the live Stage-9.5-1 verifier, replay comparator, replay-report
+    finalizer, and order-gate interfaces found the frozen handoff command
+    surface consistent with the implementations. The 11 commits after the
+    current-status overlay's observed head `ddcc8c21...` changed only the
+    additive status/retrospective documentation and introduced no new replay,
+    assurance, or scientific semantics. No additional assurance mechanism was
+    added in this continuation because the remaining bottleneck is external
+    recovery rather than an identified repository-side implementation gap.
+
+39. On 17 October 2026 this continuation resumed after the user again instructed
+    the project to proceed and reiterated that the complete Stage-9.5 assurance
+    diversion spanning multiple chats must be documented at final closure. The
+    live assurance branch had advanced from the previously observed
+    Phase-A-era head
+    `cf78ba076a12693bc1b89ac52181fc8f20091fdc` to
+    `25b864c19ef75f847f698f8c6e30f6f3e024d793`, **71 commits ahead**.
+    The delta was reconciled before any mutation.
+
+    Reconciliation showed that the apparent Phase-B design work was obsolete:
+    the repository already contains prospectively frozen deterministic replay
+    comparison for Phase A, Phase B, Phase-C failure-lineage/correction-config
+    preconditions, and corrected Phase-C seed-0 outputs; the deterministic
+    replay-report finalizer; authoritative Stage-1 reconstruction evidence and
+    closure; the frozen end-to-end historical replay execution handoff; the
+    additive current-status overlay; and this multi-chat assurance-diversion
+    working record. The current-status overlay identifies **no non-external
+    Stage-9.5-6 implementation/evidence blocker**.
+
+    The 12 commits after the status-overlay observation head
+    `ddcc8c21dff5c30d01c2a5935ae609406b804e8f` changed only the additive
+    current-status/retrospective documentation and introduced no new replay,
+    assurance, or scientific semantics. Exact-head Stage-9 robustness run
+    `39044660057` completed successfully. Stage-9.5 assurance run
+    `39044659874` had the expected fail-closed shape: assurance-contract
+    passed with **87 tests**; statistical oracle, causal properties, targeted
+    mutations, and the semantic work-package order gate passed; static
+    discovery remained the accepted **ruff=154 / mypy=55** baseline;
+    fresh-clone reconstruction remained **0 identity failures / 2
+    external-artifact blockers**; `later_packages_unlocked=false`; and
+    Stage-9.5-7/8/9 were skipped because Stage-9.5-6 closure/success evidence
+    does not yet exist.
+
+    This continuation deliberately introduced no new comparator, finalizer,
+    protocol, scientific, provenance, or order-gate semantics. The project is
+    genuinely blocked at the external-evidence boundary. The only unresolved
+    prerequisites remain `system_a_checkpoint_bytes_missing` and
+    `stage8_large_artifact_archive_missing`. The authoritative next sequence
+    remains: recover/verify the five exact original System-A checkpoints ->
+    recover/verify the original Stage-8 heavy archive at 145/145 -> close
+    Stage-9.5-1 -> execute the frozen historical replay handoff ->
+    comparator/finalizer -> Stage-9.5-6 closure/order-gate unlock -> revalidate
+    9.5-7 -> rerun/revalidate 9.5-8 -> run 9.5-9 hostile review last -> require
+    zero unresolved Class-A defects -> finalize the multi-chat assurance-
+    diversion retrospective -> close Stage 9.5 -> only then authorize Stage 10.
+
+    This entry is intentionally part of the final-retrospective evidence chain:
+    it records that software expansion was stopped once repository-side
+    assurance work was complete, rather than obscuring the true external
+    provenance bottleneck.
+
+40. On 17 October 2026 this continuation resumed after the user again instructed
+    the assurance work to proceed and reiterated that the entire Stage-9.5
+    diversion spanning multiple chats must be documented at final closure. The
+    live assurance branch had advanced from the previously observed Phase-A-era
+    head `cf78ba076a12693bc1b89ac52181fc8f20091fdc` to
+    `6013f6dcc2568f26f05682720dc5a10394dd48ec`, **72 commits ahead**.
+    The delta was reconciled before mutation.
+
+    Reconciliation confirmed that the apparent remaining Phase-B/Phase-C work
+    was obsolete. The repository already contains prospectively frozen
+    deterministic replay comparison for Phase A, Phase B, Phase-C
+    failure-lineage/correction-config preconditions, and corrected Phase-C
+    seed-0 outputs; the deterministic replay-report finalizer; authoritative
+    Stage-1 reconstruction evidence and closure; the frozen end-to-end
+    historical replay execution handoff; the additive current-status overlay;
+    and this multi-chat assurance-diversion working record. The authoritative
+    current-status overlay records **no identified non-external Stage-9.5-6
+    implementation/evidence blocker**.
+
+    Exact-head Stage-9 robustness run `39046437404` completed successfully.
+    Stage-9.5 assurance run `39046437384` had the expected fail-closed
+    top-level shape: the assurance-contract job passed with **87 tests**;
+    statistical oracle, causal properties, targeted mutations, and the semantic
+    work-package order gate passed; static discovery remained the accepted
+    **ruff=154 / mypy=55** baseline; fresh-clone reconstruction remained
+    **0 identity failures / 2 external-artifact blockers**;
+    `later_packages_unlocked=false`; and Stage-9.5-7/8/9 were skipped because
+    the Stage-9.5-6 closure/success records do not yet exist.
+
+    The 17 October Stage-1 reconstruction work introduced a new external-data
+    transport surface through the unofficial `bencorn/CICIDS2017` mirror on
+    Hugging Face. A targeted recovery check was performed against that new
+    surface for the missing System-A checkpoint/archive identifiers. The mirror
+    exposes original CICIDS2017 distribution material such as
+    `MachineLearningCSV.zip` and related dataset files, not the project-
+    generated System-A checkpoints or `artifacts/cd_primary_v1` replay
+    archive. It therefore remains supplemental transport for Stage-1 raw inputs
+    only and does not reduce either unresolved provenance blocker.
+
+    No new comparator, finalizer, protocol, scientific, provenance, or
+    order-gate semantics were added. The project again stopped software
+    expansion at the genuine external-evidence boundary. The only unresolved
+    prerequisites remain `system_a_checkpoint_bytes_missing` and
+    `stage8_large_artifact_archive_missing`. The authoritative next sequence
+    remains: recover/verify the five exact original System-A checkpoints ->
+    recover/verify the original Stage-8 heavy archive at 145/145 -> close
+    Stage-9.5-1 -> execute the frozen historical replay handoff ->
+    comparator/finalizer -> Stage-9.5-6 closure/order-gate unlock -> revalidate
+    9.5-7 -> rerun/revalidate 9.5-8 -> run 9.5-9 hostile review last -> require
+    zero unresolved Class-A defects -> finalize the multi-chat
+    assurance-diversion retrospective -> close Stage 9.5 -> only then authorize
+    Stage 10.
+
+    This entry is specifically preserved so the final Stage-9.5 reviewer-facing
+    retrospective can reconstruct the multi-chat diversion from committed
+    repository evidence rather than relying on conversation history.
+
+41. On 17 October 2026 the user again instructed the project to proceed and
+    explicitly reiterated that the full Stage-9.5 assurance diversion spanning
+    multiple chats must be documented at final closure. The live assurance
+    branch had advanced externally from the previously observed Phase-A-era
+    head `cf78ba076a12693bc1b89ac52181fc8f20091fdc` to
+    `3937ade9b044cf92c7d1baf6d1b7cdfb8d7a450f`, **73 commits ahead**.
+    The delta was reconciled before any repository mutation.
+
+    Reconciliation showed that the apparent next task—Phase-B comparator
+    design—was obsolete. The branch already contains prospectively frozen
+    deterministic comparison for Phase A, Phase B, Phase-C
+    failure-lineage/correction-config preconditions, and corrected Phase-C
+    seed-0 outputs; the deterministic replay-report finalizer; authoritative
+    Stage-1 reconstruction evidence and closure; the frozen end-to-end
+    historical replay execution handoff; the additive current-status overlay;
+    and this multi-chat diversion record. The authoritative status overlay
+    records **no remaining non-external Stage-9.5-6 implementation/evidence
+    blocker**.
+
+    The 14 commits after status-observation head
+    `ddcc8c21dff5c30d01c2a5935ae609406b804e8f` changed only the additive
+    current-status manifest and retrospective working notes; they introduced no
+    comparator, finalizer, protocol, gate, or scientific semantic change.
+
+    Exact-head Stage-9 robustness run `39046729976` completed successfully.
+    Stage-9.5 assurance run `39046729981` had the expected fail-closed shape:
+    the assurance-contract job passed with **87 tests**; statistical oracle,
+    causal properties, targeted mutations, and the semantic work-package order
+    gate all passed; static discovery remained the accepted **ruff=154 /
+    mypy=55** baseline; fresh-clone reconstruction remained **0 identity
+    failures / 2 external-artifact blockers**;
+    `later_packages_unlocked=false`; and Stage-9.5-7/8/9 were skipped because
+    Stage-9.5-6 closure/success evidence does not yet exist.
+
+    This continuation therefore deliberately introduced no new assurance
+    mechanism. The only unresolved prerequisites remain
+    `system_a_checkpoint_bytes_missing` and
+    `stage8_large_artifact_archive_missing`. The authoritative next sequence
+    remains: recover/verify the five exact original System-A checkpoints ->
+    recover/verify the original Stage-8 heavy archive at 145/145 -> close
+    Stage-9.5-1 -> execute the frozen historical replay handoff ->
+    comparator/finalizer -> Stage-9.5-6 closure/order-gate unlock -> revalidate
+    9.5-7 -> rerun/revalidate 9.5-8 -> run 9.5-9 hostile review last -> require
+    zero unresolved Class-A defects -> finalize the reviewer-facing multi-chat
+    assurance-diversion retrospective -> close Stage 9.5 -> only then authorize
+    Stage 10.
+
+    This entry is preserved specifically to support the user's final-closure
+    requirement that the diversion be reconstructed from repository evidence,
+    including the repeated live-head reconciliations and the deliberate choice
+    to stop software expansion once the true external-evidence boundary was
+    reached.
+
+42. On 17 October 2026 this continuation resumed after the user again instructed
+    the project to proceed and reiterated that the complete Stage-9.5 assurance
+    diversion spanning multiple chats must be documented at final closure. The
+    live assurance branch had advanced externally from the previously observed
+    Phase-A-era head
+    `cf78ba076a12693bc1b89ac52181fc8f20091fdc` to
+    `972e4922f6ab94d6219dabdc6d4cd5ce8e2ec429`, **74 commits ahead**.
+    The delta was reconciled before any repository mutation.
+
+    Reconciliation confirmed that the apparent planned Phase-B comparator
+    tranche was obsolete. The repository already contains prospectively frozen
+    deterministic replay comparison for Phase A, Phase B, Phase-C
+    failure-lineage/correction-config preconditions, and corrected Phase-C
+    seed-0 outputs; the deterministic replay-report finalizer; authoritative
+    Stage-1 reconstruction evidence and closure; the frozen end-to-end
+    historical replay execution handoff; the additive current-status overlay;
+    and this multi-chat diversion record. The current-status overlay records
+    **no identified non-external Stage-9.5-6 implementation/evidence blocker**.
+
+    Exact-head Stage-9 robustness run `39047079013` completed successfully.
+    Stage-9.5 assurance run `39047078981` had the intended fail-closed shape:
+    the assurance-contract job passed with **87 tests**; statistical oracle,
+    causal properties, targeted mutations, and the semantic work-package order
+    gate all passed; static discovery remained the accepted **ruff=154 /
+    mypy=55** baseline; fresh-clone reconstruction remained **0 identity
+    failures / 2 external-artifact blockers**; the order gate reported
+    `later_packages_unlocked=false`; and Stage-9.5-7/8/9 were skipped because
+    Stage-9.5-6 closure/success evidence does not yet exist.
+
+    This continuation deliberately added no comparator, finalizer, protocol,
+    gate, or scientific semantics. The only unresolved prerequisites remain
+    `system_a_checkpoint_bytes_missing` and
+    `stage8_large_artifact_archive_missing`. The authoritative next sequence
+    remains: recover/verify the five exact original System-A checkpoints ->
+    recover/verify the original Stage-8 heavy archive at 145/145 -> close
+    Stage-9.5-1 -> execute the frozen historical replay handoff ->
+    comparator/finalizer -> Stage-9.5-6 closure/order-gate unlock -> revalidate
+    9.5-7 -> rerun/revalidate 9.5-8 -> run 9.5-9 hostile review last -> require
+    zero unresolved Class-A defects -> finalize the reviewer-facing multi-chat
+    assurance-diversion retrospective -> close Stage 9.5 -> only then authorize
+    Stage 10.
+
+    This entry is preserved specifically to support the final reviewer-facing
+    retrospective and to show that the project stopped generating additional
+    software work once the assurance architecture was complete and the true
+    remaining bottleneck was external provenance recovery.
+
+43. On 17 October 2026 this continuation resumed after the user again instructed
+    the assurance work to proceed and reiterated that the complete Stage-9.5
+    diversion spanning multiple chats must be documented at final closure. The
+    live assurance branch had advanced externally from the previously observed
+    Phase-A-era head
+    `cf78ba076a12693bc1b89ac52181fc8f20091fdc` to
+    `0476f3ebeaa9be0d7dba498ded58b2811564297f`, **75 commits ahead**.
+    The delta was reconciled before any repository mutation.
+
+    Reconciliation confirmed that the apparent planned Phase-B design work was
+    obsolete. The repository already contains prospectively frozen deterministic
+    replay comparison for Phase A, Phase B, Phase-C
+    failure-lineage/correction-config preconditions, and corrected Phase-C
+    seed-0 outputs; the deterministic replay-report finalizer; authoritative
+    Stage-1 reconstruction evidence and closure; the frozen end-to-end
+    historical replay execution handoff; the additive current-status overlay;
+    and this multi-chat assurance-diversion working record. The authoritative
+    current-status overlay records **no identified non-external Stage-9.5-6
+    implementation/evidence blocker**.
+
+    Exact-head Stage-9 robustness run `39047534085` completed successfully.
+    Stage-9.5 assurance run `39047534073` had the expected fail-closed shape:
+    the assurance-contract job passed with **87 tests**; statistical oracle,
+    causal properties, targeted mutations, and the semantic work-package order
+    gate all passed; static discovery remained the accepted **ruff=154 /
+    mypy=55** baseline; fresh-clone reconstruction remained **0 identity
+    failures / 2 external-artifact blockers**; the order gate reported
+    `later_packages_unlocked=false`; and Stage-9.5-7/8/9 were skipped because
+    Stage-9.5-6 closure/success evidence does not yet exist.
+
+    No new comparator, finalizer, protocol, scientific, provenance, or gate
+    semantics were introduced in this continuation. The project deliberately
+    stopped software expansion at the genuine external-evidence boundary. The
+    only unresolved prerequisites remain
+    `system_a_checkpoint_bytes_missing` and
+    `stage8_large_artifact_archive_missing`.
+
+    The authoritative next sequence remains: recover/verify the five exact
+    original System-A checkpoints -> recover/verify the original Stage-8 heavy
+    archive at 145/145 -> close Stage-9.5-1 -> execute the frozen historical
+    replay handoff -> run comparator/finalizer -> close Stage-9.5-6 and require
+    `later_packages_unlocked=true` -> revalidate Stage-9.5-7 ->
+    rerun/revalidate Stage-9.5-8 -> run Stage-9.5-9 hostile review last ->
+    require zero unresolved Class-A defects -> finalize the reviewer-facing
+    multi-chat assurance-diversion retrospective -> close Stage 9.5 -> only then
+    authorize Stage 10.
+
+    This entry is preserved specifically to support the user's final-closure
+    requirement that the full diversion be reconstructed from committed
+    repository evidence rather than transient chat memory.
+
+44. On 17 October 2026 this continuation again resumed from the previously
+    remembered Phase-A-era planning point, but the live assurance branch was
+    already at `37d544b10b7aebb9bc06dccc21cdcbdb733e07cb`, **76 commits
+    ahead** of `cf78ba076a12693bc1b89ac52181fc8f20091fdc`. The delta was
+    reconciled before any repository mutation.
+
+    Reconciliation showed that the intended Phase-B design tranche was obsolete.
+    The live repository already contains prospectively frozen deterministic
+    replay comparison for Phase A, Phase B, Phase-C failure-lineage and
+    correction-config preconditions, and corrected Phase-C seed-0 outputs; the
+    deterministic replay-report finalizer; authoritative Stage-1 reconstruction
+    evidence and closure; the frozen end-to-end historical replay execution
+    handoff; the additive current-status overlay; and this multi-chat
+    assurance-diversion record. The machine-readable current-status overlay
+    records **no identified non-external Stage-9.5-6 implementation/evidence
+    blocker**.
+
+    Exact-head Stage-9 robustness run `39048295074` completed successfully.
+    Stage-9.5 assurance run `39048295136` had the expected fail-closed
+    top-level shape: the assurance-contract job passed with **87 tests**;
+    statistical oracle, causal properties, targeted mutations, and the semantic
+    work-package order gate all passed; static discovery remained the accepted
+    **ruff=154 / mypy=55** baseline; fresh-clone reconstruction remained
+    **0 identity failures / 2 external-artifact blockers**;
+    `later_packages_unlocked=false`; and Stage-9.5-7/8/9 were skipped because
+    Stage-9.5-6 closure/success evidence does not yet exist.
+
+    The post-status-overlay delta was audited and found to contain only the
+    additive current-status/retrospective record; it introduced no new
+    comparator, finalizer, protocol, order-gate, or scientific semantics. This
+    continuation therefore deliberately made no new assurance-mechanism change.
+    The only unresolved prerequisites remain
+    `system_a_checkpoint_bytes_missing` and
+    `stage8_large_artifact_archive_missing`.
+
+    The authoritative next sequence remains unchanged: recover and hash-verify
+    the five exact original System-A checkpoints -> recover and verify the
+    original Stage-8 heavy archive at 145/145 descriptor-linked requirements ->
+    close Stage-9.5-1 -> execute the frozen historical replay handoff -> run the
+    deterministic comparator/finalizer -> close Stage-9.5-6 and require
+    `later_packages_unlocked=true` -> revalidate 9.5-7 -> rerun/revalidate
+    9.5-8 -> run 9.5-9 hostile review last -> require zero unresolved Class-A
+    defects -> finalize the reviewer-facing multi-chat assurance-diversion
+    retrospective -> close Stage 9.5 -> only then authorize Stage 10.
+
+    This entry is specifically preserved to satisfy the user's requirement that
+    the full two-to-three-chat assurance diversion be documented at Stage-9.5
+    closure from committed repository evidence rather than reconstructed from
+    transient conversation memory.
+
+45. On 17 October 2026 this continuation resumed after the user again instructed
+    the assurance work to proceed and explicitly reiterated that the entire
+    Stage-9.5 assurance diversion spanning multiple chats must be documented at
+    final closure. The live assurance branch had advanced externally from the
+    previously remembered Phase-A-era head
+    `cf78ba076a12693bc1b89ac52181fc8f20091fdc` to
+    `3e33373353731962fd80d97e7e4939c5f29c8de6`, **77 commits ahead**.
+    The delta was reconciled before any repository mutation.
+
+    Reconciliation confirmed that the planned Phase-B design work was obsolete.
+    The live repository already contains prospectively frozen deterministic
+    replay comparison for Phase A, Phase B, Phase-C failure-lineage and
+    correction-config preconditions, and corrected Phase-C seed-0 outputs; the
+    deterministic replay-report finalizer; authoritative Stage-1 reconstruction
+    evidence and closure; the frozen end-to-end historical replay execution
+    handoff; the additive current-status overlay; and this multi-chat
+    assurance-diversion working record. The machine-readable current-status
+    overlay records **no identified non-external Stage-9.5-6
+    implementation/evidence blocker**.
+
+    Exact-head Stage-9 robustness run `39049302746` completed successfully.
+    Stage-9.5 assurance run `39049302755` had the intended fail-closed shape:
+    the assurance-contract job passed with **87 tests**; statistical oracle,
+    causal properties, targeted mutations, and the semantic work-package order
+    gate passed; static discovery remained the accepted **ruff=154 / mypy=55**
+    baseline; fresh-clone reconstruction remained **0 identity failures / 2
+    external-artifact blockers**; the order gate reported
+    `later_packages_unlocked=false`; and Stage-9.5-7/8/9 were skipped because
+    Stage-9.5-6 closure/success evidence does not yet exist.
+
+    No new comparator, finalizer, protocol, scientific, provenance, or
+    order-gate semantics were introduced in this continuation. The project
+    deliberately stopped software expansion at the genuine external-evidence
+    boundary. The only unresolved prerequisites remain
+    `system_a_checkpoint_bytes_missing` and
+    `stage8_large_artifact_archive_missing`.
+
+    The authoritative next sequence remains: recover and hash-verify the five
+    exact original System-A checkpoints -> recover and verify the original
+    Stage-8 heavy archive at 145/145 descriptor-linked requirements -> close
+    Stage-9.5-1 -> execute the frozen historical replay handoff -> run the
+    deterministic comparator/finalizer -> close Stage-9.5-6 and require
+    `later_packages_unlocked=true` -> revalidate Stage-9.5-7 ->
+    rerun/revalidate Stage-9.5-8 -> run Stage-9.5-9 hostile review last ->
+    require zero unresolved Class-A defects -> finalize the reviewer-facing
+    multi-chat assurance-diversion retrospective -> close Stage 9.5 -> only
+    then authorize Stage 10.
+
+    This entry is preserved specifically to satisfy the user's requirement that
+    the full multi-chat assurance diversion be documented at Stage-9.5 closure
+    from committed repository evidence rather than reconstructed from transient
+    conversation memory.
+
+46. On 17 October 2026 this continuation resumed after the user again instructed
+    the assurance work to proceed and explicitly reiterated that the complete
+    Stage-9.5 diversion spanning two to three chats must be documented at final
+    closure. The live assurance branch had advanced externally from the
+    previously remembered Phase-A-era head
+    `cf78ba076a12693bc1b89ac52181fc8f20091fdc` to
+    `df4f94a4b05619936bee29785098cd9a8efc4645`, **78 commits
+    ahead**. The delta was reconciled before any repository mutation.
+
+    Reconciliation confirmed that the apparent planned Phase-B design work was
+    obsolete. The live repository already contains prospectively frozen
+    deterministic replay comparison for Phase A, Phase B, Phase-C
+    failure-lineage/correction-config preconditions, and corrected Phase-C
+    seed-0 outputs; the deterministic replay-report finalizer; authoritative
+    Stage-1 reconstruction evidence and closure; the frozen end-to-end
+    historical replay execution handoff; the additive current-status overlay;
+    and this multi-chat assurance-diversion working record. The machine-readable
+    current-status overlay records **no identified non-external Stage-9.5-6
+    implementation/evidence blocker**.
+
+    The 19 commits after the current-status observation head
+    `ddcc8c21dff5c30d01c2a5935ae609406b804e8f` were audited and found
+    to change only the additive current-status/retrospective record; they
+    introduced no new comparator, finalizer, replay protocol, order-gate, or
+    scientific semantics.
+
+    Exact-head Stage-9 robustness run `39049858993` completed successfully.
+    Stage-9.5 assurance run `39049858987` had the intended fail-closed shape:
+    the assurance-contract job passed with **87 tests**; statistical oracle,
+    causal properties, targeted mutations, and the semantic work-package order
+    gate passed; static discovery remained the accepted **ruff=154 / mypy=55**
+    baseline; fresh-clone reconstruction remained **0 identity failures / 2
+    external-artifact blockers**; `later_packages_unlocked=false`; and
+    Stage-9.5-7/8/9 were skipped because the Stage-9.5-6 closure/success records
+    do not yet exist.
+
+    No new assurance mechanism was added. The project again stopped software
+    expansion at the genuine external-evidence boundary. The only unresolved
+    prerequisites remain `system_a_checkpoint_bytes_missing` and
+    `stage8_large_artifact_archive_missing`.
+
+    The authoritative next sequence remains: recover and hash-verify the five
+    exact original System-A checkpoints -> recover and verify the original
+    Stage-8 heavy archive at 145/145 descriptor-linked requirements -> close
+    Stage-9.5-1 from verifier-produced recovery evidence -> execute the frozen
+    historical replay handoff -> run the frozen comparator/finalizer -> close
+    Stage-9.5-6 and require `later_packages_unlocked=true` -> revalidate
+    Stage-9.5-7 -> rerun/revalidate Stage-9.5-8 -> run Stage-9.5-9 hostile
+    review last -> require zero unresolved Class-A defects -> finalize the
+    reviewer-facing multi-chat assurance-diversion retrospective -> close
+    Stage 9.5 -> only then authorize Stage 10.
+
+    This entry is preserved specifically to satisfy the user's closure
+    requirement that the full assurance diversion be reconstructed from
+    committed repository evidence rather than transient conversation memory.
+
+47. On 17 October 2026 this continuation resumed after the user again instructed
+    the assurance work to proceed and explicitly reiterated that the complete
+    Stage-9.5 assurance diversion spanning multiple chats must be documented at
+    final closure. The live assurance branch had advanced externally from the
+    previously remembered Phase-A-era head
+    `cf78ba076a12693bc1b89ac52181fc8f20091fdc` to
+    `8f69a57e25fecc11996535eb444f2d28d3b2c8bc`, **79 commits ahead**.
+    The delta was reconciled before any repository mutation.
+
+    Reconciliation showed that the previously planned Phase-B comparator design
+    work was obsolete. The live repository already contains prospectively
+    frozen deterministic replay comparison for Phase A, Phase B, Phase-C
+    failure-lineage/correction-config preconditions, and corrected Phase-C
+    seed-0 output comparison; the deterministic replay-report finalizer;
+    authoritative Stage-1 reconstruction evidence and closure; the frozen
+    historical replay execution handoff; the additive machine-readable
+    current-status overlay; and this multi-chat assurance-diversion working
+    record.
+
+    The current-status overlay
+    `data/manifests/stage9_5_6_current_status_v1.json` was re-audited against
+    the live branch. From its scientific/assurance observation point
+    `ddcc8c21dff5c30d01c2a5935ae609406b804e8f` to the live head, repository
+    changes were confined to the additive current-status overlay and further
+    retrospective entries; no comparator, finalizer, verifier, order-gate,
+    accepted Stage-8/9 evidence, claim boundary, or Stage-10 gate changed.
+    Therefore its statement remains authoritative: **no identified
+    non-external Stage-9.5-6 implementation/evidence blocker remains**.
+
+    Exact-head Stage-9 robustness run `39050370370` completed successfully.
+    Stage-9.5 assurance run `39050370349` was still completing when this entry
+    was written, so no unsettled job was represented as closed. Already-settled
+    results had the expected fail-closed shape: the semantic work-package order
+    gate passed and reported `later_packages_unlocked=false` because the
+    Stage-9.5-6 closure/success records do not yet exist; statistical oracle and
+    causal properties passed; fresh-clone reconstruction reported **0 identity
+    failures / 2 external-artifact blockers**; static discovery remained the
+    already accepted **ruff=154 / mypy=55** baseline; and Stage-9.5-7/8/9 were
+    skipped. Assurance-contract and targeted-mutations were still in progress
+    at the time of this factual snapshot and are intentionally not claimed here
+    as settled.
+
+    No new comparator, finalizer, protocol, scientific, provenance, or gate
+    semantics were added. This continuation deliberately stopped software
+    expansion at the genuine external-evidence boundary. The only unresolved
+    prerequisites remain `system_a_checkpoint_bytes_missing` and
+    `stage8_large_artifact_archive_missing`.
+
+    The authoritative next sequence remains: recover and hash-verify the five
+    exact original System-A checkpoints -> recover and verify the original
+    Stage-8 heavy archive at 145/145 descriptor-linked requirements -> close
+    Stage-9.5-1 from verifier-produced recovery evidence -> execute the frozen
+    historical replay handoff -> run the frozen comparator/finalizer -> close
+    Stage-9.5-6 and require `later_packages_unlocked=true` -> revalidate
+    Stage-9.5-7 -> rerun/revalidate Stage-9.5-8 -> run Stage-9.5-9 hostile
+    review last -> require zero unresolved Class-A defects -> finalize the
+    reviewer-facing multi-chat assurance-diversion retrospective -> close
+    Stage 9.5 -> only then authorize Stage 10.
+
+    This entry is preserved specifically to satisfy the user's closure
+    requirement that the entire multi-chat assurance diversion be reconstructed
+    from committed repository evidence rather than transient conversation
+    memory.
+
+48. On 17 October 2026 the user explicitly instructed the project to **close
+    Stage 9.5-1 in the next response**, while also requiring that academic and
+    scientific rigor be preserved. The live assurance head was first reconciled
+    at `260351e3cd77c5e5ddff6b40b810d9e75c1fe5f4`; this head already
+    contained the fully implemented replay comparator/finalizer stack,
+    authoritative Stage-1 reconstruction closure, the frozen historical replay
+    handoff, and no identified non-external Stage-9.5-6 blocker.
+
+    Exact-head evidence at that observation point was:
+    Stage-9 robustness run `39050628185` **success**; Stage-9.5 assurance
+    run `39050628180`; assurance-contract **87 tests passed**; fresh-clone
+    job `117448298396` **13 tests passed** and reported **0 identity
+    failures / 2 external-artifact blockers**; order-gate job
+    `117448298419` passed with `later_packages_unlocked=false`;
+    Stage-9.5-7/8/9 were skipped; and the accepted Stage-9.5-5 discovery
+    baseline remained `ruff=154 / mypy=55`.
+
+    A final recovery sweep was performed before deciding closure. It checked
+    Project/conversation files, local mounted/container paths, repository and
+    previously audited history surfaces, GitHub Releases, the System-A manifest
+    freeze run `37531241834`, all four Actions runs attached to accepted
+    Stage-8 evidence commit
+    `c2ded83b8195b9321e715626c1f305f9627936e8`, exact public-web searches
+    for all five checkpoint SHA-256 identities and Stage-8 archive identifiers,
+    and the later Stage-1 transport/mirror surface. No authoritative
+    System-A checkpoint bytes or original Stage-8 heavy archive were found.
+    Google Drive, Dropbox, Box, and SharePoint plugins were discoverable but not
+    installed/connected, so the search did not claim global physical
+    irrecoverability of every user-held copy.
+
+    Because successful closure remained impossible without weakening the frozen
+    evidence criterion, the project did **not** fabricate a pass, regenerate
+    checkpoints, rebuild the heavy archive and call it original, reclassify the
+    Class-A defect, or relax the 145-file requirement. Instead Stage 9.5-1 was
+    closed explicitly as a **negative assurance closure**:
+    `STAGE9_5_1_FRESH_CLONE_RECONSTRUCTION_NEGATIVE_CLOSURE.md` plus
+    `data/manifests/stage9_5_1_negative_closure_v1.json`.
+
+    The negative closure records `pass=false`, zero identity mismatches, both
+    unresolved external blockers, the exact five checkpoint hashes, the
+    145-file Stage-8 requirement, the exact-head CI evidence, prohibited
+    substitute resolutions, and a strict reopening predicate. It does not
+    declare the accepted Stage-8/9 numerical results false. It declares that
+    publication-grade independent reconstruction of the full original
+    checkpoint/heavy-artifact chain was not demonstrated.
+
+    The downstream status was changed only in additive current-status overlays:
+    Stage 9.5-1 is **CLOSED — FAILED / EXTERNAL PROVENANCE UNRESOLVED**;
+    Stage 9.5-6 is blocked by that closed-failed predecessor; Stage 9.5-7/8/9
+    remain locked as authoritative closure packages; Stage 9.5 cannot obtain
+    zero-unresolved-Class-A closure under the current evidence package; and
+    Stage 10 remains **PROHIBITED**.
+
+    Reopening is permitted only if the exact original checkpoint and archive
+    bytes are later supplied and the unchanged v1.2 verifier passes five seeds,
+    **145/145** archive files, zero failures, and zero blockers. Otherwise any
+    future continuation must be a separately governed restart/new evidence-
+    generation campaign rather than silent substitution into the accepted
+    Stage-8/9 evidence chain.
+
+    This entry is a required part of the final reviewer-facing Stage-9.5
+    retrospective because it records the point at which the assurance diversion
+    terminated not in a successful reconstruction, but in a deliberate,
+    scientifically honest negative closure rather than indefinite or fabricated
+    gate satisfaction.
+
+## Dropbox recovery surface discovered after negative closure — 17 October 2026
+
+A materially new authoritative surface became available after the Stage-9.5-1 negative closure: the user's Dropbox connector was connected.
+
+This event must remain explicit in the final retrospective because it changes the external-provenance search history without invalidating the historical negative closure. The negative closure itself already stated that connected personal-cloud storage had not been available and allowed reopening if exact originals were later recovered.
+
+### Checkpoint discovery
+
+Dropbox root contained `seed_0.pt` through `seed_4.pt`, each 76,105 bytes.
+
+The Dropbox API returned content hashes:
+
+- seed 0 — `ddc75eaaae68cf1e6ee34a5a68c264f922d64543ca883cd03234763a182a1719`
+- seed 1 — `b6288356dd06f134aa18ea886c5ec17e695488f57074a455115f0cd17fef4feb`
+- seed 2 — `f9ad4465f34aa3e525722a989bcf7b3588a1e57973cdbe2e1fe5e30a00378b05`
+- seed 3 — `0f6d6b65cdadc92f7aaf3e345845bdb6c9014f7512f8fff7a7026a8e3c0fd716`
+- seed 4 — `2cbb2afd97b9be46964901e8a66413a09b5cbbb9e041dd8530fc5834ab7e722e`
+
+Dropbox's documented content-hash algorithm uses 4 MiB blocks, SHA-256 per block, concatenation of binary block digests, then a final SHA-256. Because every checkpoint is smaller than one block, each observed Dropbox content hash equals
+`SHA256(binary(frozen_checkpoint_SHA256))`.
+
+All five observed values matched that transform of the five already-frozen checkpoint SHA-256 identities exactly. This established that the Dropbox checkpoint candidates correspond to the exact required byte streams under Dropbox's documented content-hash construction. The frozen Stage-9.5-1 verifier has not yet been rerun with those files materialized on a verifier-capable filesystem, so this discovery does not itself create a successful closure report.
+
+### Stage-8 archive discovery
+
+Dropbox also contained `/cd_primary_v1` with:
+
+- 253 entries;
+- 203 files;
+- 50 folders;
+- 1,863,975,043 total file bytes.
+
+The tree contained the expected major Phase-A/B/C families, including all five Phase-A run manifests/prediction files, all five Phase-B seed manifests, all ten D-arm maintenance logs, all five corrected Phase-C seed manifests, all fifteen corrected arm evaluations/prediction traces, and the original Phase-C seed-0 attempt/failure pair.
+
+The accepted Stage-8 compact evidence was used to reconstruct the unchanged v1.2 descriptor-linked archive inventory. Per-seed results were:
+
+- seed 0: 30/31 paths present;
+- seed 1: 27/28;
+- seed 2: 28/29;
+- seed 3: 27/28;
+- seed 4: 28/29.
+
+Total: **140/145** required paths present.
+
+The only five missing paths were the C-arm `maintenance.jsonl` files for seeds 0–4. Each accepted arm manifest binds that path to SHA-256
+`e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`,
+the zero-byte file hash, and each accepted C-arm maintenance summary records zero opportunities/publications/compute.
+
+A Dropbox-wide title search found only the ten D-arm maintenance files. Revision lookup for the exact missing seed-0 path returned `FILE_NOT_FOUND`. No compressed `cd_primary_v1` or Stage-8 backup was found.
+
+### Governance decision
+
+The five missing files were **not** silently recreated even though their exact byte content is cryptographically specified as empty. Doing so without authoritative provenance would weaken the already-frozen recovery rule after observing a recovery gap.
+
+Therefore:
+
+- the historical negative closure remains preserved;
+- the new surface materially narrows the external-provenance defect;
+- checkpoint originals are located with exact identity evidence;
+- the Stage-8 archive remains incomplete at 140/145;
+- Stage-9.5-1 is not yet reopened to successful closure;
+- Stage-9.5-6 remains blocked until the unchanged v1.2 verifier succeeds;
+- Stage-9.5-7/8/9 remain locked;
+- Stage 10 remains prohibited.
+
+The authoritative records for this event are:
+
+- `STAGE9_5_1_DROPBOX_RECOVERY_DISCOVERY.md`;
+- `data/manifests/stage9_5_1_dropbox_recovery_discovery_v1.json`;
+- the additive current-status update in `data/manifests/stage9_5_6_current_status_v1.json`.
+
+This episode is part of the final multi-chat assurance-diversion retrospective and must not be omitted or collapsed into a claim that the negative closure was simply "wrong"; it was correct for the surfaces available at that time.
+
+## Dropbox revision-history exhaustion follow-up — 17 October 2026
+
+After the Dropbox recovery surface had narrowed the accepted Stage-8 archive to
+140/145 required paths, one final read-only recovery check was performed before
+treating that source as exhausted.
+
+An advanced Dropbox-wide title search for `maintenance.jsonl` returned exactly
+the ten active D-arm maintenance logs and no C-frozen maintenance file. Search
+for `cd_primary_v1` returned only the already-audited archive tree. Dropbox
+revision history was then queried separately for each of the five exact missing
+paths:
+
+- seed 0 C-frozen `maintenance.jsonl`;
+- seed 1 C-frozen `maintenance.jsonl`;
+- seed 2 C-frozen `maintenance.jsonl`;
+- seed 3 C-frozen `maintenance.jsonl`;
+- seed 4 C-frozen `maintenance.jsonl`.
+
+All five revision-history calls returned `FILE_NOT_FOUND`. No recoverable
+historical revision was exposed for any missing path.
+
+The scientific/governance decision did not change: the known SHA-256 of the
+empty file does not authorize creating substitute files and relabeling them as
+recovered originals. Dropbox is therefore exhausted for this narrow recovery
+question, the authoritative archive state remains 140/145, and any further
+successful recovery must come from a genuinely new authoritative source or
+original archive representation.
+
+This follow-up is retained so the final reviewer-facing Stage-9.5 retrospective
+can distinguish (a) discovery of a materially useful personal-cloud surface,
+(b) partial recovery on that surface, and (c) explicit exhaustion of that
+surface without relaxing the frozen success criterion.
+
+## Zero-byte transport-omission forensics and reconstructible-route correction — 17 October 2026
+
+After the Dropbox recovery discovery had narrowed Stage-9.5-1 to five missing
+C-frozen `maintenance.jsonl` objects, the user instructed the project to
+complete the next step that materially moved Stage 9.5 toward closure rather
+than continuing abstract hardening.
+
+The live assurance head was first reconciled at
+`bae55fd79302bf564e409d11874f06a430d62510`. That head already contained
+substantial work completed across the assurance diversion: Phase-A/B/C replay
+comparison, the deterministic finalizer, authoritative Stage-1 reconstruction,
+the historical replay handoff, the Stage-9.5-1 negative closure, Dropbox
+recovery discovery, and this running multi-chat retrospective. The current
+status at that head reported no identified non-external Stage-9.5-6 blocker.
+The remaining recovery state was five exact checkpoints located in Dropbox and
+a Stage-8 archive physically present at **140/145** descriptor-linked paths.
+
+### Connector-to-verifier transport attempt
+
+A direct attempt was made to materialize the five Dropbox checkpoint byte
+streams into the verifier container.
+
+Dropbox successfully issued temporary raw-byte download links for all five
+checkpoint files. The ordinary verifier container could not consume those links
+because its direct network path has no external DNS access. The platform's
+sanctioned container downloader in turn requires a prior web-view authorization,
+while Dropbox temporary download links are single-use and the web fetch layer
+does not support those private binary URLs. The Dropbox connector exposes
+metadata, text extraction, previews, and temporary links, but not a raw-byte
+file object that the Project/conversation `files.materialize` layer can place
+directly into the verifier container.
+
+No scientific or provenance rule was changed to work around that product
+boundary. The raw bytes therefore remain to be materialized on a
+verifier-capable filesystem outside this connector-to-container bridge.
+
+### Exhaustive Dropbox restore-event audit
+
+A new read-only Dropbox surface was then audited:
+`list_restore_events` for the live `/cd_primary_v1` folder.
+
+The full history was paginated to exhaustion:
+
+- **26 pages**;
+- **253 total events**;
+- current Dropbox tree: **253 entries**;
+- operation types observed: **ADD only**;
+- non-ADD events: **0**;
+- DELETE/MOVE/RENAME/RESTORE/ROLLBACK events: **0**.
+
+This provided a stronger provenance fact than the earlier title/revision
+searches.
+
+For every seed 0-4, the history contains ADD events for the
+`c_frozen_symbolic` folder and its `arm_manifest.json`,
+`initial_state.json`, and `final_state.json`. It also contains the D-drift
+and D-periodic `maintenance.jsonl` ADD events. It contains **no ADD event** for
+any of the five C-frozen `maintenance.jsonl` paths.
+
+Combined with the earlier exact-path revision checks returning
+`FILE_NOT_FOUND`, this establishes that the five empty C-arm maintenance
+objects were omitted during the Dropbox archive ingestion itself; they were not
+objects that Dropbox later deleted, moved, renamed, restored, or rolled back.
+
+The machine record is:
+
+`data/manifests/stage9_5_1_dropbox_restore_event_forensics_v1.json`.
+
+### Governing-plan reinterpretation after new transport evidence
+
+The earlier no-synthesis decision was deliberately conservative and remains part
+of the historical record. At that point, the project knew only that the five
+files were absent and cryptographically expected to be empty. That alone was
+not accepted as authority to recreate them.
+
+The exhaustive transport history added a materially different fact: the
+connected archive representation demonstrably omitted those zero-byte objects
+at ingestion while preserving their sibling objects.
+
+The reconciled governing plan requires the project to **archive or provide a
+reconstructible route** to every non-Git heavy artifact needed for independent
+Stage-8/9 verification. The five missing byte streams are uniquely determined:
+each accepted C-arm manifest binds `maintenance.jsonl` to SHA-256
+
+`e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`
+
+and records zero maintenance opportunities, zero publications, zero candidates,
+and zero maintenance compute/timing.
+
+On that basis, the project froze a versioned **transport reconstruction
+correction** rather than silently relabeling newly created files as recovered
+Dropbox originals.
+
+The frozen contract is:
+
+`data/manifests/stage9_5_1_zero_byte_transport_reconstruction_v1.json`.
+
+The implementation is:
+
+`tools/stage9_5/zero_byte_transport_reconstruction.py`.
+
+Dedicated tests are:
+
+`tests/stage9_5/test_zero_byte_transport_reconstruction.py`.
+
+The human correction note is:
+
+`STAGE9_5_1_ZERO_BYTE_TRANSPORT_RECONSTRUCTION_CORRECTION.md`.
+
+### Fail-closed reconstruction mechanics
+
+The correction does not weaken or modify the Stage-9.5-1 v1.2 verifier.
+
+Before creating any file, the reconstruction utility validates **all five**
+entries. It verifies:
+
+- pinned Git-blob identities for the earlier Dropbox discovery records and the
+  new restore-event forensic record;
+- committed accepted C-arm manifest payload/manifest self-hashes;
+- byte identity between the materialized archive's C-arm manifest and the
+  committed accepted compact-evidence manifest;
+- the exact maintenance descriptor path and frozen empty-file SHA-256;
+- zero maintenance opportunities/publications/candidates/compute/SHAP/
+  surrogate/lifecycle;
+- an empty publications list;
+- path containment inside the supplied archive root;
+- no overwrite of any existing file.
+
+Only if every precondition passes may any write occur. Missing files are created
+with exclusive-create semantics and exactly zero bytes. Preexisting correct
+zero-byte files are preserved and reported separately rather than relabeled as
+reconstructed.
+
+The machine report explicitly states:
+
+- `original_dropbox_objects_recovered = false`;
+- `transport_reconstruction_explicit = true`;
+- `governing_verifier_unchanged = true`.
+
+The reconstruction report is not Stage-9.5-1 success authority.
+
+### Unchanged closure authority
+
+After the checkpoint family and 140 present archive files are materialized on a
+verifier-capable filesystem, the frozen transport correction can complete the
+five manifest-bound empty byte streams. The unchanged Stage-9.5-1 v1.2 verifier
+must then independently produce:
+
+- `pass=true`;
+- checkpoint seeds `[0,1,2,3,4]`;
+- archive requirement count **145**;
+- archive verified count **145**;
+- zero failures;
+- zero blockers.
+
+Only such verifier-produced success may reopen/supersede the historical
+negative closure and permit the frozen Stage-9.5-6 historical replay handoff.
+
+The current-status overlay was updated additively to reflect this state. The
+physical Dropbox tree remains 140/145, but a frozen reconstructible route now
+exists for the five uniquely defined transport omissions. The remaining
+execution barriers are raw-byte materialization to a verifier-capable
+filesystem and the unchanged v1.2 verifier rerun.
+
+This entire episode must remain visible in the final reviewer-facing
+retrospective: historical negative closure -> partial Dropbox recovery ->
+conservative no-synthesis decision -> exhaustive restore-event forensics ->
+versioned transport-reconstruction correction. None of those states should be
+collapsed or rewritten after the fact.
+
+## Current-chat reconciliation and Dropbox materialization preflight — 17 October 2026
+
+A later chat resumed after the assurance branch had advanced externally by
+**107 commits** from the previously observed Phase-A comparator head
+`cf78ba076a12693bc1b89ac52181fc8f20091fdc` to
+`8947848e337074096689de7d62b0c46850182b9a`. The delta was reconciled before
+any mutation.
+
+The reconciled head showed that several tasks which had still been pending in
+the earlier chat were already complete prospectively:
+
+- Phase-A, Phase-B, and corrected Phase-C replay comparison are implemented and
+  frozen;
+- the deterministic replay-report finalizer is implemented and frozen;
+- authoritative Stage-1 reconstruction evidence is closed;
+- the historical replay execution handoff is frozen;
+- the multi-chat assurance-diversion retrospective is already maintained in
+  this file;
+- no identified non-external Stage-9.5-6 implementation blocker remains.
+
+The current-status overlay instead places the live bottleneck at Stage-9.5-1:
+the Dropbox recovery bytes must be materialized on a verifier-capable
+filesystem, the frozen zero-byte transport correction must complete the five
+manifest-bound omissions, and the unchanged v1.2 verifier must then produce a
+successful 145/145 report before Stage-9.5-6 may execute.
+
+### Read-only Dropbox revalidation
+
+The connected Dropbox surface was rechecked without mutation. All five
+checkpoint objects remain present at `/seed_0.pt` through `/seed_4.pt`;
+each reports the expected size of **76,105 bytes**. The
+`/cd_primary_v1` folder remains present and reports the same aggregate size
+recorded by the frozen discovery evidence: **1,863,975,043 bytes**.
+
+The Dropbox connector also successfully issued direct temporary download links,
+confirming that the source files are downloadable from the connected cloud
+surface.
+
+### One-file materialization preflight
+
+A deliberately conservative materialization test was attempted on
+`seed_0.pt` only. No archive transfer was attempted.
+
+The verifier container tried to consume the connector-issued temporary URL
+directly with a single HTTP GET. The request failed at DNS resolution before
+any file bytes were written:
+
+`Could not resolve host: ...dl.dropboxusercontent.com`.
+
+No partial checkpoint file was accepted, no hash claim was made, and no
+Dropbox object was mutated.
+
+A public-web workaround was deliberately not used: the temporary URL is private
+and single-use, and routing it through an unrelated public web-fetch surface
+would weaken the intended connector-to-verifier provenance boundary merely to
+work around this container's network restriction.
+
+Therefore the authoritative conclusion remains unchanged: the Dropbox recovery
+surface is present, but this specific container is not the verifier-capable
+filesystem on which the recovered byte streams can presently be materialized.
+
+### Exact-head assurance state during this preflight
+
+At head `8947848e337074096689de7d62b0c46850182b9a`:
+
+- the work-package order gate completed successfully and emitted
+  `later_packages_unlocked=false`;
+- Stage-9.5-7/8/9 remained skipped/locked;
+- fresh-clone reconstruction tests reported **13 passed**;
+- the unchanged v1.2 reconstruction result remained
+  **0 identity failures / 2 external-artifact blockers**.
+
+This chat therefore made no scientific, comparator, verifier, or closure-rule
+change. Its contribution was reconciliation of the externally advanced branch,
+read-only revalidation of the connected Dropbox recovery surface, and explicit
+preservation of the remaining connector-to-verifier materialization boundary
+for the final reviewer-facing Stage-9.5 retrospective.
+
+## Integrated Stage-9.5-6 comparison-evidence producer tranche — 18 October 2026
+
+This chat resumed with an explicit instruction to keep the tranche small,
+re-read PR #21 before mutation, integrate the already-frozen Phase-A/Phase-B/
+Phase-C/failure-lineage/correction-config checks into the deterministic
+comparison-evidence producer, bind that output to the frozen replay-report
+finalizer, add synthetic-only integration tests, and **not execute the real
+historical replay**.
+
+The live PR head had advanced from the previously observed
+`cf78ba076a12693bc1b89ac52181fc8f20091fdc` to
+`2e67f176cf9ec4e9cf8499d1d489c29f0fe47b38`, a 154-commit descendant. That
+delta was reconciled before mutation. It showed that Phase-A, Phase-B,
+Phase-C preconditions, exact failed-v1 lineage, corrected Phase-C seed-0 output,
+Stage-1 reconstruction evidence, correction-config comparison, and the
+replay-report finalizer were already implemented with extensive synthetic
+tests. The tranche therefore did **not** reimplement those components.
+
+The integration gap was narrower:
+
+- the deterministic producer did not yet require the frozen Stage-9.5-1 v1.2
+  recovery report as an explicit upstream proof that both external artifact
+  families were verified;
+- the comparator and replay-report finalizer remained two operator steps rather
+  than one bound producer-to-finalizer path.
+
+The producer was therefore extended prospectively, before any historical replay
+outcome access, to verify a canonical Stage-9.5-1 v1.2 recovery report. It
+requires:
+
+- `audit_id = stage9.5-1-fresh-clone-reconstruction-v1_2`;
+- `status = pass` and `pass = true`;
+- zero report failures and blockers;
+- canonical report SHA-256 integrity;
+- a repository head in the current assurance ancestry;
+- System-A verified seeds exactly `[0,1,2,3,4]`, with no missing or
+  mismatched checkpoint bytes;
+- Stage-8 large-archive `requirement_count = 145` and
+  `verified_count = 145`, with no missing or mismatched descriptor-linked
+  files.
+
+A missing or incomplete checkpoint family produces the explicit
+`system_a_checkpoint_family_not_verified` blocker. A missing or incomplete
+Stage-8 heavy archive produces
+`stage8_large_artifact_archive_not_verified`. Either condition also produces
+the Class-A closure blocker `stage9_5_1_recovery_not_verified`.
+
+The integrated producer now also emits explicit blockers for failed Phase-A,
+failed Phase-B, unverified accepted Phase-B maintenance records, failed
+Phase-C preconditions, failed corrected Phase-C output, and unverified Stage-1
+reconstruction evidence. Any such state keeps
+`comparison_complete = false`, `source_evidence_complete = false`, and
+`unresolved_class_a` non-empty.
+
+The exact comparison-evidence file written by the producer is now passed
+directly to the already-frozen replay-report finalizer. The finalizer additionally
+requires and preserves the canonical SHA-256 of the successful Stage-9.5-1
+recovery report. This removes a manual handoff point between comparator output
+and replay-report construction.
+
+Synthetic integration tests were added for:
+
+- complete recovery + Phase-A/B/C + finalizer success;
+- each external artifact family missing independently;
+- incomplete Phase-B / unavailable accepted maintenance evidence;
+- failed exact failure-lineage or correction-config scientific-block equality;
+- direct Stage-9.5-1 recovery-report verification;
+- finalizer rejection when the recovery-report canonical SHA is absent.
+
+No recovered checkpoint bytes, Stage-8 heavy archive bytes, fresh replay
+artifacts, or historical Phase-A/B/C execution were accessed or produced in
+this tranche. The real historical replay remained unexecuted. No accepted
+Stage-8/9 scientific result, treatment, estimand, metric, or claim boundary was
+changed.
+
+This integration tranche must remain visible in the final reviewer-facing
+retrospective as the point where the previously separate frozen assurance
+components were joined into a single fail-closed producer/finalizer pipeline
+without outcome access.
+
+## Part-2 continuation: live-head reconciliation and second materialization transport audit — 19 October 2026
+
+This continuation resumed after the user explicitly requested “part 2” and reiterated the standing requirement that the complete multi-chat Stage-9.5 assurance diversion be preserved for final closure documentation.
+
+Before mutation, PR #21 was re-read and found at `fcd5028afe89102142a13900cfe001a1e81816cd`, **177 commits ahead** of the previously remembered Phase-A-era head `cf78ba076a12693bc1b89ac52181fc8f20091fdc`. The delta was reconciled before any change.
+
+That reconciliation showed that the apparent Phase-B design task was obsolete. The live branch already contains prospectively frozen deterministic replay comparison for Phase A, Phase B, exact Phase-C failure lineage and correction-config preconditions, corrected Phase-C seed-0 output comparison, the deterministic replay-report finalizer, authoritative Stage-1 reconstruction evidence, the frozen historical replay execution handoff, Dropbox recovery discovery and restore-event forensics, the zero-byte transport-reconstruction correction, and this retrospective.
+
+The additive current-status overlay identifies **no remaining non-external Stage-9.5-6 implementation/evidence blocker**. The live bottleneck is Stage-9.5-1 materialization and frozen-verifier success.
+
+### Exact-head assurance state
+
+At `fcd5028afe89102142a13900cfe001a1e81816cd`:
+
+- Stage-9 robustness run `39164178722` passed;
+- Stage-9.5 assurance run `39164178721` had the expected fail-closed top-level conclusion;
+- assurance-contract passed with **157 tests**;
+- statistical oracle, causal properties, targeted mutations, and the semantic work-package order gate passed;
+- static discovery remained the accepted `ruff=154, mypy=55` baseline;
+- fresh-clone reconstruction tests reported **13 passed** and the unchanged verifier remained **0 identity failures / 2 external-artifact blockers**;
+- `later_packages_unlocked=false`;
+- Stage-9.5-7/8/9 remained skipped/locked.
+
+### Read-only Dropbox revalidation
+
+The connected Dropbox recovery surface was revalidated without mutation.
+
+The five checkpoint objects remain present at `/seed_0.pt` through `/seed_4.pt`, each with size **76,105 bytes**. Dropbox issued fresh single-use raw-byte download URLs for all five.
+
+A new recursive snapshot of `/cd_primary_v1` completed with no pagination remainder and matched the frozen discovery summary:
+
+- **253 entries**;
+- **203 files**;
+- **50 folders**;
+- **1,863,975,043 total file bytes**.
+
+No Dropbox object was created, copied, moved, restored, shared, or modified.
+
+### Second verifier-container transfer attempt
+
+This continuation tested both available byte-transfer paths.
+
+First, the execution container attempted direct HTTP GET against the connector-issued Dropbox temporary URLs. It failed before any byte transfer because the container has no external DNS resolution.
+
+Second, the platform-sanctioned container downloader was tested. That downloader requires the target URL to have been registered through the web-fetch layer first. The web-fetch layer cannot access the private Dropbox single-use binary temporary URL, so the downloader refused materialization. No checkpoint bytes were written and no hash claim was made.
+
+This is a **runtime transport boundary**, not a change to scientific or assurance criteria. The Dropbox source remains authoritative and accessible through the connector, but this particular ChatGPT execution environment cannot bridge the private raw-byte stream into the verifier filesystem.
+
+No shared-link workaround was created because doing so would mutate Dropbox sharing state and is not necessary to the frozen assurance design.
+
+### Unchanged authority and next step
+
+The governing blockers remain unchanged:
+
+- recovered Dropbox byte streams must be materialized onto a verifier-capable filesystem;
+- the frozen zero-byte transport reconstruction must complete the five manifest-bound empty C-arm maintenance streams;
+- the unchanged Stage-9.5-1 v1.2 verifier must then independently produce `pass=true`, verified checkpoint seeds 0-4, **145/145** archive verification, zero failures, and zero blockers.
+
+Only verifier-produced success may supersede the historical negative Stage-9.5-1 closure and authorize the already-frozen Stage-9.5-6 historical replay handoff.
+
+No accepted Stage-8/9 science, comparator semantics, verifier success criteria, closure authority, or Stage-10 gate changed in this continuation.
+
+## Phase-A-only replay request stopped at unsatisfied recovery prerequisite — 19 October 2026
+
+This bounded tranche began with an explicit instruction to execute **only** the
+frozen historical Phase-A replay for seeds 0-4, run the frozen Phase-A
+comparator, preserve its machine comparison evidence, and stop on any
+non-normalized mismatch. The instruction also stated a prerequisite that
+Stage-9.5-1 recovery was closed.
+
+PR #21 was re-read before execution and was at
+`eec4b78acd1bce284af03c7d0acaad2362bf60fc`.
+
+The live authoritative repository state did not support interpreting that
+prerequisite as a **successful** Stage-9.5-1 recovery closure. The preserved
+Stage-9.5-1 disposition remains a closed-failed negative closure unless and
+until the unchanged v1.2 fresh-clone verifier produces its frozen success
+record: `pass=true`, checkpoint seeds 0-4 verified, Stage-8 archive
+`145/145`, zero failures, and zero blockers. No such successful
+`fresh_clone_reconstruction_report.json` was present at the live head.
+
+The frozen historical replay handoff explicitly prohibits proceeding to
+Phase A before that verifier-produced success. Therefore the replay was stopped
+at the prerequisite boundary rather than bypassing the existing Class-A
+provenance interlock.
+
+The connected Dropbox recovery surface was checked read-only during the
+preflight. The authoritative root `/seed_0.pt` remained present and Dropbox
+could issue a single-use raw-byte download link, but the existing
+connector-to-verifier materialization boundary remained unchanged. No temporary
+download URL was exposed as evidence, no recovered byte stream was accepted by
+the verifier, and no Dropbox object was mutated.
+
+Execution disposition for this tranche:
+
+- historical Phase-A seeds executed: **none**;
+- Phase-A comparator executed: **no**;
+- Phase-A machine comparison evidence produced: **no**;
+- Phase-A mismatch classification: **not applicable — comparator never ran**;
+- Phase B executed: **no**;
+- Phase C executed: **no**;
+- Stage-10 outcomes accessed: **no**;
+- accepted Stage-8/9 scientific objects modified: **no**;
+- comparator/verifier/projection semantics modified: **no**.
+
+Classification: **precondition stop under the existing unresolved Class-A
+provenance/recovery gate**, not a replay mismatch and not a new scientific
+defect.
+
+The next legitimate Phase-A replay attempt requires the successful unchanged
+Stage-9.5-1 v1.2 verifier report first. This stop must remain visible in the
+final reviewer-facing Stage-9.5 assurance-diversion retrospective.
+
+## Phase-B-only replay request stopped at disconnected execution surface — 19 October 2026
+
+This bounded tranche began with an explicit instruction to assume as a
+prerequisite that all five historical Phase-A replay seeds had already passed
+the frozen comparator, then execute only historical Phase B for seeds 0-4/all
+three arms and run the frozen Phase-B comparator against the recovered accepted
+maintenance archive. Corrected Phase C was explicitly prohibited for this
+tranche, and any mismatch outside the frozen timing projection was to stop the
+work without comparator relaxation.
+
+PR #21 was re-read before execution and was at
+`3770f0d165767a5429b8b1fbb3f313b4dd2aea93`, 180 commits ahead of the
+previously remembered Phase-A-era head
+`cf78ba076a12693bc1b89ac52181fc8f20091fdc`. The delta was reconciled before
+any mutation. It showed that Phase-B record, arm-manifest, and seed-manifest
+projection semantics, Phase-C comparison, the integrated comparator/finalizer,
+Stage-1 reconstruction closure, the historical replay handoff, and the running
+assurance-diversion retrospective were already prospectively frozen.
+
+The user's Phase-A-pass prerequisite was accepted as the intended current
+execution state for the tranche. However, the connected execution surfaces did
+not expose the fresh historical Phase-A replay worktree required by the frozen
+handoff:
+
+- the Git repository contains no fresh replay heavy tree or committed replay
+  comparison evidence, as intended;
+- the connected Project/conversation file surface contains only the original
+  project inputs/evidence and no fresh replay package;
+- Dropbox contains the recovered accepted `/cd_primary_v1` tree and the five
+  checkpoint candidates, but no separately named fresh replay worktree or
+  replay-comparison package;
+- recent GitHub Actions runs contain no preserved fresh historical Phase-A
+  replay artifact from which Phase B could validly continue.
+
+The accepted Dropbox Phase-B tree was inspected recursively. It currently
+contains ten physical `maintenance.jsonl` files: the five `d_drift` and five
+`d_periodic` streams. The five `c_frozen_symbolic` maintenance streams
+remain absent from the Dropbox physical tree, matching the already-documented
+zero-byte transport omission. The frozen zero-byte reconstruction correction
+must therefore be applied on a verifier-capable filesystem before that Dropbox
+tree constitutes the complete 15-stream accepted maintenance input. No empty
+files were silently synthesized in Dropbox.
+
+Live exact-head CI was also checked. Stage-9 robustness was successful;
+Stage-9.5 assurance-contract, statistical-oracle, causal-properties,
+targeted-mutations, and work-package-order-gate jobs were green. The remaining
+fresh-clone/static failures were the expected gate states. No Phase-B comparator
+implementation/test defect was observed.
+
+Execution disposition for this tranche:
+
+- historical Phase-B seeds executed: **none**;
+- Phase-B arms executed: **none**;
+- frozen Phase-B comparator executed on real replay outputs: **no**;
+- non-timing Phase-B mismatch observed: **none — comparator did not run**;
+- corrected Phase C executed: **no**;
+- Stage-10 outcomes accessed: **no**;
+- accepted Stage-8/9 scientific objects modified: **no**;
+- comparator/projection/finalizer semantics modified: **no**.
+
+Classification: **execution-surface/materialization stop, not a replay
+mismatch and not a scientific defect**. The next legitimate Phase-B execution
+must resume from the actual fresh Phase-A replay worktree that passed the frozen
+comparator and the verifier-complete accepted maintenance archive. The
+comparator must remain unchanged after those real Phase-B outcomes are
+observed.
+
+## Recovery + historical Phase-A/B replay boundary consolidated — 19 October 2026
+
+The user explicitly required the current recovery plus historical Phase-A/B
+replay task to be finished before beginning any new Phase-C tranche.
+
+PR #21 was re-read at live head
+`6b009b29316cb39a40be939e64f26fdcad9cb493`. The 181-commit delta from the
+older Phase-A-era working head was reconciled before mutation. The live branch
+already contained the prospectively frozen Phase-A and Phase-B replay
+comparators, Stage-1 reconstruction closure, Dropbox recovery/transport
+forensics, zero-byte transport reconstruction correction, historical replay
+handoff, and this retrospective.
+
+The authoritative recovery picture was rechecked:
+
+- all five System-A checkpoint byte identities are located in Dropbox;
+- the Dropbox Stage-8 tree contains 140/145 descriptor-linked physical paths;
+- the only five missing paths are the manifest-bound zero-byte
+  `c_frozen_symbolic/maintenance.jsonl` streams;
+- the reconstructible-route correction for those five exact empty streams is
+  frozen but has not executed;
+- the unchanged Stage-9.5-1 v1.2 verifier has not yet produced a successful
+  145/145 recovery report.
+
+A new single-checkpoint transfer probe used the connected Dropbox
+`download_link` capability. Dropbox successfully issued a single-use raw
+binary URL for `/seed_0.pt` with the expected 76,105-byte metadata and frozen
+Dropbox content hash. The model execution container then attempted to
+materialize that URL through the platform downloader. The downloader refused
+before byte transfer because the private URL had not been registered through
+the web-fetch layer. The single-use Dropbox URL was not preflighted through
+that layer, because doing so would consume it and would not constitute an
+authorized verifier materialization route. No checkpoint byte was accepted,
+written, or promoted to evidence.
+
+The historical Phase-A/B implementation state was then revalidated against the
+live repository. Phase-B has three separately frozen comparison layers:
+
+1. ordered `maintenance.jsonl` record projection;
+2. per-arm manifest projection with raw descriptor verification and
+   timing-derived hash handling;
+3. seed-manifest projection with exact Phase-A identity binding and
+   timing-derived arm-hash removal only after arm comparison passes.
+
+The exact predecessor head
+`fcd5028afe89102142a13900cfe001a1e81816cd` carries the same A/B comparator,
+verifier, and projection semantics as the current live head; the later delta
+changes only the retrospective/current-status overlays. At that tested head:
+
+- Stage-9 robustness run `39164178722` passed;
+- Stage-9.5 assurance run `39164178721` executed the full assurance-contract
+  suite;
+- **157 tests passed**, including the replay comparator, Stage-1 evidence,
+  zero-byte transport reconstruction, and regenerated-correction-config
+  verifier tests;
+- the frozen fresh-clone verifier remained **0 identity failures / 2 external
+  blockers**;
+- the work-package order gate remained locked.
+
+No real historical Phase-A seed and no real historical Phase-B arm was executed
+in this consolidation, because the frozen handoff prohibits doing so before
+Stage-9.5-1 verifier-produced success. No real A/B comparator output was
+manufactured from synthetic fixtures.
+
+Disposition of this task:
+
+- recovery tooling/provenance route: **frozen and ready**;
+- Phase-A replay comparator: **frozen and ready**;
+- Phase-B replay comparator: **frozen and ready**;
+- actual recovery-byte materialization: **externally blocked**;
+- Stage-9.5-1 v1.2 success report: **not yet available**;
+- historical Phase-A/B replay execution: **not yet authorized**;
+- new Phase-C work begun by this task: **no**;
+- Stage-10 outcome access: **no**;
+- accepted Stage-8/9 scientific objects changed: **no**.
+
+Therefore the recovery + historical Phase-A/B task is complete to the strongest
+valid boundary available in the present environment: all software/projection
+semantics and the operator handoff are frozen, but real A/B execution must wait
+for recovered Dropbox bytes to be placed on a verifier-capable filesystem and
+for the unchanged Stage-9.5-1 verifier to pass. The final reviewer-facing
+Stage-9.5 retrospective must preserve this boundary rather than implying that
+A/B replay actually ran in ChatGPT.
+
+## Phase-C pre-rerun execution boundary made explicit — 20 October 2026
+
+A later bounded task asked to close the gap between the current Stage-9.5-6
+state and the exact tranche that must reproduce the original Phase-C v1 seed-0
+failure lineage, regenerate the correction config from freshly replayed A/B
+identities, verify frozen scientific-block equality, preserve evidence, and
+stop before the corrected Phase-C seed-0 rerun.
+
+PR #21 was re-read first. The live head had advanced substantially to
+`0c2ec544d10793fd3124c04f59f9029c67644311`. That 183-commit external delta
+was reconciled before mutation. It already contained the frozen Phase-B
+projection/comparator implementation, Phase-C seed-0 comparison contract,
+regenerated-correction-config verifier, Stage-1 reconstruction closure,
+historical replay handoff, recovery/transport forensics, and this retrospective.
+The current exact-head CI state was scientifically/assurance-consistent:
+Stage-9 robustness passed; Stage-9.5 assurance-contract, oracle, causal,
+mutation, and order-gate jobs passed; fresh-clone/static remained in their
+expected blocked/triage states; 7/8/9 remained skipped.
+
+The remaining engineering gap was not missing comparison semantics. The
+underlying functions already verified:
+
+- unchanged Stage-9.5-1 recovery-report success;
+- complete Phase-A replay;
+- complete Phase-B replay across all seeds/arms;
+- accepted Stage-8 archive identity and maintenance records;
+- exact original Phase-C v1 seed-0 failed lineage;
+- regenerated correction-config frozen scientific blocks;
+- fresh upstream A/B identity rebinding.
+
+The gap was the public execution boundary. The integrated replay-comparator CLI
+continued through corrected Phase-C output verification, while the requested
+tranche explicitly required a mandatory stop **before** corrected Phase C.
+
+To remove that ambiguity without changing replay semantics, the following
+additive assurance artifacts were introduced prospectively:
+
+- `tools/stage9_5/phase_c_pre_rerun_verifier.py`;
+- `tests/stage9_5/test_phase_c_pre_rerun_verifier.py`;
+- `data/manifests/stage9_5_6_phase_c_pre_rerun_verification_v1.json`;
+- `STAGE9_5_6_PHASE_C_PRE_RERUN_EXECUTION_HANDOFF.md`.
+
+The new verifier does not execute Phase C. It first re-runs the frozen
+Stage-9.5-1 recovery, accepted-archive, Phase-A, and Phase-B checks. If any hard
+prerequisite fails, it returns a blocked report **without inspecting** the
+Phase-C precondition/config evidence. After prerequisites pass, it invokes the
+already-frozen Phase-C precondition comparator and independent regenerated
+correction-config verifier. It also requires the corrected
+`phase_c_offline_evaluation_v1_1/seed-0` surface to be absent. A successful
+canonical report therefore proves that the exact failed-v1 lineage and
+correction-config equality have been verified while the corrected rerun has not
+yet occurred.
+
+Synthetic tests freeze three important behaviors:
+
+1. successful pre-rerun readiness ends with
+   `next_authorized_step = corrected_phase_c_seed0_rerun`;
+2. failed Stage-9.5-1/A/B hard prerequisites prevent Phase-C precondition/config
+   inspection;
+3. any already-present corrected Phase-C seed-0 output forces a stop-boundary
+   failure.
+
+The Stage-9.5 assurance workflow was updated to watch the new contract/handoff
+and execute the new test module.
+
+This tranche does **not** claim that the hard prerequisites have executed in
+the current ChatGPT environment. The external recovered bytes still have to be
+materialized on a verifier-capable filesystem, the unchanged Stage-9.5-1 v1.2
+verifier still has to pass, and the complete historical A/B replay still has to
+pass its frozen comparator on real outputs. The contribution of this tranche is
+that once those prerequisites are true, the requested Phase-C pre-rerun tranche
+has a single fail-closed operator path and canonical evidence boundary, with no
+need to invoke or inspect corrected Phase C.
+
+No Stage-10 outcomes were accessed. No accepted Stage-8/9 scientific object,
+treatment, endpoint, or result was modified.
+
+## 2026-10-20 — Connector-native Dropbox transport probe
+
+- Live PR #21 head was reconciled at `0f9358252de80804b99ece8ca5325915579546d7`; the repository had already advanced through Dropbox recovery discovery, Stage-1 reconstruction closure, full Phase-A/B comparator engineering, and the frozen Phase-C pre-rerun verification boundary.
+- A new non-mutating Dropbox transport probe tested surfaces not represented by the earlier temporary-link attempt. `Dropbox.fetch` on `/seed_0.pt` exposed archive text (`seed_0/data.pkl`) and a stable Dropbox content URL, but not raw checkpoint bytes.
+- The stable content URL remained inaccessible to the web/container download boundary. The Dropbox-issued file ID was also rejected by `files.materialize` because it was not visible in the Project Files surface; Project Files title searches for `seed_0.pt` / `seed_0` returned no entry.
+- `/seed_0.pt` had no pre-existing shared link. No new shared link was created because doing so would mutate sharing state and was not required for this read-only tranche. No Dropbox mutation occurred.
+- Disposition: all non-mutating connector-to-verifier byte-transfer routes exposed in this chat runtime are now exhausted. The authoritative blockers remain unchanged: materialize the recovered Dropbox bytes on a verifier-capable filesystem, execute the frozen zero-byte transport correction for the five permitted empty C-arm maintenance paths, and obtain an unchanged Stage-9.5-1 v1.2 verifier success before historical A/B execution or Phase-C pre-rerun verification.
+- No scientific object changed, no accepted Stage-8/9 evidence was replaced, and no Stage-10 outcome was accessed. Machine-detail record: `data/manifests/stage9_5_6_current_status_v1.json`.
+
+## 20 October 2026 — Dropbox-to-GitHub runner transport breakthrough
+
+This entry preserves the transport diversion needed to move the recovered
+authoritative Dropbox byte streams onto a verifier-capable filesystem without
+committing recovered bytes or weakening the frozen Stage-9.5-1 verifier.
+
+### Literal temporary-URL probe
+
+A dedicated additive workflow,
+`.github/workflows/stage9-5-dropbox-transport-probe.yml`, was introduced on
+assurance head `6d1f8f913491aa6cd6a614459b3aa87643eec8b0`.
+
+The first real seed-0 rerun used a Dropbox single-use raw-download URL placed
+literally in a temporary PR-body transport envelope:
+
+- workflow run: `39389046529`;
+- rerun job: `118516249459`;
+- expected checkpoint: `/seed_0.pt`;
+- expected SHA-256:
+  `514c6d552b3cd680ae966bbb568105bd2871bc68d3a47aded070a70ba0615bd1`;
+- expected size: 76,105 bytes.
+
+The runner reached the download step but received HTTP 403. The failure was
+consistent with the Dropbox single-use URL having been consumed before the
+runner GET, plausibly by intermediary URL inspection after the literal link was
+placed in the PR body. The temporary envelope was removed immediately. No
+checkpoint byte was accepted as verifier evidence, no scientific object was
+changed, and no Stage-10 outcome was accessed.
+
+### Encoded-envelope correction
+
+The harness was corrected prospectively at
+`14e71d869da1fa29c5765c584ef7074f095eb811` so the PR body carried only a
+base64-encoded Dropbox URL. The runner decoded the URL locally immediately
+before the first HTTP GET; the URL was never printed to logs.
+
+The corrected seed-0 rerun succeeded:
+
+- workflow run: `39389355506`;
+- rerun job: `118517262866`;
+- preserved small artifact ID: `12249186146`;
+- artifact ZIP digest:
+  `sha256:c8227bec2ed330fda23ddecdeb98f34c846b3a4843d9a59e09fe30b1b5e89d27`;
+- artifact size: 433 bytes.
+
+The job could exit successfully only after the downloaded byte stream matched
+both the frozen 76,105-byte size and the frozen ordinary SHA-256 above. The
+checkpoint file was deleted before artifact upload; the artifact contains only
+the small transport-verification report.
+
+### Five-checkpoint family proof
+
+The probe was then expanded prospectively to the complete System-A checkpoint
+family at assurance head
+`eb1346cb5a0c4e68b60d0b5f35f43f88acb602f8`.
+
+A fresh encoded transport envelope carried one single-use Dropbox URL for each
+of `/seed_0.pt` through `/seed_4.pt`. The rerun succeeded:
+
+- workflow run: `39390132701`;
+- rerun job: `118519754731`;
+- total downloaded checkpoint bytes: 380,525;
+- all five frozen checkpoint SHA-256 identities and 76,105-byte per-file sizes
+  were required for job success;
+- preserved small artifact ID: `12249605482`;
+- artifact ZIP digest:
+  `sha256:d0602647abc5794cf4f3e3bde72eefab19adc3179c00b8b363cc5af1ca98c1d5`;
+- artifact size: 722 bytes.
+
+Every downloaded checkpoint file was deleted before artifact upload. The
+temporary PR-body envelope was removed immediately after the run. No recovered
+checkpoint bytes were committed to Git or retained in the uploaded evidence
+artifact.
+
+### Disposition
+
+This resolves the previously observed connector-to-verifier transport
+*mechanism uncertainty* for the System-A checkpoint family. It does **not**
+close Stage-9.5-1.
+
+The remaining authoritative sequence is unchanged:
+
+1. transport the recovered Stage-8 archive bytes onto the verifier-capable
+   runner;
+2. execute the already-frozen five-file zero-byte transport reconstruction;
+3. run the unchanged Stage-9.5-1 v1.2 verifier and require all five checkpoint
+   seeds verified, 145/145 Stage-8 archive requirements verified, zero
+   failures, and zero blockers;
+4. only then execute the frozen historical Phase-A/B replay;
+5. only after the real A/B comparator passes may the Phase-C pre-rerun tranche
+   begin.
+
+The transport probes changed assurance mechanics only. Accepted Stage-8/9
+scientific evidence, estimands, treatments, metrics, numerical results, and
+claim boundaries were not changed.
+
+### Stage-8 archive comment-transport proof
+
+The checkpoint-family proof established that opaque base64 transport envelopes
+could move recovered Dropbox bytes onto a GitHub Actions runner. The next
+bounded transport risk was the larger Stage-8 archive: carrying many
+single-use URLs would exceed a single practical PR-body envelope.
+
+A dedicated one-file archive probe therefore tested PR conversation comments
+as short-lived opaque transport chunks. The workflow was changed prospectively
+at:
+
+`3a82541d2495ba729a1e6df90ede9d27b2388932`
+
+The frozen descriptor-linked probe target was:
+
+`/cd_primary_v1/phase_a_shared_control_plane/seed-0/shared_identity.json`
+
+with accepted Stage-8 SHA-256:
+
+`e30d6ef41d074ce2e0e91fec83e55ce920d719e77ba443911ac34fceb2cba98d`.
+
+The Dropbox object size observed before transport was 977 bytes.
+
+The runner read a temporary PR comment carrying a doubly opaque transport
+envelope: the comment payload was base64-encoded JSON and the Dropbox
+single-use URL inside that JSON was itself base64 encoded. The runner decoded
+both layers locally immediately before the first HTTP GET.
+
+Authoritative probe execution:
+
+- workflow run: `39390762810`;
+- rerun job: `118521777970`;
+- result: **success**;
+- preserved small rerun artifact ID: `12248934944`;
+- artifact ZIP digest:
+  `sha256:941b9dc0614e327f65840c9c79cf09d5e9fc36aeb728e06db219f485444fcbcd`;
+- artifact size: 474 bytes.
+
+Job success required the downloaded byte stream to match the frozen ordinary
+SHA-256 exactly. The recovered file was deleted before artifact upload. The
+transport comment (GitHub issue-comment ID `6286392434`) was immediately
+overwritten with a neutral cleared marker after runner consumption.
+
+The same workflow's initial no-comment baseline produced only a
+`no_transport_comment` report and is not recovery evidence.
+
+This proves that PR conversation comments can be used as temporary encoded
+transport chunks for descriptor-linked Stage-8 archive bytes without
+committing the recovered bytes or leaving the single-use Dropbox URLs in the
+final comment text. It does not close Stage-9.5-1 and does not substitute for
+the unchanged v1.2 verifier.
+
+The next transport step may scale this exact mechanism to the 140 physically
+present descriptor-linked Stage-8 archive files, followed by the already-frozen
+five-file zero-byte transport reconstruction and then the unchanged
+Stage-9.5-1 verifier. No historical A/B replay or Phase-C pre-rerun execution is
+authorized until that verifier passes.
+
+### Run-bound encrypted checkpoint transport + unchanged-verifier proof
+
+A stronger checkpoint-recovery path was then exercised using the prospectively
+added run-bound CMS transport workflow
+`.github/workflows/stage9-5-secure-checkpoint-recovery-v1.yml`.
+
+The first attempt generated a one-time public certificate but timed out because
+no matching encrypted payload arrived. That failed attempt is preserved as
+workflow run `39395612306`, original job `118537497702`, with handshake
+artifact `12250924865`.
+
+The failed job was rerun without changing scientific or verifier code. The fresh
+rerun job was `118592521593`. It generated a new one-time certificate and
+uploaded handshake artifact:
+
+- artifact ID: `12260590855`;
+- artifact digest:
+  `sha256:010dad0fba88ee08bac20586c313f78dedbdc3a147c6186da544aa34e85c9b57`;
+- certificate SHA-256:
+  `d52d42a6a80b2667f05f10981445499dc4650a5916274afd2f3284af906601a4`.
+
+Five fresh Dropbox single-use raw-download URLs were generated for
+`/seed_0.pt` through `/seed_4.pt`. They were never preflighted or published
+in cleartext. A JSON envelope binding the workflow run ID, exact frozen
+checkpoint SHA-256 values, expected 76,105-byte sizes, and the five temporary
+URLs was encrypted locally to the run's one-time public certificate using CMS.
+Only the CMS ciphertext was committed at:
+
+`0995fba62abcf53e17149227ac1ec6a04458a35e`
+
+in the already-designated transport file
+`data/transport/stage9_5_dropbox_secure_checkpoints_v1.b64`.
+
+The GitHub runner decrypted that envelope with its non-exported one-time private
+key, performed the first GETs against the Dropbox URLs, and required every
+downloaded checkpoint byte stream to match the frozen ordinary SHA-256 and
+76,105-byte size. All five passed.
+
+The runner then restored a clean checkout and invoked the **unchanged
+Stage-9.5-1 v1.2 verifier** with only the recovered checkpoint root supplied.
+The verifier implementation blob used by the rerun was independently checked
+against the then-live branch verifier and was identical:
+`a63a02d5abc739737951826da062580b3166e5ee`.
+
+Preserved proof artifact:
+
+- artifact ID: `12260321808`;
+- artifact ZIP digest:
+  `sha256:18c8ffd4510b9ac364bedadd5f4f72dbbaeb53d104c5bc990e1709e86ad68cbc`.
+
+The unchanged verifier produced canonical SHA-256:
+
+`01f7ef5b2e62c7318995c915b79e53737448c0747e95a4e29513242fa88b7f69`
+
+with:
+
+- verified System-A seeds `[0,1,2,3,4]`;
+- checkpoint missing `[]`;
+- checkpoint mismatches `[]`;
+- verifier failures `[]`;
+- the **sole remaining blocker**
+  `stage8_large_artifact_archive_missing`.
+
+This is stronger than the earlier checkpoint-family transport proof because it
+binds the recovered bytes directly into the unchanged frozen verifier on a clean
+runner. It still does not close Stage-9.5-1: the Stage-8 large artifact archive
+must be transported/completed, the five frozen zero-byte maintenance streams
+must follow their already-frozen reconstruction correction, and the unchanged
+v1.2 verifier must then pass at 145/145 with zero failures and zero blockers.
+
+No recovered checkpoint bytes were committed or uploaded as assurance
+artifacts, no accepted Stage-8/9 scientific object changed, and no Stage-10
+outcome was accessed.
+

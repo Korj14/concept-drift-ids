@@ -1,0 +1,31 @@
+{
+  "audit_id": "stage9.5-4-targeted-mutation-assurance-v1-first-run",
+  "status": "failed_harness_iteration_preserved",
+  "classification": "mutation_fixture_R0_identity_construction_defect",
+  "scientific_class": "not_Class_A",
+  "exact_head": "1b7278429a8472b17d5670159e5af313efdf6745",
+  "workflow_run_id": 38545333519,
+  "mutation_job_id": 115789845764,
+  "artifact": {
+    "id": 11884516744,
+    "name": "stage9-5-targeted-mutations-v1",
+    "zip_sha256": "5801e00117a2b02c57b1abc7188e35c840f156fffc34c9020d112bb7cccc616e",
+    "report_canonical_sha256": "a013377a29f6db91979bc35a1006405ecf97bd504e2703a55e59bd1b357c5693"
+  },
+  "result": {
+    "defined_mutants": 11,
+    "executed_mutants": 11,
+    "killed_mutants": 10,
+    "kill_rate": 0.9090909090909091,
+    "survivor": "M06_seed_r0_threshold_bypass"
+  },
+  "diagnosis": {
+    "seed_submutant": "killed",
+    "threshold_submutant": "killed",
+    "r0_submutant": "fixture invalid: two migrated empty-rule states differed only by neural_checkpoint_sha256, which is not part of the R0 canonical starting-state identity; production therefore correctly did not reject them",
+    "correction": "construct two genuinely different R0 rule states so the production starting-state identity differs before bypassing the exact R0 comparison"
+  },
+  "scientific_source_changes": false,
+  "mutation_contract_changes": false,
+  "stage10_outcomes_accessed": false
+}

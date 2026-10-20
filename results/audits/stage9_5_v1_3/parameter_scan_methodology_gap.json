@@ -1,0 +1,17 @@
+{
+  "audit_id": "stage9.5-0-v1.3-false-pass-preservation",
+  "classification": "audit_harness_completeness_defect",
+  "scientific_class": "not_Class_A_by_itself",
+  "accepted_as_closure_evidence": false,
+  "exact_head": "befa0e0fc49ba24cbc81cc65f65068fc0b30a397",
+  "scan_canonical_sha256": "61025a57a38466408414a4678aa33f4464d1ce04ec0a097649dd78036d37d572",
+  "artifact_zip_sha256": "013602cbba69f1be5b2ac616d175c57be9a97b4f3217f3fd3a20219cd1cb0ac2",
+  "counts": {
+    "material_candidates": 235,
+    "excluded_candidates": 1018,
+    "unclassified_material_candidates": 0,
+    "unclassified_high_leverage_candidates": 0
+  },
+  "defect": "Retained exclusion-log review found material row-count, primary-arm, execution-phase, and fusion-weight constants excluded by the semantic-name matcher.",
+  "correction_protocol": "STAGE9_5_V1_4_EXCLUSION_LOG_MATERIALITY_CORRECTION.md"
+}

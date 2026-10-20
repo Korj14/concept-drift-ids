@@ -1,0 +1,49 @@
+{
+  "audit_id": "stage9.5-7-claim-to-evidence-traceability-v1-success",
+  "status": "accepted_stage9_5_7_closure_evidence",
+  "audited_head": "f582a377cbae8e36804148786e986b90ae485c1c",
+  "workflow_run_id": 38650032906,
+  "claim_traceability_job_id": 116146254453,
+  "same_head_stage9": {
+    "workflow_run_id": 38650032748,
+    "run_number": 508,
+    "conclusion": "success"
+  },
+  "artifact": {
+    "id": 11933563727,
+    "name": "stage9-5-claim-traceability-v1",
+    "zip_sha256": "1ed97a4d0a3f1a8e09b93ea26a90df1a9613c2949bccaf496b76e62c29a855f8",
+    "claim_ledger_canonical_sha256": "a4960cba4c12e983e764340044ee87cc1448f104af2142041fc342b906f88ecb"
+  },
+  "claims": {
+    "claim_count": 23,
+    "unique_claim_ids": 23,
+    "frozen_family_count": 20,
+    "represented_family_count": 20,
+    "missing_families": [],
+    "extra_families": [],
+    "orphan_current_claims": [],
+    "hand_entered_numeric_evidence_literals": 0
+  },
+  "claim_source_blob_identities": {
+    "STAGE8_PRIMARY_RESULTS_INTERPRETATION.md": "7965eccdfffb777209c15d497bdbbfec7fcf32d5",
+    "STAGE8_SYMBOLIC_MECHANISM_AUDIT_INTERPRETATION.md": "9feadb0c87054d12d2f1573730cfcd6bc8e45d5a",
+    "STAGE9_ROBUSTNESS_INTERPRETATION.md": "af05dc9907ec65d4c1729e5d1289525e64d751cd",
+    "METHODOLOGY_LEDGER.md": "9b977705b9748138bb12745e9f0fb3d77d73c2b2"
+  },
+  "final_manuscript_gate": {
+    "required": true,
+    "status": "pending_final_manuscript",
+    "policy": "When the manuscript is final, run a manuscript-number audit requiring zero orphan quantitative numbers."
+  },
+  "post_run_code_identity": {
+    "claim_definitions_changed_since_audited_head": false,
+    "claim_traceability_tool_changed_since_audited_head": false,
+    "claim_reporting_contract_changed_since_audited_head": false
+  },
+  "stage9_5_1_status": "open_blocked_system_a_checkpoint_bytes_missing",
+  "stage9_5_6_status": "open_blocked_by_stage9_5_1",
+  "scientific_objects_modified": false,
+  "stage10_outcomes_accessed": false,
+  "closure_scope": "Stage 9.5-7 only; final-manuscript zero-orphan audit remains mandatory."
+}

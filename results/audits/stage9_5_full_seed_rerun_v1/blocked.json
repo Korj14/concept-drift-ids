@@ -1,0 +1,33 @@
+{
+  "audit_id": "stage9.5-6-clean-deterministic-full-seed-rerun-v1-blocked",
+  "status": "open_blocked",
+  "classification": "dependency_on_existing_Class_A_provenance_blocker",
+  "protocol_requirement": "Rerun at least one complete accepted Stage-8 seed in a clean environment under the exact historical execution/config identity. Verification evidence only; current Stage-9.5 head may not substitute for the historical checkout.",
+  "blocking_dependency": {
+    "stage9_5_1": "open_blocked",
+    "blocker": "system_a_checkpoint_bytes_missing",
+    "reason": "The complete accepted Stage-8 seed rerun requires the exact frozen System-A checkpoint bytes. Those bytes are not present in Git, retained provenance-critical Actions artifacts, GitHub releases, or the current project session. Regenerating or retraining System A would violate the byte-identity requirement."
+  },
+  "required_checkpoint_sha256": {
+    "seed_0": "514c6d552b3cd680ae966bbb568105bd2871bc68d3a47aded070a70ba0615bd1",
+    "seed_1": "07696c3f580645d9c96ac3e736cfb5eeaa8033f148bf64822e8ee105861cf552",
+    "seed_2": "7630514cf409256bd2bbe27eca59f881acb238be698b5fdb1ee12bca8e402491",
+    "seed_3": "cce1ce47db047b9d441bbe6dad9bd53f1ee6ff3ad7d404521cae72a38bccd4b4",
+    "seed_4": "9b9e56371f3246482998c4efea4829e1e6d5aaf549bb43e1af05e471dfcb9e93"
+  },
+  "other_reconstruction_inputs": {
+    "historical_runtime_identity_frozen": true,
+    "scenario_preprocessing_r0_identities_frozen": true,
+    "raw_cicids2017_exact_files_verified_in_project_session": true,
+    "raw_data_note": "The eight exact raw CICIDS2017 CSV files have independently verified byte hashes in the current project context. A clean rerun still requires an external heavy-data handoff/archive, but raw-data identity is not the immediate stopping condition."
+  },
+  "prohibited_resolution": [
+    "retrain System A and substitute newly serialized checkpoints",
+    "execute from the current Stage-9.5 head instead of the required historical execution identity",
+    "treat numerical equivalence as checkpoint byte identity unless an original stored artifact explicitly predeclared that equivalence"
+  ],
+  "permitted_resolution": "Recover the five original checkpoint files from an authoritative archive and verify every frozen SHA-256 before rerunning a complete Stage-8 seed in the historical checkout/environment.",
+  "scientific_results_invalidated": false,
+  "interpretation": "This blocks clean deterministic historical rerun evidence. It does not establish a numerical mismatch in the already accepted Stage-8/9 compact evidence.",
+  "stage10_outcomes_accessed": false
+}

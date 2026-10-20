@@ -515,3 +515,32 @@ scenario, but Q1 submission readiness remains **not achieved**. Stage-9 prespeci
 explanation-construct triangulation, direct conditional-label/attack-pattern replication, independent
 second-dataset replication, CICIDS-quality sensitivity, fresh novelty audit, and independent
 software/reproducibility audit remain required.
+
+---
+
+## 16 October 2026 — Stage 9.5 independent-assurance adversarial status overlay
+
+This overlay supersedes any inference that the Q1 assurance program is already closed. It does not reopen accepted Stage-8/9 scientific evidence.
+
+### Current gate state
+
+- Stage 9.5 overall: **OPEN / BLOCKED**.
+- Stage 9.5-1 fresh-clone reconstruction: **0 identity failures / 2 external-artifact blockers**:
+  1. `system_a_checkpoint_bytes_missing`;
+  2. `stage8_large_artifact_archive_missing`.
+- Stage 9.5-2 independent statistical oracle: **CLOSED**.
+- Stage 9.5-3 causal/information properties: **CLOSED**.
+- Stage 9.5-4 targeted mutation assurance: **CLOSED; 11/11 frozen mutants killed**.
+- Stage 9.5-5 static software assurance: **CLOSED**; the current discovery surface remains the accepted triage baseline of 154 Ruff / 55 mypy and does not reopen the scientific finding set.
+- Stage 9.5-6 historical rerun: **OPEN / BLOCKED**. In addition to the two missing external artifact sets, the preserved historical replay gate contains non-replay-invariant runtime/timing fields; replay-equivalence correction v1.1 is prospectively frozen and cannot execute until the external artifacts are recovered and verified.
+- Stage 9.5-7/8/9: historical executions remain **provisional / not protocol-closed**; CI now prevents their execution before a valid Stage 9.5-6 closure.
+- Stage 10: **PROHIBITED** until Stage 9.5 closes in the binding order with zero unresolved Class-A defects.
+
+### Adversarial interpretation
+
+The two missing artifact sets and the historical replay-identity defect are Class-A reconstructibility/provenance problems. They do **not**, by themselves, establish that accepted Stage-8/9 numerical results are false, and they do not permit replacement of the accepted evidence with retrained checkpoints, regenerated archives, numerically equivalent serializations, or summary-only approximations.
+
+Git-based recovery surfaces checked to date do not contain the missing original bytes: repository history, active branches/tags, checked retained Actions artifacts/releases, repository discussions, Git LFS configuration, committed Stage-9 provenance, and the current Project/session file surface. A valid closure therefore requires authoritative recovery of the original external bytes and hash verification before the historical rerun can proceed.
+
+This status is a claim-boundary constraint: do not describe the project as fully externally reconstructible, do not mark Stage 9.5 closed, and do not access Stage-10 treatment outcomes.
+

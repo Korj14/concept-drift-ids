@@ -1,0 +1,58 @@
+{
+  "audit_id": "stage9.5-5-static-software-assurance-v1_4-success",
+  "status": "accepted_stage9_5_5_closure_evidence",
+  "audited_head": "7e48418f98ad4115c1ae63644ee333f3bc268ae1",
+  "workflow_run_id": 38646749987,
+  "static_job_id": 116135369558,
+  "same_head_stage9": {
+    "workflow_run_id": 38646749995,
+    "run_number": 498,
+    "conclusion": "success"
+  },
+  "static_artifact": {
+    "id": 11932953733,
+    "name": "stage9-5-static-assurance-v1-4",
+    "zip_sha256": "68362fa2c33e48a4baf3884a05f02230eb162c5a76b05903ff616f160718e661",
+    "report_canonical_sha256": "05cdab1f0a6c8eb48b4fb01e10e0012fe40bf132ff97e498e9c6bc4ad4c96298"
+  },
+  "toolchain": {
+    "ruff": "0.17.0",
+    "mypy": "2.4.0"
+  },
+  "historical_runtime_lock_identity_match": true,
+  "static_discovery": {
+    "tool_execution_valid": true,
+    "ruff_findings": 155,
+    "mypy_findings": 55,
+    "scientific_ruff": 134,
+    "scientific_mypy": 55,
+    "assurance_ruff": 21,
+    "assurance_mypy": 0,
+    "static_job_conclusion": "failure_expected_by_discovery_runner_when_findings_exist"
+  },
+  "triage": {
+    "total_findings": 210,
+    "unmatched": 0,
+    "multiply_matched": 0,
+    "unresolved": 0,
+    "fingerprint_set_sha256": "2cffcdaa4a53f608336b4336df833877c6f5ad65f57877c63fb37c0c8b1b5a69",
+    "scientific_fingerprint_set_sha256": "268693732ad427a3e21482634b75b7c0d72bf61d70847340bf14cc45678754df",
+    "classifications": {
+      "scientific_cosmetic_legacy": 185,
+      "scientific_third_party_typing_limitation": 4,
+      "assurance_cosmetic_legacy": 20,
+      "assurance_harness_risk_resolved": 1
+    }
+  },
+  "regressions": {
+    "stage9_5_0": "success",
+    "stage9_5_2": "success",
+    "stage9_5_3": "success",
+    "stage9_5_4": "success",
+    "stage9_5_1": "blocked with 0 identity failures and 1 external-artifact blocker"
+  },
+  "scientific_source_files_modified_for_static_cleanup": false,
+  "historical_runtime_lock_modified": false,
+  "stage10_outcomes_accessed": false,
+  "closure_scope": "Stage 9.5-5 only; Stage 9.5 remains blocked by Stage 9.5-1."
+}

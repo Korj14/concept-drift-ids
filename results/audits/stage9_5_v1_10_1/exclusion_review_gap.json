@@ -1,0 +1,31 @@
+{
+  "audit_id": "stage9.5-0-v1.10.1-small-material-expression-gap",
+  "classification": "preclosure_expression_discovery_gap",
+  "scientific_class": "not_Class_A",
+  "accepted_as_closure_evidence": false,
+  "exact_head": "328b062d47200f7f55d49af08a5289603f1111e0",
+  "stage9_5_run_id": 38448299524,
+  "stage9_run_id": 38448299461,
+  "stage9_same_head": "success",
+  "v1_10_1_scan": {
+    "pass": true,
+    "canonical_sha256": "35cd6e1206b47c638814e0aa9bc2c0f7d0a10b22a2af266d99317ec88d367a02",
+    "parameter_register_sha256": "741752e9701dd0a508426c95a0231b78db224bfd7080833fbc41f5715f161881",
+    "artifact_zip_sha256": "1020548a53cfce551aa2f31a665f7ccc34808d6c9b022a024c1a1f2bb45bde52",
+    "counts": {
+      "registered_entries": 88,
+      "material_candidates": 498,
+      "excluded_candidates": 1451,
+      "unclassified_material_candidates": 0,
+      "ambiguous_material_candidates": 0,
+      "unclassified_high_leverage_candidates": 0
+    }
+  },
+  "findings": [
+    "Stage-9 source treatment label_latency=0 was excluded by the generic small-expression heuristic.",
+    "Lifecycle overlap defaults 0.95/0.50/0.50 were excluded despite registered lifecycle.overlap_thresholds.",
+    "Lifecycle failure-streak +1/max(1, ...) semantics were excluded despite the registered state-machine/failure-persistence policy.",
+    "Stage-9 replay_enabled booleans in dynamic condition dictionaries were not discovered as source-level material mirrors."
+  ],
+  "correction_protocol": "STAGE9_5_V1_11_SMALL_MATERIAL_EXPRESSION_COVERAGE_CORRECTION.md"
+}

@@ -1,0 +1,160 @@
+name: Stage 9.5 Stage-1 reconstruction
+
+on:
+  push:
+    branches:
+      - "stage9-5-*"
+    paths:
+      - ".github/workflows/stage9-5-stage1-reconstruction.yml"
+      - "data/manifests/stage9_5_6_stage1_reconstruction_evidence_v1.json"
+      - "tools/stage9_5/stage1_reconstruction_evidence.py"
+      - "STAGE9_5_6_STAGE1_RECONSTRUCTION_EXECUTION_HANDOFF.md"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  authoritative-stage1-reconstruction:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    env:
+      PYTHONHASHSEED: "0"
+      OMP_NUM_THREADS: "1"
+      MKL_NUM_THREADS: "1"
+      OPENBLAS_NUM_THREADS: "1"
+      NUMEXPR_NUM_THREADS: "1"
+      PYTHONPATH: "src"
+      CICIDS2017_MIRROR_REPO: "https://huggingface.co/datasets/bencorn/CICIDS2017"
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11.9"
+
+      - name: Install frozen historical runtime
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements-lock.txt
+
+      - name: Download CICIDS2017 ML transport bundle
+        run: |
+          mkdir -p artifacts/stage9_5_stage1_transport_v1
+          rm -rf artifacts/stage9_5_stage1_transport_v1/mirror
+          git lfs version
+          GIT_LFS_SKIP_SMUDGE=1 git clone --depth 1 \
+            "$CICIDS2017_MIRROR_REPO" \
+            artifacts/stage9_5_stage1_transport_v1/mirror
+          cd artifacts/stage9_5_stage1_transport_v1/mirror
+          git rev-parse HEAD | tee ../mirror_commit.txt
+          ZIP_PATH="$(git lfs ls-files -n | grep -E '(^|/)MachineLearningCSV\.zip$' | head -1)"
+          test -n "$ZIP_PATH"
+          printf '%s\n' "$ZIP_PATH" | tee ../mirror_zip_path.txt
+          git lfs pull --include="$ZIP_PATH" --exclude=""
+          test -f "$ZIP_PATH"
+          cp "$ZIP_PATH" ../MachineLearningCSV.zip
+          cd -
+          sha256sum artifacts/stage9_5_stage1_transport_v1/MachineLearningCSV.zip \
+            | tee artifacts/stage9_5_stage1_transport_v1/MachineLearningCSV.zip.sha256
+
+      - name: Extract and select exact frozen raw CSV set
+        run: |
+          rm -rf artifacts/stage9_5_stage1_transport_v1/extracted
+          rm -rf artifacts/stage9_5_stage1_transport_v1/raw_exact
+          mkdir -p artifacts/stage9_5_stage1_transport_v1/extracted
+          mkdir -p artifacts/stage9_5_stage1_transport_v1/raw_exact
+          python -m zipfile -e \
+            artifacts/stage9_5_stage1_transport_v1/MachineLearningCSV.zip \
+            artifacts/stage9_5_stage1_transport_v1/extracted
+          python - <<'PY'
+          import json
+          import shutil
+          from pathlib import Path
+
+          contract = json.loads(
+              Path(
+                  "data/manifests/stage9_5_6_stage1_reconstruction_evidence_v1.json"
+              ).read_text(encoding="utf-8")
+          )
+          expected = contract["raw_input_contract"]["exact_file_sha256"]
+          extracted = Path("artifacts/stage9_5_stage1_transport_v1/extracted")
+          target = Path("artifacts/stage9_5_stage1_transport_v1/raw_exact")
+
+          by_name = {}
+          for path in extracted.rglob("*.csv"):
+              by_name.setdefault(path.name, []).append(path)
+
+          failures = []
+          for name in expected:
+              matches = by_name.get(name, [])
+              if len(matches) != 1:
+                  failures.append(
+                      f"{name}: expected one extracted file, found {len(matches)}"
+                  )
+                  continue
+              shutil.copyfile(matches[0], target / name)
+
+          if failures:
+              raise SystemExit("\n".join(failures))
+          PY
+
+      - name: Verify all eight frozen raw-file SHA-256 identities
+        run: |
+          python - <<'PY'
+          import hashlib
+          import json
+          from pathlib import Path
+
+          contract = json.loads(
+              Path(
+                  "data/manifests/stage9_5_6_stage1_reconstruction_evidence_v1.json"
+              ).read_text(encoding="utf-8")
+          )
+          expected = contract["raw_input_contract"]["exact_file_sha256"]
+          root = Path("artifacts/stage9_5_stage1_transport_v1/raw_exact")
+          failures = []
+
+          for name, wanted in expected.items():
+              path = root / name
+              if not path.is_file():
+                  failures.append(f"{name}: missing")
+                  continue
+              digest = hashlib.sha256()
+              with path.open("rb") as handle:
+                  for chunk in iter(lambda: handle.read(8 * 1024 * 1024), b""):
+                      digest.update(chunk)
+              observed = digest.hexdigest()
+              if observed != wanted:
+                  failures.append(
+                      f"{name}: expected {wanted}, observed {observed}"
+                  )
+
+          if failures:
+              raise SystemExit("\n".join(failures))
+          print(f"verified_raw_files={len(expected)}")
+          PY
+
+      - name: Run frozen Stage 9.5-6 Stage-1 verifier
+        run: |
+          python tools/stage9_5/stage1_reconstruction_evidence.py \
+            --raw-root artifacts/stage9_5_stage1_transport_v1/raw_exact \
+            --reconstructed-root artifacts/stage9_5_stage1_reconstruction_v1/interim/cicids2017 \
+            --report results/audits/stage9_5_full_seed_rerun_v1/stage1_reconstruction_report.json \
+            --contract data/manifests/stage9_5_6_stage1_reconstruction_evidence_v1.json
+
+      - name: Upload Stage-1 reconstruction evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: stage9-5-stage1-reconstruction-v1
+          path: |
+            results/audits/stage9_5_full_seed_rerun_v1/stage1_reconstruction_report.json
+            artifacts/stage9_5_stage1_transport_v1/MachineLearningCSV.zip.sha256
+            artifacts/stage9_5_stage1_transport_v1/mirror_commit.txt
+            artifacts/stage9_5_stage1_transport_v1/mirror_zip_path.txt
+          if-no-files-found: warn

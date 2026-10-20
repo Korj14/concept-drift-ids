@@ -243,3 +243,49 @@ This overlay records the present state after completion of the mandatory retrosp
 No unresolved System-B implementation defect blocks transition to C/D design freeze.
 
 All material primary C/D design controls affecting treatment definition, causal isolation, confirmatory analysis, runtime, and held-out access are now prospectively frozen. Any residual historical wording elsewhere in this register is superseded only where an explicit later accepted/frozen row records completion; it is not permission to reopen accepted System B.
+
+## Stage 9.5 independent-assurance gate overlay — 16 October 2026
+
+This overlay records the current assurance state without reopening accepted Stage-8/9 scientific evidence or earlier control rows.
+
+| Control | Current state |
+| --- | --- |
+| Stage 9.5 overall | **OPEN / BLOCKED** |
+| Stage 9.5-1 fresh-clone reconstruction | **0 repository/runtime/compact-evidence identity failures; 2 external-artifact blockers** |
+| External blocker 1 | `system_a_checkpoint_bytes_missing` — recover and SHA-256 verify the five original System-A checkpoint files; no retraining/regeneration/substitution |
+| External blocker 2 | `stage8_large_artifact_archive_missing` — recover and verify the original `artifacts/cd_primary_v1` archive; compact summaries are not a substitute for the frozen replay-equivalence target |
+| Stage 9.5-2 statistical oracle | **CLOSED** |
+| Stage 9.5-3 causal/information properties | **CLOSED** |
+| Stage 9.5-4 targeted mutations | **CLOSED — 11/11 frozen mutants killed** |
+| Stage 9.5-5 static assurance | **CLOSED; current discovery baseline 154 Ruff / 55 mypy remains triage-only and does not reopen the accepted scientific fingerprint set** |
+| Stage 9.5-6 historical rerun | **OPEN / BLOCKED** — also subject to the prospectively frozen replay-equivalence correction because historical upstream manifest hashes include non-replay-invariant runtime/timing diagnostics |
+| Stage 9.5-7 claim traceability | **HISTORICALLY EXECUTED / PROVISIONAL; NOT PROTOCOL-CLOSED** |
+| Stage 9.5-8 independent reporting | **HISTORICALLY EXECUTED / PROVISIONAL; NOT PROTOCOL-CLOSED** |
+| Stage 9.5-9 hostile review | **HISTORICALLY EXECUTED / PROVISIONAL; NOT PROTOCOL-CLOSED** |
+| Work-package order | **ENFORCED PROSPECTIVELY IN CI: 9.5-7/8/9 remain locked until valid 9.5-6 closure evidence exists** |
+| Stage 10 | **PROHIBITED until Stage 9.5 legitimately closes with zero unresolved Class-A defects** |
+
+Interpretation boundary: these assurance blockers concern reconstructibility/provenance and the literal historical replay gate. They do not by themselves establish that accepted Stage-8/9 numerical results are wrong, and they do not authorize replacement of accepted evidence with regenerated artifacts or summary-only approximations.
+
+## Stage 9.5-1 negative-closure overlay — 17 October 2026
+
+This additive overlay supersedes only the **current-status interpretation** of the 16 October Stage-9.5 table above. Historical open/blocking rows remain part of the assurance chronology.
+
+| Control | Current state |
+| --- | --- |
+| Stage 9.5-1 fresh-clone reconstruction | **CLOSED — FAILED / EXTERNAL PROVENANCE UNRESOLVED** |
+| Negative closure authority | `STAGE9_5_1_FRESH_CLONE_RECONSTRUCTION_NEGATIVE_CLOSURE.md` + `data/manifests/stage9_5_1_negative_closure_v1.json` |
+| Final verifier disposition | **0 identity failures / 2 unresolved external-artifact blockers** |
+| Frozen success criterion | **UNCHANGED** — exact five original System-A checkpoints + original Stage-8 heavy archive at **145/145**, zero failures/blockers |
+| External blocker 1 | `system_a_checkpoint_bytes_missing` |
+| External blocker 2 | `stage8_large_artifact_archive_missing` |
+| Regeneration/substitution | **PROHIBITED as closure evidence** |
+| Stage 9.5-6 historical rerun | **BLOCKED BY CLOSED-FAILED 9.5-1** under the current evidence package |
+| Stage 9.5-7/8/9 | **LOCKED as authoritative closure packages** |
+| Stage 9.5 overall | **NOT CLOSABLE UNDER THE CURRENT EVIDENCE PACKAGE** because the Class-A provenance defect remains unresolved |
+| Stage 10 | **PROHIBITED** |
+
+Interpretation boundary: the negative closure terminates the Stage-9.5-1 assurance attempt without falsifying success. It does not assert that accepted Stage-8/9 numerical results are wrong, and it does not change any accepted treatment, estimand, metric, or result. It records that publication-grade clean-clone reconstruction of the full original checkpoint/heavy-artifact chain has not been demonstrated.
+
+Reopening is permitted only if the exact original bytes are later recovered and the unchanged v1.2 verifier independently passes the frozen five-seed / 145-of-145 predicate. Otherwise any continuation requires a separately governed restart/new evidence-generation campaign rather than substitution into the accepted evidence chain.
+

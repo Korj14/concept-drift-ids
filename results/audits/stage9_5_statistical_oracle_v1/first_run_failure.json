@@ -1,0 +1,24 @@
+{
+  "audit_id": "stage9.5-2-independent-statistical-oracle-v1-first-run",
+  "classification": "oracle_harness_summary_schema_adapter_defect",
+  "scientific_class": "not_Class_A",
+  "accepted_as_oracle_evidence": false,
+  "exact_head": "d828901609ca761fdfd9dcf343dd4529a7fc6f5f",
+  "workflow_run_id": 38456294408,
+  "oracle_job_id": 115499777695,
+  "same_head_stage9_run_id": 38456294539,
+  "same_head_stage9_conclusion": "success",
+  "stage9_5_0_job_conclusion": "success",
+  "stage9_5_1_blocker_unchanged": "system_a_checkpoint_bytes_missing",
+  "oracle_tests": "8 passed",
+  "oracle_execution": {
+    "completed": false,
+    "failure_type": "KeyError",
+    "failure_key": "values",
+    "location": "_compare_summary during first Stage-8 confirmatory endpoint comparison",
+    "report_uploaded": false
+  },
+  "diagnosis": "Stage-8 confirmatory summaries store the per-seed vector under 'effects'; the generic Stage-9 summary schema stores it under 'values'. The oracle used the Stage-9 field name for both and crashed before producing a discrepancy ledger.",
+  "scientific_value_changes": false,
+  "correction": "v1.1 adds an explicit Stage-8 effects-to-values comparison adapter and fail-safe unexpected-exception report writing."
+}

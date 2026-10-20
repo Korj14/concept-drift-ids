@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "contract_id": "stage9.5-6-phase-b-seed-manifest-projection-v1",
+  "status": "prospectively_frozen_before_authoritative_stage9_5_6_replay",
+  "scope": "Phase-B seed-level phase_b_manifest.json comparison only",
+  "required_seeds": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "required_arms": [
+    "c_frozen_symbolic",
+    "d_drift",
+    "d_periodic"
+  ],
+  "exact_arm_key_set_required": true,
+  "phase_a_binding": {
+    "source": "verified aggregate Phase-A comparator result",
+    "require_phase_a_pass": true,
+    "required_map_field": "shared_identity_by_seed",
+    "exact_seed_keys": [
+      "0",
+      "1",
+      "2",
+      "3",
+      "4"
+    ],
+    "seed_manifest_shared_identity_rule": "shared_identity_sha256 must equal verified Phase-A shared_identity.identity_sha256 for the current seed",
+    "all_phase_a_map_rule": "all_phase_a_shared_identity_sha256 must exactly equal the five-seed verified Phase-A identity map",
+    "require_complete_seeds": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "require_mismatch_count": 0,
+    "require_failures": []
+  },
+  "arm_binding": {
+    "every_arm_must_pass_projected_arm_comparator": true,
+    "descriptor_path_rule": "each arm descriptor path must equal <arm>/arm_manifest.json",
+    "raw_manifest_identity_rule": "descriptor manifest_sha256 must equal the raw arm manifest identity verified by that arm comparator",
+    "projected_identity_rule": "accepted and fresh projected arm SHA-256 values must both be valid and equal; that common projected identity is recorded in the seed comparison result"
+  },
+  "raw_integrity_verification_order": [
+    "verify seed-manifest payload_sha256 and manifest_sha256 before projection",
+    "require exact three-arm key set on accepted and fresh seed manifests",
+    "bind current-seed and all-five Phase-A shared identities to the verified Phase-A comparator result",
+    "verify every arm descriptor path, file SHA-256, and raw manifest_sha256 against the corresponding expected arm manifest",
+    "require every corresponding arm comparator result to pass before seed projection can pass"
+  ],
+  "projection": {
+    "remove_only_after_raw_and_arm_binding_verification": [
+      "payload_sha256",
+      "manifest_sha256",
+      "arms.c_frozen_symbolic.sha256",
+      "arms.c_frozen_symbolic.manifest_sha256",
+      "arms.d_drift.sha256",
+      "arms.d_drift.manifest_sha256",
+      "arms.d_periodic.sha256",
+      "arms.d_periodic.manifest_sha256"
+    ],
+    "rationale": "the removed arm identities are transitively timing-dependent solely through the already frozen Phase-B maintenance/arm timing projection",
+    "all_other_content_exact": true,
+    "exact_fields_include": [
+      "schema_version",
+      "run_id",
+      "seed",
+      "git_commit",
+      "status",
+      "primary_config_manifest_sha256",
+      "shared_identity_sha256",
+      "all_phase_a_shared_identity_sha256",
+      "operator_config_sha256",
+      "arm_isolation_sha256",
+      "primary_boundary_scored",
+      "all arm descriptor paths and any non-derived descriptor content"
+    ],
+    "equality_rule": "accepted and fresh projected seed manifests must have identical canonical JSON SHA-256 and exact recursive content equality"
+  },
+  "accepted_maintenance_archive_required": true,
+  "summary_fallback_permitted": false,
+  "allowed_timing_exclusions_source": [
+    "data/manifests/stage9_5_6_phase_b_maintenance_record_projection_v1.json",
+    "data/manifests/stage9_5_6_phase_b_arm_manifest_projection_v1.json"
+  ],
+  "missing_arm_failure": true,
+  "extra_arm_failure": true,
+  "phase_a_binding_mismatch_failure": true,
+  "arm_binding_mismatch_failure": true,
+  "non_diagnostic_difference_failure": true,
+  "phase_c_scope_modified": false,
+  "scientific_objects_modified": false,
+  "stage10_outcomes_accessed": false
+}

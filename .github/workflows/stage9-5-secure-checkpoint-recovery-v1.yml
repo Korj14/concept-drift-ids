@@ -1,0 +1,353 @@
+name: Stage 9.5 secure checkpoint recovery proof
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/stage9-5-secure-checkpoint-recovery-v1.yml"
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  secure-checkpoint-recovery:
+    runs-on: windows-latest
+    timeout-minutes: 20
+    env:
+      PYTHONHASHSEED: "0"
+      OMP_NUM_THREADS: "1"
+      MKL_NUM_THREADS: "1"
+      OPENBLAS_NUM_THREADS: "1"
+      NUMEXPR_NUM_THREADS: "1"
+      PAYLOAD_PATH: data/transport/stage9_5_dropbox_secure_checkpoints_v1.b64
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11.9"
+
+      - name: Install frozen runtime
+        shell: pwsh
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements-lock.txt
+
+      - name: Generate one-time checkpoint transport certificate
+        env:
+          MSYS_NO_PATHCONV: "1"
+        shell: bash
+        run: |
+          set -euo pipefail
+          openssl req -x509 -newkey rsa:4096 -sha256 -nodes \
+            -keyout transport_private.pem \
+            -out transport_public_cert.pem \
+            -subj "/CN=stage9-5-checkpoint-recovery-${GITHUB_RUN_ID}" \
+            -days 1
+          python - <<'PY'
+          import hashlib, json, os
+          from pathlib import Path
+          cert = Path("transport_public_cert.pem").read_bytes()
+          expected = {
+              "seed_0.pt": "514c6d552b3cd680ae966bbb568105bd2871bc68d3a47aded070a70ba0615bd1",
+              "seed_1.pt": "07696c3f580645d9c96ac3e736cfb5eeaa8033f148bf64822e8ee105861cf552",
+              "seed_2.pt": "7630514cf409256bd2bbe27eca59f881acb238be698b5fdb1ee12bca8e402491",
+              "seed_3.pt": "cce1ce47db047b9d441bbe6dad9bd53f1ee6ff3ad7d404521cae72a38bccd4b4",
+              "seed_4.pt": "9b9e56371f3246482998c4efea4829e1e6d5aaf549bb43e1af05e471dfcb9e93",
+          }
+          payload = {
+              "audit_id": "stage9.5-secure-checkpoint-recovery-handshake-v1",
+              "run_id": os.environ["GITHUB_RUN_ID"],
+              "repository_head": os.environ["GITHUB_SHA"],
+              "certificate_sha256": hashlib.sha256(cert).hexdigest(),
+              "expected_checkpoint_sha256": expected,
+              "expected_size_each": 76105,
+              "private_key_exported": False,
+              "stage10_outcomes_accessed": False,
+          }
+          Path("checkpoint_transport_handshake.json").write_text(
+              json.dumps(payload, indent=2, sort_keys=True) + "\n",
+              encoding="utf-8",
+          )
+          PY
+
+      - name: Upload one-time checkpoint transport certificate
+        uses: actions/upload-artifact@v4
+        with:
+          name: stage9-5-secure-checkpoint-recovery-handshake-v1
+          path: |
+            transport_public_cert.pem
+            checkpoint_transport_handshake.json
+          if-no-files-found: error
+
+      - name: Wait for encrypted checkpoint URLs and materialize exact bytes
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from __future__ import annotations
+
+          import base64
+          import hashlib
+          import json
+          import os
+          import re
+          import subprocess
+          import time
+          import urllib.error
+          import urllib.parse
+          import urllib.request
+          from pathlib import Path
+
+          repo = os.environ["GITHUB_REPOSITORY"]
+          run_id = os.environ["GITHUB_RUN_ID"]
+          token = os.environ["GH_TOKEN"]
+          payload_path = os.environ["PAYLOAD_PATH"]
+          expected = {
+              "/seed_0.pt": "514c6d552b3cd680ae966bbb568105bd2871bc68d3a47aded070a70ba0615bd1",
+              "/seed_1.pt": "07696c3f580645d9c96ac3e736cfb5eeaa8033f148bf64822e8ee105861cf552",
+              "/seed_2.pt": "7630514cf409256bd2bbe27eca59f881acb238be698b5fdb1ee12bca8e402491",
+              "/seed_3.pt": "cce1ce47db047b9d441bbe6dad9bd53f1ee6ff3ad7d404521cae72a38bccd4b4",
+              "/seed_4.pt": "9b9e56371f3246482998c4efea4829e1e6d5aaf549bb43e1af05e471dfcb9e93",
+          }
+          checkpoint_root = Path(os.environ["RUNNER_TEMP"]) / "stage9_5_checkpoints"
+          checkpoint_root.mkdir(parents=True, exist_ok=False)
+          report_path = Path("checkpoint_transport_report.json")
+
+          def api_json(url: str) -> object:
+              req = urllib.request.Request(
+                  url,
+                  headers={
+                      "Authorization": f"Bearer {token}",
+                      "Accept": "application/vnd.github+json",
+                      "User-Agent": "stage9.5-secure-checkpoint-recovery-v1",
+                  },
+              )
+              with urllib.request.urlopen(req, timeout=30) as response:
+                  return json.load(response)
+
+          report = {
+              "audit_id": "stage9.5-secure-checkpoint-recovery-v1",
+              "run_id": run_id,
+              "pass": False,
+              "expected_checkpoint_sha256": expected,
+              "expected_size_each": 76105,
+              "private_dropbox_urls_published": False,
+              "downloaded_checkpoint_bytes_uploaded": False,
+              "stage10_outcomes_accessed": False,
+          }
+
+          try:
+              envelope = None
+              payload_head = None
+              for _ in range(150):
+                  try:
+                      pr = api_json(f"https://api.github.com/repos/{repo}/pulls/21")
+                      if not isinstance(pr, dict):
+                          raise TypeError("PR response is not an object")
+                      head = pr["head"]["sha"]
+                      encoded_path = urllib.parse.quote(payload_path, safe="/")
+                      content = api_json(
+                          f"https://api.github.com/repos/{repo}/contents/"
+                          f"{encoded_path}?ref={head}"
+                      )
+                      if not isinstance(content, dict):
+                          raise TypeError("content response is not an object")
+                      encoded = content.get("content")
+                      if not isinstance(encoded, str):
+                          raise TypeError("content payload missing")
+                      transport_b64 = base64.b64decode(
+                          encoded.replace("\n", ""), validate=True
+                      )
+                      cms = base64.b64decode(transport_b64.strip(), validate=True)
+                      Path("checkpoint_transport_payload.cms").write_bytes(cms)
+                      decrypt = subprocess.run(
+                          [
+                              "openssl", "cms", "-decrypt", "-inform", "DER",
+                              "-in", "checkpoint_transport_payload.cms",
+                              "-recip", "transport_public_cert.pem",
+                              "-inkey", "transport_private.pem",
+                          ],
+                          check=False,
+                          capture_output=True,
+                      )
+                      if decrypt.returncode != 0:
+                          time.sleep(4)
+                          continue
+                      candidate = json.loads(decrypt.stdout.decode("utf-8"))
+                      if not isinstance(candidate, dict):
+                          time.sleep(4)
+                          continue
+                      if str(candidate.get("run_id")) != run_id:
+                          time.sleep(4)
+                          continue
+                      envelope = candidate
+                      payload_head = head
+                      break
+                  except urllib.error.HTTPError as exc:
+                      if exc.code != 404:
+                          raise
+                  time.sleep(4)
+
+              if envelope is None:
+                  raise RuntimeError("No matching encrypted checkpoint payload arrived")
+              files = envelope.get("files")
+              if not isinstance(files, list) or len(files) != 5:
+                  raise ValueError("Checkpoint payload must contain exactly five files")
+              by_path = {}
+              for item in files:
+                  if not isinstance(item, dict):
+                      raise TypeError("Checkpoint payload entry must be an object")
+                  path = item.get("path")
+                  if not isinstance(path, str) or path in by_path:
+                      raise ValueError("Checkpoint payload has invalid or duplicate path")
+                  by_path[path] = item
+              if set(by_path) != set(expected):
+                  raise ValueError("Checkpoint payload path set mismatch")
+
+              verified = []
+              for path, expected_sha in expected.items():
+                  item = by_path[path]
+                  if item.get("expected_sha256") != expected_sha:
+                      raise ValueError(f"Expected SHA mismatch in encrypted payload: {path}")
+                  if int(item.get("expected_size", -1)) != 76105:
+                      raise ValueError(f"Expected size mismatch in encrypted payload: {path}")
+                  url = item.get("download_url")
+                  if not isinstance(url, str) or not re.match(
+                      r"^https://[^/]+\.dl\.dropboxusercontent\.com/", url
+                  ):
+                      raise ValueError(f"Invalid Dropbox raw URL: {path}")
+                  target = checkpoint_root / path.lstrip("/")
+                  request = urllib.request.Request(
+                      url,
+                      headers={"User-Agent": "stage9.5-secure-checkpoint-recovery-v1"},
+                  )
+                  digest = hashlib.sha256()
+                  size = 0
+                  with urllib.request.urlopen(request, timeout=180) as response:
+                      with target.open("xb") as handle:
+                          while True:
+                              chunk = response.read(1024 * 1024)
+                              if not chunk:
+                                  break
+                              handle.write(chunk)
+                              digest.update(chunk)
+                              size += len(chunk)
+                  actual = digest.hexdigest()
+                  if actual != expected_sha or size != 76105:
+                      raise ValueError(f"Downloaded checkpoint identity mismatch: {path}")
+                  verified.append(
+                      {"path": path, "sha256": actual, "size": size}
+                  )
+
+              report.update(
+                  {
+                      "status": "pass",
+                      "pass": True,
+                      "repository_head_with_payload": payload_head,
+                      "verified": verified,
+                  }
+              )
+          except Exception as exc:
+              report.update(
+                  {
+                      "status": "failed",
+                      "error_type": type(exc).__name__,
+                      "error_message": str(exc),
+                  }
+              )
+              raise
+          finally:
+              Path("checkpoint_transport_payload.cms").unlink(missing_ok=True)
+              Path("transport_private.pem").unlink(missing_ok=True)
+              report_path.write_text(
+                  json.dumps(report, indent=2, sort_keys=True) + "\n",
+                  encoding="utf-8",
+              )
+          PY
+
+      - name: Restore clean checkout before unchanged verifier
+        shell: pwsh
+        run: |
+          $TransportReport = Join-Path $env:RUNNER_TEMP "checkpoint_transport_report.json"
+          Move-Item checkpoint_transport_report.json $TransportReport -Force
+          Remove-Item transport_public_cert.pem -Force -ErrorAction SilentlyContinue
+          Remove-Item checkpoint_transport_handshake.json -Force -ErrorAction SilentlyContinue
+          $Dirty = git status --porcelain
+          if ($Dirty) {
+            throw "Secure transport left unexpected checkout changes before verifier: $Dirty"
+          }
+
+      - name: Run unchanged Stage 9.5-1 verifier with recovered checkpoints
+        shell: pwsh
+        run: |
+          $CheckpointRoot = Join-Path $env:RUNNER_TEMP "stage9_5_checkpoints"
+          $VerifierOut = Join-Path $env:RUNNER_TEMP "stage9_5_checkpoint_verifier"
+          python tools/stage9_5/fresh_clone_reconstruction.py `
+            --output-dir $VerifierOut `
+            --checkpoint-root $CheckpointRoot
+          $VerifierRc = $LASTEXITCODE
+
+          Copy-Item (Join-Path $VerifierOut "fresh_clone_reconstruction_report.json") .
+          Copy-Item (Join-Path $VerifierOut "FRESH_CLONE_RECONSTRUCTION_REPORT.md") .
+
+          $env:VERIFIER_OUT = $VerifierOut
+          $env:VERIFIER_RC = "$VerifierRc"
+          @'
+          import json, os
+          from pathlib import Path
+
+          report = json.loads(
+              (Path(os.environ["VERIFIER_OUT"]) / "fresh_clone_reconstruction_report.json")
+              .read_text(encoding="utf-8")
+          )
+          checkpoints = report["external_artifacts"]["system_a_checkpoints"]
+          summary = {
+              "audit_id": "stage9.5-1-checkpoint-only-verifier-proof-v1",
+              "repository_head": report["repository_head"],
+              "verifier_audit_id": report["audit_id"],
+              "verifier_canonical_sha256": report["canonical_sha256"],
+              "verified_seeds": checkpoints["verified_seeds"],
+              "checkpoint_missing": checkpoints["missing"],
+              "checkpoint_mismatches": checkpoints["mismatches"],
+              "failures": report["failures"],
+              "blockers": report["blockers"],
+              "pass": (
+                  int(os.environ["VERIFIER_RC"]) != 0
+                  and report["audit_id"] == "stage9.5-1-fresh-clone-reconstruction-v1_2"
+                  and report["pass"] is False
+                  and report["status"] == "blocked"
+                  and report["failures"] == []
+                  and report["blockers"] == ["stage8_large_artifact_archive_missing"]
+                  and checkpoints["verified_seeds"] == [0, 1, 2, 3, 4]
+                  and checkpoints["missing"] == []
+                  and checkpoints["mismatches"] == []
+              ),
+              "stage10_outcomes_accessed": False,
+          }
+          Path("checkpoint_only_verifier_summary.json").write_text(
+              json.dumps(summary, indent=2, sort_keys=True) + "\n",
+              encoding="utf-8",
+          )
+          assert summary["pass"], json.dumps(summary, sort_keys=True)
+          '@ | python -
+
+          Copy-Item (Join-Path $env:RUNNER_TEMP "checkpoint_transport_report.json") .
+          Remove-Item -Recurse -Force $CheckpointRoot
+
+      - name: Upload checkpoint recovery verification evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: stage9-5-secure-checkpoint-recovery-proof-v1
+          path: |
+            checkpoint_transport_report.json
+            checkpoint_only_verifier_summary.json
+            fresh_clone_reconstruction_report.json
+            FRESH_CLONE_RECONSTRUCTION_REPORT.md
+          if-no-files-found: warn

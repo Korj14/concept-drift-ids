@@ -1,0 +1,27 @@
+{
+  "audit_id": "stage9.5-9-hostile-review-audit-v1-first-run",
+  "status": "failed_harness_iteration_preserved",
+  "classification": "platform_sensitive_git_blob_identity_check",
+  "scientific_class": "not_Class_A",
+  "exact_head": "0f00bfa1c567d3663a47eca956bbc88b5d15916f",
+  "workflow_run_id": 38662040377,
+  "job_id": 116185341201,
+  "test_result": {
+    "passed": 2,
+    "failed": 1
+  },
+  "artifact_created": false,
+  "established_before_failure": {
+    "reviewer_attack_contract_test": "passed",
+    "stage10_hard_gate_test": "passed"
+  },
+  "diagnosis": {
+    "repository_package_evidence_files_present": true,
+    "repository_failed_audit_artifact_count": 24,
+    "committed_stage10_result_files": 0,
+    "defect": "The auditor recomputed Git blob SHA-1 from checked-out Markdown bytes. On Windows, checkout line-ending conversion can differ from the repository blob bytes, creating a false source-identity failure.",
+    "correction": "Read the immutable blob identity directly from Git with git rev-parse HEAD:<path>."
+  },
+  "scientific_source_changes": false,
+  "stage10_outcomes_accessed": false
+}

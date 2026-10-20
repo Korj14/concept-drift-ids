@@ -1,0 +1,162 @@
+name: Stage 9.5 Dropbox transport probe
+
+on:
+  push:
+    branches:
+      - "stage9-5-q1-assurance"
+
+jobs:
+  archive-comment-transport-probe:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+      issues: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.sha }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11.9"
+
+      - name: Read PR 21 transport comments
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api --paginate --slurp "repos/${GITHUB_REPOSITORY}/issues/21/comments?per_page=100" > pr_comments.json
+
+      - name: Download and verify one Stage-8 archive file
+        shell: bash
+        run: |
+          python - <<'PY'
+          from __future__ import annotations
+
+          import base64
+          import hashlib
+          import json
+          import os
+          import re
+          import urllib.request
+          from pathlib import Path
+
+          MARKER = "STAGE9_5_DROPBOX_ARCHIVE_TRANSPORT_V1"
+          EXPECTED_PATH = (
+              "/cd_primary_v1/phase_a_shared_control_plane/"
+              "seed-0/shared_identity.json"
+          )
+          EXPECTED_SHA256 = (
+              "e30d6ef41d074ce2e0e91fec83e55ce920d719e77ba443911ac34fceb2cba98d"
+          )
+          report_path = Path("transport_probe_report.json")
+          report = {
+              "audit_id": "stage9.5-dropbox-archive-comment-transport-probe-v1",
+              "repository_head": os.environ["GITHUB_SHA"],
+              "expected_path": EXPECTED_PATH,
+              "expected_sha256": EXPECTED_SHA256,
+              "raw_bytes_preserved_after_probe": False,
+              "stage10_outcomes_accessed": False,
+          }
+
+          pages = json.loads(Path("pr_comments.json").read_text(encoding="utf-8"))
+          comments = [
+              comment
+              for page in pages
+              if isinstance(page, list)
+              for comment in page
+              if isinstance(comment, dict)
+          ]
+          matches = [
+              comment
+              for comment in comments
+              if MARKER in str(comment.get("body", ""))
+          ]
+          if not matches:
+              report.update({"status": "no_transport_comment", "pass": False})
+              report_path.write_text(
+                  json.dumps(report, indent=2, sort_keys=True) + "\n",
+                  encoding="utf-8",
+              )
+              raise SystemExit(0)
+
+          comment = max(matches, key=lambda item: int(item.get("id", 0)))
+          body = str(comment.get("body", ""))
+          encoded = body.split(MARKER, 1)[1].strip()
+          try:
+              envelope_json = base64.b64decode(encoded, validate=True).decode("utf-8")
+              envelope = json.loads(envelope_json)
+          except Exception as exc:
+              raise ValueError("Invalid encoded archive transport comment.") from exc
+          if not isinstance(envelope, dict):
+              raise TypeError("Archive transport envelope must be an object.")
+          if envelope.get("path") != EXPECTED_PATH:
+              raise ValueError("Archive transport path is not the frozen probe path.")
+
+          encoded_url = envelope.get("download_url_b64")
+          if not isinstance(encoded_url, str):
+              raise ValueError("Archive transport envelope is missing encoded URL.")
+          try:
+              url = base64.b64decode(encoded_url, validate=True).decode("utf-8")
+          except Exception as exc:
+              raise ValueError("Dropbox URL is not valid base64 UTF-8.") from exc
+          if not re.match(r"^https://[^/]+\.dl\.dropboxusercontent\.com/", url):
+              raise ValueError("Decoded URL is not a Dropbox raw-download URL.")
+
+          target = Path("shared_identity.json")
+          try:
+              try:
+                  request = urllib.request.Request(
+                      url,
+                      headers={"User-Agent": "stage9.5-dropbox-archive-probe-v1"},
+                      method="GET",
+                  )
+                  with urllib.request.urlopen(request, timeout=120) as response:
+                      with target.open("wb") as handle:
+                          while True:
+                              chunk = response.read(1024 * 1024)
+                              if not chunk:
+                                  break
+                              handle.write(chunk)
+              except Exception as exc:
+                  report.update(
+                      {
+                          "status": "download_error",
+                          "pass": False,
+                          "actual_sha256": None,
+                          "actual_size_bytes": None,
+                          "error_type": type(exc).__name__,
+                          "http_status": getattr(exc, "code", None),
+                      }
+                  )
+              else:
+                  data = target.read_bytes()
+                  actual_sha256 = hashlib.sha256(data).hexdigest()
+                  passed = actual_sha256 == EXPECTED_SHA256
+                  report.update(
+                      {
+                          "status": "pass" if passed else "identity_mismatch",
+                          "pass": passed,
+                          "actual_sha256": actual_sha256,
+                          "actual_size_bytes": len(data),
+                      }
+                  )
+          finally:
+              target.unlink(missing_ok=True)
+
+          report_path.write_text(
+              json.dumps(report, indent=2, sort_keys=True) + "\n",
+              encoding="utf-8",
+          )
+          if not report.get("pass"):
+              raise SystemExit("Stage-8 archive comment transport probe failed.")
+          PY
+
+      - name: Upload small transport verification evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: stage9-5-dropbox-archive-comment-transport-probe-v1
+          path: transport_probe_report.json
+          if-no-files-found: error

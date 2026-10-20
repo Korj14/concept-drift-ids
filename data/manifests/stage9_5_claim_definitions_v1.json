@@ -1,0 +1,1350 @@
+{
+  "schema_version": 1,
+  "status": "prospectively_frozen_claim_definitions",
+  "governing_contract": "data/manifests/stage9_5_claim_reporting_v1.json",
+  "numeric_literal_policy": "No int/float literals are permitted anywhere under claims[*].values. Evidence numbers must be resolved from selectors/transforms.",
+  "claims": [
+    {
+      "claim_id": "method_scenario_partition_feature_seed_counts",
+      "family": "method.scenario_partition_feature_seed_counts",
+      "claim_text_template": "The controlled scenario uses the frozen training, development, pre-reference, and post-reference partitions, fixed feature schema, and fixed stochastic seed set.",
+      "claim_status": "current",
+      "interpretation_status": "methodology",
+      "source_interpretation_path": "METHODOLOGY_LEDGER.md",
+      "source_section": "Stage 3A preprocessing acceptance",
+      "generating_code_path": "src/concept_drift_ids/scenario_manifest.py",
+      "verification_code_path": "tools/stage9_5/claim_traceability.py",
+      "config_protocol_identity": [
+        "STAGE8_PRIMARY_EXECUTION_PROTOCOL.md",
+        "STAGE9_PRESPECIFIED_ROBUSTNESS_PROTOCOL.md",
+        "STAGE9_5_Q1_INDEPENDENT_ASSURANCE_PROTOCOL.md"
+      ],
+      "evidence_identity_refs": [
+        "stage8_evidence_commit"
+      ],
+      "display_transformation": "evidence_native_unrounded",
+      "claim_boundary": "Controlled pseudo-chronological CICIDS2017 scenario; counts are construction identities, not independent replicates.",
+      "values": {
+        "training_rows": {
+          "type": "direct",
+          "path": "data/manifests/sudden_benign_v1.json",
+          "pointer": "/partitions/training/rows"
+        },
+        "development_rows": {
+          "type": "direct",
+          "path": "data/manifests/sudden_benign_v1.json",
+          "pointer": "/partitions/development/rows"
+        },
+        "pre_rows": {
+          "type": "direct",
+          "path": "data/manifests/sudden_benign_v1.json",
+          "pointer": "/partitions/pre_drift/rows"
+        },
+        "post_rows": {
+          "type": "direct",
+          "path": "data/manifests/sudden_benign_v1.json",
+          "pointer": "/partitions/post_drift/rows"
+        },
+        "feature_count": {
+          "type": "direct",
+          "path": "data/manifests/sudden_benign_v1.json",
+          "pointer": "/feature_schema/model_feature_count"
+        },
+        "seed_count": {
+          "type": "list_length",
+          "path": "data/manifests/system_a_v1.json",
+          "pointer": "/config/seeds"
+        }
+      }
+    },
+    {
+      "claim_id": "method_preprocessing",
+      "family": "method.preprocessing_and_system_a_training",
+      "claim_text_template": "Preprocessing is fit only on the frozen training partition and then reused unchanged for development and evaluation partitions.",
+      "claim_status": "current",
+      "interpretation_status": "methodology",
+      "source_interpretation_path": "METHODOLOGY_LEDGER.md",
+      "source_section": "Stage 3A preprocessing acceptance",
+      "generating_code_path": "src/concept_drift_ids/frozen_preprocessing.py",
+      "verification_code_path": "tools/stage9_5/claim_traceability.py",
+      "config_protocol_identity": [
+        "STAGE8_PRIMARY_EXECUTION_PROTOCOL.md",
+        "STAGE9_PRESPECIFIED_ROBUSTNESS_PROTOCOL.md",
+        "STAGE9_5_Q1_INDEPENDENT_ASSURANCE_PROTOCOL.md"
+      ],
+      "evidence_identity_refs": [
+        "stage8_evidence_commit"
+      ],
+      "display_transformation": "evidence_native_unrounded",
+      "claim_boundary": "Fit on frozen training partition only; no development/pre/post fitting.",
+      "values": {
+        "fit_scope": {
+          "type": "direct",
+          "path": "data/manifests/sudden_benign_v1_preprocessing_v1.json",
+          "pointer": "/training_fit_scope"
+        },
+        "imputer_strategy": {
+          "type": "direct",
+          "path": "data/manifests/sudden_benign_v1_preprocessing_v1.json",
+          "pointer": "/imputer/strategy"
+        },
+        "scaler_with_mean": {
+          "type": "direct",
+          "path": "data/manifests/sudden_benign_v1_preprocessing_v1.json",
+          "pointer": "/scaler/with_mean"
+        },
+        "scaler_with_std": {
+          "type": "direct",
+          "path": "data/manifests/sudden_benign_v1_preprocessing_v1.json",
+          "pointer": "/scaler/with_std"
+        },
+        "dtype_policy": {
+          "type": "direct",
+          "path": "data/manifests/sudden_benign_v1_preprocessing_v1.json",
+          "pointer": "/dtype_policy"
+        },
+        "core_state_sha256": {
+          "type": "direct",
+          "path": "data/manifests/sudden_benign_v1_preprocessing_v1.json",
+          "pointer": "/core_state_sha256"
+        }
+      }
+    },
+    {
+      "claim_id": "method_system_a_training",
+      "family": "method.preprocessing_and_system_a_training",
+      "claim_text_template": "System A is the frozen neural-only baseline trained and threshold-selected using only the prespecified training/development information set.",
+      "claim_status": "current",
+      "interpretation_status": "methodology",
+      "source_interpretation_path": "METHODOLOGY_LEDGER.md",
+      "source_section": "Stage 3B System A protocol freeze",
+      "generating_code_path": "src/concept_drift_ids/system_a.py",
+      "verification_code_path": "tools/stage9_5/claim_traceability.py",
+      "config_protocol_identity": [
+        "STAGE8_PRIMARY_EXECUTION_PROTOCOL.md",
+        "STAGE9_PRESPECIFIED_ROBUSTNESS_PROTOCOL.md",
+        "STAGE9_5_Q1_INDEPENDENT_ASSURANCE_PROTOCOL.md"
+      ],
+      "evidence_identity_refs": [
+        "stage8_evidence_commit"
+      ],
+      "display_transformation": "evidence_native_unrounded",
+      "claim_boundary": "System A is a frozen neural-only baseline; neural architecture is not a contribution claim.",
+      "values": {
+        "config": {
+          "type": "direct",
+          "path": "data/manifests/system_a_v1.json",
+          "pointer": "/config"
+        },
+        "training_partition_used": {
+          "type": "direct",
+          "path": "data/manifests/system_a_v1.json",
+          "pointer": "/training_partition_used"
+        },
+        "development_partition_used": {
+          "type": "direct",
+          "path": "data/manifests/system_a_v1.json",
+          "pointer": "/development_partition_used"
+        },
+        "pre_used_for_development": {
+          "type": "direct",
+          "path": "data/manifests/system_a_v1.json",
+          "pointer": "/pre_drift_used_for_model_development"
+        },
+        "post_used_for_development": {
+          "type": "direct",
+          "path": "data/manifests/system_a_v1.json",
+          "pointer": "/post_drift_used_for_model_development"
+        }
+      }
+    },
+    {
+      "claim_id": "method_shared_control_plane",
+      "family": "method.shared_control_plane_timing_replay_detector",
+      "claim_text_template": "Matched adaptive arms share the same delayed-label detector and neural adaptation control plane, replay policy, RNG policy, and primary fusion authority.",
+      "claim_status": "current",
+      "interpretation_status": "methodology",
+      "source_interpretation_path": "METHODOLOGY_LEDGER.md",
+      "source_section": "Frozen causal design consequences",
+      "generating_code_path": "src/concept_drift_ids/cd_shared_runner.py",
+      "verification_code_path": "tools/stage9_5/claim_traceability.py",
+      "config_protocol_identity": [
+        "STAGE8_PRIMARY_EXECUTION_PROTOCOL.md",
+        "STAGE9_PRESPECIFIED_ROBUSTNESS_PROTOCOL.md",
+        "STAGE9_5_Q1_INDEPENDENT_ASSURANCE_PROTOCOL.md"
+      ],
+      "evidence_identity_refs": [
+        "stage8_evidence_commit"
+      ],
+      "display_transformation": "evidence_native_unrounded",
+      "claim_boundary": "C and D share the adaptive neural/control-plane trajectory; detector input is delayed and checkpoint-pure.",
+      "values": {
+        "control_plane": {
+          "type": "direct",
+          "path": "data/manifests/cd_primary_run_config_v1_1.json",
+          "pointer": "/primary_control_plane/config"
+        },
+        "adwin": {
+          "type": "direct",
+          "path": "data/manifests/cd_primary_run_config_v1_1.json",
+          "pointer": "/primary_control_plane/adwin"
+        },
+        "rng": {
+          "type": "direct",
+          "path": "data/manifests/cd_primary_run_config_v1_1.json",
+          "pointer": "/primary_control_plane/rng"
+        },
+        "primary_neural_weight": {
+          "type": "direct",
+          "path": "data/manifests/cd_primary_run_config_v1_1.json",
+          "pointer": "/fusion/primary_neural_weight"
+        }
+      }
+    },
+    {
+      "claim_id": "method_symbolic_operator",
+      "family": "method.symbolic_generation_validation_gate_lifecycle",
+      "claim_text_template": "Drift-triggered and periodic symbolic arms use the same frozen generation, validation, gate, lifecycle, and opportunity-budget operator.",
+      "claim_status": "current",
+      "interpretation_status": "methodology",
+      "source_interpretation_path": "METHODOLOGY_LEDGER.md",
+      "source_section": "Frozen causal design consequences",
+      "generating_code_path": "src/concept_drift_ids/cd_symbolic_lifecycle.py",
+      "verification_code_path": "tools/stage9_5/claim_traceability.py",
+      "config_protocol_identity": [
+        "STAGE8_PRIMARY_EXECUTION_PROTOCOL.md",
+        "STAGE9_PRESPECIFIED_ROBUSTNESS_PROTOCOL.md",
+        "STAGE9_5_Q1_INDEPENDENT_ASSURANCE_PROTOCOL.md"
+      ],
+      "evidence_identity_refs": [
+        "stage8_evidence_commit"
+      ],
+      "display_transformation": "evidence_native_unrounded",
+      "claim_boundary": "Drift and periodic arms use the matched frozen symbolic operator, validation gate, lifecycle policy, and opportunity budget.",
+      "values": {
+        "operator": {
+          "type": "direct",
+          "path": "data/manifests/cd_primary_run_config_v1_1.json",
+          "pointer": "/primary_symbolic_operator/config"
+        },
+        "maximum_opportunities": {
+          "type": "direct",
+          "path": "data/manifests/cd_primary_run_config_v1_1.json",
+          "pointer": "/primary_symbolic_operator/maximum_opportunities_per_seed"
+        },
+        "periodic_clocks": {
+          "type": "direct",
+          "path": "data/manifests/cd_primary_run_config_v1_1.json",
+          "pointer": "/primary_symbolic_operator/periodic_clocks"
+        }
+      }
+    },
+    {
+      "claim_id": "primary_E1_post_mcc_d_drift_minus_c",
+      "family": "primary.confirmatory_E1_E2_E3",
+      "claim_text_template": "Within the fixed primary scenario, D-drift has a consistently positive post-reference MCC effect relative to frozen-symbolic C, subject to the prespecified familywise inference boundary.",
+      "claim_status": "current",
+      "interpretation_status": "confirmatory",
+      "source_interpretation_path": "STAGE8_PRIMARY_RESULTS_INTERPRETATION.md",
+      "source_section": "Primary confirmatory family",
+      "generating_code_path": "src/concept_drift_ids/cd_analysis.py",
+      "verification_code_path": "tools/stage9_5/claim_traceability.py",
+      "config_protocol_identity": [
+        "STAGE8_PRIMARY_EXECUTION_PROTOCOL.md",
+        "STAGE9_PRESPECIFIED_ROBUSTNESS_PROTOCOL.md",
+        "STAGE9_5_Q1_INDEPENDENT_ASSURANCE_PROTOCOL.md"
+      ],
+      "evidence_identity_refs": [
+        "stage8_confirmatory_manifest_sha256",
+        "stage8_evidence_commit"
+      ],
+      "display_transformation": "publication_display_rounding_only",
+      "claim_boundary": "Inference is paired by stochastic seed within the one fixed primary scenario; Holm family contains exactly E1/E2/E3.",
+      "values": {
+        "summary": {
+          "type": "direct",
+          "path": "results/frozen/cd_primary_v1/phase_c_offline_evaluation_v1_1/confirmatory_analysis.json",
+          "pointer": "/confirmatory_family/summaries/E1_post_mcc_d_drift_minus_c"
+        },
+        "holm_adjusted_p": {
+          "type": "direct",
+          "path": "results/frozen/cd_primary_v1/phase_c_offline_evaluation_v1_1/confirmatory_analysis.json",
+          "pointer": "/confirmatory_family/holm_adjusted_p/E1_post_mcc_d_drift_minus_c"
+        },
+        "raw_sign_test_p": {
+          "type": "direct",
+          "path": "results/frozen/cd_primary_v1/phase_c_offline_evaluation_v1_1/confirmatory_analysis.json",
+          "pointer": "/confirmatory_family/raw_sign_test_p/E1_post_mcc_d_drift_minus_c"
+        }
+      }
+    },
+    {
+      "claim_id": "primary_E2_post_mcsc_d_drift_minus_c",
+      "family": "primary.confirmatory_E1_E2_E3",
+      "claim_text_template": "The primary evidence does not support improved post-reference MCSC for D-drift relative to frozen-symbolic C.",
+      "claim_status": "current",
+      "interpretation_status": "confirmatory",
+      "source_interpretation_path": "STAGE8_PRIMARY_RESULTS_INTERPRETATION.md",
+      "source_section": "Primary confirmatory family",
+      "generating_code_path": "src/concept_drift_ids/cd_analysis.py",
+      "verification_code_path": "tools/stage9_5/claim_traceability.py",
+      "config_protocol_identity": [
+        "STAGE8_PRIMARY_EXECUTION_PROTOCOL.md",
+        "STAGE9_PRESPECIFIED_ROBUSTNESS_PROTOCOL.md",
+        "STAGE9_5_Q1_INDEPENDENT_ASSURANCE_PROTOCOL.md"
+      ],
+      "evidence_identity_refs": [
+        "stage8_confirmatory_manifest_sha256",
+        "stage8_evidence_commit"
+      ],
+      "display_transformation": "publication_display_rounding_only",
+      "claim_boundary": "Inference is paired by stochastic seed within the one fixed primary scenario; Holm family contains exactly E1/E2/E3.",
+      "values": {
+        "summary": {
+          "type": "direct",
+          "path": "results/frozen/cd_primary_v1/phase_c_offline_evaluation_v1_1/confirmatory_analysis.json",
+          "pointer": "/confirmatory_family/summaries/E2_post_mcsc_d_drift_minus_c"
+        },
+        "holm_adjusted_p": {
+          "type": "direct",
+          "path": "results/frozen/cd_primary_v1/phase_c_offline_evaluation_v1_1/confirmatory_analysis.json",
+          "pointer": "/confirmatory_family/holm_adjusted_p/E2_post_mcsc_d_drift_minus_c"
+        },
+        "raw_sign_test_p": {
+          "type": "direct",
+          "path": "results/frozen/cd_primary_v1/phase_c_offline_evaluation_v1_1/confirmatory_analysis.json",
+          "pointer": "/confirmatory_family/raw_sign_test_p/E2_post_mcsc_d_drift_minus_c"
+        }
+      }
+    },
+    {
+      "claim_id": "primary_E3_post_mcsc_d_drift_minus_d_periodic",
+      "family": "primary.confirmatory_E1_E2_E3",
+      "claim_text_template": "The primary evidence does not support superior post-reference MCSC for drift-triggered maintenance relative to matched periodic maintenance.",
+      "claim_status": "current",
+      "interpretation_status": "confirmatory",
+      "source_interpretation_path": "STAGE8_PRIMARY_RESULTS_INTERPRETATION.md",
+      "source_section": "Primary confirmatory family",
+      "generating_code_path": "src/concept_drift_ids/cd_analysis.py",
+      "verification_code_path": "tools/stage9_5/claim_traceability.py",
+      "config_protocol_identity": [
+        "STAGE8_PRIMARY_EXECUTION_PROTOCOL.md",
+        "STAGE9_PRESPECIFIED_ROBUSTNESS_PROTOCOL.md",
+        "STAGE9_5_Q1_INDEPENDENT_ASSURANCE_PROTOCOL.md"
+      ],
+      "evidence_identity_refs": [
+        "stage8_confirmatory_manifest_sha256",
+        "stage8_evidence_commit"
+      ],
+      "display_transformation": "publication_display_rounding_only",
+      "claim_boundary": "Inference is paired by stochastic seed within the one fixed primary scenario; Holm family contains exactly E1/E2/E3.",
+      "values": {
+        "summary": {
+          "type": "direct",
+          "path": "results/frozen/cd_primary_v1/phase_c_offline_evaluation_v1_1/confirmatory_analysis.json",
+          "pointer": "/confirmatory_family/summaries/E3_post_mcsc_d_drift_minus_d_periodic"
+        },
+        "holm_adjusted_p": {
+          "type": "direct",
+          "path": "results/frozen/cd_primary_v1/phase_c_offline_evaluation_v1_1/confirmatory_analysis.json",
+          "pointer": "/confirmatory_family/holm_adjusted_p/E3_post_mcsc_d_drift_minus_d_periodic"
+        },
+        "raw_sign_test_p": {
+          "type": "direct",
+          "path": "results/frozen/cd_primary_v1/phase_c_offline_evaluation_v1_1/confirmatory_analysis.json",
+          "pointer": "/confirmatory_family/raw_sign_test_p/E3_post_mcsc_d_drift_minus_d_periodic"
+        }
+      }
+    },
+    {
+      "claim_id": "primary_operating_tradeoff",
+      "family": "primary.descriptive_operating_tradeoff",
+      "claim_text_template": "Primary post-reference operating summaries show a prediction-versus-symbolic-explanation trade-off across the three matched arms.",
+      "claim_status": "current",
+      "interpretation_status": "secondary",
+      "source_interpretation_path": "STAGE8_PRIMARY_RESULTS_INTERPRETATION.md",
+      "source_section": "Descriptive post-regime operating picture",
+      "generating_code_path": "src/concept_drift_ids/cd_primary_phase_c.py",
+      "verification_code_path": "tools/stage9_5/claim_traceability.py",
+      "config_protocol_identity": [
+        "STAGE8_PRIMARY_EXECUTION_PROTOCOL.md",
+        "STAGE9_PRESPECIFIED_ROBUSTNESS_PROTOCOL.md",
+        "STAGE9_5_Q1_INDEPENDENT_ASSURANCE_PROTOCOL.md"
+      ],
+      "evidence_identity_refs": [
+        "stage8_evidence_commit",
+        "stage8_compact_manifest_sha256"
+      ],
+      "display_transformation": "evidence_native_unrounded",
+      "claim_boundary": "Descriptive marginal means only; confirmatory inference remains paired by seed.",
+      "values": {
+        "c_frozen_symbolic_mcc_mean": {
+          "type": "seed_aggregate",
+          "path_pattern": "results/frozen/cd_primary_v1/phase_c_offline_evaluation_v1_1/seed-{seed}/c_frozen_symbolic_evaluation.json",
+          "seed_source": {
+            "path": "data/manifests/cd_stage9_run_config_v1_1.json",
+            "pointer": "/seeds"
+          },
+          "pointer": "/metrics_by_neural_weight/0.5/post/mcc",
+          "aggregation": "mean"
+        },
+        "c_frozen_symbolic_f1_mean": {
+          "type": "seed_aggregate",
+          "path_pattern": "results/frozen/cd_primary_v1/phase_c_offline_evaluation_v1_1/seed-{seed}/c_frozen_symbolic_evaluation.json",
+          "seed_source": {
+            "path": "data/manifests/cd_stage9_run_config_v1_1.json",
+            "pointer": "/seeds"
+          },
+          "pointer": "/metrics_by_neural_weight/0.5/post/f1",
+          "aggregation": "mean"
+        },
+        "c_frozen_symbolic_recall_mean": {
+          "type": "seed_aggregate",
+          "path_pattern": "results/frozen/cd_primary_v1/phase_c_offline_evaluation_v1_1/seed-{seed}/c_frozen_symbolic_evaluation.json",
+          "seed_source": {
+            "path": "data/manifests/cd_stage9_run_config_v1_1.json",
+            "pointer": "/seeds"
+          },
+          "pointer": "/metrics_by_neural_weight/0.5/post/recall",
+          "aggregation": "mean"
+        },
+        "c_frozen_symbolic_fpr_mean": {
+          "type": "seed_aggregate",
+          "path_pattern": "results/frozen/cd_primary_v1/phase_c_offline_evaluation_v1_1/seed-{seed}/c_frozen_symbolic_evaluation.json",
+          "seed_source": {
+            "path": "data/manifests/cd_stage9_run_config_v1_1.json",
+            "pointer": "/seeds"
+          },
+          "pointer": "/metrics_by_neural_weight/0.5/post/fpr",
+          "aggregation": "mean"
+        },
+        "c_frozen_symbolic_mcsc_mean": {
+          "type": "seed_aggregate",
+          "path_pattern": "results/frozen/cd_primary_v1/phase_c_offline_evaluation_v1_1/seed-{seed}/c_frozen_symbolic_evaluation.json",
+          "seed_source": {
+            "path": "data/manifests/cd_stage9_run_config_v1_1.json",
+            "pointer": "/seeds"
+          },
+          "pointer": "/explanation/post/mcsc",
+          "aggregation": "mean"
+        },
+        "c_frozen_symbolic_resolved_coverage_mean": {
+          "type": "seed_aggregate",
+          "path_pattern": "results/frozen/cd_primary_v1/phase_c_offline_evaluation_v1_1/seed-{seed}/c_frozen_symbolic_evaluation.json",
+          "seed_source": {
+            "path": "data/manifests/cd_stage9_run_config_v1_1.json",
+            "pointer": "/seeds"
+          },
+          "pointer": "/explanation/post/resolved_coverage",
+          "aggregation": "mean"
+        },
+        "c_frozen_symbolic_uncovered_rate_mean": {
+          "type": "seed_aggregate",
+          "path_pattern": "results/frozen/cd_primary_v1/phase_c_offline_evaluation_v1_1/seed-{seed}/c_frozen_symbolic_evaluation.json",
+          "seed_source": {
+            "path": "data/manifests/cd_stage9_run_config_v1_1.json",
+            "pointer": "/seeds"
+          },
+          "pointer": "/explanation/post/uncovered_rate",
+          "aggregation": "mean"
+        },
+        "d_drift_mcc_mean": {
+          "type": "seed_aggregate",
+          "path_pattern": "results/frozen/cd_primary_v1/phase_c_offline_evaluation_v1_1/seed-{seed}/d_drift_evaluation.json",
+          "seed_source": {
+            "path": "data/manifests/cd_stage9_run_config_v1_1.json",
+            "pointer": "/seeds"
+          },
+          "pointer": "/metrics_by_neural_weight/0.5/post/mcc",
+          "aggregation": "mean"
+        },
+        "d_drift_f1_mean": {
+          "type": "seed_aggregate",
+          "path_pattern": "results/frozen/cd_primary_v1/phase_c_offline_evaluation_v1_1/seed-{seed}/d_drift_evaluation.json",
+          "seed_source": {
+            "path": "data/manifests/cd_stage9_run_config_v1_1.json",
+            "pointer": "/seeds"
+          },
+          "pointer": "/metrics_by_neural_weight/0.5/post/f1",
+          "aggregation": "mean"
+        },
+        "d_drift_recall_mean": {
+          "type": "seed_aggregate",
+          "path_pattern": "results/frozen/cd_primary_v1/phase_c_offline_evaluation_v1_1/seed-{seed}/d_drift_evaluation.json",
+          "seed_source": {
+            "path": "data/manifests/cd_stage9_run_config_v1_1.json",
+            "pointer": "/seeds"
+          },
+          "pointer": "/metrics_by_neural_weight/0.5/post/recall",
+          "aggregation": "mean"
+        },
+        "d_drift_fpr_mean": {
+          "type": "seed_aggregate",
+          "path_pattern": "results/frozen/cd_primary_v1/phase_c_offline_evaluation_v1_1/seed-{seed}/d_drift_evaluation.json",
+          "seed_source": {
+            "path": "data/manifests/cd_stage9_run_config_v1_1.json",
+            "pointer": "/seeds"
+          },
+          "pointer": "/metrics_by_neural_weight/0.5/post/fpr",
+          "aggregation": "mean"
+        },
+        "d_drift_mcsc_mean": {
+          "type": "seed_aggregate",
+          "path_pattern": "results/frozen/cd_primary_v1/phase_c_offline_evaluation_v1_1/seed-{seed}/d_drift_evaluation.json",
+          "seed_source": {
+            "path": "data/manifests/cd_stage9_run_config_v1_1.json",
+            "pointer": "/seeds"
+          },
+          "pointer": "/explanation/post/mcsc",
+          "aggregation": "mean"
+        },
+        "d_drift_resolved_coverage_mean": {
+          "type": "seed_aggregate",
+          "path_pattern": "results/frozen/cd_primary_v1/phase_c_offline_evaluation_v1_1/seed-{seed}/d_drift_evaluation.json",
+          "seed_source": {
+            "path": "data/manifests/cd_stage9_run_config_v1_1.json",
+            "pointer": "/seeds"
+          },
+          "pointer": "/explanation/post/resolved_coverage",
+          "aggregation": "mean"
+        },
+        "d_drift_uncovered_rate_mean": {
+          "type": "seed_aggregate",
+          "path_pattern": "results/frozen/cd_primary_v1/phase_c_offline_evaluation_v1_1/seed-{seed}/d_drift_evaluation.json",
+          "seed_source": {
+            "path": "data/manifests/cd_stage9_run_config_v1_1.json",
+            "pointer": "/seeds"
+          },
+          "pointer": "/explanation/post/uncovered_rate",
+          "aggregation": "mean"
+        },
+        "d_periodic_mcc_mean": {
+          "type": "seed_aggregate",
+          "path_pattern": "results/frozen/cd_primary_v1/phase_c_offline_evaluation_v1_1/seed-{seed}/d_periodic_evaluation.json",
+          "seed_source": {
+            "path": "data/manifests/cd_stage9_run_config_v1_1.json",
+            "pointer": "/seeds"
+          },
+          "pointer": "/metrics_by_neural_weight/0.5/post/mcc",
+          "aggregation": "mean"
+        },
+        "d_periodic_f1_mean": {
+          "type": "seed_aggregate",
+          "path_pattern": "results/frozen/cd_primary_v1/phase_c_offline_evaluation_v1_1/seed-{seed}/d_periodic_evaluation.json",
+          "seed_source": {
+            "path": "data/manifests/cd_stage9_run_config_v1_1.json",
+            "pointer": "/seeds"
+          },
+          "pointer": "/metrics_by_neural_weight/0.5/post/f1",
+          "aggregation": "mean"
+        },
+        "d_periodic_recall_mean": {
+          "type": "seed_aggregate",
+          "path_pattern": "results/frozen/cd_primary_v1/phase_c_offline_evaluation_v1_1/seed-{seed}/d_periodic_evaluation.json",
+          "seed_source": {
+            "path": "data/manifests/cd_stage9_run_config_v1_1.json",
+            "pointer": "/seeds"
+          },
+          "pointer": "/metrics_by_neural_weight/0.5/post/recall",
+          "aggregation": "mean"
+        },
+        "d_periodic_fpr_mean": {
+          "type": "seed_aggregate",
+          "path_pattern": "results/frozen/cd_primary_v1/phase_c_offline_evaluation_v1_1/seed-{seed}/d_periodic_evaluation.json",
+          "seed_source": {
+            "path": "data/manifests/cd_stage9_run_config_v1_1.json",
+            "pointer": "/seeds"
+          },
+          "pointer": "/metrics_by_neural_weight/0.5/post/fpr",
+          "aggregation": "mean"
+        },
+        "d_periodic_mcsc_mean": {
+          "type": "seed_aggregate",
+          "path_pattern": "results/frozen/cd_primary_v1/phase_c_offline_evaluation_v1_1/seed-{seed}/d_periodic_evaluation.json",
+          "seed_source": {
+            "path": "data/manifests/cd_stage9_run_config_v1_1.json",
+            "pointer": "/seeds"
+          },
+          "pointer": "/explanation/post/mcsc",
+          "aggregation": "mean"
+        },
+        "d_periodic_resolved_coverage_mean": {
+          "type": "seed_aggregate",
+          "path_pattern": "results/frozen/cd_primary_v1/phase_c_offline_evaluation_v1_1/seed-{seed}/d_periodic_evaluation.json",
+          "seed_source": {
+            "path": "data/manifests/cd_stage9_run_config_v1_1.json",
+            "pointer": "/seeds"
+          },
+          "pointer": "/explanation/post/resolved_coverage",
+          "aggregation": "mean"
+        },
+        "d_periodic_uncovered_rate_mean": {
+          "type": "seed_aggregate",
+          "path_pattern": "results/frozen/cd_primary_v1/phase_c_offline_evaluation_v1_1/seed-{seed}/d_periodic_evaluation.json",
+          "seed_source": {
+            "path": "data/manifests/cd_stage9_run_config_v1_1.json",
+            "pointer": "/seeds"
+          },
+          "pointer": "/explanation/post/uncovered_rate",
+          "aggregation": "mean"
+        }
+      }
+    },
+    {
+      "claim_id": "primary_publication_timing",
+      "family": "primary.trigger_timing_and_publication_timing",
+      "claim_text_template": "Most realized primary drift-gated symbolic publications are not cleanly post-boundary, constraining any boundary-detect-then-repair narrative.",
+      "claim_status": "current",
+      "interpretation_status": "secondary",
+      "source_interpretation_path": "STAGE8_PRIMARY_RESULTS_INTERPRETATION.md",
+      "source_section": "Trigger timing is a major interpretation constraint",
+      "generating_code_path": "src/concept_drift_ids/cd_primary_mechanism.py",
+      "verification_code_path": "tools/stage9_5/claim_traceability.py",
+      "config_protocol_identity": [
+        "STAGE8_PRIMARY_EXECUTION_PROTOCOL.md",
+        "STAGE9_PRESPECIFIED_ROBUSTNESS_PROTOCOL.md",
+        "STAGE9_5_Q1_INDEPENDENT_ASSURANCE_PROTOCOL.md"
+      ],
+      "evidence_identity_refs": [
+        "mechanism_aggregate_sha256",
+        "stage8_evidence_commit"
+      ],
+      "display_transformation": "evidence_native_unrounded",
+      "claim_boundary": "Boundary is scoring-only; publication timing constrains post-boundary repair language.",
+      "values": {
+        "boundary_index": {
+          "type": "direct",
+          "path": "data/manifests/sudden_benign_v1.json",
+          "pointer": "/partitions/pre_drift/rows"
+        },
+        "d_drift_pre_publications": {
+          "type": "seed_nested_relation_count",
+          "path_pattern": "results/frozen/cd_primary_mechanism_v1_2/seed-{seed}.json",
+          "seed_source": {
+            "path": "data/manifests/cd_stage9_run_config_v1_1.json",
+            "pointer": "/seeds"
+          },
+          "pointer": "/comparisons/d_drift/publications",
+          "item_pointer": "/effective_index",
+          "relation": "lt",
+          "threshold_source": {
+            "type": "direct",
+            "path": "data/manifests/sudden_benign_v1.json",
+            "pointer": "/partitions/pre_drift/rows"
+          }
+        },
+        "d_drift_post_publications": {
+          "type": "seed_nested_relation_count",
+          "path_pattern": "results/frozen/cd_primary_mechanism_v1_2/seed-{seed}.json",
+          "seed_source": {
+            "path": "data/manifests/cd_stage9_run_config_v1_1.json",
+            "pointer": "/seeds"
+          },
+          "pointer": "/comparisons/d_drift/publications",
+          "item_pointer": "/effective_index",
+          "relation": "ge",
+          "threshold_source": {
+            "type": "direct",
+            "path": "data/manifests/sudden_benign_v1.json",
+            "pointer": "/partitions/pre_drift/rows"
+          }
+        }
+      }
+    },
+    {
+      "claim_id": "primary_maintenance_budget_compute_wait",
+      "family": "primary.maintenance_budget_compute_wait",
+      "claim_text_template": "Drift and periodic trigger arms operate under the same opportunity budget, with realized maintenance, publication, compute, and validation-wait quantities treated descriptively.",
+      "claim_status": "current",
+      "interpretation_status": "secondary",
+      "source_interpretation_path": "STAGE8_PRIMARY_RESULTS_INTERPRETATION.md",
+      "source_section": "D-drift versus periodic maintenance",
+      "generating_code_path": "src/concept_drift_ids/cd_primary_phase_c.py",
+      "verification_code_path": "tools/stage9_5/claim_traceability.py",
+      "config_protocol_identity": [
+        "STAGE8_PRIMARY_EXECUTION_PROTOCOL.md",
+        "STAGE9_PRESPECIFIED_ROBUSTNESS_PROTOCOL.md",
+        "STAGE9_5_Q1_INDEPENDENT_ASSURANCE_PROTOCOL.md"
+      ],
+      "evidence_identity_refs": [
+        "stage8_evidence_commit",
+        "stage8_compact_manifest_sha256"
+      ],
+      "display_transformation": "evidence_native_unrounded",
+      "claim_boundary": "Maintenance rows/opportunities are longitudinal diagnostics, not independent replicates.",
+      "values": {
+        "d_drift_opportunity_count_mean": {
+          "type": "seed_aggregate",
+          "path_pattern": "results/frozen/cd_primary_v1/phase_c_offline_evaluation_v1_1/seed-{seed}/d_drift_evaluation.json",
+          "seed_source": {
+            "path": "data/manifests/cd_stage9_run_config_v1_1.json",
+            "pointer": "/seeds"
+          },
+          "pointer": "/maintenance_summary/opportunity_count",
+          "aggregation": "mean"
+        },
+        "d_drift_publication_count_mean": {
+          "type": "seed_aggregate",
+          "path_pattern": "results/frozen/cd_primary_v1/phase_c_offline_evaluation_v1_1/seed-{seed}/d_drift_evaluation.json",
+          "seed_source": {
+            "path": "data/manifests/cd_stage9_run_config_v1_1.json",
+            "pointer": "/seeds"
+          },
+          "pointer": "/maintenance_summary/publication_count",
+          "aggregation": "mean"
+        },
+        "d_drift_candidate_count_mean": {
+          "type": "seed_aggregate",
+          "path_pattern": "results/frozen/cd_primary_v1/phase_c_offline_evaluation_v1_1/seed-{seed}/d_drift_evaluation.json",
+          "seed_source": {
+            "path": "data/manifests/cd_stage9_run_config_v1_1.json",
+            "pointer": "/seeds"
+          },
+          "pointer": "/maintenance_summary/candidate_count",
+          "aggregation": "mean"
+        },
+        "d_drift_compute_seconds_mean": {
+          "type": "seed_aggregate",
+          "path_pattern": "results/frozen/cd_primary_v1/phase_c_offline_evaluation_v1_1/seed-{seed}/d_drift_evaluation.json",
+          "seed_source": {
+            "path": "data/manifests/cd_stage9_run_config_v1_1.json",
+            "pointer": "/seeds"
+          },
+          "pointer": "/maintenance_summary/compute_seconds",
+          "aggregation": "mean"
+        },
+        "d_drift_mean_validation_wait_rows_mean": {
+          "type": "seed_aggregate",
+          "path_pattern": "results/frozen/cd_primary_v1/phase_c_offline_evaluation_v1_1/seed-{seed}/d_drift_evaluation.json",
+          "seed_source": {
+            "path": "data/manifests/cd_stage9_run_config_v1_1.json",
+            "pointer": "/seeds"
+          },
+          "pointer": "/maintenance_summary/mean_validation_wait_rows",
+          "aggregation": "mean"
+        },
+        "d_periodic_opportunity_count_mean": {
+          "type": "seed_aggregate",
+          "path_pattern": "results/frozen/cd_primary_v1/phase_c_offline_evaluation_v1_1/seed-{seed}/d_periodic_evaluation.json",
+          "seed_source": {
+            "path": "data/manifests/cd_stage9_run_config_v1_1.json",
+            "pointer": "/seeds"
+          },
+          "pointer": "/maintenance_summary/opportunity_count",
+          "aggregation": "mean"
+        },
+        "d_periodic_publication_count_mean": {
+          "type": "seed_aggregate",
+          "path_pattern": "results/frozen/cd_primary_v1/phase_c_offline_evaluation_v1_1/seed-{seed}/d_periodic_evaluation.json",
+          "seed_source": {
+            "path": "data/manifests/cd_stage9_run_config_v1_1.json",
+            "pointer": "/seeds"
+          },
+          "pointer": "/maintenance_summary/publication_count",
+          "aggregation": "mean"
+        },
+        "d_periodic_candidate_count_mean": {
+          "type": "seed_aggregate",
+          "path_pattern": "results/frozen/cd_primary_v1/phase_c_offline_evaluation_v1_1/seed-{seed}/d_periodic_evaluation.json",
+          "seed_source": {
+            "path": "data/manifests/cd_stage9_run_config_v1_1.json",
+            "pointer": "/seeds"
+          },
+          "pointer": "/maintenance_summary/candidate_count",
+          "aggregation": "mean"
+        },
+        "d_periodic_compute_seconds_mean": {
+          "type": "seed_aggregate",
+          "path_pattern": "results/frozen/cd_primary_v1/phase_c_offline_evaluation_v1_1/seed-{seed}/d_periodic_evaluation.json",
+          "seed_source": {
+            "path": "data/manifests/cd_stage9_run_config_v1_1.json",
+            "pointer": "/seeds"
+          },
+          "pointer": "/maintenance_summary/compute_seconds",
+          "aggregation": "mean"
+        },
+        "d_periodic_mean_validation_wait_rows_mean": {
+          "type": "seed_aggregate",
+          "path_pattern": "results/frozen/cd_primary_v1/phase_c_offline_evaluation_v1_1/seed-{seed}/d_periodic_evaluation.json",
+          "seed_source": {
+            "path": "data/manifests/cd_stage9_run_config_v1_1.json",
+            "pointer": "/seeds"
+          },
+          "pointer": "/maintenance_summary/mean_validation_wait_rows",
+          "aggregation": "mean"
+        }
+      }
+    },
+    {
+      "claim_id": "primary_recovery",
+      "family": "primary.recovery_secondary",
+      "claim_text_template": "Recovery summaries are secondary window-defined diagnostics and retain right-censoring rather than creating additional inferential replicates.",
+      "claim_status": "current",
+      "interpretation_status": "secondary",
+      "source_interpretation_path": "STAGE8_PRIMARY_RESULTS_INTERPRETATION.md",
+      "source_section": "Recovery behavior",
+      "generating_code_path": "src/concept_drift_ids/cd_primary_phase_c.py",
+      "verification_code_path": "tools/stage9_5/claim_traceability.py",
+      "config_protocol_identity": [
+        "STAGE8_PRIMARY_EXECUTION_PROTOCOL.md",
+        "STAGE9_PRESPECIFIED_ROBUSTNESS_PROTOCOL.md",
+        "STAGE9_5_Q1_INDEPENDENT_ASSURANCE_PROTOCOL.md"
+      ],
+      "evidence_identity_refs": [
+        "stage8_evidence_commit",
+        "stage8_compact_manifest_sha256"
+      ],
+      "display_transformation": "evidence_native_unrounded",
+      "claim_boundary": "Recovery is secondary and window-defined; censored seeds remain censored.",
+      "values": {
+        "c_frozen_symbolic_mcc_recovered_count": {
+          "type": "seed_aggregate",
+          "path_pattern": "results/frozen/cd_primary_v1/phase_c_offline_evaluation_v1_1/seed-{seed}/c_frozen_symbolic_evaluation.json",
+          "seed_source": {
+            "path": "data/manifests/cd_stage9_run_config_v1_1.json",
+            "pointer": "/seeds"
+          },
+          "pointer": "/primary_recovery/mcc/recovered",
+          "aggregation": "count_true"
+        },
+        "c_frozen_symbolic_mcsc_recovered_count": {
+          "type": "seed_aggregate",
+          "path_pattern": "results/frozen/cd_primary_v1/phase_c_offline_evaluation_v1_1/seed-{seed}/c_frozen_symbolic_evaluation.json",
+          "seed_source": {
+            "path": "data/manifests/cd_stage9_run_config_v1_1.json",
+            "pointer": "/seeds"
+          },
+          "pointer": "/primary_recovery/mcsc/recovered",
+          "aggregation": "count_true"
+        },
+        "d_drift_mcc_recovered_count": {
+          "type": "seed_aggregate",
+          "path_pattern": "results/frozen/cd_primary_v1/phase_c_offline_evaluation_v1_1/seed-{seed}/d_drift_evaluation.json",
+          "seed_source": {
+            "path": "data/manifests/cd_stage9_run_config_v1_1.json",
+            "pointer": "/seeds"
+          },
+          "pointer": "/primary_recovery/mcc/recovered",
+          "aggregation": "count_true"
+        },
+        "d_drift_mcsc_recovered_count": {
+          "type": "seed_aggregate",
+          "path_pattern": "results/frozen/cd_primary_v1/phase_c_offline_evaluation_v1_1/seed-{seed}/d_drift_evaluation.json",
+          "seed_source": {
+            "path": "data/manifests/cd_stage9_run_config_v1_1.json",
+            "pointer": "/seeds"
+          },
+          "pointer": "/primary_recovery/mcsc/recovered",
+          "aggregation": "count_true"
+        },
+        "d_periodic_mcc_recovered_count": {
+          "type": "seed_aggregate",
+          "path_pattern": "results/frozen/cd_primary_v1/phase_c_offline_evaluation_v1_1/seed-{seed}/d_periodic_evaluation.json",
+          "seed_source": {
+            "path": "data/manifests/cd_stage9_run_config_v1_1.json",
+            "pointer": "/seeds"
+          },
+          "pointer": "/primary_recovery/mcc/recovered",
+          "aggregation": "count_true"
+        },
+        "d_periodic_mcsc_recovered_count": {
+          "type": "seed_aggregate",
+          "path_pattern": "results/frozen/cd_primary_v1/phase_c_offline_evaluation_v1_1/seed-{seed}/d_periodic_evaluation.json",
+          "seed_source": {
+            "path": "data/manifests/cd_stage9_run_config_v1_1.json",
+            "pointer": "/seeds"
+          },
+          "pointer": "/primary_recovery/mcsc/recovered",
+          "aggregation": "count_true"
+        }
+      }
+    },
+    {
+      "claim_id": "primary_lambda1_isolation",
+      "family": "primary.lambda1_and_neural_control",
+      "claim_text_template": "At full neural authority, matched-arm predictive differences collapse to the shared neural stream, supporting causal isolation of symbolic-state/fusion effects.",
+      "claim_status": "current",
+      "interpretation_status": "negative",
+      "source_interpretation_path": "STAGE8_PRIMARY_RESULTS_INTERPRETATION.md",
+      "source_section": "Neural control-plane retention",
+      "generating_code_path": "src/concept_drift_ids/cd_stage9_offline.py",
+      "verification_code_path": "tools/stage9_5/claim_traceability.py",
+      "config_protocol_identity": [
+        "STAGE8_PRIMARY_EXECUTION_PROTOCOL.md",
+        "STAGE9_PRESPECIFIED_ROBUSTNESS_PROTOCOL.md",
+        "STAGE9_5_Q1_INDEPENDENT_ASSURANCE_PROTOCOL.md"
+      ],
+      "evidence_identity_refs": [
+        "stage9_aggregate_sha256",
+        "stage8_confirmatory_manifest_sha256"
+      ],
+      "display_transformation": "evidence_native_unrounded",
+      "claim_boundary": "Lambda=1 removes symbolic predictive authority and is a causal-isolation negative control.",
+      "values": {
+        "primary_lambda1_equality": {
+          "type": "direct",
+          "path": "results/frozen/cd_primary_v1/phase_c_offline_evaluation_v1_1/confirmatory_analysis.json",
+          "pointer": "/lambda_one_predictive_equality_all_seeds"
+        },
+        "lambda1_d_drift_minus_c_mcc": {
+          "type": "direct",
+          "path": "results/frozen/cd_robustness_v1_1/aggregate.json",
+          "pointer": "/conditions/lambda_1_0/within_condition_primary_contrasts/d_drift_minus_c/mcc"
+        },
+        "lambda1_d_drift_minus_c_f1": {
+          "type": "direct",
+          "path": "results/frozen/cd_robustness_v1_1/aggregate.json",
+          "pointer": "/conditions/lambda_1_0/within_condition_primary_contrasts/d_drift_minus_c/f1"
+        },
+        "lambda1_d_drift_minus_c_fpr": {
+          "type": "direct",
+          "path": "results/frozen/cd_robustness_v1_1/aggregate.json",
+          "pointer": "/conditions/lambda_1_0/within_condition_primary_contrasts/d_drift_minus_c/fpr"
+        }
+      }
+    },
+    {
+      "claim_id": "mechanism_decomposition",
+      "family": "mechanism.withdrawal_addition_retained_allocation",
+      "claim_text_template": "The post-primary mechanism audit attributes most of the D-drift-versus-C predictive difference to withdrawal of stale symbolic authority, with a smaller addition component.",
+      "claim_status": "current",
+      "interpretation_status": "exploratory",
+      "source_interpretation_path": "STAGE8_SYMBOLIC_MECHANISM_AUDIT_INTERPRETATION.md",
+      "source_section": "Main D-drift versus C post-reference result",
+      "generating_code_path": "src/concept_drift_ids/cd_primary_mechanism.py",
+      "verification_code_path": "tools/stage9_5/claim_traceability.py",
+      "config_protocol_identity": [
+        "STAGE8_PRIMARY_EXECUTION_PROTOCOL.md",
+        "STAGE9_PRESPECIFIED_ROBUSTNESS_PROTOCOL.md",
+        "STAGE9_5_Q1_INDEPENDENT_ASSURANCE_PROTOCOL.md"
+      ],
+      "evidence_identity_refs": [
+        "mechanism_aggregate_sha256",
+        "mechanism_audit_manifest_sha256"
+      ],
+      "display_transformation": "evidence_native_unrounded",
+      "claim_boundary": "Exploratory post-primary decomposition; does not replace E1/E2/E3.",
+      "values": {
+        "total_mean": {
+          "type": "direct",
+          "path": "results/frozen/cd_primary_mechanism_v1_2/aggregate.json",
+          "pointer": "/targets/d_drift/post/total_mcc_difference/mean"
+        },
+        "withdrawal_mean": {
+          "type": "direct",
+          "path": "results/frozen/cd_primary_mechanism_v1_2/aggregate.json",
+          "pointer": "/targets/d_drift/post/mechanisms/withdrawal/shapley_mcc_contribution/mean"
+        },
+        "addition_mean": {
+          "type": "direct",
+          "path": "results/frozen/cd_primary_mechanism_v1_2/aggregate.json",
+          "pointer": "/targets/d_drift/post/mechanisms/addition/shapley_mcc_contribution/mean"
+        },
+        "retained_mean": {
+          "type": "direct",
+          "path": "results/frozen/cd_primary_mechanism_v1_2/aggregate.json",
+          "pointer": "/targets/d_drift/post/mechanisms/retained_authority/shapley_mcc_contribution/mean"
+        }
+      }
+    },
+    {
+      "claim_id": "mechanism_rescue_harm_counts",
+      "family": "mechanism.rescue_harm_decision_counts",
+      "claim_text_template": "Withdrawal and addition mechanism strata can be audited through immutable rescue and harm decision counts without treating rows as inferential replicates.",
+      "claim_status": "current",
+      "interpretation_status": "exploratory",
+      "source_interpretation_path": "STAGE8_SYMBOLIC_MECHANISM_AUDIT_INTERPRETATION.md",
+      "source_section": "What withdrawal is doing",
+      "generating_code_path": "src/concept_drift_ids/cd_primary_mechanism.py",
+      "verification_code_path": "tools/stage9_5/claim_traceability.py",
+      "config_protocol_identity": [
+        "STAGE8_PRIMARY_EXECUTION_PROTOCOL.md",
+        "STAGE9_PRESPECIFIED_ROBUSTNESS_PROTOCOL.md",
+        "STAGE9_5_Q1_INDEPENDENT_ASSURANCE_PROTOCOL.md"
+      ],
+      "evidence_identity_refs": [
+        "mechanism_aggregate_sha256",
+        "mechanism_audit_manifest_sha256"
+      ],
+      "display_transformation": "evidence_native_unrounded",
+      "claim_boundary": "Row counts are descriptive longitudinal observations, not independent replicates.",
+      "values": {
+        "withdrawal_rescues": {
+          "type": "seed_aggregate",
+          "path_pattern": "results/frozen/cd_primary_mechanism_v1_2/seed-{seed}.json",
+          "seed_source": {
+            "path": "data/manifests/cd_stage9_run_config_v1_1.json",
+            "pointer": "/seeds"
+          },
+          "pointer": "/comparisons/d_drift/domains/post/strata/withdrawal/rescue_count",
+          "aggregation": "sum"
+        },
+        "withdrawal_harms": {
+          "type": "seed_aggregate",
+          "path_pattern": "results/frozen/cd_primary_mechanism_v1_2/seed-{seed}.json",
+          "seed_source": {
+            "path": "data/manifests/cd_stage9_run_config_v1_1.json",
+            "pointer": "/seeds"
+          },
+          "pointer": "/comparisons/d_drift/domains/post/strata/withdrawal/harm_count",
+          "aggregation": "sum"
+        },
+        "addition_rescues": {
+          "type": "seed_aggregate",
+          "path_pattern": "results/frozen/cd_primary_mechanism_v1_2/seed-{seed}.json",
+          "seed_source": {
+            "path": "data/manifests/cd_stage9_run_config_v1_1.json",
+            "pointer": "/seeds"
+          },
+          "pointer": "/comparisons/d_drift/domains/post/strata/addition/rescue_count",
+          "aggregation": "sum"
+        },
+        "addition_harms": {
+          "type": "seed_aggregate",
+          "path_pattern": "results/frozen/cd_primary_mechanism_v1_2/seed-{seed}.json",
+          "seed_source": {
+            "path": "data/manifests/cd_stage9_run_config_v1_1.json",
+            "pointer": "/seeds"
+          },
+          "pointer": "/comparisons/d_drift/domains/post/strata/addition/harm_count",
+          "aggregation": "sum"
+        }
+      }
+    },
+    {
+      "claim_id": "mechanism_periodic_context",
+      "family": "mechanism.timing_and_periodic_comparator",
+      "claim_text_template": "Matched periodic maintenance exhibits the same broad withdrawal-dominant mechanism family, limiting claims of drift-trigger-specific mechanism superiority.",
+      "claim_status": "current",
+      "interpretation_status": "exploratory",
+      "source_interpretation_path": "STAGE8_SYMBOLIC_MECHANISM_AUDIT_INTERPRETATION.md",
+      "source_section": "D-periodic shows the same mechanism family",
+      "generating_code_path": "src/concept_drift_ids/cd_primary_mechanism.py",
+      "verification_code_path": "tools/stage9_5/claim_traceability.py",
+      "config_protocol_identity": [
+        "STAGE8_PRIMARY_EXECUTION_PROTOCOL.md",
+        "STAGE9_PRESPECIFIED_ROBUSTNESS_PROTOCOL.md",
+        "STAGE9_5_Q1_INDEPENDENT_ASSURANCE_PROTOCOL.md"
+      ],
+      "evidence_identity_refs": [
+        "mechanism_aggregate_sha256",
+        "mechanism_audit_manifest_sha256"
+      ],
+      "display_transformation": "evidence_native_unrounded",
+      "claim_boundary": "Periodic mechanism context is descriptive matched-comparator evidence, not a new confirmatory endpoint.",
+      "values": {
+        "periodic_total_mean": {
+          "type": "direct",
+          "path": "results/frozen/cd_primary_mechanism_v1_2/aggregate.json",
+          "pointer": "/targets/d_periodic/post/total_mcc_difference/mean"
+        },
+        "periodic_withdrawal_mean": {
+          "type": "direct",
+          "path": "results/frozen/cd_primary_mechanism_v1_2/aggregate.json",
+          "pointer": "/targets/d_periodic/post/mechanisms/withdrawal/shapley_mcc_contribution/mean"
+        },
+        "drift_pre_total_mean": {
+          "type": "direct",
+          "path": "results/frozen/cd_primary_mechanism_v1_2/aggregate.json",
+          "pointer": "/targets/d_drift/pre/total_mcc_difference/mean"
+        },
+        "drift_pre_withdrawal_mean": {
+          "type": "direct",
+          "path": "results/frozen/cd_primary_mechanism_v1_2/aggregate.json",
+          "pointer": "/targets/d_drift/pre/mechanisms/withdrawal/shapley_mcc_contribution/mean"
+        }
+      }
+    },
+    {
+      "claim_id": "robustness_conditionwise_d_drift_minus_c",
+      "family": "robustness.conditionwise_D_drift_minus_C",
+      "claim_text_template": "The positive D-drift-versus-C predictive effect persists across the major prespecified same-scenario robustness conditions, with condition-specific variation.",
+      "claim_status": "current",
+      "interpretation_status": "secondary",
+      "source_interpretation_path": "STAGE9_ROBUSTNESS_INTERPRETATION.md",
+      "source_section": "Main robustness question: D-drift versus frozen-symbolic C",
+      "generating_code_path": "src/concept_drift_ids/cd_stage9_export.py",
+      "verification_code_path": "tools/stage9_5/claim_traceability.py",
+      "config_protocol_identity": [
+        "STAGE8_PRIMARY_EXECUTION_PROTOCOL.md",
+        "STAGE9_PRESPECIFIED_ROBUSTNESS_PROTOCOL.md",
+        "STAGE9_5_Q1_INDEPENDENT_ASSURANCE_PROTOCOL.md"
+      ],
+      "evidence_identity_refs": [
+        "stage9_aggregate_sha256",
+        "stage9_execution_plan_sha256"
+      ],
+      "display_transformation": "evidence_native_unrounded",
+      "claim_boundary": "Prespecified same-scenario robustness; no new confirmatory p-value family.",
+      "values": {
+        "mcc_mean_by_condition": {
+          "type": "object_child_map",
+          "path": "results/frozen/cd_robustness_v1_1/aggregate.json",
+          "pointer": "/conditions",
+          "relative_pointer": "/within_condition_primary_contrasts/d_drift_minus_c/mcc/mean",
+          "skip_missing": true
+        },
+        "mcc_values_by_condition": {
+          "type": "object_child_map",
+          "path": "results/frozen/cd_robustness_v1_1/aggregate.json",
+          "pointer": "/conditions",
+          "relative_pointer": "/within_condition_primary_contrasts/d_drift_minus_c/mcc/values",
+          "skip_missing": true
+        }
+      }
+    },
+    {
+      "claim_id": "robustness_lambda1_neural_only",
+      "family": "robustness.lambda1_and_neural_only",
+      "claim_text_template": "The lambda-one analysis confirms predictive arm equality and bounds claims relative to the shared neural-only stream.",
+      "claim_status": "current",
+      "interpretation_status": "negative",
+      "source_interpretation_path": "STAGE9_ROBUSTNESS_INTERPRETATION.md",
+      "source_section": "Lambda=1 is the decisive causal negative control",
+      "generating_code_path": "src/concept_drift_ids/cd_stage9_offline.py",
+      "verification_code_path": "tools/stage9_5/claim_traceability.py",
+      "config_protocol_identity": [
+        "STAGE8_PRIMARY_EXECUTION_PROTOCOL.md",
+        "STAGE9_PRESPECIFIED_ROBUSTNESS_PROTOCOL.md",
+        "STAGE9_5_Q1_INDEPENDENT_ASSURANCE_PROTOCOL.md"
+      ],
+      "evidence_identity_refs": [
+        "stage9_aggregate_sha256"
+      ],
+      "display_transformation": "evidence_native_unrounded",
+      "claim_boundary": "Lambda=1 is neural-only; paired-effect direction in the aggregate is lambda=1 minus primary lambda=.50.",
+      "values": {
+        "c_lambda1_minus_primary_mcc": {
+          "type": "direct",
+          "path": "results/frozen/cd_robustness_v1_1/aggregate.json",
+          "pointer": "/conditions/lambda_1_0/arms/c_frozen_symbolic/paired_effect_vs_primary_lambda_0_5/mcc"
+        },
+        "d_lambda1_minus_primary_mcc": {
+          "type": "direct",
+          "path": "results/frozen/cd_robustness_v1_1/aggregate.json",
+          "pointer": "/conditions/lambda_1_0/arms/d_drift/paired_effect_vs_primary_lambda_0_5/mcc"
+        },
+        "periodic_lambda1_minus_primary_mcc": {
+          "type": "direct",
+          "path": "results/frozen/cd_robustness_v1_1/aggregate.json",
+          "pointer": "/conditions/lambda_1_0/arms/d_periodic/paired_effect_vs_primary_lambda_0_5/mcc"
+        }
+      }
+    },
+    {
+      "claim_id": "robustness_detector_replay_gate",
+      "family": "robustness.detector_replay_gate_sensitivities",
+      "claim_text_template": "The primary predictive contrast is not dependent on one detector construction, replay setting, symbolic gate, or label-latency setting.",
+      "claim_status": "current",
+      "interpretation_status": "secondary",
+      "source_interpretation_path": "STAGE9_ROBUSTNESS_INTERPRETATION.md",
+      "source_section": "Detector-family and detector-signal robustness",
+      "generating_code_path": "src/concept_drift_ids/cd_stage9_export.py",
+      "verification_code_path": "tools/stage9_5/claim_traceability.py",
+      "config_protocol_identity": [
+        "STAGE8_PRIMARY_EXECUTION_PROTOCOL.md",
+        "STAGE9_PRESPECIFIED_ROBUSTNESS_PROTOCOL.md",
+        "STAGE9_5_Q1_INDEPENDENT_ASSURANCE_PROTOCOL.md"
+      ],
+      "evidence_identity_refs": [
+        "stage9_aggregate_sha256",
+        "stage9_execution_plan_sha256"
+      ],
+      "display_transformation": "evidence_native_unrounded",
+      "claim_boundary": "Sensitivity conditions cannot replace the primary configuration.",
+      "values": {
+        "page_hinkley": {
+          "type": "direct",
+          "path": "results/frozen/cd_robustness_v1_1/aggregate.json",
+          "pointer": "/conditions/page_hinkley_hard_error/within_condition_primary_contrasts/d_drift_minus_c/mcc"
+        },
+        "adwin_brier": {
+          "type": "direct",
+          "path": "results/frozen/cd_robustness_v1_1/aggregate.json",
+          "pointer": "/conditions/adwin_brier/within_condition_primary_contrasts/d_drift_minus_c/mcc"
+        },
+        "no_replay": {
+          "type": "direct",
+          "path": "results/frozen/cd_robustness_v1_1/aggregate.json",
+          "pointer": "/conditions/no_replay/within_condition_primary_contrasts/d_drift_minus_c/mcc"
+        },
+        "static_gate": {
+          "type": "direct",
+          "path": "results/frozen/cd_robustness_v1_1/aggregate.json",
+          "pointer": "/conditions/static_symbolic_gate/within_condition_primary_contrasts/d_drift_minus_c/mcc"
+        },
+        "latency_zero": {
+          "type": "direct",
+          "path": "results/frozen/cd_robustness_v1_1/aggregate.json",
+          "pointer": "/conditions/latency_0/within_condition_primary_contrasts/d_drift_minus_c/mcc"
+        },
+        "latency_high": {
+          "type": "direct",
+          "path": "results/frozen/cd_robustness_v1_1/aggregate.json",
+          "pointer": "/conditions/latency_10000/within_condition_primary_contrasts/d_drift_minus_c/mcc"
+        }
+      }
+    },
+    {
+      "claim_id": "robustness_d_drift_minus_periodic",
+      "family": "robustness.D_drift_minus_periodic",
+      "claim_text_template": "Across robustness conditions, drift-triggered versus periodic predictive contrasts are mixed and do not establish categorical trigger superiority.",
+      "claim_status": "current",
+      "interpretation_status": "secondary",
+      "source_interpretation_path": "STAGE9_ROBUSTNESS_INTERPRETATION.md",
+      "source_section": "Trigger-specific superiority is not established",
+      "generating_code_path": "src/concept_drift_ids/cd_stage9_export.py",
+      "verification_code_path": "tools/stage9_5/claim_traceability.py",
+      "config_protocol_identity": [
+        "STAGE8_PRIMARY_EXECUTION_PROTOCOL.md",
+        "STAGE9_PRESPECIFIED_ROBUSTNESS_PROTOCOL.md",
+        "STAGE9_5_Q1_INDEPENDENT_ASSURANCE_PROTOCOL.md"
+      ],
+      "evidence_identity_refs": [
+        "stage9_aggregate_sha256"
+      ],
+      "display_transformation": "evidence_native_unrounded",
+      "claim_boundary": "Mixed trigger contrasts do not establish categorical superiority of drift-triggered maintenance.",
+      "values": {
+        "mcc_mean_by_condition": {
+          "type": "object_child_map",
+          "path": "results/frozen/cd_robustness_v1_1/aggregate.json",
+          "pointer": "/conditions",
+          "relative_pointer": "/within_condition_primary_contrasts/d_drift_minus_d_periodic/mcc/mean",
+          "skip_missing": true
+        },
+        "mcc_values_by_condition": {
+          "type": "object_child_map",
+          "path": "results/frozen/cd_robustness_v1_1/aggregate.json",
+          "pointer": "/conditions",
+          "relative_pointer": "/within_condition_primary_contrasts/d_drift_minus_d_periodic/mcc/values",
+          "skip_missing": true
+        }
+      }
+    },
+    {
+      "claim_id": "robustness_explanation_coverage_tradeoff",
+      "family": "robustness.explanation_and_coverage_tradeoff",
+      "claim_text_template": "Robustness evidence does not remove the explanation-quality and symbolic-coverage trade-off seen in the primary experiment.",
+      "claim_status": "current",
+      "interpretation_status": "secondary",
+      "source_interpretation_path": "STAGE9_ROBUSTNESS_INTERPRETATION.md",
+      "source_section": "Explanation-quality and coverage trade-off remains",
+      "generating_code_path": "src/concept_drift_ids/cd_stage9_export.py",
+      "verification_code_path": "tools/stage9_5/claim_traceability.py",
+      "config_protocol_identity": [
+        "STAGE8_PRIMARY_EXECUTION_PROTOCOL.md",
+        "STAGE9_PRESPECIFIED_ROBUSTNESS_PROTOCOL.md",
+        "STAGE9_5_Q1_INDEPENDENT_ASSURANCE_PROTOCOL.md"
+      ],
+      "evidence_identity_refs": [
+        "stage9_aggregate_sha256"
+      ],
+      "display_transformation": "evidence_native_unrounded",
+      "claim_boundary": "Robustness evidence does not establish a prediction-and-explanation win-win.",
+      "values": {
+        "mcsc_mean_by_condition": {
+          "type": "object_child_map",
+          "path": "results/frozen/cd_robustness_v1_1/aggregate.json",
+          "pointer": "/conditions",
+          "relative_pointer": "/within_condition_primary_contrasts/d_drift_minus_c/mcsc/mean",
+          "skip_missing": true
+        },
+        "resolved_coverage_mean_by_condition": {
+          "type": "object_child_map",
+          "path": "results/frozen/cd_robustness_v1_1/aggregate.json",
+          "pointer": "/conditions",
+          "relative_pointer": "/within_condition_primary_contrasts/d_drift_minus_c/resolved_coverage/mean",
+          "skip_missing": true
+        }
+      }
+    },
+    {
+      "claim_id": "robustness_publication_timing",
+      "family": "robustness.publication_clock_timing",
+      "claim_text_template": "Stage-9 publication timing remains mixed before and after the controlled boundary, reinforcing the whole-stream endogenous-lifecycle estimand.",
+      "claim_status": "current",
+      "interpretation_status": "secondary",
+      "source_interpretation_path": "STAGE9_ROBUSTNESS_INTERPRETATION.md",
+      "source_section": "Trigger timing still rejects a simple boundary-detect-then-repair story",
+      "generating_code_path": "src/concept_drift_ids/cd_stage9_export.py",
+      "verification_code_path": "tools/stage9_5/claim_traceability.py",
+      "config_protocol_identity": [
+        "STAGE8_PRIMARY_EXECUTION_PROTOCOL.md",
+        "STAGE9_PRESPECIFIED_ROBUSTNESS_PROTOCOL.md",
+        "STAGE9_5_Q1_INDEPENDENT_ASSURANCE_PROTOCOL.md"
+      ],
+      "evidence_identity_refs": [
+        "stage9_aggregate_sha256"
+      ],
+      "display_transformation": "evidence_native_unrounded",
+      "claim_boundary": "Publication-clock audit is descriptive/post-export and creates no new hypothesis test.",
+      "values": {
+        "boundary_index": {
+          "type": "direct",
+          "path": "results/audits/stage9_v1_1_publication_clock_audit.json",
+          "pointer": "/boundary_index"
+        },
+        "d_drift_pre_by_condition": {
+          "type": "filtered_group_sum",
+          "path": "results/audits/stage9_v1_1_publication_clock_audit.json",
+          "pointer": "/rows",
+          "filters": {
+            "arm": "d_drift"
+          },
+          "group_by": "condition",
+          "field": "pre_reference_publications"
+        },
+        "d_drift_post_by_condition": {
+          "type": "filtered_group_sum",
+          "path": "results/audits/stage9_v1_1_publication_clock_audit.json",
+          "pointer": "/rows",
+          "filters": {
+            "arm": "d_drift"
+          },
+          "group_by": "condition",
+          "field": "post_reference_publications"
+        }
+      }
+    },
+    {
+      "claim_id": "scope_fixed_scenario_external_validity",
+      "family": "scope.fixed_scenario_and_external_validity_limitations",
+      "claim_text_template": "All Stage-8/9 causal and robustness conclusions remain conditional on the single controlled pseudo-chronological CICIDS2017 scenario and do not establish deployment or cross-dataset generalization.",
+      "claim_status": "current",
+      "interpretation_status": "limitation",
+      "source_interpretation_path": "STAGE9_ROBUSTNESS_INTERPRETATION.md",
+      "source_section": "Classification and interpretation boundary",
+      "generating_code_path": "src/concept_drift_ids/scenario_manifest.py",
+      "verification_code_path": "tools/stage9_5/claim_traceability.py",
+      "config_protocol_identity": [
+        "STAGE8_PRIMARY_EXECUTION_PROTOCOL.md",
+        "STAGE9_PRESPECIFIED_ROBUSTNESS_PROTOCOL.md",
+        "STAGE9_5_Q1_INDEPENDENT_ASSURANCE_PROTOCOL.md"
+      ],
+      "evidence_identity_refs": [
+        "stage8_evidence_commit",
+        "stage9_evidence_commit"
+      ],
+      "display_transformation": "evidence_native_unrounded",
+      "claim_boundary": "Evidence is conditional on one controlled benign-source-regime-dominant CICIDS2017 scenario; no cross-dataset or deployment-population generalization.",
+      "values": {
+        "scenario_id": {
+          "type": "direct",
+          "path": "data/manifests/sudden_benign_v1.json",
+          "pointer": "/scenario_id"
+        },
+        "chronology": {
+          "type": "direct",
+          "path": "data/manifests/sudden_benign_v1.json",
+          "pointer": "/chronology"
+        },
+        "stage9_inference_scope": {
+          "type": "direct",
+          "path": "results/frozen/cd_robustness_v1_1/aggregate.json",
+          "pointer": "/inference"
+        }
+      }
+    }
+  ]
+}

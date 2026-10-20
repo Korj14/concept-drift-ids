@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
   "status_id": "stage9.5-6-current-status-v1",
-  "status_observed_at_head": "fcd5028afe89102142a13900cfe001a1e81816cd",
-  "status_date": "2026-10-19",
+  "status_observed_at_head": "051d3fdd96ebb6d204ac468ad34124b7be066cdd",
+  "status_date": "2026-10-20",
   "purpose": "Additive current-status overlay. Does not modify the prospectively frozen replay construction contract, accepted Stage-8/9 science, or closure authority.",
   "frozen_replay_construction_contract": {
     "path": "data/manifests/stage9_5_6_replay_report_construction_v1.json",
@@ -45,7 +45,7 @@
   ],
   "work_package_state": {
     "stage9.5-1": "historical_negative_closure_preserved_reopening_route_frozen_pending_materialization_and_verifier",
-    "stage9.5-6": "blocked_until_stage9.5-1_frozen_v1_2_verifier_success_then_integrated_historical_replay_pipeline",
+    "stage9.5-6": "engineering_ready_through_phase_c_pre_rerun_boundary_but_execution_blocked_until_stage9.5-1_and_real_phase_a_b_replay_pass",
     "stage9.5-7": "locked",
     "stage9.5-8": "locked",
     "stage9.5-9": "locked",
@@ -227,5 +227,32 @@
     "scientific_objects_modified": false,
     "accepted_stage8_9_evidence_replaced": false,
     "stage10_outcomes_accessed": false
+  },
+  "phase_c_pre_rerun_readiness_2026_10_20": {
+    "status": "engineering_ready_execution_blocked_by_hard_prerequisites",
+    "contract_path": "data/manifests/stage9_5_6_phase_c_pre_rerun_verification_v1.json",
+    "handoff_path": "STAGE9_5_6_PHASE_C_PRE_RERUN_EXECUTION_HANDOFF.md",
+    "verifier_path": "tools/stage9_5/phase_c_pre_rerun_verifier.py",
+    "test_path": "tests/stage9_5/test_phase_c_pre_rerun_verifier.py",
+    "hard_prerequisites": [
+      "unchanged Stage-9.5-1 v1.2 verifier pass with seeds 0-4 and 145/145 archive files",
+      "complete historical Phase-A replay passes frozen comparator for seeds 0-4",
+      "complete historical Phase-B replay passes frozen comparator for seeds 0-4 and all three arms with accepted maintenance archive verified"
+    ],
+    "verified_scope_once_prerequisites_pass": [
+      "exact original Phase-C v1 seed-0 attempt/failure lineage and expected NameError",
+      "no successful scoring artifact and no unexpected original Phase-C output",
+      "regenerated correction config prepared from correction source 79ddc4c6d6dea52c7cabc55a6d082448fc24fcf9",
+      "all frozen scientific blocks equal accepted corrected configuration",
+      "only frozen upstream A/B identity rebinding permitted",
+      "corrected Phase-C seed-0 output surface absent"
+    ],
+    "successful_report_path": "results/audits/stage9_5_full_seed_rerun_v1/phase_c_pre_rerun_verification_report.json",
+    "successful_report_next_authorized_step": "corrected_phase_c_seed0_rerun",
+    "corrected_phase_c_seed0_executed": false,
+    "authoritative_pre_rerun_execution_complete": false,
+    "stage10_outcomes_accessed": false,
+    "accepted_stage8_9_evidence_replaced": false,
+    "scientific_objects_modified": false
   }
 }

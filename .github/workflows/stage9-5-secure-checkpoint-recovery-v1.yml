@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   secure-checkpoint-recovery:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     timeout-minutes: 20
     env:
       PYTHONHASHSEED: "0"
@@ -31,9 +31,8 @@ jobs:
           python-version: "3.11.9"
 
       - name: Install frozen runtime
-        shell: bash
+        shell: pwsh
         run: |
-          set -euo pipefail
           python -m pip install --upgrade pip
           python -m pip install -r requirements-lock.txt
 
@@ -271,58 +270,60 @@ jobs:
           PY
 
       - name: Run unchanged Stage 9.5-1 verifier with recovered checkpoints
-        shell: bash
+        shell: pwsh
         run: |
-          set -euo pipefail
-          CHECKPOINT_ROOT="${RUNNER_TEMP}/stage9_5_checkpoints"
-          VERIFIER_OUT="${RUNNER_TEMP}/stage9_5_checkpoint_verifier"
-          set +e
-          python tools/stage9_5/fresh_clone_reconstruction.py \
-            --output-dir "${VERIFIER_OUT}" \
-            --checkpoint-root "${CHECKPOINT_ROOT}"
-          rc=$?
-          set -e
-          export VERIFIER_OUT
-          export VERIFIER_RC="$rc"
-          python - <<'PY'
+          $CheckpointRoot = Join-Path $env:RUNNER_TEMP "stage9_5_checkpoints"
+          $VerifierOut = Join-Path $env:RUNNER_TEMP "stage9_5_checkpoint_verifier"
+          python tools/stage9_5/fresh_clone_reconstruction.py `
+            --output-dir $VerifierOut `
+            --checkpoint-root $CheckpointRoot
+          $VerifierRc = $LASTEXITCODE
+
+          Copy-Item (Join-Path $VerifierOut "fresh_clone_reconstruction_report.json") .
+          Copy-Item (Join-Path $VerifierOut "FRESH_CLONE_RECONSTRUCTION_REPORT.md") .
+
+          $env:VERIFIER_OUT = $VerifierOut
+          $env:VERIFIER_RC = "$VerifierRc"
+          @'
           import json, os
           from pathlib import Path
+
           report = json.loads(
               (Path(os.environ["VERIFIER_OUT"]) / "fresh_clone_reconstruction_report.json")
               .read_text(encoding="utf-8")
           )
-          assert int(os.environ["VERIFIER_RC"]) != 0
-          assert report["audit_id"] == "stage9.5-1-fresh-clone-reconstruction-v1_2"
-          assert report["pass"] is False
-          assert report["status"] == "blocked"
-          assert report["failures"] == []
-          assert report["blockers"] == ["stage8_large_artifact_archive_missing"]
           checkpoints = report["external_artifacts"]["system_a_checkpoints"]
-          assert checkpoints["verified_seeds"] == [0, 1, 2, 3, 4]
-          assert checkpoints["missing"] == []
-          assert checkpoints["mismatches"] == []
+          summary = {
+              "audit_id": "stage9.5-1-checkpoint-only-verifier-proof-v1",
+              "repository_head": report["repository_head"],
+              "verifier_audit_id": report["audit_id"],
+              "verifier_canonical_sha256": report["canonical_sha256"],
+              "verified_seeds": checkpoints["verified_seeds"],
+              "checkpoint_missing": checkpoints["missing"],
+              "checkpoint_mismatches": checkpoints["mismatches"],
+              "failures": report["failures"],
+              "blockers": report["blockers"],
+              "pass": (
+                  int(os.environ["VERIFIER_RC"]) != 0
+                  and report["audit_id"] == "stage9.5-1-fresh-clone-reconstruction-v1_2"
+                  and report["pass"] is False
+                  and report["status"] == "blocked"
+                  and report["failures"] == []
+                  and report["blockers"] == ["stage8_large_artifact_archive_missing"]
+                  and checkpoints["verified_seeds"] == [0, 1, 2, 3, 4]
+                  and checkpoints["missing"] == []
+                  and checkpoints["mismatches"] == []
+              ),
+              "stage10_outcomes_accessed": False,
+          }
           Path("checkpoint_only_verifier_summary.json").write_text(
-              json.dumps(
-                  {
-                      "audit_id": "stage9.5-1-checkpoint-only-verifier-proof-v1",
-                      "repository_head": report["repository_head"],
-                      "verifier_audit_id": report["audit_id"],
-                      "verifier_canonical_sha256": report["canonical_sha256"],
-                      "verified_seeds": checkpoints["verified_seeds"],
-                      "failures": report["failures"],
-                      "blockers": report["blockers"],
-                      "pass": True,
-                      "stage10_outcomes_accessed": False,
-                  },
-                  indent=2,
-                  sort_keys=True,
-              ) + "\n",
+              json.dumps(summary, indent=2, sort_keys=True) + "\n",
               encoding="utf-8",
           )
-          PY
-          cp "${VERIFIER_OUT}/fresh_clone_reconstruction_report.json" .
-          cp "${VERIFIER_OUT}/FRESH_CLONE_RECONSTRUCTION_REPORT.md" .
-          rm -rf "${CHECKPOINT_ROOT}"
+          assert summary["pass"], json.dumps(summary, sort_keys=True)
+          '@ | python -
+
+          Remove-Item -Recurse -Force $CheckpointRoot
 
       - name: Upload checkpoint recovery verification evidence
         if: always()

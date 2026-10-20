@@ -1,0 +1,241 @@
+name: Stage 9.5 secure Dropbox transport proof
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/stage9-5-secure-dropbox-transport-v1.yml"
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  secure-one-file-proof:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      PAYLOAD_PATH: data/transport/stage9_5_dropbox_secure_payload_v1.b64
+      TARGET_PATH: /seed_0.pt
+      EXPECTED_SHA256: 514c6d552b3cd680ae966bbb568105bd2871bc68d3a47aded070a70ba0615bd1
+      EXPECTED_SIZE: "76105"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Generate one-time transport certificate
+        shell: bash
+        run: |
+          set -euo pipefail
+          openssl req -x509 -newkey rsa:4096 -sha256 -nodes \
+            -keyout transport_private.pem \
+            -out transport_public_cert.pem \
+            -subj "/CN=stage9-5-dropbox-transport-${GITHUB_RUN_ID}" \
+            -days 1
+          python - <<'PY'
+          import hashlib, json, os
+          from pathlib import Path
+          cert = Path("transport_public_cert.pem").read_bytes()
+          payload = {
+              "audit_id": "stage9.5-secure-dropbox-transport-handshake-v1",
+              "run_id": os.environ["GITHUB_RUN_ID"],
+              "repository_head": os.environ["GITHUB_SHA"],
+              "certificate_sha256": hashlib.sha256(cert).hexdigest(),
+              "target_path": os.environ["TARGET_PATH"],
+              "expected_sha256": os.environ["EXPECTED_SHA256"],
+              "expected_size": int(os.environ["EXPECTED_SIZE"]),
+              "private_key_exported": False,
+              "stage10_outcomes_accessed": False,
+          }
+          Path("transport_handshake.json").write_text(
+              json.dumps(payload, indent=2, sort_keys=True) + "\n",
+              encoding="utf-8",
+          )
+          PY
+
+      - name: Upload one-time public transport certificate
+        uses: actions/upload-artifact@v4
+        with:
+          name: stage9-5-secure-dropbox-transport-handshake-v1
+          path: |
+            transport_public_cert.pem
+            transport_handshake.json
+          if-no-files-found: error
+
+      - name: Wait for encrypted transport payload and verify one checkpoint
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from __future__ import annotations
+
+          import base64
+          import hashlib
+          import json
+          import os
+          import re
+          import subprocess
+          import time
+          import urllib.error
+          import urllib.request
+          from pathlib import Path
+
+          repo = os.environ["GITHUB_REPOSITORY"]
+          run_id = os.environ["GITHUB_RUN_ID"]
+          token = os.environ["GH_TOKEN"]
+          payload_path = os.environ["PAYLOAD_PATH"]
+          target_path = os.environ["TARGET_PATH"]
+          expected_sha256 = os.environ["EXPECTED_SHA256"]
+          expected_size = int(os.environ["EXPECTED_SIZE"])
+          report_path = Path("secure_transport_report.json")
+
+          def api_json(url: str) -> object:
+              req = urllib.request.Request(
+                  url,
+                  headers={
+                      "Authorization": f"Bearer {token}",
+                      "Accept": "application/vnd.github+json",
+                      "User-Agent": "stage9.5-secure-dropbox-transport-v1",
+                  },
+              )
+              with urllib.request.urlopen(req, timeout=30) as response:
+                  return json.load(response)
+
+          report = {
+              "audit_id": "stage9.5-secure-dropbox-transport-proof-v1",
+              "run_id": run_id,
+              "target_path": target_path,
+              "expected_sha256": expected_sha256,
+              "expected_size": expected_size,
+              "pass": False,
+              "private_dropbox_url_published": False,
+              "downloaded_bytes_persisted": False,
+              "stage10_outcomes_accessed": False,
+          }
+
+          try:
+              matched = False
+              for _ in range(120):
+                  try:
+                      pr = api_json(f"https://api.github.com/repos/{repo}/pulls/21")
+                      if not isinstance(pr, dict):
+                          raise TypeError("PR response is not an object")
+                      head = pr["head"]["sha"]
+                      encoded_path = urllib.parse.quote(payload_path, safe="/")
+                      content = api_json(
+                          f"https://api.github.com/repos/{repo}/contents/"
+                          f"{encoded_path}?ref={head}"
+                      )
+                      if not isinstance(content, dict):
+                          raise TypeError("content response is not an object")
+                      encoded = content.get("content")
+                      if not isinstance(encoded, str):
+                          raise TypeError("content payload missing")
+                      transport_b64 = base64.b64decode(
+                          encoded.replace("\n", ""), validate=True
+                      )
+                      cms = base64.b64decode(
+                          transport_b64.strip(), validate=True
+                      )
+                      Path("transport_payload.cms").write_bytes(cms)
+                      decrypt = subprocess.run(
+                          [
+                              "openssl",
+                              "cms",
+                              "-decrypt",
+                              "-inform",
+                              "DER",
+                              "-in",
+                              "transport_payload.cms",
+                              "-recip",
+                              "transport_public_cert.pem",
+                              "-inkey",
+                              "transport_private.pem",
+                          ],
+                          check=False,
+                          capture_output=True,
+                      )
+                      if decrypt.returncode != 0:
+                          time.sleep(5)
+                          continue
+                      envelope = json.loads(decrypt.stdout.decode("utf-8"))
+                      if not isinstance(envelope, dict):
+                          time.sleep(5)
+                          continue
+                      if str(envelope.get("run_id")) != run_id:
+                          time.sleep(5)
+                          continue
+                      if envelope.get("target_path") != target_path:
+                          raise ValueError("Encrypted payload target path mismatch")
+                      if envelope.get("expected_sha256") != expected_sha256:
+                          raise ValueError("Encrypted payload expected SHA mismatch")
+                      url = envelope.get("download_url")
+                      if not isinstance(url, str):
+                          raise TypeError("Encrypted payload URL missing")
+                      if not re.match(
+                          r"^https://[^/]+\.dl\.dropboxusercontent\.com/", url
+                      ):
+                          raise ValueError("Encrypted payload URL is not Dropbox raw download")
+
+                      request = urllib.request.Request(
+                          url,
+                          headers={
+                              "User-Agent": "stage9.5-secure-dropbox-transport-v1"
+                          },
+                      )
+                      digest = hashlib.sha256()
+                      size = 0
+                      with urllib.request.urlopen(request, timeout=120) as response:
+                          while True:
+                              chunk = response.read(1024 * 1024)
+                              if not chunk:
+                                  break
+                              digest.update(chunk)
+                              size += len(chunk)
+                      actual_sha256 = digest.hexdigest()
+                      report.update(
+                          {
+                              "repository_head_with_payload": head,
+                              "actual_sha256": actual_sha256,
+                              "actual_size": size,
+                          }
+                      )
+                      if actual_sha256 != expected_sha256:
+                          raise ValueError("Downloaded checkpoint SHA-256 mismatch")
+                      if size != expected_size:
+                          raise ValueError("Downloaded checkpoint size mismatch")
+                      matched = True
+                      report.update({"status": "pass", "pass": True})
+                      break
+                  except urllib.error.HTTPError as exc:
+                      if exc.code != 404:
+                          raise
+                  time.sleep(5)
+
+              if not matched:
+                  report.update({"status": "no_matching_encrypted_payload"})
+                  raise RuntimeError("No matching encrypted transport payload arrived")
+          except Exception as exc:
+              report.setdefault("status", "failed")
+              report["error_type"] = type(exc).__name__
+              report["error_message"] = str(exc)
+              raise
+          finally:
+              Path("transport_payload.cms").unlink(missing_ok=True)
+              Path("transport_private.pem").unlink(missing_ok=True)
+              report_path.write_text(
+                  json.dumps(report, indent=2, sort_keys=True) + "\n",
+                  encoding="utf-8",
+              )
+          PY
+
+      - name: Upload secure transport proof report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: stage9-5-secure-dropbox-transport-proof-v1
+          path: secure_transport_report.json
+          if-no-files-found: error

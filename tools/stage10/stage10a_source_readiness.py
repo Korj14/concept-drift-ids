@@ -55,6 +55,12 @@ def _sha256_file(path: Path) -> str:
     return digest.hexdigest()
 
 
+def _git_blob_sha1(path: Path) -> str:
+    raw = path.read_bytes()
+    header = f"blob {len(raw)}\\0".encode("ascii")
+    return hashlib.sha1(header + raw).hexdigest()
+
+
 def _canonical_sha256(payload: object) -> str:
     raw = json.dumps(
         payload,
@@ -213,6 +219,12 @@ def verify_source_readiness(data_root: Path) -> dict[str, Any]:
         failures.append("stage10a_protocol_manifest_canonical_hash_mismatch")
     if not _embedded_hash_ok(source_audit):
         failures.append("stage10a_source_audit_canonical_hash_mismatch")
+    if _git_blob_sha1(PROTOCOL_PATH) != manifest["protocol_document"]["git_blob_sha1"]:
+        failures.append("stage10a_protocol_document_git_blob_mismatch")
+    if _git_blob_sha1(SOURCE_AUDIT_PATH) != manifest["source_audit"]["git_blob_sha1"]:
+        failures.append("stage10a_source_audit_git_blob_mismatch")
+    if source_audit.get("canonical_sha256") != manifest["source_audit"]["canonical_sha256"]:
+        failures.append("stage10a_source_audit_manifest_binding_mismatch")
 
     if preprocessing.get("core_state_sha256") != EXPECTED_PREPROCESSING_STATE:
         failures.append("inherited_preprocessing_state_mismatch")

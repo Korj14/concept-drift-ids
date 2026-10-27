@@ -308,3 +308,23 @@ Reopening is permitted only if the exact original bytes are later recovered and 
 | Stage-10A execution gate | Source-only protocol/readiness work is permitted; C/D/D-periodic treatment execution and outcome access remain prohibited until legitimate Stage-9.5 closure | Post-Stage-9 governance addendum + Stage-10+ master protocol | Hard gate; no local or CI bypass | **FROZEN GOVERNANCE RULE** |
 | Stage-10A source verifier | `tools/stage10/stage10a_source_readiness.py`; source identities/counts/row hashes/class-conditional diagnostics only; report must always state treatment execution unauthorized | Pre-outcome engineering assurance | Must stop before adaptive treatment execution | **FROZEN PRE-OUTCOME** |
 
+---
+
+## Stage 10B pre-outcome gradual BENIGN source-regime controls — 28 October 2026
+
+| Variable / control | Prospective value | Match / use requirement | Freeze state |
+| --- | --- | --- | --- |
+| Stage-10B scenario | `cicids2017_gradual_benign_source_v1` | Separate controlled gradual covariate/source-mixture replication, not attack evolution or natural production drift | **FROZEN PRE-OUTCOME** |
+| Raw source identities | Wednesday 225,166,395 bytes SHA-256 `893c27dc968bf7a8adef1689f90be55ca4a4dc3088fb63d6ff247ac56856df2a`; Thursday morning 52,023,263 bytes SHA-256 `d67066211fb1689c78406f1506f4c44704ecb92088353d5c96d96d6474eb819d` | Exact bytes, no corrected/deduplicated substitute | **FROZEN PRE-OUTCOME** |
+| Training/development and initial model | Same frozen Stage-8 training/development, 77-feature preprocessing core, System-A checkpoints/seeds/thresholds, R0.v2 | No refit or future-outcome selection | **FROZEN PRE-OUTCOME** |
+| Evaluation pre | Wednesday `[554162,623433)` excluding original 11 Heartbleed; 69,260 retained; BENIGN 65,671; GoldenEye 3,589 | Source order and frozen exclusion | **FROZEN PRE-OUTCOME** |
+| Evaluation post | Wednesday `[623433,692703)` template 69,270; BENIGN 65,697; GoldenEye 3,573; no attack replacement | Preserve every template position and GoldenEye label | **FROZEN PRE-OUTCOME** |
+| Source mapping | For BENIGN slot ordinal j, frozen Thursday BENIGN eligible index `floor(j*168186/65697)` | Same eligible mapping as accepted Stage-8 abrupt scenario; source-only deterministic | **FROZEN PRE-OUTCOME** |
+| Gradual schedule | Post local clock t, 50,000-row ramp, `p(t)=min(1,(t+0.5)/50000)`; SHA-256 salt `stage10b-gradual-benign-v1`; first 8 digest bytes big-endian uint64; integer comparison `100000*u64<(2*t+1)*2^64`; t>=50,000 always replaces | One exogenous source schedule shared across all arms/seeds, no outcome/trigger dependence | **FROZEN PRE-OUTCOME** |
+| Source-only observed assembly | 41,935/65,697 eligible BENIGN slots replaced: 23,661 ramp, 18,274 plateau; 23,762 Wednesday BENIGN slots retained; GoldenEye unchanged | Verify ordered slot and mapping hashes; no favorable source reselection | **FROZEN PRE-OUTCOME** |
+| Reference clocks | Ramp start global index 69,260; ramp complete 119,260; stream ends 138,530 | Evaluator/diagnostic only; never detector/updater input | **FROZEN PRE-OUTCOME** |
+| Primary inference | Seeds 0–4; paired-seed causal unit; E1 post MCC D-drift−C; E2 post MCSC D-drift−C; E3 post MCSC D-drift−D-periodic; **full post 69,270 rows** as primary estimand | Reporting separately from Stage-8/9 and Stage-10A, no event/window pseudo-replication or seed extension | **FROZEN PRE-OUTCOME** |
+| Secondary reporting | Separate ramp/plateau descriptive trajectories, attacks/FNR/coverage, explanation, timing, cost, failures | Cannot promote subperiod findings into the frozen primary family | **FROZEN PRE-OUTCOME** |
+| Treatment isolation | Match C/D neural and non-symbolic states within seed; identical detector/latency/replay; symbolic lifecycle is intended difference; periodic arm shares symbolic operator/budget | Abort on unmatched causal state; inherited fusion lambda=.50 | **FROZEN PRE-OUTCOME** |
+| Stage-10B stage gate | `tools/stage10/stage10b_source_readiness.py` may inspect only raw source labels/mapping/protocol/source hashes; no treatment output | Stage-9.5 closure remains prerequisite to any Stage-10 adaptive run | **FROZEN GOVERNANCE** |
+

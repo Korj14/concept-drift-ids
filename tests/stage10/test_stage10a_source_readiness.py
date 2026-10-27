@@ -79,8 +79,9 @@ def test_failure_report_stays_fail_closed() -> None:
 
 def test_git_blob_header_uses_actual_nul_separator(tmp_path: Path) -> None:
     probe = tmp_path / "probe.txt"
-    probe.write_bytes(b"abc\\n".replace(b"\\\\n", b"\\n"))
-    expected = hashlib.sha1(b"blob 4" + bytes((0,)) + b"abc\\n".replace(b"\\\\n", b"\\n")).hexdigest()
+    content = bytes((97, 98, 99, 10))
+    probe.write_bytes(content)
+    expected = hashlib.sha1(b"blob 4" + bytes((0,)) + content).hexdigest()
     assert readiness._git_blob_sha1(probe) == expected
 
 
@@ -98,9 +99,9 @@ def test_frozen_artifact_hashes_allow_crlf_but_reject_content_edits(
             manifest["source_audit"]["git_blob_sha1"],
         ),
     ):
-        canonical = file_path.read_bytes().replace(b"\\r\\n", b"\\n")
+        canonical = file_path.read_bytes().replace(bytes((13, 10)), bytes((10,)))
         probe = tmp_path / file_path.name
-        probe.write_bytes(canonical.replace(b"\\n", b"\\r\\n"))
+        probe.write_bytes(canonical.replace(bytes((10,)), bytes((13, 10))))
         assert readiness._git_blob_sha1(probe) == expected
 
         tampered = canonical[:-1] + (b"X" if canonical[-1:] != b"X" else b"Y")

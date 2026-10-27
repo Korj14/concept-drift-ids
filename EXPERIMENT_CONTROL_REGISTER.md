@@ -328,3 +328,24 @@ Reopening is permitted only if the exact original bytes are later recovered and 
 | Treatment isolation | Match C/D neural and non-symbolic states within seed; identical detector/latency/replay; symbolic lifecycle is intended difference; periodic arm shares symbolic operator/budget | Abort on unmatched causal state; inherited fusion lambda=.50 | **FROZEN PRE-OUTCOME** |
 | Stage-10B stage gate | `tools/stage10/stage10b_source_readiness.py` may inspect only raw source labels/mapping/protocol/source hashes; no treatment output | Stage-9.5 closure remains prerequisite to any Stage-10 adaptive run | **FROZEN GOVERNANCE** |
 
+---
+
+## Stage 10C pre-outcome unseen Bot-family introduction controls — 28 October 2026
+
+| Variable / control | Prospective frozen value | Match / gate requirement | Freeze state |
+| --- | --- | --- | --- |
+| Stage-10C scenario | `cicids2017_controlled_unseen_bot_v1` | Controlled attack-family replacement, not natural attack evolution or independent-environment replication | **FROZEN PRE-OUTCOME** |
+| Raw sources | Wednesday 225,166,395 bytes SHA-256 `893c27dc968bf7a8adef1689f90be55ca4a4dc3088fb63d6ff247ac56856df2a`; Friday morning 58,316,725 bytes SHA-256 `53a41c24d570ea83b7ac55b2e94df94e7a8216aeb80a2af0246b6bc8bb543000` | Exact source bytes, no corrected/deduplicated substitution | **FROZEN PRE-OUTCOME** |
+| Historical initial evidence | Accepted Monday+Tuesday+Wednesday `[0,346352)` training and Wednesday `[346352,554162)` development; GoldenEye seen 1,118 training/2,013 development; Bot not present | Exact inherited System-A/preprocessing/R0.v2/threshold identities; no Bot future label in historical initial state | **FROZEN PRE-OUTCOME** |
+| Pre attack pool | Exactly 1,966 source-ordered GoldenEye from Wednesday `[554162,623433)` original 3,589 candidate rows, selecting candidate ordinal `floor(k*3589/1966)` | No training/development overlap, no treatment-dependent choice | **FROZEN PRE-OUTCOME** |
+| Post attack pool | All 1,966 Friday-morning Bot rows in original source-row order | Unseen-family definition is historical family-label absence, not guaranteed rule noncoverage | **FROZEN PRE-OUTCOME** |
+| BENIGN background | Friday-morning BENIGN source rows 189,067, alternating zero-based benign candidate ordinals into disjoint pre-even/post-odd pools | Same collection source on both sides; prospective even sampling, no BENIGN reuse | **FROZEN PRE-OUTCOME** |
+| BENIGN sample counts | Pre 67,294 from even candidates via `floor(k*even_pool_size/67294)`; post 67,304 from odd via `floor(k*odd_pool_size/67304)` | Source-ordered samples without replacement; source metadata evaluator only | **FROZEN PRE-OUTCOME** |
+| Synthetic attack positions | For each regime N, attack slot `floor((2*k+1)*N/(2*1966))`, k=0..1965 | 1,966 unique slots/regime, fill remaining slots with sampled BENIGN rows; no per-arm seed RNG | **FROZEN PRE-OUTCOME** |
+| Source stream identity | Pre 69,260, post 69,270, boundary global 69,260, 138,530 total; pre GoldenEye, post Bot | Exact ordered `(source_order,row_in_source)` hashes in source audit; evaluator-only boundary | **FROZEN PRE-OUTCOME** |
+| Source diagnostic selection | BENIGN mean KS 0.00247861, max 0.00611571, 0/77 features >=0.1; GoldenEye/Bot mean KS 0.49642, 58/77 >=0.1 | Source-only; no treatment success selection; strong attack-family/port/day signatures remain confounded | **FROZEN PRE-OUTCOME** |
+| Primary treatment | C adaptive neural+frozen symbolic; D-drift same neural+drift-gated lifecycle; D-periodic matched operator/budget periodic clock | Matched within-seed non-symbolic state, fail-closed on divergence | **FROZEN PRE-OUTCOME** |
+| Primary inferential family | Seeds 0–4; E1 post MCC D-drift−C, E2 post MCSC D-drift−C, E3 post MCSC D-drift−D-periodic; entire post Bot regime | Paired seed causal unit; no pseudo-replication, post-hoc endpoint/seed changes, or replacement of accepted evidence | **FROZEN PRE-OUTCOME** |
+| Source verifier | `tools/stage10/stage10c_source_readiness.py` reconstructs exact raw labels, BENIGN/attack selection and slot hashes; recomputes both 77-feature KS comparisons | Raw-only verification, no C/D predictions/outcomes, explicit treatment lock in all reports | **FROZEN PRE-OUTCOME** |
+| Stage 9.5 execution firewall | Source-only protocol/static checks permitted; C/D/D-periodic execution prohibited until legitimate Stage-9.5 closure | No local/GitHub workaround, no false treatment authorization after preflight pass | **FROZEN GOVERNANCE** |
+

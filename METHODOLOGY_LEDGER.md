@@ -2768,3 +2768,75 @@ row/feature identities, treatment controls and endpoints remain unchanged.
 Accepted Stage-8/9 evidence remains immutable. The failure does not authorize
 C/D/D-periodic treatment execution; Stage-9.5 remains the hard gate.
 
+---
+
+## 28 October 2026 — Stage 10B gradual-shift protocol and source-only audit, treatment locked
+
+After Stage-10A's source verifier passed locally with exact matching raw/row hashes,
+Stage-10B pre-outcome protocolization began from accepted Stage-10A branch head
+`65ecd8c6bb6612197145eb7b8a1e67ceb44d969f` on dedicated branch
+`stage10b-preoutcome-protocol`. The Stage-9.5 assurance detour remains parked
+and unresolved. No Stage-10 C/D/D-periodic treatment outcomes were accessed.
+
+The Stage-10B candidate is a controlled, **gradual BENIGN-source-regime
+covariate shift** in the accepted CICIDS2017 pseudo-chronology. Historical
+training/development/checkpoints/R0/thresholds and original Wednesday
+69,260/69,270 evaluation template are retained. The frozen source mechanism
+reuses the accepted Thursday-morning BENIGN candidate mapping but replaces
+Wednesday post-template BENIGN slots with a deterministic SHA-256
+pseudo-uniform source assignment whose target probability rises linearly
+over 50,000 post rows. No GoldenEye attack row is replaced. A 19,270-row
+fully transitioned post plateau follows the ramp.
+
+Source-only audit observed: 65,697 eligible post BENIGN slots; 41,935
+Thursday replacements (23,661 ramp, 18,274 plateau), 23,762 retained
+Wednesday BENIGN slots, 3,573 unchanged GoldenEye rows, and 14 exact
+5,000-row/remainder replacement tallies frozen by source-index hashes.
+No treated model, detector, symbolic maintenance, or outcome analysis
+was run.
+
+### Source-only descriptive audit correction, before any Stage-10 outcome
+
+The initial Stage-10B audit/protocol commits
+`f6960c32ba4d72481b016bc731345f2e6f65c659` and
+`605b0706e142e1586700b33584880662c9a01d35`
+recorded an incorrect descriptive BENIGN KS comparison: the exploratory
+pre-side feature slice inadvertently included pre GoldenEye rows while
+the post-side was BENIGN-only. It was caught during the adversarial
+pre-outcome review and not concealed or used to select treatment.
+
+The corrected source-only **BENIGN-only** comparison is mean KS
+0.09832351548615437, max 0.2116328939912442, with 46/77 features
+at KS >=0.10. The original incorrect values were mean 0.0769385465034643,
+max 0.17647563723395193, 20/77 at KS >=0.10. Corrections
+`cb381e70368183d51b051cb8d0fb2a4919804e01` and
+`f94fc59ffc6962c4475849d206134fee2ea525cd`
+changed only these source-derived descriptive figures and the audit's
+canonical identity; all raw source rows, deterministic replacement choices,
+pre/post sizes, source hashes, candidate mappings, and treatment controls
+remained unchanged. The failed/source-audit history is preserved in Git.
+No Stage-10 outcome was used in the correction.
+
+Frozen Stage-10B artifacts:
+
+- `STAGE10B_GRADUAL_BENIGN_SOURCE_REPLICATION_PROTOCOL_V1.md`;
+- `data/manifests/stage10b_gradual_benign_source_v1.json`;
+- `data/manifests/stage10b_gradual_benign_source_audit_v1.json`;
+- `tools/stage10/stage10b_source_readiness.py`;
+- `tests/stage10/test_stage10b_source_readiness.py`;
+- existing `.github/workflows/stage10-preoutcome.yml`, extended to test A and B;
+- the present control-register/ledger entries.
+
+The corrected Stage-10B source-audit canonical SHA-256 is
+`cf89c94cc860b4cbd8b34b3bb60e6a25cb1153bdbb9245848a0c669c0781caaa`.
+The Stage-10B machine-manifest canonical SHA-256 is
+`75a2864cdcf56a53b9465ceb4fe805aa961a55cf56f7b30780842fc62079006e`.
+
+Stage-10B's defined full-post paired-seed E1/E2/E3 family is prospective;
+ramp and plateau effects are descriptive secondary, not endpoint shopping.
+The source-only verifier cannot unlock Stage-10 outcomes. Missing future
+scenario-loader equivalence and matched C/D runtime audits remain explicit
+implementation work after legitimate Stage-9.5 closure. The controlled
+ramp is neither a natural-production sequence nor an attack-pattern
+evolution / proven P(Y|X) shift, and it is not a second environment.
+

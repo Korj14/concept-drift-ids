@@ -1,0 +1,98 @@
+{
+  "audit_id": "stage10a-goldeneye-source-audit-v1",
+  "canonical_sha256": "5738c65009c22ef57845ba1adf06bfca198098af0d404120a76d958ac5998275",
+  "class_conditional_shift_diagnostics": {
+    "BENIGN_pre_vs_post": {
+      "features_evaluated": 77,
+      "features_ks_ge_0_10": 0,
+      "features_ks_ge_0_20": 0,
+      "features_ks_ge_0_30": 0,
+      "max_ks": 0.01017527658264894,
+      "mean_ks": 0.0028706110296976093,
+      "median_ks": 0.0029515152378098986,
+      "p90_ks": 0.005245276627597952
+    },
+    "DoS_GoldenEye_pre_vs_post": {
+      "features_evaluated": 77,
+      "features_ks_ge_0_10": 44,
+      "features_ks_ge_0_20": 1,
+      "features_ks_ge_0_30": 0,
+      "max_ks": 0.21537658565366374,
+      "mean_ks": 0.08392808190258134,
+      "median_ks": 0.11136798331999453,
+      "p90_ks": 0.15885842995869226
+    },
+    "feature_count": 77,
+    "interpretation": "Source-only evidence supports a same-family attack-pattern/class-conditional feature shift under a nearly stationary BENIGN background. It does not by itself prove natural production concept drift or an unconditional change in P(Y|X).",
+    "top_goldeneye_ks_features": [
+      {"feature": "Flow IAT Min", "ks": 0.21537658565366374},
+      {"feature": "Flow Duration", "ks": 0.18897239965042298},
+      {"feature": "Flow IAT Std", "ks": 0.1626422964032354},
+      {"feature": "Fwd IAT Total", "ks": 0.16207646011068588},
+      {"feature": "Flow IAT Max", "ks": 0.1607235530214574},
+      {"feature": "Idle Mean", "ks": 0.1607235530214574},
+      {"feature": "Idle Max", "ks": 0.1607235530214574},
+      {"feature": "Fwd IAT Max", "ks": 0.15964397231114102},
+      {"feature": "Bwd IAT Max", "ks": 0.15833473505705972},
+      {"feature": "Flow Packets/s", "ks": 0.15763211860228143},
+      {"feature": "Fwd IAT Mean", "ks": 0.15763211860228143},
+      {"feature": "Fwd IAT Min", "ks": 0.15763211860228143}
+    ]
+  },
+  "construction": {
+    "boundary_index_after_exclusion": 69260,
+    "chronology": "pseudo-chronological source-row order; no true timestamp claim",
+    "post_exclusion": null,
+    "post_source_range": {
+      "row_end_exclusive": 692703,
+      "row_start_inclusive": 623433
+    },
+    "pre_exclusion": {
+      "label": "Heartbleed",
+      "rows": 11
+    },
+    "pre_source_range": {
+      "row_end_exclusive": 623433,
+      "row_start_inclusive": 554162
+    },
+    "stream_order": ["pre", "post"]
+  },
+  "counts": {
+    "post": {"BENIGN": 65697, "DoS GoldenEye": 3573, "rows": 69270},
+    "pre": {"BENIGN": 65671, "DoS GoldenEye": 3589, "rows": 69260}
+  },
+  "dataset": "CICIDS2017",
+  "governance": {
+    "accepted_stage8_9_evidence_replaced": false,
+    "execution_authorized": false,
+    "source_selection_used_stage10_treatment_outcomes": false,
+    "stage9_5_gate_bypassed": false
+  },
+  "ordered_row_identity_sha256": {
+    "post_benign_row_ids": "e393262d5ba7f02dd167aee8575e4980fa108b9471cef8034bb069a1340f5527",
+    "post_goldeneye_row_ids": "bc584d69c0fdb7040a2a40ef105eea4cb514555872719718abeb21ee3c837646",
+    "post_included_row_ids": "186aec7f816faca89484c537b77ed8e729a9ac55982a7e1bec6f37750c1c30d8",
+    "pre_benign_row_ids": "0a9b395d897b7843f44ff6ec78c87b806e1f99710fad4c404cd1b174311b92f1",
+    "pre_goldeneye_row_ids": "15fd308926f6fda0d74639fc9e55176ab4f97b51ec575f7763512a080a5ae5f2",
+    "pre_included_row_ids": "ef7773f88374c82a663723c0c1125f4a8bfee75a58fe4d8e35355b492e07b354",
+    "stream_row_ids": "81924f3c39cb49adfaebea11d9aef045ab73804dd61faee49dcfbd2dd5f33f25",
+    "stream_source_order_row_pairs": "b6c3b7a14a08be6c6b186ed339a1f205cdff49d48de6fa16ce44cc776796c6a7"
+  },
+  "prevalence": {
+    "post_attack_fraction": 0.05158077089649199,
+    "post_minus_pre_percentage_points": -0.02384609833809559,
+    "pre_attack_fraction": 0.051819231879872946
+  },
+  "raw_source": {
+    "file_size_bytes": 225166395,
+    "raw_columns": 79,
+    "raw_rows": 692703,
+    "sha256": "893c27dc968bf7a8adef1689f90be55ca4a4dc3088fb63d6ff247ac56856df2a",
+    "source_file": "Wednesday-workingHours.pcap_ISCX.csv",
+    "source_order": 2
+  },
+  "scenario_candidate_id": "cicids2017_goldeneye_temporal_attack_shift_v1",
+  "schema_version": 1,
+  "stage10_treatment_outcomes_accessed": false,
+  "status": "source_only_preoutcome_audit"
+}

@@ -1,0 +1,102 @@
+{
+  "accepted_stage8_9_evidence_replaced": false,
+  "adaptive_mechanism": {
+    "adwin_clock": 32,
+    "adwin_delta": 0.002,
+    "current_window_rows": 10000,
+    "fusion_lambda": 0.5,
+    "generation_window_rows": 10000,
+    "max_symbolic_opportunities": 4,
+    "neural_batch_size": 1024,
+    "neural_epochs": 5,
+    "neural_lr": 0.0001,
+    "neural_weight_decay": 1e-05,
+    "replay_budget_rows": 10000,
+    "update_anchor_rows": 5000,
+    "update_online_rows": 5000,
+    "validation_window_rows": 10000
+  },
+  "arms": [
+    "c_frozen_symbolic",
+    "d_drift",
+    "d_periodic"
+  ],
+  "canonical_sha256": "75a2864cdcf56a53b9465ceb4fe805aa961a55cf56f7b30780842fc62079006e",
+  "causal_unit": "matched_seed_within_fixed_stage10b_scenario",
+  "claim_boundaries": [
+    "not_natural_production_drift",
+    "not_attack_pattern_evolution",
+    "not_independent_environment",
+    "not_unqualified_real_concept_drift",
+    "not_universal_trigger_superiority",
+    "not_universal_symbolic_benefit"
+  ],
+  "governing_master_protocol": "stage10-plus-master-replication-sensitivity-v1_1",
+  "information_timing": {
+    "known_reference_evaluator_only": true,
+    "label_latency_rows": 5000,
+    "prediction_before_release": true
+  },
+  "inherited_identities": {
+    "preprocessing_core_state_sha256": "4527f77220f2cf6063108a7d71d80aaa0e82099ad282ff25408a2d9ce3488b1e",
+    "r0_v2_manifest_sha256": "131027d2f136494eb388183f18dcb7eb0e9d7e9fe786f22dba25f4e1624c1483",
+    "seeds": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "system_a_manifest_sha256": "42004b5ed100b690023b9998bdc959fac41ab947b996fb7c58e44cee5e8dc6de"
+  },
+  "next_permitted_action": "run_source_only_stage10b_readiness_verifier",
+  "next_prohibited_action": "stage10b_C_D_treatment_execution_before_stage9_5_closure",
+  "post_estimand": "full_69270_row_ramp_plus_plateau",
+  "primary_endpoints": [
+    "E1_post_mcc_d_drift_minus_c",
+    "E2_post_mcsc_d_drift_minus_c",
+    "E3_post_mcsc_d_drift_minus_d_periodic"
+  ],
+  "protocol_document": {
+    "git_blob_sha1": "393b2d7952dca7df840dcbb15d257af9a118c7a5",
+    "path": "STAGE10B_GRADUAL_BENIGN_SOURCE_REPLICATION_PROTOCOL_V1.md"
+  },
+  "protocol_id": "stage10b-gradual-benign-source-v1",
+  "scenario": {
+    "chronology": "pseudo_chronological",
+    "kind": "controlled_gradual_benign_source_regime_covariate_shift",
+    "label_semantics": "BENIGN=0, DoS GoldenEye=1",
+    "natural_production_drift_claim": false,
+    "p_y_given_x_change_claim": false,
+    "post_rows": 69270,
+    "pre_rows": 69260,
+    "ramp_completion_stream_index": 119260,
+    "ramp_duration_post_rows": 50000,
+    "ramp_fraction_clock": "p(t)=min(1,(t+0.5)/50000)",
+    "ramp_is_synthetic": true,
+    "replacement_salt": "stage10b-gradual-benign-v1",
+    "start_boundary_stream_index": 69260
+  },
+  "scenario_id": "cicids2017_gradual_benign_source_v1",
+  "schema_version": 1,
+  "secondary_subperiods": {
+    "plateau_stream_index_range": [
+      119260,
+      138530
+    ],
+    "ramp_stream_index_range": [
+      69260,
+      119260
+    ]
+  },
+  "source_audit": {
+    "canonical_sha256": "cf89c94cc860b4cbd8b34b3bb60e6a25cb1153bdbb9245848a0c669c0781caaa",
+    "git_blob_sha1": "be01219a77f330c009ea074be32c77bf68245b7f",
+    "path": "data/manifests/stage10b_gradual_benign_source_audit_v1.json"
+  },
+  "stage10_treatment_execution_authorized": false,
+  "stage10_treatment_outcomes_accessed_during_freeze": false,
+  "stage10a_evidence_replaced": false,
+  "stage9_5_hard_gate_required": true,
+  "status": "prospectively_frozen_preoutcome_execution_locked"
+}

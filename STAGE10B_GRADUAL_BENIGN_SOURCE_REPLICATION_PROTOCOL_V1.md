@@ -151,7 +151,7 @@ The frozen window tallies in
 verify that the observed replacement fraction rises through the successive
 5,000-row post windows, approaching 0.95 in the last ramp window, and is
 exactly 1.0 in the plateau. The source-only blended BENIGN pre/post
-77-feature KS mean was 0.07694, max 0.17648, with 20/77 features >=0.10.
+77-feature KS mean was 0.09832, max 0.21163, with 46/77 features >=0.10.
 These measurements characterize the constructed input, **not** treatment
 performance, adaptation recovery, or detector power.
 

@@ -2840,3 +2840,85 @@ implementation work after legitimate Stage-9.5 closure. The controlled
 ramp is neither a natural-production sequence nor an attack-pattern
 evolution / proven P(Y|X) shift, and it is not a second environment.
 
+---
+
+## 28 October 2026 — Stage-10C unseen-family introduction frozen before any treatment access
+
+Following successful local Stage-10A and Stage-10B source-only readiness
+checks, dedicated branch `stage10c-preoutcome-protocol` was created from
+the exact accepted Stage-10B pre-outcome head
+`d212355e42d6f85a52ed3565506085d268547a5a`. Stage-9.5 remains
+parked and unresolved. No Stage-10 C/D/D-periodic model treatment was run,
+no Stage-10 adaptive outcome was accessed, and no accepted Stage-8/9 or
+Stage-10A/B evidence was modified.
+
+The prospective source-only audit compared candidate unseen-family
+constructions from CICIDS2017. The selected scenario is a controlled
+**seen-family-to-unseen-family replacement**: Wednesday GoldenEye (present
+in original training and development) in pre, Friday-morning Bot (absent
+from original training/development) in post. To reduce incidental BENIGN
+source-regime movement, both regimes use disjoint evenly subsampled
+Friday-morning BENIGN flows, separated by even/odd ordinal from the
+same raw BENIGN pool.
+
+Fixed total stream: pre 69,260 = 67,294 Friday BENIGN + 1,966 Wednesday
+GoldenEye; post 69,270 = 67,304 Friday BENIGN + all 1,966 Friday Bot;
+evaluator-only boundary index 69,260, total 138,530 rows. The Wed pre
+attack pool is strictly later than the development end. Source selection
+and attack-position injection are deterministic integer operations, not
+seed-specific or detector-conditioned, and every selected row and ordered
+source-provenance stream is bound by little-endian-int64 SHA-256 hashes
+in `data/manifests/stage10c_unseen_bot_source_audit_v1.json`.
+
+No treatment outcome was used in design. Source-only 77-feature KS:
+Friday BENIGN pre vs post mean 0.002478607776839007, maximum
+0.006115708493194316, 0/77 features >=0.1. Seen GoldenEye versus
+unseen Bot mean 0.4964198156972249, median 0.6347914547304171,
+maximum 1.0, 58/77 >=0.1; Destination Port itself attains KS=1.0.
+The source-only comparison shows substantial attack-feature and port/day
+signatures; it does **not** prove natural evolving attack behavior,
+source-independent family mechanism, or mathematical real concept drift.
+The BENIGN interleaving/regular attack-slot assembly also deliberately
+forgoes true chronological flow order. These scope limits remain binding.
+
+The initial R0 may match Bot traffic on shared features even though
+the Bot *family label* was unseen during its initial construction.
+Novelty therefore means absence of Bot-family labeled training/development
+evidence, not a guarantee that R0's pattern coverage is zero.
+
+Files prospectively frozen:
+
+- `STAGE10C_UNSEEN_BOT_FAMILY_REPLICATION_PROTOCOL_V1.md`;
+- `data/manifests/stage10c_unseen_bot_source_audit_v1.json`;
+- `data/manifests/stage10c_unseen_bot_v1.json`;
+- `tools/stage10/stage10c_source_readiness.py`;
+- `tests/stage10/test_stage10c_source_readiness.py`;
+- the additive Stage-10C CI test selection in
+  `.github/workflows/stage10-preoutcome.yml`;
+- new Stage-10C control register entries and this historical record.
+
+The independent source verifier is designed to re-read exact Wednesday and
+Friday-morning CSV bytes, reconstruct source-pool/slot/stream hashes,
+check historical Bot absence and inherited manifests, and **recompute**
+both class-conditional 77-feature KS summaries, unlike the narrower
+Stage-10B source verifier. Its pass/fail output always sets Stage-10
+treatment authorization false.
+
+One temporary CI workflow edit on commit
+`7ac994916cd9bc251b28067ff5a3fe14a5ff0c29` added a second path to
+a single `test -f` line rather than the pytest command. It was immediately
+corrected prospectively in commit
+`7c4fa2e5545267eb4bb2f4e7155df60efcf2b287`;
+both revisions remain visible in Git history. No scientific selection,
+data hash, endpoint or treatment behavior changed.
+
+Primary Stage-10C E1/E2/E3 remains the paired five-seed full post-Bot
+regime; window/early-label/novelty analysis is descriptive, not a
+new confirmatory family. Scientific replication claims remain narrowly
+scenario-specific, and mixed/null/unfavorable findings will be retained.
+
+No Stage-10C adaptive scenario loader or matched-neural C/D executor is
+claimed validated by source-readiness tests. Those require a separate,
+prospectively governed implementation chain **after** Stage-9.5 formally
+closes; source-only success does not unlock Stage-10 outcomes.
+

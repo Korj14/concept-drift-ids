@@ -34,7 +34,7 @@
     ]
   },
   "audit_id": "stage10c-unseen-bot-source-audit-v1",
-  "canonical_sha256": "c4ebd127dac647e8b68f0b2d3093b0194bf002900affe232379f0fdfc1230481",
+  "canonical_sha256": "2beb64a94e35714854494624f5fb0011e6b73b66be71a3b902146bea48c9cadd",
   "claims": {
     "attack_source_day_confound_fully_removed": false,
     "benign_sampling_pseudochronological": true,

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+from pathlib import Path
 
 import numpy as np
 
@@ -74,3 +75,34 @@ def test_failure_report_stays_fail_closed() -> None:
     assert report["next_permitted_action"] == (
         "correct_preoutcome_source_or_identity_failure_only"
     )
+
+
+def test_git_blob_header_uses_actual_nul_separator(tmp_path: Path) -> None:
+    probe = tmp_path / "probe.txt"
+    probe.write_bytes(b"abc\\n".replace(b"\\\\n", b"\\n"))
+    expected = hashlib.sha1(b"blob 4" + bytes((0,)) + b"abc\\n".replace(b"\\\\n", b"\\n")).hexdigest()
+    assert readiness._git_blob_sha1(probe) == expected
+
+
+def test_frozen_artifact_hashes_allow_crlf_but_reject_content_edits(
+    tmp_path: Path,
+) -> None:
+    manifest = json.loads(readiness.MANIFEST_PATH.read_text(encoding="utf-8"))
+    for file_path, expected in (
+        (
+            readiness.PROTOCOL_PATH,
+            manifest["protocol_document"]["git_blob_sha1"],
+        ),
+        (
+            readiness.SOURCE_AUDIT_PATH,
+            manifest["source_audit"]["git_blob_sha1"],
+        ),
+    ):
+        canonical = file_path.read_bytes().replace(b"\\r\\n", b"\\n")
+        probe = tmp_path / file_path.name
+        probe.write_bytes(canonical.replace(b"\\n", b"\\r\\n"))
+        assert readiness._git_blob_sha1(probe) == expected
+
+        tampered = canonical[:-1] + (b"X" if canonical[-1:] != b"X" else b"Y")
+        probe.write_bytes(tampered)
+        assert readiness._git_blob_sha1(probe) != expected

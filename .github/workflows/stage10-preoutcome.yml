@@ -1,0 +1,46 @@
+name: Stage 10 pre-outcome contract
+
+on:
+  push:
+    branches:
+      - "stage10*"
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  stage10-preoutcome:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11.9"
+          cache: pip
+
+      - name: Verify interpreter
+        run: |
+          python - <<'PY'
+          import sys
+          assert sys.version_info[:3] == (3, 11, 9), sys.version
+          PY
+
+      - name: Install frozen environment
+        run: python -m pip install -r requirements-lock.txt
+
+      - name: Verify Stage 10A pre-outcome artifacts
+        run: |
+          test -f STAGE10A_GOLDENEYE_ATTACK_PATTERN_REPLICATION_PROTOCOL_V1.md
+          test -f data/manifests/stage10a_goldeneye_attack_pattern_v1.json
+          test -f data/manifests/stage10a_goldeneye_source_audit_v1.json
+          test -f tools/stage10/stage10a_source_readiness.py
+          test -f tests/stage10/test_stage10a_source_readiness.py
+
+      - name: Compile Stage 10A verifier
+        run: python -m compileall -q tools/stage10
+
+      - name: Run Stage 10A repository-only tests
+        run: python -m pytest -q tests/stage10/test_stage10a_source_readiness.py

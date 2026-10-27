@@ -1,0 +1,128 @@
+{
+  "attack_windows": {
+    "post": [
+      142,
+      142,
+      142,
+      142,
+      142,
+      141,
+      142,
+      142,
+      142,
+      142,
+      142,
+      142,
+      142,
+      121
+    ],
+    "pre": [
+      142,
+      142,
+      142,
+      142,
+      142,
+      142,
+      142,
+      141,
+      142,
+      142,
+      142,
+      142,
+      142,
+      121
+    ]
+  },
+  "audit_id": "stage10c-unseen-bot-source-audit-v1",
+  "canonical_sha256": "c4ebd127dac647e8b68f0b2d3093b0194bf002900affe232379f0fdfc1230481",
+  "claims": {
+    "attack_source_day_confound_fully_removed": false,
+    "benign_sampling_pseudochronological": true,
+    "bot_unseen_from_historical_training_and_development": true,
+    "natural_chronology": false,
+    "real_concept_drift_proven": false
+  },
+  "ks_77_features": {
+    "benign_pre_vs_post": {
+      "ge_0_1": 0,
+      "ge_0_2": 0,
+      "ge_0_3": 0,
+      "max": 0.006115708493194316,
+      "mean": 0.002478607776839007,
+      "median": 0.002945025924851352,
+      "p90": 0.0039029012106031047
+    },
+    "seen_goldeneye_vs_unseen_bot": {
+      "ge_0_1": 58,
+      "ge_0_2": 58,
+      "ge_0_3": 58,
+      "max": 1,
+      "mean": 0.4964198156972249,
+      "median": 0.6347914547304171,
+      "p90": 0.9459816887080371
+    }
+  },
+  "ordered_int64_le_sha256": {
+    "all_unseen_bot_row_ids": "a1209de5d8cad7f488396543591336b089939ed62ad53cada44aa1ff0ce6c78e",
+    "full_stream_source_order": "3fc98b36ab1dc9d908c900a60a1249d5a3c8a083d8c79a97ecc1b9a1570c8c5c",
+    "full_stream_source_pairs": "f5e5063409a4f74253f433b3d96560246e0b844c10d42b75c03e634011f9a789",
+    "full_stream_source_row_ids": "a1b3c4590888251ac4b9786b238667a72b74ccdbb16e5e599a64b40fb1deea61",
+    "post_benign_friday_row_ids": "609844ac7482a8e104c6c15f471ff086c42ac6560d0e80af282b2c07161acebd",
+    "post_injected_attack_slots": "55cc351f6482e18061de66d14fe5047d671ced3ae1c562df8680b5e0b85b6e11",
+    "post_stream_source_order": "75e026bddc4f87c925f31def423fddf2d7608c04f462779cde7c192f30c3f520",
+    "post_stream_source_pairs": "d425ba049fdd47bbd51ea74718db5140f21b401afe98a2c00d95668155951092",
+    "post_stream_source_row_ids": "df2263b616581bd29254cfa2112d81bc62770f64417fe72dbe588e0e4d074f75",
+    "pre_benign_friday_row_ids": "c24a72b129b121cd1f542035a7ca04f2a2bcdc67bd963b84f379593c192562aa",
+    "pre_injected_attack_slots": "57727b8bbe9c5554c3f74ad0d4b257b607ac7f1248bfc645ac72c265aedf73a5",
+    "pre_stream_source_order": "5d8a9c0004fdb7f0e5e9f2039e32634df9fbeb06266bae0b6ca1d54fdfad3f49",
+    "pre_stream_source_pairs": "7301d865d2cdd5032356f0d4195428f0866b9f3e7a81562c058bd5bd40c2ebaa",
+    "pre_stream_source_row_ids": "ba01958604cf04fa673b2194f5ea01c0f9f5f50e46a511de528dcc30ab578f91",
+    "selected_seen_goldeneye_row_ids": "cdb588edac22205efdce773c89f88fbf76f521f5e71cc3bc13d179b6b9eb4507"
+  },
+  "scenario_id": "cicids2017_controlled_unseen_bot_v1",
+  "schema_version": 1,
+  "source_files": {
+    "FridayMorning": {
+      "file": "Friday-WorkingHours-Morning.pcap_ISCX.csv",
+      "rows": 191033,
+      "sha256": "53a41c24d570ea83b7ac55b2e94df94e7a8216aeb80a2af0246b6bc8bb543000",
+      "size_bytes": 58316725,
+      "source_order": 5
+    },
+    "Wednesday": {
+      "file": "Wednesday-workingHours.pcap_ISCX.csv",
+      "rows": 692703,
+      "sha256": "893c27dc968bf7a8adef1689f90be55ca4a4dc3088fb63d6ff247ac56856df2a",
+      "size_bytes": 225166395,
+      "source_order": 2
+    }
+  },
+  "source_selection": {
+    "attack_count_each_regime": 1966,
+    "attack_slot_rule": "floor((2*k+1)*N/(2*1966)), k=0..1965",
+    "boundary_stream_index": 69260,
+    "evaluation_post_rows": 69270,
+    "evaluation_pre_rows": 69260,
+    "friday_benign_count": 189067,
+    "friday_bot_count": 1966,
+    "post_attack_family": "Bot",
+    "post_attack_prevalence": 0.028381694817381262,
+    "post_benign_candidate_rule": "Friday BENIGN zero-based odd ordinal, then floor(k * odd_pool_size / 67304)",
+    "post_bot_attack_rule": "all Friday Bot in source row order",
+    "post_friday_benign_count": 67304,
+    "pre_attack_family": "DoS GoldenEye",
+    "pre_attack_prevalence": 0.028385792665319088,
+    "pre_benign_candidate_rule": "Friday BENIGN zero-based even ordinal, then floor(k * even_pool_size / 67294)",
+    "pre_friday_benign_count": 67294,
+    "seen_attack_selection_rule": "floor(k*3589/1966), k=0..1965",
+    "seen_goldeneye_eligible_count": 3589,
+    "seen_goldeneye_eligible_wednesday_range": [
+      554162,
+      623433
+    ],
+    "source_order_stream_is_synthetic": true
+  },
+  "stage10_treatment_execution_authorized": false,
+  "stage10_treatment_outcomes_accessed": false,
+  "status": "source_only_preoutcome_audit"
+}

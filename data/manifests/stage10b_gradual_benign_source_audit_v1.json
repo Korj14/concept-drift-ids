@@ -2,11 +2,11 @@
   "audit_id": "stage10b-gradual-benign-source-audit-v1",
   "blended_benign_pre_post_ks": {
     "feature_count": 77,
-    "features_ge_0_1": 20,
-    "max": 0.17647563723395193,
-    "mean": 0.0769385465034643
+    "features_ge_0_1": 46,
+    "max": 0.2116328939912442,
+    "mean": 0.09832351548615437
   },
-  "canonical_sha256": "ffe1b68c8b527380e0f8fbe44303af1d4a18cf0bcd4a5b159948dd70b8ac8e2a",
+  "canonical_sha256": "cf89c94cc860b4cbd8b34b3bb60e6a25cb1153bdbb9245848a0c669c0781caaa",
   "claim_limit": "controlled gradual BENIGN source-regime covariate shift, not natural drift, attack-pattern evolution, or proven P(Y|X) change",
   "hashes": {
     "benign_slots": "e393262d5ba7f02dd167aee8575e4980fa108b9471cef8034bb069a1340f5527",

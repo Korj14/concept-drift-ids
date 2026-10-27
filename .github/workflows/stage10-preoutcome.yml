@@ -42,10 +42,15 @@ jobs:
           test -f data/manifests/stage10b_gradual_benign_source_v1.json
           test -f data/manifests/stage10b_gradual_benign_source_audit_v1.json
           test -f tools/stage10/stage10b_source_readiness.py
-          test -f tests/stage10/test_stage10b_source_readiness.py
+          test -f tests/stage10/test_stage10b_source_readiness.py tests/stage10/test_stage10c_source_readiness.py
+          test -f STAGE10C_UNSEEN_BOT_FAMILY_REPLICATION_PROTOCOL_V1.md
+          test -f data/manifests/stage10c_unseen_bot_v1.json
+          test -f data/manifests/stage10c_unseen_bot_source_audit_v1.json
+          test -f tools/stage10/stage10c_source_readiness.py
+          test -f tests/stage10/test_stage10c_source_readiness.py
 
       - name: Compile Stage 10A verifier
         run: python -m compileall -q tools/stage10
 
-      - name: Run Stage 10A and 10B repository-only tests
+      - name: Run Stage 10A, 10B and 10C repository-only tests
         run: python -m pytest -q tests/stage10/test_stage10a_source_readiness.py tests/stage10/test_stage10b_source_readiness.py

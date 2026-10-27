@@ -1,0 +1,105 @@
+{
+  "accepted_stage8_9_evidence_replaced": false,
+  "adaptive_mechanism": {
+    "adwin_clock": 32,
+    "adwin_delta": 0.002,
+    "anchor_memory_capacity": 10000,
+    "current_window_rows": 10000,
+    "fusion_lambda": 0.5,
+    "generation_window_rows": 10000,
+    "maximum_symbolic_opportunities": 4,
+    "neural_batch_size": 1024,
+    "neural_epochs": 5,
+    "neural_learning_rate": 0.0001,
+    "neural_weight_decay": 1e-05,
+    "update_anchor_rows": 5000,
+    "update_online_rows": 5000,
+    "validation_window_rows": 10000
+  },
+  "canonical_sha256": "d5fd7d49e44cc422f6690df19274b104ecb9658541b93aa9d2ffe066aaf1e730",
+  "causal_unit": "matched_seed_within_stage10a_scenario",
+  "claim_boundaries": [
+    "no_natural_production_drift_claim",
+    "no_unqualified_p_y_given_x_change_claim_from_source_only_diagnostics",
+    "no_universal_trigger_superiority",
+    "no_universal_symbolic_benefit",
+    "no_architecture_invariance",
+    "no_environmental_generalization_beyond_cicids2017_from_stage10a_alone"
+  ],
+  "governing_master_protocol": "stage10-plus-master-replication-sensitivity-v1_1",
+  "information_timing": {
+    "label_latency_rows": 5000,
+    "prediction_before_label_release": true
+  },
+  "inherited_identities": {
+    "preprocessing_core_state_sha256": "4527f77220f2cf6063108a7d71d80aaa0e82099ad282ff25408a2d9ce3488b1e",
+    "r0_v2_manifest_sha256": "131027d2f136494eb388183f18dcb7eb0e9d7e9fe786f22dba25f4e1624c1483",
+    "seeds": [0, 1, 2, 3, 4],
+    "system_a_manifest_sha256": "42004b5ed100b690023b9998bdc959fac41ab947b996fb7c58e44cee5e8dc6de"
+  },
+  "next_permitted_action": "run_source_only_stage10a_readiness_verifier",
+  "next_prohibited_action": "any_stage10a_treatment_execution_before_stage9_5_closure",
+  "no_n_extension_after_outcome_access": true,
+  "no_window_rule_event_pseudoreplication": true,
+  "primary_arms": ["c_frozen_symbolic", "d_drift", "d_periodic"],
+  "primary_endpoints": [
+    "E1_post_mcc_d_drift_minus_c",
+    "E2_post_mcsc_d_drift_minus_c",
+    "E3_post_mcsc_d_drift_minus_d_periodic"
+  ],
+  "protocol_document": {
+    "git_blob_sha1": "2785e94380cc29e20f014738e2837d708649f5bc",
+    "path": "STAGE10A_GOLDENEYE_ATTACK_PATTERN_REPLICATION_PROTOCOL_V1.md"
+  },
+  "protocol_id": "stage10a-goldeneye-attack-pattern-v1",
+  "raw_source": {
+    "path": "Wednesday-workingHours.pcap_ISCX.csv",
+    "sha256": "893c27dc968bf7a8adef1689f90be55ca4a4dc3088fb63d6ff247ac56856df2a",
+    "size_bytes": 225166395,
+    "source_order": 2
+  },
+  "scenario": {
+    "boundary_index": 69260,
+    "boundary_role": "offline_evaluator_scoring_and_diagnostics_only",
+    "chronology": "pseudo_chronological_source_row_order",
+    "drift_wording": "same-family attack-pattern / class-conditional feature shift",
+    "natural_production_drift_claim": false,
+    "post": {
+      "BENIGN": 65697,
+      "DoS GoldenEye": 3573,
+      "excluded_labels": {},
+      "ordered_row_ids_sha256": "186aec7f816faca89484c537b77ed8e729a9ac55982a7e1bec6f37750c1c30d8",
+      "range": {
+        "row_end_exclusive": 692703,
+        "row_start_inclusive": 623433
+      },
+      "rows": 69270
+    },
+    "pre": {
+      "BENIGN": 65671,
+      "DoS GoldenEye": 3589,
+      "excluded_labels": {
+        "Heartbleed": 11
+      },
+      "ordered_row_ids_sha256": "ef7773f88374c82a663723c0c1125f4a8bfee75a58fe4d8e35355b492e07b354",
+      "range": {
+        "row_end_exclusive": 623433,
+        "row_start_inclusive": 554162
+      },
+      "rows": 69260
+    },
+    "stream_row_ids_sha256": "81924f3c39cb49adfaebea11d9aef045ab73804dd61faee49dcfbd2dd5f33f25",
+    "stream_source_order_row_pairs_sha256": "b6c3b7a14a08be6c6b186ed339a1f205cdff49d48de6fa16ce44cc776796c6a7"
+  },
+  "scenario_id": "cicids2017_goldeneye_temporal_attack_shift_v1",
+  "schema_version": 1,
+  "source_audit": {
+    "canonical_sha256": "5738c65009c22ef57845ba1adf06bfca198098af0d404120a76d958ac5998275",
+    "git_blob_sha1": "a9700114cc08b0525b1a77fe2e499152d94ccb26",
+    "path": "data/manifests/stage10a_goldeneye_source_audit_v1.json"
+  },
+  "stage10_treatment_execution_authorized": false,
+  "stage10_treatment_outcomes_accessed_during_freeze": false,
+  "stage9_5_hard_gate_required": true,
+  "status": "prospectively_frozen_preoutcome_execution_locked"
+}

@@ -56,8 +56,14 @@ def _sha256_file(path: Path) -> str:
 
 
 def _git_blob_sha1(path: Path) -> str:
-    raw = path.read_bytes()
-    header = f"blob {len(raw)}\\0".encode("ascii")
+    """
+    Hash the frozen repository text identity, not platform checkout newlines.
+
+    Only CRLF->LF transport normalization is allowed. The SHA-1 preimage uses
+    the actual Git blob NUL separator. Other content edits still change SHA.
+    """
+    raw = path.read_bytes().replace(b"\r\n", b"\n")
+    header = b"blob " + str(len(raw)).encode("ascii") + bytes((0,))
     return hashlib.sha1(header + raw).hexdigest()
 
 

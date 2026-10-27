@@ -2706,3 +2706,35 @@ Consequences under the current evidence package:
 
 The negative closure may be reopened only if the exact original bytes are later recovered and the unchanged v1.2 verifier passes five checkpoint seeds plus **145/145** Stage-8 files with zero failures/blockers. Otherwise any continuation must be a prospectively governed restart/new evidence-generation campaign rather than substitution into the accepted Stage-8/9 chain.
 
+---
+
+## 27 October 2026 — Stage 10A GoldenEye attack-pattern replication prospectively frozen before treatment access
+
+Stage 10A was advanced as pre-outcome protocol work while Stage 9.5 remained parked and unresolved. No Stage-10 C/D/D-periodic treatment run was executed and no Stage-10 treatment outcome was accessed.
+
+The frozen candidate is `cicids2017_goldeneye_temporal_attack_shift_v1`. It preserves the accepted historical training/development information set and uses original Wednesday CICIDS2017 evaluation rows rather than the accepted primary scenario's Thursday-BENIGN source replacement.
+
+Exact evaluation construction:
+
+- pre: Wednesday rows `[554162,623433)`, excluding the already frozen 11 Heartbleed rows, yielding 69,260 rows = 65,671 BENIGN + 3,589 DoS GoldenEye;
+- post: Wednesday rows `[623433,692703)`, yielding 69,270 rows = 65,697 BENIGN + 3,573 DoS GoldenEye;
+- evaluator-only logical boundary: 69,260;
+- raw Wednesday SHA-256: `893c27dc968bf7a8adef1689f90be55ca4a4dc3088fb63d6ff247ac56856df2a`.
+
+The source-only pre-outcome audit found nearly unchanged attack prevalence (5.1819% pre versus 5.1581% post; −0.02385 percentage points). Across the frozen 77 features, BENIGN pre/post movement is small (mean KS 0.00287; maximum 0.01018; zero features at KS >= 0.10), while same-family DoS GoldenEye movement is materially larger (mean KS 0.08393; median 0.11137; maximum 0.21538; 44/77 features at KS >= 0.10).
+
+This is frozen as an **attack-pattern / class-conditional feature-shift replication**, not as proof of natural production drift and not as an unqualified proof that `P(Y|X)` changed. That distinction is intentional and prevents scenario convenience from being promoted into a stronger causal drift claim.
+
+Prospective Stage-10A artifacts:
+
+- `STAGE10A_GOLDENEYE_ATTACK_PATTERN_REPLICATION_PROTOCOL_V1.md`;
+- `data/manifests/stage10a_goldeneye_attack_pattern_v1.json`;
+- `data/manifests/stage10a_goldeneye_source_audit_v1.json`;
+- `tools/stage10/stage10a_source_readiness.py`;
+- `tests/stage10/test_stage10a_source_readiness.py`;
+- `.github/workflows/stage10-preoutcome.yml`.
+
+The inherited paired-seed causal unit, seeds 0–4, primary E1/E2/E3 family, label latency, detector, neural adaptation budget, fusion semantics, and validated/versioned symbolic lifecycle remain prospectively unchanged for this replication. Null, mixed, or unfavorable Stage-10A evidence will be preserved and will narrow claims rather than trigger retrospective scenario redesign.
+
+The Stage-9.5 hard gate remains binding. Passing Stage-10A source-only readiness does not authorize treatment execution.
+

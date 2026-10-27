@@ -175,6 +175,14 @@ def verify_lambda_one_negative_control(
     left: SymbolicArmEvaluation,
     right: SymbolicArmEvaluation,
 ) -> None:
+    for name, evaluation in (("left", left), ("right", right)):
+        if not np.array_equal(
+            evaluation.fused_probability,
+            evaluation.neural_probability,
+        ):
+            raise ValueError(
+                f"Lambda=1 {name} fused scores are not exactly neural-only."
+            )
     if not np.array_equal(
         left.neural_probability,
         right.neural_probability,

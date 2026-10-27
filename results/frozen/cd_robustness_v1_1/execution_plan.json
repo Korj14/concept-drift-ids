@@ -1,0 +1,726 @@
+{
+  "condition_order": {
+    "adaptive": [
+      "latency_0",
+      "latency_10000",
+      "page_hinkley_hard_error",
+      "adwin_brier",
+      "no_replay"
+    ],
+    "offline": [
+      "lambda_0_7",
+      "lambda_0_9",
+      "lambda_1_0",
+      "window_2500",
+      "window_10000"
+    ],
+    "symbolic_gate": [
+      "static_symbolic_gate"
+    ]
+  },
+  "identity_context": {
+    "frozen_primary_contract_sha256": "4bd0d2d2cb3b33b12286f19fcbae0c823e67c50a9c690f797d07a333fc6c9dc7",
+    "fusion_contract_sha256": "acb2ba17bad35700cfc2f6d539548c31cf86f944eb1aa2aea566828278bbde69",
+    "preprocessing_state_hash": "4527f77220f2cf6063108a7d71d80aaa0e82099ad282ff25408a2d9ce3488b1e",
+    "primary_control_plane_config_sha256": "7491733fe4bb7524eb38960b78067df44081fd4513055664985f3fd0d9841384",
+    "primary_symbolic_operator_config_sha256": "197360bb33718f32d7aebeb60b5e5fe3ba0619941c4a38a4f4c6ba3b529b7532",
+    "r0_v2_manifest_sha256": "131027d2f136494eb388183f18dcb7eb0e9d7e9fe786f22dba25f4e1624c1483",
+    "runtime_identity_sha256": "2c8058035fcb66ad7fa99559de9a8611f81a954f4f9055a832b59ec01d3bfa3b",
+    "scenario_manifest_canonical_sha256": "3d1c3f9775ac5c8a73053634784be513bb1714ef7f26fa9db406ccd78c4344e3",
+    "stage8_closure_commit": "f8a424389056a048a6ad6be0b744bf6d12b69df2",
+    "stage8_parent_evidence_commit": "c2ded83b8195b9321e715626c1f305f9627936e8",
+    "stage9_config_manifest_sha256": "b72fc0dce0df46974737cd0c33714cc17b23f31ce188e92d318b1787c0ae027e",
+    "system_a_manifest_sha256": "42004b5ed100b690023b9998bdc959fac41ab947b996fb7c58e44cee5e8dc6de"
+  },
+  "outcome_dependent_early_stopping_forbidden": true,
+  "payload_sha256": "cc79a429e8658ba5fce55b31eb23e7c233b11bcda48a10a8de638264b074ec6e",
+  "phase_order": {
+    "adaptive": [
+      "phase_a",
+      "phase_b",
+      "phase_c"
+    ],
+    "offline": [
+      "offline"
+    ],
+    "symbolic_gate": [
+      "phase_b",
+      "phase_c"
+    ]
+  },
+  "plan_sha256": "4ae426dd32ffed2384b4565710364459f4ee0ac2752543d6ec075facf66e53c8",
+  "resume_policy": "verify_and_skip_only_complete_steps;abort_on_existing_partial_or_failed_step",
+  "schema_version": 1,
+  "seed_order": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "stage9_config_manifest_sha256": "b72fc0dce0df46974737cd0c33714cc17b23f31ce188e92d318b1787c0ae027e",
+  "status": "frozen_stage9_execution_plan",
+  "steps": [
+    {
+      "condition_id": "lambda_0_7",
+      "group": "offline",
+      "phase": "offline",
+      "seed": 0
+    },
+    {
+      "condition_id": "lambda_0_7",
+      "group": "offline",
+      "phase": "offline",
+      "seed": 1
+    },
+    {
+      "condition_id": "lambda_0_7",
+      "group": "offline",
+      "phase": "offline",
+      "seed": 2
+    },
+    {
+      "condition_id": "lambda_0_7",
+      "group": "offline",
+      "phase": "offline",
+      "seed": 3
+    },
+    {
+      "condition_id": "lambda_0_7",
+      "group": "offline",
+      "phase": "offline",
+      "seed": 4
+    },
+    {
+      "condition_id": "lambda_0_9",
+      "group": "offline",
+      "phase": "offline",
+      "seed": 0
+    },
+    {
+      "condition_id": "lambda_0_9",
+      "group": "offline",
+      "phase": "offline",
+      "seed": 1
+    },
+    {
+      "condition_id": "lambda_0_9",
+      "group": "offline",
+      "phase": "offline",
+      "seed": 2
+    },
+    {
+      "condition_id": "lambda_0_9",
+      "group": "offline",
+      "phase": "offline",
+      "seed": 3
+    },
+    {
+      "condition_id": "lambda_0_9",
+      "group": "offline",
+      "phase": "offline",
+      "seed": 4
+    },
+    {
+      "condition_id": "lambda_1_0",
+      "group": "offline",
+      "phase": "offline",
+      "seed": 0
+    },
+    {
+      "condition_id": "lambda_1_0",
+      "group": "offline",
+      "phase": "offline",
+      "seed": 1
+    },
+    {
+      "condition_id": "lambda_1_0",
+      "group": "offline",
+      "phase": "offline",
+      "seed": 2
+    },
+    {
+      "condition_id": "lambda_1_0",
+      "group": "offline",
+      "phase": "offline",
+      "seed": 3
+    },
+    {
+      "condition_id": "lambda_1_0",
+      "group": "offline",
+      "phase": "offline",
+      "seed": 4
+    },
+    {
+      "condition_id": "window_2500",
+      "group": "offline",
+      "phase": "offline",
+      "seed": 0
+    },
+    {
+      "condition_id": "window_2500",
+      "group": "offline",
+      "phase": "offline",
+      "seed": 1
+    },
+    {
+      "condition_id": "window_2500",
+      "group": "offline",
+      "phase": "offline",
+      "seed": 2
+    },
+    {
+      "condition_id": "window_2500",
+      "group": "offline",
+      "phase": "offline",
+      "seed": 3
+    },
+    {
+      "condition_id": "window_2500",
+      "group": "offline",
+      "phase": "offline",
+      "seed": 4
+    },
+    {
+      "condition_id": "window_10000",
+      "group": "offline",
+      "phase": "offline",
+      "seed": 0
+    },
+    {
+      "condition_id": "window_10000",
+      "group": "offline",
+      "phase": "offline",
+      "seed": 1
+    },
+    {
+      "condition_id": "window_10000",
+      "group": "offline",
+      "phase": "offline",
+      "seed": 2
+    },
+    {
+      "condition_id": "window_10000",
+      "group": "offline",
+      "phase": "offline",
+      "seed": 3
+    },
+    {
+      "condition_id": "window_10000",
+      "group": "offline",
+      "phase": "offline",
+      "seed": 4
+    },
+    {
+      "condition_id": "static_symbolic_gate",
+      "group": "symbolic_gate",
+      "phase": "phase_b",
+      "seed": 0
+    },
+    {
+      "condition_id": "static_symbolic_gate",
+      "group": "symbolic_gate",
+      "phase": "phase_b",
+      "seed": 1
+    },
+    {
+      "condition_id": "static_symbolic_gate",
+      "group": "symbolic_gate",
+      "phase": "phase_b",
+      "seed": 2
+    },
+    {
+      "condition_id": "static_symbolic_gate",
+      "group": "symbolic_gate",
+      "phase": "phase_b",
+      "seed": 3
+    },
+    {
+      "condition_id": "static_symbolic_gate",
+      "group": "symbolic_gate",
+      "phase": "phase_b",
+      "seed": 4
+    },
+    {
+      "condition_id": "static_symbolic_gate",
+      "group": "symbolic_gate",
+      "phase": "phase_c",
+      "seed": 0
+    },
+    {
+      "condition_id": "static_symbolic_gate",
+      "group": "symbolic_gate",
+      "phase": "phase_c",
+      "seed": 1
+    },
+    {
+      "condition_id": "static_symbolic_gate",
+      "group": "symbolic_gate",
+      "phase": "phase_c",
+      "seed": 2
+    },
+    {
+      "condition_id": "static_symbolic_gate",
+      "group": "symbolic_gate",
+      "phase": "phase_c",
+      "seed": 3
+    },
+    {
+      "condition_id": "static_symbolic_gate",
+      "group": "symbolic_gate",
+      "phase": "phase_c",
+      "seed": 4
+    },
+    {
+      "condition_id": "latency_0",
+      "group": "adaptive",
+      "phase": "phase_a",
+      "seed": 0
+    },
+    {
+      "condition_id": "latency_0",
+      "group": "adaptive",
+      "phase": "phase_a",
+      "seed": 1
+    },
+    {
+      "condition_id": "latency_0",
+      "group": "adaptive",
+      "phase": "phase_a",
+      "seed": 2
+    },
+    {
+      "condition_id": "latency_0",
+      "group": "adaptive",
+      "phase": "phase_a",
+      "seed": 3
+    },
+    {
+      "condition_id": "latency_0",
+      "group": "adaptive",
+      "phase": "phase_a",
+      "seed": 4
+    },
+    {
+      "condition_id": "latency_0",
+      "group": "adaptive",
+      "phase": "phase_b",
+      "seed": 0
+    },
+    {
+      "condition_id": "latency_0",
+      "group": "adaptive",
+      "phase": "phase_b",
+      "seed": 1
+    },
+    {
+      "condition_id": "latency_0",
+      "group": "adaptive",
+      "phase": "phase_b",
+      "seed": 2
+    },
+    {
+      "condition_id": "latency_0",
+      "group": "adaptive",
+      "phase": "phase_b",
+      "seed": 3
+    },
+    {
+      "condition_id": "latency_0",
+      "group": "adaptive",
+      "phase": "phase_b",
+      "seed": 4
+    },
+    {
+      "condition_id": "latency_0",
+      "group": "adaptive",
+      "phase": "phase_c",
+      "seed": 0
+    },
+    {
+      "condition_id": "latency_0",
+      "group": "adaptive",
+      "phase": "phase_c",
+      "seed": 1
+    },
+    {
+      "condition_id": "latency_0",
+      "group": "adaptive",
+      "phase": "phase_c",
+      "seed": 2
+    },
+    {
+      "condition_id": "latency_0",
+      "group": "adaptive",
+      "phase": "phase_c",
+      "seed": 3
+    },
+    {
+      "condition_id": "latency_0",
+      "group": "adaptive",
+      "phase": "phase_c",
+      "seed": 4
+    },
+    {
+      "condition_id": "latency_10000",
+      "group": "adaptive",
+      "phase": "phase_a",
+      "seed": 0
+    },
+    {
+      "condition_id": "latency_10000",
+      "group": "adaptive",
+      "phase": "phase_a",
+      "seed": 1
+    },
+    {
+      "condition_id": "latency_10000",
+      "group": "adaptive",
+      "phase": "phase_a",
+      "seed": 2
+    },
+    {
+      "condition_id": "latency_10000",
+      "group": "adaptive",
+      "phase": "phase_a",
+      "seed": 3
+    },
+    {
+      "condition_id": "latency_10000",
+      "group": "adaptive",
+      "phase": "phase_a",
+      "seed": 4
+    },
+    {
+      "condition_id": "latency_10000",
+      "group": "adaptive",
+      "phase": "phase_b",
+      "seed": 0
+    },
+    {
+      "condition_id": "latency_10000",
+      "group": "adaptive",
+      "phase": "phase_b",
+      "seed": 1
+    },
+    {
+      "condition_id": "latency_10000",
+      "group": "adaptive",
+      "phase": "phase_b",
+      "seed": 2
+    },
+    {
+      "condition_id": "latency_10000",
+      "group": "adaptive",
+      "phase": "phase_b",
+      "seed": 3
+    },
+    {
+      "condition_id": "latency_10000",
+      "group": "adaptive",
+      "phase": "phase_b",
+      "seed": 4
+    },
+    {
+      "condition_id": "latency_10000",
+      "group": "adaptive",
+      "phase": "phase_c",
+      "seed": 0
+    },
+    {
+      "condition_id": "latency_10000",
+      "group": "adaptive",
+      "phase": "phase_c",
+      "seed": 1
+    },
+    {
+      "condition_id": "latency_10000",
+      "group": "adaptive",
+      "phase": "phase_c",
+      "seed": 2
+    },
+    {
+      "condition_id": "latency_10000",
+      "group": "adaptive",
+      "phase": "phase_c",
+      "seed": 3
+    },
+    {
+      "condition_id": "latency_10000",
+      "group": "adaptive",
+      "phase": "phase_c",
+      "seed": 4
+    },
+    {
+      "condition_id": "page_hinkley_hard_error",
+      "group": "adaptive",
+      "phase": "phase_a",
+      "seed": 0
+    },
+    {
+      "condition_id": "page_hinkley_hard_error",
+      "group": "adaptive",
+      "phase": "phase_a",
+      "seed": 1
+    },
+    {
+      "condition_id": "page_hinkley_hard_error",
+      "group": "adaptive",
+      "phase": "phase_a",
+      "seed": 2
+    },
+    {
+      "condition_id": "page_hinkley_hard_error",
+      "group": "adaptive",
+      "phase": "phase_a",
+      "seed": 3
+    },
+    {
+      "condition_id": "page_hinkley_hard_error",
+      "group": "adaptive",
+      "phase": "phase_a",
+      "seed": 4
+    },
+    {
+      "condition_id": "page_hinkley_hard_error",
+      "group": "adaptive",
+      "phase": "phase_b",
+      "seed": 0
+    },
+    {
+      "condition_id": "page_hinkley_hard_error",
+      "group": "adaptive",
+      "phase": "phase_b",
+      "seed": 1
+    },
+    {
+      "condition_id": "page_hinkley_hard_error",
+      "group": "adaptive",
+      "phase": "phase_b",
+      "seed": 2
+    },
+    {
+      "condition_id": "page_hinkley_hard_error",
+      "group": "adaptive",
+      "phase": "phase_b",
+      "seed": 3
+    },
+    {
+      "condition_id": "page_hinkley_hard_error",
+      "group": "adaptive",
+      "phase": "phase_b",
+      "seed": 4
+    },
+    {
+      "condition_id": "page_hinkley_hard_error",
+      "group": "adaptive",
+      "phase": "phase_c",
+      "seed": 0
+    },
+    {
+      "condition_id": "page_hinkley_hard_error",
+      "group": "adaptive",
+      "phase": "phase_c",
+      "seed": 1
+    },
+    {
+      "condition_id": "page_hinkley_hard_error",
+      "group": "adaptive",
+      "phase": "phase_c",
+      "seed": 2
+    },
+    {
+      "condition_id": "page_hinkley_hard_error",
+      "group": "adaptive",
+      "phase": "phase_c",
+      "seed": 3
+    },
+    {
+      "condition_id": "page_hinkley_hard_error",
+      "group": "adaptive",
+      "phase": "phase_c",
+      "seed": 4
+    },
+    {
+      "condition_id": "adwin_brier",
+      "group": "adaptive",
+      "phase": "phase_a",
+      "seed": 0
+    },
+    {
+      "condition_id": "adwin_brier",
+      "group": "adaptive",
+      "phase": "phase_a",
+      "seed": 1
+    },
+    {
+      "condition_id": "adwin_brier",
+      "group": "adaptive",
+      "phase": "phase_a",
+      "seed": 2
+    },
+    {
+      "condition_id": "adwin_brier",
+      "group": "adaptive",
+      "phase": "phase_a",
+      "seed": 3
+    },
+    {
+      "condition_id": "adwin_brier",
+      "group": "adaptive",
+      "phase": "phase_a",
+      "seed": 4
+    },
+    {
+      "condition_id": "adwin_brier",
+      "group": "adaptive",
+      "phase": "phase_b",
+      "seed": 0
+    },
+    {
+      "condition_id": "adwin_brier",
+      "group": "adaptive",
+      "phase": "phase_b",
+      "seed": 1
+    },
+    {
+      "condition_id": "adwin_brier",
+      "group": "adaptive",
+      "phase": "phase_b",
+      "seed": 2
+    },
+    {
+      "condition_id": "adwin_brier",
+      "group": "adaptive",
+      "phase": "phase_b",
+      "seed": 3
+    },
+    {
+      "condition_id": "adwin_brier",
+      "group": "adaptive",
+      "phase": "phase_b",
+      "seed": 4
+    },
+    {
+      "condition_id": "adwin_brier",
+      "group": "adaptive",
+      "phase": "phase_c",
+      "seed": 0
+    },
+    {
+      "condition_id": "adwin_brier",
+      "group": "adaptive",
+      "phase": "phase_c",
+      "seed": 1
+    },
+    {
+      "condition_id": "adwin_brier",
+      "group": "adaptive",
+      "phase": "phase_c",
+      "seed": 2
+    },
+    {
+      "condition_id": "adwin_brier",
+      "group": "adaptive",
+      "phase": "phase_c",
+      "seed": 3
+    },
+    {
+      "condition_id": "adwin_brier",
+      "group": "adaptive",
+      "phase": "phase_c",
+      "seed": 4
+    },
+    {
+      "condition_id": "no_replay",
+      "group": "adaptive",
+      "phase": "phase_a",
+      "seed": 0
+    },
+    {
+      "condition_id": "no_replay",
+      "group": "adaptive",
+      "phase": "phase_a",
+      "seed": 1
+    },
+    {
+      "condition_id": "no_replay",
+      "group": "adaptive",
+      "phase": "phase_a",
+      "seed": 2
+    },
+    {
+      "condition_id": "no_replay",
+      "group": "adaptive",
+      "phase": "phase_a",
+      "seed": 3
+    },
+    {
+      "condition_id": "no_replay",
+      "group": "adaptive",
+      "phase": "phase_a",
+      "seed": 4
+    },
+    {
+      "condition_id": "no_replay",
+      "group": "adaptive",
+      "phase": "phase_b",
+      "seed": 0
+    },
+    {
+      "condition_id": "no_replay",
+      "group": "adaptive",
+      "phase": "phase_b",
+      "seed": 1
+    },
+    {
+      "condition_id": "no_replay",
+      "group": "adaptive",
+      "phase": "phase_b",
+      "seed": 2
+    },
+    {
+      "condition_id": "no_replay",
+      "group": "adaptive",
+      "phase": "phase_b",
+      "seed": 3
+    },
+    {
+      "condition_id": "no_replay",
+      "group": "adaptive",
+      "phase": "phase_b",
+      "seed": 4
+    },
+    {
+      "condition_id": "no_replay",
+      "group": "adaptive",
+      "phase": "phase_c",
+      "seed": 0
+    },
+    {
+      "condition_id": "no_replay",
+      "group": "adaptive",
+      "phase": "phase_c",
+      "seed": 1
+    },
+    {
+      "condition_id": "no_replay",
+      "group": "adaptive",
+      "phase": "phase_c",
+      "seed": 2
+    },
+    {
+      "condition_id": "no_replay",
+      "group": "adaptive",
+      "phase": "phase_c",
+      "seed": 3
+    },
+    {
+      "condition_id": "no_replay",
+      "group": "adaptive",
+      "phase": "phase_c",
+      "seed": 4
+    }
+  ],
+  "technical_failure_policy": "abort_and_preserve_partial_evidence;do_not_delete_or_rerun"
+}

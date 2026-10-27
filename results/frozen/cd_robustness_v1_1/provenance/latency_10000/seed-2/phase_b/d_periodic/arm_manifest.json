@@ -1,0 +1,85 @@
+{
+  "arm": "d_periodic",
+  "files": {
+    "final_state": {
+      "path": "final_state.json",
+      "sha256": "2da969922cb0d3ef78cd160b2f9074a440b64c605e16767db8be1e98bb082a30"
+    },
+    "initial_state": {
+      "path": "initial_state.json",
+      "sha256": "8f5dac1d1ed1e225a97f080c65dfe70d4a0c00bf61dbac9528b31a7e8cc39f63"
+    },
+    "maintenance": {
+      "path": "maintenance.jsonl",
+      "sha256": "ba494caf4ad1dc61c82f9bbf0e30c47a8fdad69cb110c87021bb6f42ab55a007"
+    },
+    "version_0001": {
+      "path": "versions/0001-d-s2-v0001.json",
+      "sha256": "c618e037ee858d0d0652e0d5fd394dadbda8a2fb5224be092e8597e968bed48f"
+    }
+  },
+  "final_history_sha256": "2dc874380569863f0bfe214da6a90739f571f752ac3360b3dfbba384d8e930d8",
+  "final_rule_base_sha256": "93367a2a61a4ad37e14e0bda608b5a58b6140f01a3fec5f6b2867f9db146bcb8",
+  "final_rule_base_version_id": "d-s2-v0001",
+  "identity_context": {
+    "condition_id": "latency_10000",
+    "condition_spec_sha256": "6adb3905a2db4fc6e3cfa0719e09191063eb99c08fd08b9463ea204706c34f0e",
+    "frozen_primary_contract_sha256": "4bd0d2d2cb3b33b12286f19fcbae0c823e67c50a9c690f797d07a333fc6c9dc7",
+    "fusion_contract_sha256": "acb2ba17bad35700cfc2f6d539548c31cf86f944eb1aa2aea566828278bbde69",
+    "preprocessing_state_hash": "4527f77220f2cf6063108a7d71d80aaa0e82099ad282ff25408a2d9ce3488b1e",
+    "primary_control_plane_config_sha256": "7491733fe4bb7524eb38960b78067df44081fd4513055664985f3fd0d9841384",
+    "primary_symbolic_operator_config_sha256": "197360bb33718f32d7aebeb60b5e5fe3ba0619941c4a38a4f4c6ba3b529b7532",
+    "r0_v2_manifest_sha256": "131027d2f136494eb388183f18dcb7eb0e9d7e9fe786f22dba25f4e1624c1483",
+    "runtime_identity_sha256": "2c8058035fcb66ad7fa99559de9a8611f81a954f4f9055a832b59ec01d3bfa3b",
+    "scenario_manifest_canonical_sha256": "3d1c3f9775ac5c8a73053634784be513bb1714ef7f26fa9db406ccd78c4344e3",
+    "seed": 2,
+    "stage8_closure_commit": "f8a424389056a048a6ad6be0b744bf6d12b69df2",
+    "stage8_parent_evidence_commit": "c2ded83b8195b9321e715626c1f305f9627936e8",
+    "stage9_config_manifest_sha256": "b72fc0dce0df46974737cd0c33714cc17b23f31ce188e92d318b1787c0ae027e",
+    "system_a_checkpoint_sha256": "7630514cf409256bd2bbe27eca59f881acb238be698b5fdb1ee12bca8e402491",
+    "system_a_manifest_sha256": "42004b5ed100b690023b9998bdc959fac41ab947b996fb7c58e44cee5e8dc6de"
+  },
+  "initial_rule_base_sha256": "c2451d8153862285a0fe60f88c6b9258101330dd28550b8ff906f73329dba08f",
+  "initial_rule_base_version_id": "d-s2-r0v2",
+  "maintenance_summary": {
+    "candidate_count": 34,
+    "censored_or_blocked_count": 3,
+    "completed_validation_count": 1,
+    "compute_seconds": 35.598495799999995,
+    "compute_seconds_per_opportunity": 8.899623949999999,
+    "compute_seconds_per_publication": 35.598495799999995,
+    "lifecycle_decision_counts": {
+      "candidate_rejected_quality_gate": 2,
+      "candidate_rejected_redundant": 2,
+      "demoted": 2,
+      "merge_consolidation": 1,
+      "new_addition": 2,
+      "no_refinement_gain": 1,
+      "refined": 1,
+      "retained": 5
+    },
+    "lifecycle_seconds": 0.3062718,
+    "mean_validation_wait_rows": 27706.0,
+    "no_op_count": 0,
+    "opportunity_count": 4,
+    "publication_count": 1,
+    "publication_per_opportunity": 0.25,
+    "shap_seconds": 35.2435714,
+    "surrogate_seconds": 0.048652600000000004
+  },
+  "manifest_sha256": "cf281b076526e369e901b6b7c5e50a6e579cbbbab534d45cb97a1f4e2ff1c1f0",
+  "operator_config_sha256": "197360bb33718f32d7aebeb60b5e5fe3ba0619941c4a38a4f4c6ba3b529b7532",
+  "payload_sha256": "5162df9c9f258fa51992cd1a175dc82f333e4936a8dba9368d59af2270d82e2b",
+  "publications": [
+    {
+      "canonical_sha256": "93367a2a61a4ad37e14e0bda608b5a58b6140f01a3fec5f6b2867f9db146bcb8",
+      "effective_index": 130825,
+      "file_key": "version_0001",
+      "history_sha256": "2dc874380569863f0bfe214da6a90739f571f752ac3360b3dfbba384d8e930d8",
+      "rule_base_version_id": "d-s2-v0001"
+    }
+  ],
+  "schema_version": 1,
+  "seed": 2,
+  "shared_identity_sha256": "cd35129831c0267cf2da506aaee19790318a4a2cb7b3541de1d1cebf0bde06d0"
+}

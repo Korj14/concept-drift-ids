@@ -1,0 +1,58 @@
+{
+  "all_phase_a_shared_identity_sha256": {
+    "0": "ba31d55a9ffdbf330d9a6c95b553a710301bf68d848b45ddc3372efd3c45fd40",
+    "1": "8734ae75174af141094e450afa36e52a0aeac17f68d7587c0d9a5578b7f5775b",
+    "2": "0aff6a9ba8a5075e09fbdda6139f1c7954de760ebba464fd67798fb04736f1ff",
+    "3": "6f08fcffa283518d8f6ea812fbb5135037ee8ab3118881b06ce24b38ffb4e118",
+    "4": "7cb54379656989ca8819ce03b5b027c307242c0757be7d748bd556612fd31154"
+  },
+  "arm_isolation_sha256": "6f4c9b394469e2992d3ede65b462d37f14608e2e539ac5302a6f2cc9021f21ff",
+  "arms": {
+    "c_frozen_symbolic": {
+      "manifest_sha256": "b4055a93891e66d95fcd52147d8a544e3c0f75b499808924dfb860a83f4e37f0",
+      "path": "c_frozen_symbolic/arm_manifest.json",
+      "sha256": "e07bc13067be408060a6580ae9ea80a2fa84dc7d5ff9fbbbbb53e14c02c78a41"
+    },
+    "d_drift": {
+      "manifest_sha256": "cde373eac0be4aeb9523837b42d5b97b0638e541242cf523d6e4aaa966714040",
+      "path": "d_drift/arm_manifest.json",
+      "sha256": "f247b7acf10ee9e8419039227cdc857ac6199954155aeb547b33238b56fbe914"
+    },
+    "d_periodic": {
+      "manifest_sha256": "73ead2ffd29256a32e31df4e1a795866c0191985d4ad65e4c6ca4be0c8adc824",
+      "path": "d_periodic/arm_manifest.json",
+      "sha256": "064394c76c6dc506b81f444411e73319327fefddfbe79a0d7280245eb674d414"
+    }
+  },
+  "boundary_scored": false,
+  "condition_id": "adwin_brier",
+  "git_commit": "b882df355de7b865c5623b90604ee50438e4243d",
+  "identity_context": {
+    "condition_id": "adwin_brier",
+    "condition_spec_sha256": "c63435fa42c99901e82aca29dabdca9de02dc150cd134b4e81afeadb5a3d7537",
+    "frozen_primary_contract_sha256": "4bd0d2d2cb3b33b12286f19fcbae0c823e67c50a9c690f797d07a333fc6c9dc7",
+    "fusion_contract_sha256": "acb2ba17bad35700cfc2f6d539548c31cf86f944eb1aa2aea566828278bbde69",
+    "preprocessing_state_hash": "4527f77220f2cf6063108a7d71d80aaa0e82099ad282ff25408a2d9ce3488b1e",
+    "primary_control_plane_config_sha256": "7491733fe4bb7524eb38960b78067df44081fd4513055664985f3fd0d9841384",
+    "primary_symbolic_operator_config_sha256": "197360bb33718f32d7aebeb60b5e5fe3ba0619941c4a38a4f4c6ba3b529b7532",
+    "r0_v2_manifest_sha256": "131027d2f136494eb388183f18dcb7eb0e9d7e9fe786f22dba25f4e1624c1483",
+    "runtime_identity_sha256": "2c8058035fcb66ad7fa99559de9a8611f81a954f4f9055a832b59ec01d3bfa3b",
+    "scenario_manifest_canonical_sha256": "3d1c3f9775ac5c8a73053634784be513bb1714ef7f26fa9db406ccd78c4344e3",
+    "seed": 3,
+    "stage8_closure_commit": "f8a424389056a048a6ad6be0b744bf6d12b69df2",
+    "stage8_parent_evidence_commit": "c2ded83b8195b9321e715626c1f305f9627936e8",
+    "stage9_config_manifest_sha256": "b72fc0dce0df46974737cd0c33714cc17b23f31ce188e92d318b1787c0ae027e",
+    "system_a_checkpoint_sha256": "cce1ce47db047b9d441bbe6dad9bd53f1ee6ff3ad7d404521cae72a38bccd4b4",
+    "system_a_manifest_sha256": "42004b5ed100b690023b9998bdc959fac41ab947b996fb7c58e44cee5e8dc6de"
+  },
+  "manifest_sha256": "60d18954f7acf7129702a88a9aa80500735cdadc8396b739a0bb4731e540c208",
+  "operator_config_sha256": "197360bb33718f32d7aebeb60b5e5fe3ba0619941c4a38a4f4c6ba3b529b7532",
+  "payload_sha256": "41b031f1a3e3b02786f81018acdf676d5709a6409e0f2ae1a7a7b6909f27e76b",
+  "phase_a_source": "stage9_condition_phase_a",
+  "run_id": "cd-robustness-v1_1-adwin_brier-phase-b-seed-3",
+  "schema_version": 1,
+  "seed": 3,
+  "shared_identity_sha256": "6f08fcffa283518d8f6ea812fbb5135037ee8ab3118881b06ce24b38ffb4e118",
+  "stage9_config_manifest_sha256": "b72fc0dce0df46974737cd0c33714cc17b23f31ce188e92d318b1787c0ae027e",
+  "status": "complete_unscored_stage9_symbolic_trajectories"
+}

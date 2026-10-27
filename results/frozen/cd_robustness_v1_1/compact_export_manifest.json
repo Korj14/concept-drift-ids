@@ -1,0 +1,1800 @@
+{
+  "conditions": {
+    "offline": [
+      "lambda_0_7",
+      "lambda_0_9",
+      "lambda_1_0",
+      "window_2500",
+      "window_10000"
+    ],
+    "scored": [
+      "latency_0",
+      "latency_10000",
+      "page_hinkley_hard_error",
+      "adwin_brier",
+      "no_replay",
+      "static_symbolic_gate"
+    ]
+  },
+  "execution_plan_sha256": "4ae426dd32ffed2384b4565710364459f4ee0ac2752543d6ec075facf66e53c8",
+  "files": {
+    "aggregate": {
+      "canonical_sha256": "6432dd5791f0baa9bdb2597c072b866814fb614f5a1f670dffec7f760bd1491a",
+      "path": "aggregate.json",
+      "sha256": "d6e70aaa591de7169ed9acc7f1da7c0aa6edfc7e7d3e8b5e72657d7d1e57be70"
+    },
+    "execution_plan": {
+      "path": "execution_plan.json",
+      "sha256": "e82e4c83d5b018d7c1f0592e96945bb4d215599eacfc16e7116a6a3a39d5e948"
+    },
+    "offline:lambda_0_7": {
+      "0": {
+        "path": "offline/lambda_0_7/seed-0.json",
+        "sha256": "c5958d2f16a34b0285b13cd025d0391a4be69838070c0986eb744e02a3f168c6"
+      },
+      "1": {
+        "path": "offline/lambda_0_7/seed-1.json",
+        "sha256": "ac99495dd42f2948b254253504f406e1a1ea7aabed923a8c022d9c9a08f9b228"
+      },
+      "2": {
+        "path": "offline/lambda_0_7/seed-2.json",
+        "sha256": "d037d4a9e358075bfc656cf06b88b8d832208746c26ae55fdfb7006bebfccf67"
+      },
+      "3": {
+        "path": "offline/lambda_0_7/seed-3.json",
+        "sha256": "2b18e0ccbf6763257d0f53df00ab795c85fe8133cd825150f6df39ea6bd58b22"
+      },
+      "4": {
+        "path": "offline/lambda_0_7/seed-4.json",
+        "sha256": "25f8a79897b7cf38337f4d30e5de5b8637bd909a85c4be3760247a6a3a2564bd"
+      }
+    },
+    "offline:lambda_0_9": {
+      "0": {
+        "path": "offline/lambda_0_9/seed-0.json",
+        "sha256": "7189b40b073af52f7990a9be484008caef60ac522c874a4b234abb3731cadf0e"
+      },
+      "1": {
+        "path": "offline/lambda_0_9/seed-1.json",
+        "sha256": "efdaa52b37d85d55d31a8f94a7eafb0cf8089d66e951d27f5eb994e4536e5c34"
+      },
+      "2": {
+        "path": "offline/lambda_0_9/seed-2.json",
+        "sha256": "7843eec9fb58f611dbce02f2c5a42fb5a69aa4ca46e553c7a4e9b99046a30bb7"
+      },
+      "3": {
+        "path": "offline/lambda_0_9/seed-3.json",
+        "sha256": "e0312e945af5633493aad519ceede9f77937e797d73414bfd03b4d7bfa034647"
+      },
+      "4": {
+        "path": "offline/lambda_0_9/seed-4.json",
+        "sha256": "2fb613f219b7b7e5f1e71ae4d63defe994f804ee0f343d5c8ace09e53c322b46"
+      }
+    },
+    "offline:lambda_1_0": {
+      "0": {
+        "path": "offline/lambda_1_0/seed-0.json",
+        "sha256": "861dc3c1208f6f18b2ab38d99f2f8b42d2cf4f536617d6bea1b5604f71d3a5f6"
+      },
+      "1": {
+        "path": "offline/lambda_1_0/seed-1.json",
+        "sha256": "6d8293c685b55862931c4950899380b9add9bd5535bf0fde74f70976a12d32f4"
+      },
+      "2": {
+        "path": "offline/lambda_1_0/seed-2.json",
+        "sha256": "461a28c1a223bf35dbc5992f25940b62617a147c613e881391a527e064e6dcd3"
+      },
+      "3": {
+        "path": "offline/lambda_1_0/seed-3.json",
+        "sha256": "a8dfaccb4b9b5ce60934a9509002c8f1addc2e7f3bfeadca237575b126a31405"
+      },
+      "4": {
+        "path": "offline/lambda_1_0/seed-4.json",
+        "sha256": "3494c3df8877c3a45af6fd809c93773309439de6227190d9252d5c7951777f0b"
+      }
+    },
+    "offline:window_10000": {
+      "0": {
+        "path": "offline/window_10000/seed-0.json",
+        "sha256": "3e440211533ca12ca3f2645e7e201f470f89cc7a41e0eb8c5aa52d429154382e"
+      },
+      "1": {
+        "path": "offline/window_10000/seed-1.json",
+        "sha256": "ce8c0b0d42513a8e31e9e2fefdf3141eaec04217ae0370336a5af3262c9f873c"
+      },
+      "2": {
+        "path": "offline/window_10000/seed-2.json",
+        "sha256": "0045df7858e74148484d34f2eaadbea43df7d84b49024bb934c4d57fa9a78189"
+      },
+      "3": {
+        "path": "offline/window_10000/seed-3.json",
+        "sha256": "53742f9890784ab2eac251f43a7822230c2714932138141ac26221959a4363a6"
+      },
+      "4": {
+        "path": "offline/window_10000/seed-4.json",
+        "sha256": "fd5ef5996286fa30dc5febed20f6531b30a850e7155af44103172c1804d104ed"
+      }
+    },
+    "offline:window_2500": {
+      "0": {
+        "path": "offline/window_2500/seed-0.json",
+        "sha256": "d8947e97a70599c2947f9e44a9082f86be160af0a72054c5917ac9683f044b2b"
+      },
+      "1": {
+        "path": "offline/window_2500/seed-1.json",
+        "sha256": "04276bb5013b0bf4016b4292ed4d9089e2a594417fbf14bb64dbfd51ef171066"
+      },
+      "2": {
+        "path": "offline/window_2500/seed-2.json",
+        "sha256": "fd06b9a9f112353ab7bfbea94274458ef3d9ec265deb8a4eeb762c6bd113d04c"
+      },
+      "3": {
+        "path": "offline/window_2500/seed-3.json",
+        "sha256": "05fe604f30114bb5a36382ab0ef4a07a5f591202bdc071d50d827d1877722655"
+      },
+      "4": {
+        "path": "offline/window_2500/seed-4.json",
+        "sha256": "4a9e3d3568a1852467306da24ce584483f41f7545be32316e82110046e1ab2bb"
+      }
+    },
+    "scored:adwin_brier": {
+      "0": {
+        "phase_c": {
+          "c_frozen_symbolic_evaluation.json": {
+            "path": "scored/adwin_brier/seed-0/c_frozen_symbolic_evaluation.json",
+            "sha256": "1249fcb69e5a1708df9394f0ecb75ecae9e215ef5818bc7849cb364ffa71cc90"
+          },
+          "d_drift_evaluation.json": {
+            "path": "scored/adwin_brier/seed-0/d_drift_evaluation.json",
+            "sha256": "f1ce19d70b6f0316a204f20a6737aaa6f0ad632cbe4ce332e3e3dc5d3434ae82"
+          },
+          "d_periodic_evaluation.json": {
+            "path": "scored/adwin_brier/seed-0/d_periodic_evaluation.json",
+            "sha256": "946d915f6cd718fdc6716292bd9c2f1fe389cb3a692c606bed17eecb6e1db62c"
+          },
+          "phase_c_seed_manifest.json": {
+            "path": "scored/adwin_brier/seed-0/phase_c_seed_manifest.json",
+            "sha256": "9ca49de637946502953698c41056be24f84e7dc0780574b0854ad25f882d42b3"
+          }
+        },
+        "provenance": {
+          "phase_a": {
+            "input_identity.json": {
+              "path": "provenance/adwin_brier/seed-0/phase_a/input_identity.json",
+              "sha256": "102ae0351d5b90f31ca082ea1d291346d7ef4f81b92db62a87dba36f98eac662"
+            },
+            "run_manifest.json": {
+              "path": "provenance/adwin_brier/seed-0/phase_a/run_manifest.json",
+              "sha256": "1fbbddd29889f38d5a16827c6a00f5551676fcb236d0f5576322ac0dddf98428"
+            },
+            "shared_identity.json": {
+              "path": "provenance/adwin_brier/seed-0/phase_a/shared_identity.json",
+              "sha256": "05be0309f047d09d8a64b2f7b19d495f5eb9a44a36e7a4418742bd59d70bdd9e"
+            }
+          },
+          "phase_b": {
+            "c_frozen_symbolic/arm_manifest.json": {
+              "path": "provenance/adwin_brier/seed-0/phase_b/c_frozen_symbolic/arm_manifest.json",
+              "sha256": "aa16d0698a12ba964e44681eccd60d0f6ec0fe741ca9ccf16c6609fdc334e866"
+            },
+            "d_drift/arm_manifest.json": {
+              "path": "provenance/adwin_brier/seed-0/phase_b/d_drift/arm_manifest.json",
+              "sha256": "738d74c6af9f43ab54a08799f2074a75f18ebe2535e721e083eb559b81950d0b"
+            },
+            "d_periodic/arm_manifest.json": {
+              "path": "provenance/adwin_brier/seed-0/phase_b/d_periodic/arm_manifest.json",
+              "sha256": "e41d461f246953ab0ec4d7e87ab95de98751f01f5ceeb350153105217a815bb5"
+            },
+            "phase_b_manifest.json": {
+              "path": "provenance/adwin_brier/seed-0/phase_b/phase_b_manifest.json",
+              "sha256": "1e778fac15a04306eb42d76f9d0863c7bfcab36807b6e9c51c54fe582a396d79"
+            }
+          }
+        }
+      },
+      "1": {
+        "phase_c": {
+          "c_frozen_symbolic_evaluation.json": {
+            "path": "scored/adwin_brier/seed-1/c_frozen_symbolic_evaluation.json",
+            "sha256": "4fe6c43ae2f5e7cc783a98580bdf49bfb27d73e451fd8fb2d0a4746b65f00433"
+          },
+          "d_drift_evaluation.json": {
+            "path": "scored/adwin_brier/seed-1/d_drift_evaluation.json",
+            "sha256": "086faceccfdc1024e791859d57b25b0f9ca8cd2d591826e0c771b6ef6985811e"
+          },
+          "d_periodic_evaluation.json": {
+            "path": "scored/adwin_brier/seed-1/d_periodic_evaluation.json",
+            "sha256": "05a351959bc205f0009aed587d68d41b8845bbe1f5066d1466937200823fb463"
+          },
+          "phase_c_seed_manifest.json": {
+            "path": "scored/adwin_brier/seed-1/phase_c_seed_manifest.json",
+            "sha256": "5bf720e268fac9eb070328146fd2948233a582f579074467613c8f85f62e9e89"
+          }
+        },
+        "provenance": {
+          "phase_a": {
+            "input_identity.json": {
+              "path": "provenance/adwin_brier/seed-1/phase_a/input_identity.json",
+              "sha256": "55b516867eb08d7f5bbeccd7d36c9a7cbc3fffc6269d09a1ba059194250e916e"
+            },
+            "run_manifest.json": {
+              "path": "provenance/adwin_brier/seed-1/phase_a/run_manifest.json",
+              "sha256": "c25e11016c9652c020b6db60d45baf6bb4808105f06459288ae068d9d976fdbe"
+            },
+            "shared_identity.json": {
+              "path": "provenance/adwin_brier/seed-1/phase_a/shared_identity.json",
+              "sha256": "f32a1756ea93bfd2600a467ea053f6de558328de222439db2bb0d1211486716a"
+            }
+          },
+          "phase_b": {
+            "c_frozen_symbolic/arm_manifest.json": {
+              "path": "provenance/adwin_brier/seed-1/phase_b/c_frozen_symbolic/arm_manifest.json",
+              "sha256": "e87e823d225b94e456829b804246ef247d99bb32124917d90cf1749d48378307"
+            },
+            "d_drift/arm_manifest.json": {
+              "path": "provenance/adwin_brier/seed-1/phase_b/d_drift/arm_manifest.json",
+              "sha256": "bdef51639d736a9953164d0e1c1ca0b7fdc8eb5a4557d8cc360e4f7227340539"
+            },
+            "d_periodic/arm_manifest.json": {
+              "path": "provenance/adwin_brier/seed-1/phase_b/d_periodic/arm_manifest.json",
+              "sha256": "c67bda309a0a73e519f3f34eac1b939897eca63786a4bd5a35f43fc78a2064c4"
+            },
+            "phase_b_manifest.json": {
+              "path": "provenance/adwin_brier/seed-1/phase_b/phase_b_manifest.json",
+              "sha256": "61a2c983f9f5152193a579104fbaa3c16854a3bcab4796e539075a195e4044bf"
+            }
+          }
+        }
+      },
+      "2": {
+        "phase_c": {
+          "c_frozen_symbolic_evaluation.json": {
+            "path": "scored/adwin_brier/seed-2/c_frozen_symbolic_evaluation.json",
+            "sha256": "f6a05ba6bb8fb894b97d7cc9c2646ba30faa18d21978bde2bf5a68d6639395db"
+          },
+          "d_drift_evaluation.json": {
+            "path": "scored/adwin_brier/seed-2/d_drift_evaluation.json",
+            "sha256": "c0a3bfb12fa2a5d04d273d789d0cab0653ce22ca70e1d0412d5257328049004f"
+          },
+          "d_periodic_evaluation.json": {
+            "path": "scored/adwin_brier/seed-2/d_periodic_evaluation.json",
+            "sha256": "6ae7fa3cdf2f201c8cfe88187a340feefad266d53e685b9873278c5954f45eb2"
+          },
+          "phase_c_seed_manifest.json": {
+            "path": "scored/adwin_brier/seed-2/phase_c_seed_manifest.json",
+            "sha256": "774f3f813436a31d9c773c47ad575a93895c3d9a2b56aa981121bc760a05f749"
+          }
+        },
+        "provenance": {
+          "phase_a": {
+            "input_identity.json": {
+              "path": "provenance/adwin_brier/seed-2/phase_a/input_identity.json",
+              "sha256": "531178515888501aae804812756405097732f173890f76304ec3ad851d241d4b"
+            },
+            "run_manifest.json": {
+              "path": "provenance/adwin_brier/seed-2/phase_a/run_manifest.json",
+              "sha256": "a68f321cff675e63c47afe6a39a7533a30c9d970e5abdb58666215ae9a02e360"
+            },
+            "shared_identity.json": {
+              "path": "provenance/adwin_brier/seed-2/phase_a/shared_identity.json",
+              "sha256": "16012016443d54cc2bb6442dad9e76f4b7129077cb8f5aff8de9b9d9f4b0a313"
+            }
+          },
+          "phase_b": {
+            "c_frozen_symbolic/arm_manifest.json": {
+              "path": "provenance/adwin_brier/seed-2/phase_b/c_frozen_symbolic/arm_manifest.json",
+              "sha256": "a782d0a60c78cad9f78a13091d119091225a76783df6ac54175ae39182a9abbf"
+            },
+            "d_drift/arm_manifest.json": {
+              "path": "provenance/adwin_brier/seed-2/phase_b/d_drift/arm_manifest.json",
+              "sha256": "bd9db7445cfb71bb75dca62bfc9e698636873c91eb7a9301b0d7b50bd96d3756"
+            },
+            "d_periodic/arm_manifest.json": {
+              "path": "provenance/adwin_brier/seed-2/phase_b/d_periodic/arm_manifest.json",
+              "sha256": "ac534e1450c064f5d55e9cd12eb6e9ab6dead571b5c0fd2d530d5d8ae9687f9c"
+            },
+            "phase_b_manifest.json": {
+              "path": "provenance/adwin_brier/seed-2/phase_b/phase_b_manifest.json",
+              "sha256": "093fec1668b2ba231f49fda3902826d83323df76b815db8db2089708f10b6ed8"
+            }
+          }
+        }
+      },
+      "3": {
+        "phase_c": {
+          "c_frozen_symbolic_evaluation.json": {
+            "path": "scored/adwin_brier/seed-3/c_frozen_symbolic_evaluation.json",
+            "sha256": "192918b4f24f9d251a3023d1a9f123ebc9768931a318da16966c7f3fa0cbfd3b"
+          },
+          "d_drift_evaluation.json": {
+            "path": "scored/adwin_brier/seed-3/d_drift_evaluation.json",
+            "sha256": "ec7b2fac0a863a520140173d65ba0cde57828e73de6e0c6ba49ac621f6042f87"
+          },
+          "d_periodic_evaluation.json": {
+            "path": "scored/adwin_brier/seed-3/d_periodic_evaluation.json",
+            "sha256": "5e948546e2b27aeb4d90491477f776d54c685f409a3489c0198fc3f907b3e3bb"
+          },
+          "phase_c_seed_manifest.json": {
+            "path": "scored/adwin_brier/seed-3/phase_c_seed_manifest.json",
+            "sha256": "72bc54bf1e3899516c6dfb4d7fa06b57f766c9582e9a92e63314f9e1ca6d5b3e"
+          }
+        },
+        "provenance": {
+          "phase_a": {
+            "input_identity.json": {
+              "path": "provenance/adwin_brier/seed-3/phase_a/input_identity.json",
+              "sha256": "f87f1ed36fe427225dc848bfd51c8a87726224a6721e2b6769ea3969a8b01276"
+            },
+            "run_manifest.json": {
+              "path": "provenance/adwin_brier/seed-3/phase_a/run_manifest.json",
+              "sha256": "5c2e4e35f9dd81889be939abf46b5e77c8a9660cdc782999d9dd066281de3c69"
+            },
+            "shared_identity.json": {
+              "path": "provenance/adwin_brier/seed-3/phase_a/shared_identity.json",
+              "sha256": "f25472ff102aac5443960250ffca4bf3ea3b943a8f68c44849252cd2300ce56d"
+            }
+          },
+          "phase_b": {
+            "c_frozen_symbolic/arm_manifest.json": {
+              "path": "provenance/adwin_brier/seed-3/phase_b/c_frozen_symbolic/arm_manifest.json",
+              "sha256": "e07bc13067be408060a6580ae9ea80a2fa84dc7d5ff9fbbbbb53e14c02c78a41"
+            },
+            "d_drift/arm_manifest.json": {
+              "path": "provenance/adwin_brier/seed-3/phase_b/d_drift/arm_manifest.json",
+              "sha256": "f247b7acf10ee9e8419039227cdc857ac6199954155aeb547b33238b56fbe914"
+            },
+            "d_periodic/arm_manifest.json": {
+              "path": "provenance/adwin_brier/seed-3/phase_b/d_periodic/arm_manifest.json",
+              "sha256": "064394c76c6dc506b81f444411e73319327fefddfbe79a0d7280245eb674d414"
+            },
+            "phase_b_manifest.json": {
+              "path": "provenance/adwin_brier/seed-3/phase_b/phase_b_manifest.json",
+              "sha256": "c5a64a15c6f8cdc7367d280debb715f10de4b6d11cadcbea9bb029089bfe8e63"
+            }
+          }
+        }
+      },
+      "4": {
+        "phase_c": {
+          "c_frozen_symbolic_evaluation.json": {
+            "path": "scored/adwin_brier/seed-4/c_frozen_symbolic_evaluation.json",
+            "sha256": "8253d419f243f2bb061a8e98395f161f2cfa5abbf5d762348a3c4e5f6af6dd15"
+          },
+          "d_drift_evaluation.json": {
+            "path": "scored/adwin_brier/seed-4/d_drift_evaluation.json",
+            "sha256": "ac08eea471ff4c43ea85b48c8abcae9ff46d19133f2ce1f2208f882b7626c80d"
+          },
+          "d_periodic_evaluation.json": {
+            "path": "scored/adwin_brier/seed-4/d_periodic_evaluation.json",
+            "sha256": "0a62d37c456f17dadc8e5795bf87cd5e468fd717e91ae9f1af688603e21936e9"
+          },
+          "phase_c_seed_manifest.json": {
+            "path": "scored/adwin_brier/seed-4/phase_c_seed_manifest.json",
+            "sha256": "789d4b3766674f628d2915048a0f3b9246b2adb3cd8043d9f9e4a1730b9fe800"
+          }
+        },
+        "provenance": {
+          "phase_a": {
+            "input_identity.json": {
+              "path": "provenance/adwin_brier/seed-4/phase_a/input_identity.json",
+              "sha256": "7b1044f7cdb5308f6f98984ad1d5c42c7d8ef8c7064b5ff6fa1d3f17bd5aeea1"
+            },
+            "run_manifest.json": {
+              "path": "provenance/adwin_brier/seed-4/phase_a/run_manifest.json",
+              "sha256": "78e4a33fd7173fdd81c08401c51f57eae75e8a97e35aa3c701c6ff57c6ab3e3b"
+            },
+            "shared_identity.json": {
+              "path": "provenance/adwin_brier/seed-4/phase_a/shared_identity.json",
+              "sha256": "b0e2a98ec74b43c7352c04c3b807352f86ae57d8e4551d10ab290bf10da22cee"
+            }
+          },
+          "phase_b": {
+            "c_frozen_symbolic/arm_manifest.json": {
+              "path": "provenance/adwin_brier/seed-4/phase_b/c_frozen_symbolic/arm_manifest.json",
+              "sha256": "3353c3603a39190e7226b002bcaf4665f0067d01d2cb46d6dd573ac53f85c7a5"
+            },
+            "d_drift/arm_manifest.json": {
+              "path": "provenance/adwin_brier/seed-4/phase_b/d_drift/arm_manifest.json",
+              "sha256": "f9ed3d146fb2172632d64b18d9f663765e8361aa12e1d00b1f6e8d008cb0d46a"
+            },
+            "d_periodic/arm_manifest.json": {
+              "path": "provenance/adwin_brier/seed-4/phase_b/d_periodic/arm_manifest.json",
+              "sha256": "a2dfef33f42a156b17a8800be9ed8fdf20922db9d81636f41120d2542069f741"
+            },
+            "phase_b_manifest.json": {
+              "path": "provenance/adwin_brier/seed-4/phase_b/phase_b_manifest.json",
+              "sha256": "3160221e73c96a6f87df37dd95679435478bc1a3c46122c083caa7f5b7e13650"
+            }
+          }
+        }
+      }
+    },
+    "scored:latency_0": {
+      "0": {
+        "phase_c": {
+          "c_frozen_symbolic_evaluation.json": {
+            "path": "scored/latency_0/seed-0/c_frozen_symbolic_evaluation.json",
+            "sha256": "a8c8466b3b7620a630ad131e1a0c5c26f05bdc71b9c9958ead137d79234bc7cf"
+          },
+          "d_drift_evaluation.json": {
+            "path": "scored/latency_0/seed-0/d_drift_evaluation.json",
+            "sha256": "af20ad0756d5416fa9c92c9f982131caa460300a8ae68cdbede61059a2da7b55"
+          },
+          "d_periodic_evaluation.json": {
+            "path": "scored/latency_0/seed-0/d_periodic_evaluation.json",
+            "sha256": "3ad57322c793349c157f20b49ec947564eb3c100e57cd64c310b5b6cc54ba7f0"
+          },
+          "phase_c_seed_manifest.json": {
+            "path": "scored/latency_0/seed-0/phase_c_seed_manifest.json",
+            "sha256": "9f2411bc65e7911e7621b1c3e1bceb5204ed62611891093b1162fc99269326af"
+          }
+        },
+        "provenance": {
+          "phase_a": {
+            "input_identity.json": {
+              "path": "provenance/latency_0/seed-0/phase_a/input_identity.json",
+              "sha256": "102ae0351d5b90f31ca082ea1d291346d7ef4f81b92db62a87dba36f98eac662"
+            },
+            "run_manifest.json": {
+              "path": "provenance/latency_0/seed-0/phase_a/run_manifest.json",
+              "sha256": "58c596a334253d8077a509c57c37afc73d4867a45b3e5688a8cf192887e4d206"
+            },
+            "shared_identity.json": {
+              "path": "provenance/latency_0/seed-0/phase_a/shared_identity.json",
+              "sha256": "f60a66d7e2848673871f06a7506168211f71b3027e3188f7c966455b3df44c4f"
+            }
+          },
+          "phase_b": {
+            "c_frozen_symbolic/arm_manifest.json": {
+              "path": "provenance/latency_0/seed-0/phase_b/c_frozen_symbolic/arm_manifest.json",
+              "sha256": "75929083ec8f72815e4b7e5aff56bfbae4160e3af601c64b6636ab0856a376a5"
+            },
+            "d_drift/arm_manifest.json": {
+              "path": "provenance/latency_0/seed-0/phase_b/d_drift/arm_manifest.json",
+              "sha256": "8cad7ded54066af56a4d2e6bcd203160f52b35c9c6a5958a33e48eca5160e268"
+            },
+            "d_periodic/arm_manifest.json": {
+              "path": "provenance/latency_0/seed-0/phase_b/d_periodic/arm_manifest.json",
+              "sha256": "1829e42ed2f4933bb3d62a1dc702ab5fc31d8ced2ddc9d6d41b2981b692426fc"
+            },
+            "phase_b_manifest.json": {
+              "path": "provenance/latency_0/seed-0/phase_b/phase_b_manifest.json",
+              "sha256": "33fa52f9c033b7e96b4bcdb74028a60e46dd39bfb811d1c3de2c2f3f32ba7c6c"
+            }
+          }
+        }
+      },
+      "1": {
+        "phase_c": {
+          "c_frozen_symbolic_evaluation.json": {
+            "path": "scored/latency_0/seed-1/c_frozen_symbolic_evaluation.json",
+            "sha256": "e677554250f75dab13eef408a8c3af5d4b7683100e8e7ec21d18cd79a9bbe7fd"
+          },
+          "d_drift_evaluation.json": {
+            "path": "scored/latency_0/seed-1/d_drift_evaluation.json",
+            "sha256": "6ca42b75aa4d1e4e64e91a0502a1441cddf97c0084d515c744196c9a17d54afd"
+          },
+          "d_periodic_evaluation.json": {
+            "path": "scored/latency_0/seed-1/d_periodic_evaluation.json",
+            "sha256": "1660e82d9860cab4f4f452ca208586b6b2c793cd32eb5410faed21ac87f9b08c"
+          },
+          "phase_c_seed_manifest.json": {
+            "path": "scored/latency_0/seed-1/phase_c_seed_manifest.json",
+            "sha256": "195bb803d8b4c6e958509d24fa13dc81a293579e9fbf4e458beebf2659099543"
+          }
+        },
+        "provenance": {
+          "phase_a": {
+            "input_identity.json": {
+              "path": "provenance/latency_0/seed-1/phase_a/input_identity.json",
+              "sha256": "55b516867eb08d7f5bbeccd7d36c9a7cbc3fffc6269d09a1ba059194250e916e"
+            },
+            "run_manifest.json": {
+              "path": "provenance/latency_0/seed-1/phase_a/run_manifest.json",
+              "sha256": "42009eacb3c47ae9d5e2dfc7895e6cac87d283a69ff0d773a3a5d86039443e82"
+            },
+            "shared_identity.json": {
+              "path": "provenance/latency_0/seed-1/phase_a/shared_identity.json",
+              "sha256": "10449a3af6ea75b012766b734bfcd4537029edc2abe68f32337f4678a1927be6"
+            }
+          },
+          "phase_b": {
+            "c_frozen_symbolic/arm_manifest.json": {
+              "path": "provenance/latency_0/seed-1/phase_b/c_frozen_symbolic/arm_manifest.json",
+              "sha256": "fafa46c45981fc43a5b42d4944f8e501e83c416be5123395da51943541d7de3e"
+            },
+            "d_drift/arm_manifest.json": {
+              "path": "provenance/latency_0/seed-1/phase_b/d_drift/arm_manifest.json",
+              "sha256": "d1bd0ba82ead93cff0ee2061fbc1e56e7cf07ea1224a5885a96652581d7a040c"
+            },
+            "d_periodic/arm_manifest.json": {
+              "path": "provenance/latency_0/seed-1/phase_b/d_periodic/arm_manifest.json",
+              "sha256": "542546ef5d4337fc73c010a2a693196d1f17c32448d25340c7accf21753811f1"
+            },
+            "phase_b_manifest.json": {
+              "path": "provenance/latency_0/seed-1/phase_b/phase_b_manifest.json",
+              "sha256": "53cef724b12e6f7a7434639e0f652a19ebf8ce54222b5b8f1a84aa3217c19296"
+            }
+          }
+        }
+      },
+      "2": {
+        "phase_c": {
+          "c_frozen_symbolic_evaluation.json": {
+            "path": "scored/latency_0/seed-2/c_frozen_symbolic_evaluation.json",
+            "sha256": "e65811d4b4d9c25fda91f9cce1f2e3a300d7d82f37f51b946c51cc5e662d6c38"
+          },
+          "d_drift_evaluation.json": {
+            "path": "scored/latency_0/seed-2/d_drift_evaluation.json",
+            "sha256": "db962065df01457b6d69f512fa9c9ed5db26ba784a86da542c86c719e65aecfe"
+          },
+          "d_periodic_evaluation.json": {
+            "path": "scored/latency_0/seed-2/d_periodic_evaluation.json",
+            "sha256": "866c96b25867373fc74f69488f2bfa2b0176f24730ca4b25ef1a6753a4ecd52a"
+          },
+          "phase_c_seed_manifest.json": {
+            "path": "scored/latency_0/seed-2/phase_c_seed_manifest.json",
+            "sha256": "65dd8c48924842cb031206d6e8433003d58ab30d443bbc21ffa26dc130a8a1a8"
+          }
+        },
+        "provenance": {
+          "phase_a": {
+            "input_identity.json": {
+              "path": "provenance/latency_0/seed-2/phase_a/input_identity.json",
+              "sha256": "531178515888501aae804812756405097732f173890f76304ec3ad851d241d4b"
+            },
+            "run_manifest.json": {
+              "path": "provenance/latency_0/seed-2/phase_a/run_manifest.json",
+              "sha256": "bf9a94f8f3396db4d00144ce8d45aeac90f7099786b1d6718bb857f8c72ecf8f"
+            },
+            "shared_identity.json": {
+              "path": "provenance/latency_0/seed-2/phase_a/shared_identity.json",
+              "sha256": "163d8946238dbd276b7578d39d773e6bccfd2c4aafff631f6001ce238047c0fd"
+            }
+          },
+          "phase_b": {
+            "c_frozen_symbolic/arm_manifest.json": {
+              "path": "provenance/latency_0/seed-2/phase_b/c_frozen_symbolic/arm_manifest.json",
+              "sha256": "125b5209b85bd1bcd7c8f3ebdb40eb8c80199257fa5fc0312de9d68ebb06f5d7"
+            },
+            "d_drift/arm_manifest.json": {
+              "path": "provenance/latency_0/seed-2/phase_b/d_drift/arm_manifest.json",
+              "sha256": "2af0612f8909426ae7127bd2a6fdc43844493506f29d029213cd83b0fdcd8b2e"
+            },
+            "d_periodic/arm_manifest.json": {
+              "path": "provenance/latency_0/seed-2/phase_b/d_periodic/arm_manifest.json",
+              "sha256": "d26c550c720358f85fdb922acf9d6af7daf7007aa420a9b5c7af1f04bec17285"
+            },
+            "phase_b_manifest.json": {
+              "path": "provenance/latency_0/seed-2/phase_b/phase_b_manifest.json",
+              "sha256": "184c4756758edaddce6be2e601465ec9766e6bc31d001c6bc7626bd40dceb58b"
+            }
+          }
+        }
+      },
+      "3": {
+        "phase_c": {
+          "c_frozen_symbolic_evaluation.json": {
+            "path": "scored/latency_0/seed-3/c_frozen_symbolic_evaluation.json",
+            "sha256": "190e4a943416722e3ed4f66280a1a9b1eb295caf01edb88c34bd1d9092ab87e9"
+          },
+          "d_drift_evaluation.json": {
+            "path": "scored/latency_0/seed-3/d_drift_evaluation.json",
+            "sha256": "8d5d47eb9403f94e38db49add9e11a3a5e5b27d67b0bc2c2b8a9f220f861136a"
+          },
+          "d_periodic_evaluation.json": {
+            "path": "scored/latency_0/seed-3/d_periodic_evaluation.json",
+            "sha256": "9b0552244d859c8c57cea51f2a1f11b3ade73971ff396748d0a41073beb2e563"
+          },
+          "phase_c_seed_manifest.json": {
+            "path": "scored/latency_0/seed-3/phase_c_seed_manifest.json",
+            "sha256": "cea56d503ad25822d147c7c4871ba876278aa3494d22c6467843bf24633e9feb"
+          }
+        },
+        "provenance": {
+          "phase_a": {
+            "input_identity.json": {
+              "path": "provenance/latency_0/seed-3/phase_a/input_identity.json",
+              "sha256": "f87f1ed36fe427225dc848bfd51c8a87726224a6721e2b6769ea3969a8b01276"
+            },
+            "run_manifest.json": {
+              "path": "provenance/latency_0/seed-3/phase_a/run_manifest.json",
+              "sha256": "63ab4b2e6a34b3bce8e9149455802c20b36f6801ee65f7e9e6d66fe338129d65"
+            },
+            "shared_identity.json": {
+              "path": "provenance/latency_0/seed-3/phase_a/shared_identity.json",
+              "sha256": "9fc8ab693d03780bf112338a26782e02d3b26fb6f6b296f4a45355dfa583daff"
+            }
+          },
+          "phase_b": {
+            "c_frozen_symbolic/arm_manifest.json": {
+              "path": "provenance/latency_0/seed-3/phase_b/c_frozen_symbolic/arm_manifest.json",
+              "sha256": "078de04ef421fc4ccbbcabd29000e606c77eea17ff2d49591a86494db58b60a9"
+            },
+            "d_drift/arm_manifest.json": {
+              "path": "provenance/latency_0/seed-3/phase_b/d_drift/arm_manifest.json",
+              "sha256": "3eae6b0f0ccb48ceae02e3df5f5bf9c8ab759ac25b3059c662fe0c2635237543"
+            },
+            "d_periodic/arm_manifest.json": {
+              "path": "provenance/latency_0/seed-3/phase_b/d_periodic/arm_manifest.json",
+              "sha256": "769a2ca13b20004bc5ad2b8d84b949083e36d71ac194a27395f502d5556d8d5a"
+            },
+            "phase_b_manifest.json": {
+              "path": "provenance/latency_0/seed-3/phase_b/phase_b_manifest.json",
+              "sha256": "1c092977e7c6329d949f5c3f49e7cecca2dc267108a851544adc2bbbe87324e2"
+            }
+          }
+        }
+      },
+      "4": {
+        "phase_c": {
+          "c_frozen_symbolic_evaluation.json": {
+            "path": "scored/latency_0/seed-4/c_frozen_symbolic_evaluation.json",
+            "sha256": "29fa176e666c2596d07859452830e151f5e52730fb9dcd8ae76ed12c47e545b8"
+          },
+          "d_drift_evaluation.json": {
+            "path": "scored/latency_0/seed-4/d_drift_evaluation.json",
+            "sha256": "a89f4b79b967d60a68bb142c5f5fd7a4d55058446c4d209dfdd7cdb5d87c8efd"
+          },
+          "d_periodic_evaluation.json": {
+            "path": "scored/latency_0/seed-4/d_periodic_evaluation.json",
+            "sha256": "8be00c63579cba0e000ce7f9fb3e76fe15711d4854857eb7d8e534dc8239a656"
+          },
+          "phase_c_seed_manifest.json": {
+            "path": "scored/latency_0/seed-4/phase_c_seed_manifest.json",
+            "sha256": "502b32fb30bc354b681c62df7b009983d243ebd3cf5e954103ecb8f274045cc6"
+          }
+        },
+        "provenance": {
+          "phase_a": {
+            "input_identity.json": {
+              "path": "provenance/latency_0/seed-4/phase_a/input_identity.json",
+              "sha256": "7b1044f7cdb5308f6f98984ad1d5c42c7d8ef8c7064b5ff6fa1d3f17bd5aeea1"
+            },
+            "run_manifest.json": {
+              "path": "provenance/latency_0/seed-4/phase_a/run_manifest.json",
+              "sha256": "4bec117ad9463049c03f0cf07bee31a4dd23f23c728bdeafed19ebd60d75ce99"
+            },
+            "shared_identity.json": {
+              "path": "provenance/latency_0/seed-4/phase_a/shared_identity.json",
+              "sha256": "694913d808422104ddec99828feff36a0107ef84f53ecb281d8715c32dae6f5e"
+            }
+          },
+          "phase_b": {
+            "c_frozen_symbolic/arm_manifest.json": {
+              "path": "provenance/latency_0/seed-4/phase_b/c_frozen_symbolic/arm_manifest.json",
+              "sha256": "6e20c1a80582b676f3c5f6f21941abaa9389996d9395869f2d2eef3cb06651d0"
+            },
+            "d_drift/arm_manifest.json": {
+              "path": "provenance/latency_0/seed-4/phase_b/d_drift/arm_manifest.json",
+              "sha256": "a8378fce5588d7aef6cde98d6523b3054769ff9835d8e0f4ce81fc571561b240"
+            },
+            "d_periodic/arm_manifest.json": {
+              "path": "provenance/latency_0/seed-4/phase_b/d_periodic/arm_manifest.json",
+              "sha256": "62eae9c1925708e6fed420778ab11a76e6a6c7dd504d5a904c73dd8dcc217955"
+            },
+            "phase_b_manifest.json": {
+              "path": "provenance/latency_0/seed-4/phase_b/phase_b_manifest.json",
+              "sha256": "be2437532af5c3e5c28056bd105c897c27373ff121a4a524faee7aa705d1571d"
+            }
+          }
+        }
+      }
+    },
+    "scored:latency_10000": {
+      "0": {
+        "phase_c": {
+          "c_frozen_symbolic_evaluation.json": {
+            "path": "scored/latency_10000/seed-0/c_frozen_symbolic_evaluation.json",
+            "sha256": "58f65dfc7da7d2b22d7ca4d6b912bb0260b537302ae0e493d99538e9e73d78f5"
+          },
+          "d_drift_evaluation.json": {
+            "path": "scored/latency_10000/seed-0/d_drift_evaluation.json",
+            "sha256": "67e6b0d15ca16109c39736f17b3c72a2f4c0023e592ae14020fc3b9abc9524a1"
+          },
+          "d_periodic_evaluation.json": {
+            "path": "scored/latency_10000/seed-0/d_periodic_evaluation.json",
+            "sha256": "d11b7f4652d3eae38d5f47927965288c03f44a5f60d7cde519411ebf67425767"
+          },
+          "phase_c_seed_manifest.json": {
+            "path": "scored/latency_10000/seed-0/phase_c_seed_manifest.json",
+            "sha256": "24dae09026ebab72e0d5b4fbdddd2f5eb9afb0f8494ec863b4ba27966eb6f30a"
+          }
+        },
+        "provenance": {
+          "phase_a": {
+            "input_identity.json": {
+              "path": "provenance/latency_10000/seed-0/phase_a/input_identity.json",
+              "sha256": "102ae0351d5b90f31ca082ea1d291346d7ef4f81b92db62a87dba36f98eac662"
+            },
+            "run_manifest.json": {
+              "path": "provenance/latency_10000/seed-0/phase_a/run_manifest.json",
+              "sha256": "7e1bb484a3a551d5697ddf2cc8f44807316f610f926ba0d69890e1c7b7b2dc30"
+            },
+            "shared_identity.json": {
+              "path": "provenance/latency_10000/seed-0/phase_a/shared_identity.json",
+              "sha256": "224f251f698f526fb45eb98ad55857242264edf22eb2178464d9d91868d2090a"
+            }
+          },
+          "phase_b": {
+            "c_frozen_symbolic/arm_manifest.json": {
+              "path": "provenance/latency_10000/seed-0/phase_b/c_frozen_symbolic/arm_manifest.json",
+              "sha256": "68a334a87418b3fd1607c3307d92471762c247934f87193ae958aef2f97a0889"
+            },
+            "d_drift/arm_manifest.json": {
+              "path": "provenance/latency_10000/seed-0/phase_b/d_drift/arm_manifest.json",
+              "sha256": "de92514e850f61eb7debec8f3c9512359011c89f814728d3803d629f341f0cd1"
+            },
+            "d_periodic/arm_manifest.json": {
+              "path": "provenance/latency_10000/seed-0/phase_b/d_periodic/arm_manifest.json",
+              "sha256": "9929376b769042682a43d57e621476396a6b506cc6a3426c5fda8e785d008475"
+            },
+            "phase_b_manifest.json": {
+              "path": "provenance/latency_10000/seed-0/phase_b/phase_b_manifest.json",
+              "sha256": "760857711bf1460d78637367efd4112a6ae74aca39a39ead3cc8ae5b07d1402c"
+            }
+          }
+        }
+      },
+      "1": {
+        "phase_c": {
+          "c_frozen_symbolic_evaluation.json": {
+            "path": "scored/latency_10000/seed-1/c_frozen_symbolic_evaluation.json",
+            "sha256": "1ea5f94f2c585eb45f99e08e2f1ca5e71c0590079972b66e736070dab91bcfc5"
+          },
+          "d_drift_evaluation.json": {
+            "path": "scored/latency_10000/seed-1/d_drift_evaluation.json",
+            "sha256": "468da0769bbb4a9d83ddf64086a0cee8de23164d2f9ac22ed13ce5e93da1c5bf"
+          },
+          "d_periodic_evaluation.json": {
+            "path": "scored/latency_10000/seed-1/d_periodic_evaluation.json",
+            "sha256": "f8485fb09a55a9c9f7da892f727611db8caa3d4e4d18a3af405acbe4ca0c37a5"
+          },
+          "phase_c_seed_manifest.json": {
+            "path": "scored/latency_10000/seed-1/phase_c_seed_manifest.json",
+            "sha256": "13316e6d2d07c1430ac421d8a56464660dd3c078c6de09aafa4dfa4dcf7b45a7"
+          }
+        },
+        "provenance": {
+          "phase_a": {
+            "input_identity.json": {
+              "path": "provenance/latency_10000/seed-1/phase_a/input_identity.json",
+              "sha256": "55b516867eb08d7f5bbeccd7d36c9a7cbc3fffc6269d09a1ba059194250e916e"
+            },
+            "run_manifest.json": {
+              "path": "provenance/latency_10000/seed-1/phase_a/run_manifest.json",
+              "sha256": "fae362d0eda6bfa7eab617abbdf431a7cdc44cdb75f2ef1d736840b87141a28a"
+            },
+            "shared_identity.json": {
+              "path": "provenance/latency_10000/seed-1/phase_a/shared_identity.json",
+              "sha256": "2df69bc097910b0c261beaf111a7a1cfb5f4fbc672b505fae0b3e3ed3cc84ece"
+            }
+          },
+          "phase_b": {
+            "c_frozen_symbolic/arm_manifest.json": {
+              "path": "provenance/latency_10000/seed-1/phase_b/c_frozen_symbolic/arm_manifest.json",
+              "sha256": "1a419b0d19b7bab78c265ee3cee267cb10731fccf6022b7a48f51ac28adee5e6"
+            },
+            "d_drift/arm_manifest.json": {
+              "path": "provenance/latency_10000/seed-1/phase_b/d_drift/arm_manifest.json",
+              "sha256": "23ed4224702063399fbc464d5fc592e64b3bdc6141ef69e9b0e53fbce41db183"
+            },
+            "d_periodic/arm_manifest.json": {
+              "path": "provenance/latency_10000/seed-1/phase_b/d_periodic/arm_manifest.json",
+              "sha256": "519c5558d1d6485eee5a34c690bc5b0e5a8ae18b59bbb37ff9fdb4204562f980"
+            },
+            "phase_b_manifest.json": {
+              "path": "provenance/latency_10000/seed-1/phase_b/phase_b_manifest.json",
+              "sha256": "c7b9c40bcd2fd2c89147345fcb81dc385a2184cc7f8d3362acee8e703b939cc2"
+            }
+          }
+        }
+      },
+      "2": {
+        "phase_c": {
+          "c_frozen_symbolic_evaluation.json": {
+            "path": "scored/latency_10000/seed-2/c_frozen_symbolic_evaluation.json",
+            "sha256": "6cec21100a702122154ce553789231eaab723bbe8e061b6e160c0f8fd28fb9d1"
+          },
+          "d_drift_evaluation.json": {
+            "path": "scored/latency_10000/seed-2/d_drift_evaluation.json",
+            "sha256": "37b77dd564043ec788055cd85be205921ede246a6c39bc7e82bc3c23708a70f4"
+          },
+          "d_periodic_evaluation.json": {
+            "path": "scored/latency_10000/seed-2/d_periodic_evaluation.json",
+            "sha256": "d162f15690952a5f49bf85dbd264a84d66829a4df6966bccac9d9cc8624e0101"
+          },
+          "phase_c_seed_manifest.json": {
+            "path": "scored/latency_10000/seed-2/phase_c_seed_manifest.json",
+            "sha256": "e18721254518b4681779d8c08ccfe0e5d9153cf921b09d895ac4045e391c8965"
+          }
+        },
+        "provenance": {
+          "phase_a": {
+            "input_identity.json": {
+              "path": "provenance/latency_10000/seed-2/phase_a/input_identity.json",
+              "sha256": "531178515888501aae804812756405097732f173890f76304ec3ad851d241d4b"
+            },
+            "run_manifest.json": {
+              "path": "provenance/latency_10000/seed-2/phase_a/run_manifest.json",
+              "sha256": "dc9d4a76967b38b1e6065985cf851b3b1eb9443cf8594d429a7684a2072634e7"
+            },
+            "shared_identity.json": {
+              "path": "provenance/latency_10000/seed-2/phase_a/shared_identity.json",
+              "sha256": "a2276333c9a6f28fc002751f78da1cf0f0f17ac6fe96bb69c53d4c83512c07d1"
+            }
+          },
+          "phase_b": {
+            "c_frozen_symbolic/arm_manifest.json": {
+              "path": "provenance/latency_10000/seed-2/phase_b/c_frozen_symbolic/arm_manifest.json",
+              "sha256": "fb9f304b6d7829701796b1a33818309e5ca314b6a1c18f144639068737cdc7a7"
+            },
+            "d_drift/arm_manifest.json": {
+              "path": "provenance/latency_10000/seed-2/phase_b/d_drift/arm_manifest.json",
+              "sha256": "5797db2a6686033456bd0e2d6c5a29d419c069ed2e661a69f1fc5ba7483ff28e"
+            },
+            "d_periodic/arm_manifest.json": {
+              "path": "provenance/latency_10000/seed-2/phase_b/d_periodic/arm_manifest.json",
+              "sha256": "c877031f8810d46d95b8fcf2f5a6033da691508694f1b94d405529bc39a000e5"
+            },
+            "phase_b_manifest.json": {
+              "path": "provenance/latency_10000/seed-2/phase_b/phase_b_manifest.json",
+              "sha256": "ac8f63f76b54385c653fb29a21132c024e173be4c83ecbb503f09b07417c8dfa"
+            }
+          }
+        }
+      },
+      "3": {
+        "phase_c": {
+          "c_frozen_symbolic_evaluation.json": {
+            "path": "scored/latency_10000/seed-3/c_frozen_symbolic_evaluation.json",
+            "sha256": "f9fa530ae3fd04c19c6294151507025e50646974d49b0d6dc4b3e6a65c187306"
+          },
+          "d_drift_evaluation.json": {
+            "path": "scored/latency_10000/seed-3/d_drift_evaluation.json",
+            "sha256": "8bc59a519322be64c0d932d20c05a4d657791e73d09048b0f62c798306178695"
+          },
+          "d_periodic_evaluation.json": {
+            "path": "scored/latency_10000/seed-3/d_periodic_evaluation.json",
+            "sha256": "0c67b62a9aaa85f5e5fbc0a9e6b0d49f57b05a7704d9364c4929ad1cb9ecfbaa"
+          },
+          "phase_c_seed_manifest.json": {
+            "path": "scored/latency_10000/seed-3/phase_c_seed_manifest.json",
+            "sha256": "c224bae1c9b9e442ff58f8d988ae5e01e6f8ee82337fb3654c2ba4463b137d95"
+          }
+        },
+        "provenance": {
+          "phase_a": {
+            "input_identity.json": {
+              "path": "provenance/latency_10000/seed-3/phase_a/input_identity.json",
+              "sha256": "f87f1ed36fe427225dc848bfd51c8a87726224a6721e2b6769ea3969a8b01276"
+            },
+            "run_manifest.json": {
+              "path": "provenance/latency_10000/seed-3/phase_a/run_manifest.json",
+              "sha256": "dd9a08553c969e49b0302ce70aaa601345eff04f27dc4be06316539942fdbe9b"
+            },
+            "shared_identity.json": {
+              "path": "provenance/latency_10000/seed-3/phase_a/shared_identity.json",
+              "sha256": "ea5ceae6be8237190427a860348b3cd34908115acc1fa0d7824192e97068af69"
+            }
+          },
+          "phase_b": {
+            "c_frozen_symbolic/arm_manifest.json": {
+              "path": "provenance/latency_10000/seed-3/phase_b/c_frozen_symbolic/arm_manifest.json",
+              "sha256": "87b9f69c05b9d950b64c4b63b6e41a32345dbc2a403b7a6dad25cef3973f9e6f"
+            },
+            "d_drift/arm_manifest.json": {
+              "path": "provenance/latency_10000/seed-3/phase_b/d_drift/arm_manifest.json",
+              "sha256": "af6ed5c4c445a97316a0ccfb760fd9d60474bc9166df2cc3aab413656839eb99"
+            },
+            "d_periodic/arm_manifest.json": {
+              "path": "provenance/latency_10000/seed-3/phase_b/d_periodic/arm_manifest.json",
+              "sha256": "5a802f4d87436fc6c3b1431789d29a7654783c711e298c2a008fd3625d09a8e9"
+            },
+            "phase_b_manifest.json": {
+              "path": "provenance/latency_10000/seed-3/phase_b/phase_b_manifest.json",
+              "sha256": "ac57d84ce8bda934b1aad6f80fbb8d2babb7e1b6a98bd2231140118f971e33f0"
+            }
+          }
+        }
+      },
+      "4": {
+        "phase_c": {
+          "c_frozen_symbolic_evaluation.json": {
+            "path": "scored/latency_10000/seed-4/c_frozen_symbolic_evaluation.json",
+            "sha256": "e9595c2162c4ece8472a1f94694498f1c17970a9abb8e5e98f6e53143e9cbbad"
+          },
+          "d_drift_evaluation.json": {
+            "path": "scored/latency_10000/seed-4/d_drift_evaluation.json",
+            "sha256": "a95ed7add8df30766f30ae7c490ae21b986d7c57fa5576087cd45a7007a0c879"
+          },
+          "d_periodic_evaluation.json": {
+            "path": "scored/latency_10000/seed-4/d_periodic_evaluation.json",
+            "sha256": "3a4666f74a86d91bd9b4c5a9bf0f8f9319178cd62cd218f7df0772dab27cf129"
+          },
+          "phase_c_seed_manifest.json": {
+            "path": "scored/latency_10000/seed-4/phase_c_seed_manifest.json",
+            "sha256": "0b9456e4e8917972687df08299bf2c6444c5280fe2f1bff3d517203a37126606"
+          }
+        },
+        "provenance": {
+          "phase_a": {
+            "input_identity.json": {
+              "path": "provenance/latency_10000/seed-4/phase_a/input_identity.json",
+              "sha256": "7b1044f7cdb5308f6f98984ad1d5c42c7d8ef8c7064b5ff6fa1d3f17bd5aeea1"
+            },
+            "run_manifest.json": {
+              "path": "provenance/latency_10000/seed-4/phase_a/run_manifest.json",
+              "sha256": "fb79e06862a5007af5906bbababe6c43fd2c9e6311e0948ee6db985afc4c3614"
+            },
+            "shared_identity.json": {
+              "path": "provenance/latency_10000/seed-4/phase_a/shared_identity.json",
+              "sha256": "794b02b3b46cfba5418e9848d13f40d19a71d9f4f2eb4eb4f8b38a7a6881b5ba"
+            }
+          },
+          "phase_b": {
+            "c_frozen_symbolic/arm_manifest.json": {
+              "path": "provenance/latency_10000/seed-4/phase_b/c_frozen_symbolic/arm_manifest.json",
+              "sha256": "dc6f77040812bc51d3637c2e1b1bc8e5ea7650016a2ae632a0892002b3cda9cd"
+            },
+            "d_drift/arm_manifest.json": {
+              "path": "provenance/latency_10000/seed-4/phase_b/d_drift/arm_manifest.json",
+              "sha256": "cd31b2aee6aaa4ed13dcb7c2294b9076f7209850bb5b23e81d71b1c734c5a5b7"
+            },
+            "d_periodic/arm_manifest.json": {
+              "path": "provenance/latency_10000/seed-4/phase_b/d_periodic/arm_manifest.json",
+              "sha256": "4d3740770a54e964b22f6b137e4c6e8989ffb611c9f8b8f0258daac5d1a64882"
+            },
+            "phase_b_manifest.json": {
+              "path": "provenance/latency_10000/seed-4/phase_b/phase_b_manifest.json",
+              "sha256": "7da8828e252f2f871365389075e66ba50d612b5de0e85c828160b76215a10b2b"
+            }
+          }
+        }
+      }
+    },
+    "scored:no_replay": {
+      "0": {
+        "phase_c": {
+          "c_frozen_symbolic_evaluation.json": {
+            "path": "scored/no_replay/seed-0/c_frozen_symbolic_evaluation.json",
+            "sha256": "fea1d654450c4c44297dc95f1656a4d1e22301ca2ee65de7a4481d72d0765d2f"
+          },
+          "d_drift_evaluation.json": {
+            "path": "scored/no_replay/seed-0/d_drift_evaluation.json",
+            "sha256": "92f6900fb032309bfa3e09fdb2323b4176c3bbf7da47154ed7ff0e12093c596f"
+          },
+          "d_periodic_evaluation.json": {
+            "path": "scored/no_replay/seed-0/d_periodic_evaluation.json",
+            "sha256": "99916030c50ac4072aa81c353b785fe87924c42a6c3a001ecdccdb3763fd9f0c"
+          },
+          "phase_c_seed_manifest.json": {
+            "path": "scored/no_replay/seed-0/phase_c_seed_manifest.json",
+            "sha256": "969bf473dd49e2f2ef1a72766a5a00c8d82aa2c5e78b54dfaf989d197fa2f7bd"
+          }
+        },
+        "provenance": {
+          "phase_a": {
+            "input_identity.json": {
+              "path": "provenance/no_replay/seed-0/phase_a/input_identity.json",
+              "sha256": "102ae0351d5b90f31ca082ea1d291346d7ef4f81b92db62a87dba36f98eac662"
+            },
+            "run_manifest.json": {
+              "path": "provenance/no_replay/seed-0/phase_a/run_manifest.json",
+              "sha256": "5cb8a3920ccf700e9db9f52236ce2d417bbae0b87dd106cdcc7c8247d4b359af"
+            },
+            "shared_identity.json": {
+              "path": "provenance/no_replay/seed-0/phase_a/shared_identity.json",
+              "sha256": "31d82167570308f2c6aaee2a802a0c78b5a3c42b3da311bda68930f995eb8a1e"
+            }
+          },
+          "phase_b": {
+            "c_frozen_symbolic/arm_manifest.json": {
+              "path": "provenance/no_replay/seed-0/phase_b/c_frozen_symbolic/arm_manifest.json",
+              "sha256": "60a2d5edb560cbb78876f21ed3b6e2290eb3b40e8f0538ea237e969060b1ce41"
+            },
+            "d_drift/arm_manifest.json": {
+              "path": "provenance/no_replay/seed-0/phase_b/d_drift/arm_manifest.json",
+              "sha256": "bfc209db1b30160adc1435a3b783cb9eccd024d02564f75fbd8f2d3dacde1736"
+            },
+            "d_periodic/arm_manifest.json": {
+              "path": "provenance/no_replay/seed-0/phase_b/d_periodic/arm_manifest.json",
+              "sha256": "27f3ad8caeb9cf4b40117692c4bd935ae355fe6dca6208c9514ee0b5b8409c06"
+            },
+            "phase_b_manifest.json": {
+              "path": "provenance/no_replay/seed-0/phase_b/phase_b_manifest.json",
+              "sha256": "94373b1914f8ccccecafec51e2d2914707fc882d55be8e0654029f256a2c1d69"
+            }
+          }
+        }
+      },
+      "1": {
+        "phase_c": {
+          "c_frozen_symbolic_evaluation.json": {
+            "path": "scored/no_replay/seed-1/c_frozen_symbolic_evaluation.json",
+            "sha256": "6e8ef6e150a221fe04e1ca3d8936b8b74d67901b993ceea877b58cc31552a680"
+          },
+          "d_drift_evaluation.json": {
+            "path": "scored/no_replay/seed-1/d_drift_evaluation.json",
+            "sha256": "98c01f5b5353c03a4f92b723004f1935356141a1e41a4012b0a12c822b204124"
+          },
+          "d_periodic_evaluation.json": {
+            "path": "scored/no_replay/seed-1/d_periodic_evaluation.json",
+            "sha256": "756f57891b614c3041832e6399dea860bf355c347ab9b28425f83ca6bbcff511"
+          },
+          "phase_c_seed_manifest.json": {
+            "path": "scored/no_replay/seed-1/phase_c_seed_manifest.json",
+            "sha256": "7bb0487d4760418c23f5347942b47de196507be863c58a534176dde473228e31"
+          }
+        },
+        "provenance": {
+          "phase_a": {
+            "input_identity.json": {
+              "path": "provenance/no_replay/seed-1/phase_a/input_identity.json",
+              "sha256": "55b516867eb08d7f5bbeccd7d36c9a7cbc3fffc6269d09a1ba059194250e916e"
+            },
+            "run_manifest.json": {
+              "path": "provenance/no_replay/seed-1/phase_a/run_manifest.json",
+              "sha256": "d7a88924886c3238dbe70b8a5ef170536ad80b6c91511dd2e1d90448b628cd23"
+            },
+            "shared_identity.json": {
+              "path": "provenance/no_replay/seed-1/phase_a/shared_identity.json",
+              "sha256": "475c4e0d8d251a47ebc55d742c3ee1c45b1b3c2b82966135692ae1a908a256c5"
+            }
+          },
+          "phase_b": {
+            "c_frozen_symbolic/arm_manifest.json": {
+              "path": "provenance/no_replay/seed-1/phase_b/c_frozen_symbolic/arm_manifest.json",
+              "sha256": "3118d14e7dc39a9bce8f0034a1150a9d3f517162e46610caa00418b9ff35a0c5"
+            },
+            "d_drift/arm_manifest.json": {
+              "path": "provenance/no_replay/seed-1/phase_b/d_drift/arm_manifest.json",
+              "sha256": "75ca1b6d6669cdcff1a8d7b4330b3a2cb68a174bc185b5a16418f260399476e2"
+            },
+            "d_periodic/arm_manifest.json": {
+              "path": "provenance/no_replay/seed-1/phase_b/d_periodic/arm_manifest.json",
+              "sha256": "59967493101fa5ba449bfc8042fd0c0cdf287ae3c5bfd7bf67c1d4eb75a4943f"
+            },
+            "phase_b_manifest.json": {
+              "path": "provenance/no_replay/seed-1/phase_b/phase_b_manifest.json",
+              "sha256": "c030cfce6643ea453d27c05b43c7d89410f64aae05f73bc8c66f642f366a440a"
+            }
+          }
+        }
+      },
+      "2": {
+        "phase_c": {
+          "c_frozen_symbolic_evaluation.json": {
+            "path": "scored/no_replay/seed-2/c_frozen_symbolic_evaluation.json",
+            "sha256": "0af0500fb1771889da07324b3dc6b8c1c94210e6e0bbf4e28e5fde48f09227c1"
+          },
+          "d_drift_evaluation.json": {
+            "path": "scored/no_replay/seed-2/d_drift_evaluation.json",
+            "sha256": "4191905678134a05fa600288bab2fc0ca4d3a45d1ab144678f1802f8186b7dce"
+          },
+          "d_periodic_evaluation.json": {
+            "path": "scored/no_replay/seed-2/d_periodic_evaluation.json",
+            "sha256": "bba2eccb74462fc80f9df72c3d0a92cae4f6f0bd7f487b2689a961cc356b4f6b"
+          },
+          "phase_c_seed_manifest.json": {
+            "path": "scored/no_replay/seed-2/phase_c_seed_manifest.json",
+            "sha256": "09c38183ece1cbd70b02287cf74fca36c808f1618785ae8650a44b7c829dcd29"
+          }
+        },
+        "provenance": {
+          "phase_a": {
+            "input_identity.json": {
+              "path": "provenance/no_replay/seed-2/phase_a/input_identity.json",
+              "sha256": "531178515888501aae804812756405097732f173890f76304ec3ad851d241d4b"
+            },
+            "run_manifest.json": {
+              "path": "provenance/no_replay/seed-2/phase_a/run_manifest.json",
+              "sha256": "ee69b8f391c6368dbffbcfc0d1a5a509c5928149ca4d57d91b25ceba60fee848"
+            },
+            "shared_identity.json": {
+              "path": "provenance/no_replay/seed-2/phase_a/shared_identity.json",
+              "sha256": "62f00123b471c26702d4c23646c3fe68063837e174cf302a09d52cd148dae7de"
+            }
+          },
+          "phase_b": {
+            "c_frozen_symbolic/arm_manifest.json": {
+              "path": "provenance/no_replay/seed-2/phase_b/c_frozen_symbolic/arm_manifest.json",
+              "sha256": "f623cb47d9ea2ce7bebee4797bfcda06ee0cb1dec2cfb9927d571faeddda885d"
+            },
+            "d_drift/arm_manifest.json": {
+              "path": "provenance/no_replay/seed-2/phase_b/d_drift/arm_manifest.json",
+              "sha256": "5a6a048d23a290ffe155912ebd97b30da4738ea945985257d64e6c86751a92c8"
+            },
+            "d_periodic/arm_manifest.json": {
+              "path": "provenance/no_replay/seed-2/phase_b/d_periodic/arm_manifest.json",
+              "sha256": "120d72793b24e91a94cefece59e2bfbc622d97ced8bd63e0b4620517c4fcd3ce"
+            },
+            "phase_b_manifest.json": {
+              "path": "provenance/no_replay/seed-2/phase_b/phase_b_manifest.json",
+              "sha256": "359db56c08412cb81287ce63753d020882f9f20d501b7e670a082bba08b27c2f"
+            }
+          }
+        }
+      },
+      "3": {
+        "phase_c": {
+          "c_frozen_symbolic_evaluation.json": {
+            "path": "scored/no_replay/seed-3/c_frozen_symbolic_evaluation.json",
+            "sha256": "202ac8c6eefbd572cb22ef9bd3e6b5563123eb93e5cc200a235e6b85c7fbb537"
+          },
+          "d_drift_evaluation.json": {
+            "path": "scored/no_replay/seed-3/d_drift_evaluation.json",
+            "sha256": "ddda7e256c0ce8eebda2c8d7bfeca2dcfb2d70bad45dd27ee3e1477c630a15b6"
+          },
+          "d_periodic_evaluation.json": {
+            "path": "scored/no_replay/seed-3/d_periodic_evaluation.json",
+            "sha256": "5f3f107f0eaa6785ec3ca25d4bf669625b95d7973af945c7f67b045aca25d655"
+          },
+          "phase_c_seed_manifest.json": {
+            "path": "scored/no_replay/seed-3/phase_c_seed_manifest.json",
+            "sha256": "2f026909a444770aa95e811d96ae41bb50a946ec0252b965c3cfe2db612c4cfc"
+          }
+        },
+        "provenance": {
+          "phase_a": {
+            "input_identity.json": {
+              "path": "provenance/no_replay/seed-3/phase_a/input_identity.json",
+              "sha256": "f87f1ed36fe427225dc848bfd51c8a87726224a6721e2b6769ea3969a8b01276"
+            },
+            "run_manifest.json": {
+              "path": "provenance/no_replay/seed-3/phase_a/run_manifest.json",
+              "sha256": "f14fb700af3d8e3c48cae794246eeb37d2708a4683617e94fa70d4d751deef01"
+            },
+            "shared_identity.json": {
+              "path": "provenance/no_replay/seed-3/phase_a/shared_identity.json",
+              "sha256": "a79a785e6eea708be1150b59856f1ff3125484b496695cfe226793e3a89a0c84"
+            }
+          },
+          "phase_b": {
+            "c_frozen_symbolic/arm_manifest.json": {
+              "path": "provenance/no_replay/seed-3/phase_b/c_frozen_symbolic/arm_manifest.json",
+              "sha256": "e1417b71826edb970f8f84d3941f1f5cb158d6f690934400967119b5963b2cd4"
+            },
+            "d_drift/arm_manifest.json": {
+              "path": "provenance/no_replay/seed-3/phase_b/d_drift/arm_manifest.json",
+              "sha256": "aba0058c0df9a0dad3b07dc46523783f2a67f2324cec99273c2d94b3d54175d4"
+            },
+            "d_periodic/arm_manifest.json": {
+              "path": "provenance/no_replay/seed-3/phase_b/d_periodic/arm_manifest.json",
+              "sha256": "218a76d1b7b09fd571901956b90e56aaa38f15b27e61658ab30130f157e70ae7"
+            },
+            "phase_b_manifest.json": {
+              "path": "provenance/no_replay/seed-3/phase_b/phase_b_manifest.json",
+              "sha256": "58f1e25676ef30e0bcbd5b75918550ac328830b75ff9fe5ee2df69970338ec57"
+            }
+          }
+        }
+      },
+      "4": {
+        "phase_c": {
+          "c_frozen_symbolic_evaluation.json": {
+            "path": "scored/no_replay/seed-4/c_frozen_symbolic_evaluation.json",
+            "sha256": "99e835cd63fc6a9a78b4c0bb25c83d3808595eda4d2bacdfffe1a9cfb65887cf"
+          },
+          "d_drift_evaluation.json": {
+            "path": "scored/no_replay/seed-4/d_drift_evaluation.json",
+            "sha256": "e12ba6fb4043f50d08a6b7bc0bfafee135c560bd5295aa8bd37adb44f9ee233d"
+          },
+          "d_periodic_evaluation.json": {
+            "path": "scored/no_replay/seed-4/d_periodic_evaluation.json",
+            "sha256": "57efa9e8242faf20c3969490fa12b416e8051e20f8a6743a77ed97d09b9970bd"
+          },
+          "phase_c_seed_manifest.json": {
+            "path": "scored/no_replay/seed-4/phase_c_seed_manifest.json",
+            "sha256": "d8351959be8052f19aeb9f946c87dfecf559a849f0dad263ab2fecd33247c98b"
+          }
+        },
+        "provenance": {
+          "phase_a": {
+            "input_identity.json": {
+              "path": "provenance/no_replay/seed-4/phase_a/input_identity.json",
+              "sha256": "7b1044f7cdb5308f6f98984ad1d5c42c7d8ef8c7064b5ff6fa1d3f17bd5aeea1"
+            },
+            "run_manifest.json": {
+              "path": "provenance/no_replay/seed-4/phase_a/run_manifest.json",
+              "sha256": "797804687de5aefa0ba1261cbb6813886d03641c3654c25cfb8eaffdc0d48aff"
+            },
+            "shared_identity.json": {
+              "path": "provenance/no_replay/seed-4/phase_a/shared_identity.json",
+              "sha256": "1f92144d82214d27794e692510a1c0f974022c3c119f79dbb0b0716f6ef7b1bf"
+            }
+          },
+          "phase_b": {
+            "c_frozen_symbolic/arm_manifest.json": {
+              "path": "provenance/no_replay/seed-4/phase_b/c_frozen_symbolic/arm_manifest.json",
+              "sha256": "c6e42843210412699a4a2fc706af65df372dad7a969747317487157d37ac3f42"
+            },
+            "d_drift/arm_manifest.json": {
+              "path": "provenance/no_replay/seed-4/phase_b/d_drift/arm_manifest.json",
+              "sha256": "295aa6da20663efe08a6b6e23da5a9485dc4faaddda48b8adf0695ff214ef74a"
+            },
+            "d_periodic/arm_manifest.json": {
+              "path": "provenance/no_replay/seed-4/phase_b/d_periodic/arm_manifest.json",
+              "sha256": "818a9b4148d7758eccf1e9d5d6904b86280d997383d43f364a0ff592705e519a"
+            },
+            "phase_b_manifest.json": {
+              "path": "provenance/no_replay/seed-4/phase_b/phase_b_manifest.json",
+              "sha256": "4e97b72093fb693cbbb3e451816bf927b8f9676d540d9a5f341530e39ed24d00"
+            }
+          }
+        }
+      }
+    },
+    "scored:page_hinkley_hard_error": {
+      "0": {
+        "phase_c": {
+          "c_frozen_symbolic_evaluation.json": {
+            "path": "scored/page_hinkley_hard_error/seed-0/c_frozen_symbolic_evaluation.json",
+            "sha256": "be5d5ba09067ade596ce133b5615e4f479346ef2e9b492b20a03be1ea0290d6e"
+          },
+          "d_drift_evaluation.json": {
+            "path": "scored/page_hinkley_hard_error/seed-0/d_drift_evaluation.json",
+            "sha256": "5025b63e58455c29e8824041d5415367ab3019f2aa0fb3cf69376ef43a5088de"
+          },
+          "d_periodic_evaluation.json": {
+            "path": "scored/page_hinkley_hard_error/seed-0/d_periodic_evaluation.json",
+            "sha256": "998372cbc37e646fef69b1fc321c93bbcb18cc0270223d1ca3d0714842f3772e"
+          },
+          "phase_c_seed_manifest.json": {
+            "path": "scored/page_hinkley_hard_error/seed-0/phase_c_seed_manifest.json",
+            "sha256": "2e8247b5e43b043f5cd4e7dd4e10d9044b332853271c2e1c79e2a005ba20c665"
+          }
+        },
+        "provenance": {
+          "phase_a": {
+            "input_identity.json": {
+              "path": "provenance/page_hinkley_hard_error/seed-0/phase_a/input_identity.json",
+              "sha256": "102ae0351d5b90f31ca082ea1d291346d7ef4f81b92db62a87dba36f98eac662"
+            },
+            "run_manifest.json": {
+              "path": "provenance/page_hinkley_hard_error/seed-0/phase_a/run_manifest.json",
+              "sha256": "d4beed873104d8de18a79f2fb60306576bab5f0300257400bf7b51542e784a58"
+            },
+            "shared_identity.json": {
+              "path": "provenance/page_hinkley_hard_error/seed-0/phase_a/shared_identity.json",
+              "sha256": "f4e15dd8715edd44faae7041fdbb4fe17a949f145c3ebdbf27a57e382426d0fd"
+            }
+          },
+          "phase_b": {
+            "c_frozen_symbolic/arm_manifest.json": {
+              "path": "provenance/page_hinkley_hard_error/seed-0/phase_b/c_frozen_symbolic/arm_manifest.json",
+              "sha256": "31fed40ae716fab4a31fb16049c9fa0ee373b94c5821905ebd9a7c8ee5c57a2d"
+            },
+            "d_drift/arm_manifest.json": {
+              "path": "provenance/page_hinkley_hard_error/seed-0/phase_b/d_drift/arm_manifest.json",
+              "sha256": "2aa4f0dc09795e4872a18d8d1f000c66a0b8ca0e3cd84442c9e0b563384585f6"
+            },
+            "d_periodic/arm_manifest.json": {
+              "path": "provenance/page_hinkley_hard_error/seed-0/phase_b/d_periodic/arm_manifest.json",
+              "sha256": "ed3b0ba915c0872d451cafb876ac0fa184ce0e4789b26a3f3bf86c7c68978b9e"
+            },
+            "phase_b_manifest.json": {
+              "path": "provenance/page_hinkley_hard_error/seed-0/phase_b/phase_b_manifest.json",
+              "sha256": "9752981d928bb8cd5c66bae70f88a6df4bd5997d08f45a33537d7eb1c8ba2209"
+            }
+          }
+        }
+      },
+      "1": {
+        "phase_c": {
+          "c_frozen_symbolic_evaluation.json": {
+            "path": "scored/page_hinkley_hard_error/seed-1/c_frozen_symbolic_evaluation.json",
+            "sha256": "c43d34d4c2d76986ab57317b922bdfa732b7971e492168f81e4bb1337b861228"
+          },
+          "d_drift_evaluation.json": {
+            "path": "scored/page_hinkley_hard_error/seed-1/d_drift_evaluation.json",
+            "sha256": "42f1e217fe743e2ff3deb79249045b61db7c2a308ba8ae8d4f0ed5fff2e1a7aa"
+          },
+          "d_periodic_evaluation.json": {
+            "path": "scored/page_hinkley_hard_error/seed-1/d_periodic_evaluation.json",
+            "sha256": "bdc6e01f4d54c50ac37ff9e6d2a44f452b0b9c1f68453440567b8c21edf2cb23"
+          },
+          "phase_c_seed_manifest.json": {
+            "path": "scored/page_hinkley_hard_error/seed-1/phase_c_seed_manifest.json",
+            "sha256": "4ed058b0ae7f767f432930c4ae931453541088ac1453d901e1d31d53cb0a5237"
+          }
+        },
+        "provenance": {
+          "phase_a": {
+            "input_identity.json": {
+              "path": "provenance/page_hinkley_hard_error/seed-1/phase_a/input_identity.json",
+              "sha256": "55b516867eb08d7f5bbeccd7d36c9a7cbc3fffc6269d09a1ba059194250e916e"
+            },
+            "run_manifest.json": {
+              "path": "provenance/page_hinkley_hard_error/seed-1/phase_a/run_manifest.json",
+              "sha256": "9296dedd8a9402223b0c7344db2a712c0247720f888d05dc1ac869642474077c"
+            },
+            "shared_identity.json": {
+              "path": "provenance/page_hinkley_hard_error/seed-1/phase_a/shared_identity.json",
+              "sha256": "97259d5850b312dbb53882dfbfaab7af722f6e193110c21625460dc0ab4be612"
+            }
+          },
+          "phase_b": {
+            "c_frozen_symbolic/arm_manifest.json": {
+              "path": "provenance/page_hinkley_hard_error/seed-1/phase_b/c_frozen_symbolic/arm_manifest.json",
+              "sha256": "58337e117598adb4d28c9e436b745ce95cfe7a7f74ffe51b30a37d230e1e52d6"
+            },
+            "d_drift/arm_manifest.json": {
+              "path": "provenance/page_hinkley_hard_error/seed-1/phase_b/d_drift/arm_manifest.json",
+              "sha256": "cfbabdc93f7dd88dc47b18ec1fb3f81d07b8bc073c8f73ae8a13d63d560ddaa2"
+            },
+            "d_periodic/arm_manifest.json": {
+              "path": "provenance/page_hinkley_hard_error/seed-1/phase_b/d_periodic/arm_manifest.json",
+              "sha256": "6226f3ed954cb176a880c86674fe075b1cb84abc3634dbe7647f3d1384787b37"
+            },
+            "phase_b_manifest.json": {
+              "path": "provenance/page_hinkley_hard_error/seed-1/phase_b/phase_b_manifest.json",
+              "sha256": "7a8fcf0d86d9f48f78a7fa9e173008642ab6f27f4245866de01761515a53c461"
+            }
+          }
+        }
+      },
+      "2": {
+        "phase_c": {
+          "c_frozen_symbolic_evaluation.json": {
+            "path": "scored/page_hinkley_hard_error/seed-2/c_frozen_symbolic_evaluation.json",
+            "sha256": "baec4b7fed765abd3deb0e8a71b3bbf302105ef4d2dcef411be7c468be2a8ca1"
+          },
+          "d_drift_evaluation.json": {
+            "path": "scored/page_hinkley_hard_error/seed-2/d_drift_evaluation.json",
+            "sha256": "c595e125206c9a1ae7477d2bcb04426d87f72d23592d647caddb8c0dea9c5949"
+          },
+          "d_periodic_evaluation.json": {
+            "path": "scored/page_hinkley_hard_error/seed-2/d_periodic_evaluation.json",
+            "sha256": "3fcbf33081aee8af26b48dd8a9e68843e2b5eda497e17a628bf767fd432c1334"
+          },
+          "phase_c_seed_manifest.json": {
+            "path": "scored/page_hinkley_hard_error/seed-2/phase_c_seed_manifest.json",
+            "sha256": "6488b27e3c97948bd2233b8ebcfbc0ca7111940431e831398028a7698cdaddd2"
+          }
+        },
+        "provenance": {
+          "phase_a": {
+            "input_identity.json": {
+              "path": "provenance/page_hinkley_hard_error/seed-2/phase_a/input_identity.json",
+              "sha256": "531178515888501aae804812756405097732f173890f76304ec3ad851d241d4b"
+            },
+            "run_manifest.json": {
+              "path": "provenance/page_hinkley_hard_error/seed-2/phase_a/run_manifest.json",
+              "sha256": "aede9577a258ce20423d450e40df0b01ad5c4284950c9645d88f4b287da0a52d"
+            },
+            "shared_identity.json": {
+              "path": "provenance/page_hinkley_hard_error/seed-2/phase_a/shared_identity.json",
+              "sha256": "48dcb7a93695b6eee9d8b2f6e13f59829a7641f489480646dbe24978947ef528"
+            }
+          },
+          "phase_b": {
+            "c_frozen_symbolic/arm_manifest.json": {
+              "path": "provenance/page_hinkley_hard_error/seed-2/phase_b/c_frozen_symbolic/arm_manifest.json",
+              "sha256": "1c73a8bb970819f7dcfdd3087073dba70247f41a90ac3e6900f03b7d1af59bab"
+            },
+            "d_drift/arm_manifest.json": {
+              "path": "provenance/page_hinkley_hard_error/seed-2/phase_b/d_drift/arm_manifest.json",
+              "sha256": "2a3539d9891b75bd1155201e486f43e8a5b96810164574563982972c0ccefbaa"
+            },
+            "d_periodic/arm_manifest.json": {
+              "path": "provenance/page_hinkley_hard_error/seed-2/phase_b/d_periodic/arm_manifest.json",
+              "sha256": "56a521e3f774330bb05ea5b37918a05e03d0998d4cadcb9e1faf78ecd70884e2"
+            },
+            "phase_b_manifest.json": {
+              "path": "provenance/page_hinkley_hard_error/seed-2/phase_b/phase_b_manifest.json",
+              "sha256": "f1c99d7eec3b571e5259d5c186888cb8cd0b57d27f65b088a0d7739b7c023771"
+            }
+          }
+        }
+      },
+      "3": {
+        "phase_c": {
+          "c_frozen_symbolic_evaluation.json": {
+            "path": "scored/page_hinkley_hard_error/seed-3/c_frozen_symbolic_evaluation.json",
+            "sha256": "bc61c23bc1c42e34cb6809f59233dd2989077659007987abb40d3243fa72f807"
+          },
+          "d_drift_evaluation.json": {
+            "path": "scored/page_hinkley_hard_error/seed-3/d_drift_evaluation.json",
+            "sha256": "564d350555865179f3152cc3a8e8c35208b045cc20dce106b8878ef08b3946e5"
+          },
+          "d_periodic_evaluation.json": {
+            "path": "scored/page_hinkley_hard_error/seed-3/d_periodic_evaluation.json",
+            "sha256": "8a6f90efe5606f0ffe2058d0a20619fb61d4546aa0edac590a01d6b982059c5e"
+          },
+          "phase_c_seed_manifest.json": {
+            "path": "scored/page_hinkley_hard_error/seed-3/phase_c_seed_manifest.json",
+            "sha256": "838023ce610f0f324d840e4d4fb0bae272cca6324ccf43710cf956b93838cfd3"
+          }
+        },
+        "provenance": {
+          "phase_a": {
+            "input_identity.json": {
+              "path": "provenance/page_hinkley_hard_error/seed-3/phase_a/input_identity.json",
+              "sha256": "f87f1ed36fe427225dc848bfd51c8a87726224a6721e2b6769ea3969a8b01276"
+            },
+            "run_manifest.json": {
+              "path": "provenance/page_hinkley_hard_error/seed-3/phase_a/run_manifest.json",
+              "sha256": "8b03323907d9d846e4d2ecdb6df91c19aeb264931be741dee31d65ed40fd6765"
+            },
+            "shared_identity.json": {
+              "path": "provenance/page_hinkley_hard_error/seed-3/phase_a/shared_identity.json",
+              "sha256": "657e5a8a0da998dcd0c5b26e0aa02b20ee85ef5f5c8d95540e0ed7ecd1a23208"
+            }
+          },
+          "phase_b": {
+            "c_frozen_symbolic/arm_manifest.json": {
+              "path": "provenance/page_hinkley_hard_error/seed-3/phase_b/c_frozen_symbolic/arm_manifest.json",
+              "sha256": "89c1da0580e2c9e0ab8dfa61a26b11cbbb2afb45a0cb6343f2987108270192e3"
+            },
+            "d_drift/arm_manifest.json": {
+              "path": "provenance/page_hinkley_hard_error/seed-3/phase_b/d_drift/arm_manifest.json",
+              "sha256": "39c4eb02e6c77bbd97df235399431965bae6e44845a27c2e043ba1836a17967f"
+            },
+            "d_periodic/arm_manifest.json": {
+              "path": "provenance/page_hinkley_hard_error/seed-3/phase_b/d_periodic/arm_manifest.json",
+              "sha256": "195a698705c2c621757b040992bc4537c5010fa14d0144cfe749b08e773945c8"
+            },
+            "phase_b_manifest.json": {
+              "path": "provenance/page_hinkley_hard_error/seed-3/phase_b/phase_b_manifest.json",
+              "sha256": "ad6d9ea422841c419cec1a7a5c0ffcbdd17fe3c560d0d837d07f1a6c06048cfd"
+            }
+          }
+        }
+      },
+      "4": {
+        "phase_c": {
+          "c_frozen_symbolic_evaluation.json": {
+            "path": "scored/page_hinkley_hard_error/seed-4/c_frozen_symbolic_evaluation.json",
+            "sha256": "dc265bbb01d235be93798dc208622b45b3ec7a33d493a256b394dbad0c1501a0"
+          },
+          "d_drift_evaluation.json": {
+            "path": "scored/page_hinkley_hard_error/seed-4/d_drift_evaluation.json",
+            "sha256": "9f115ee4fd6b53a8e823f2eacd19f638c6f3c34a3df7d3084cea802d25977059"
+          },
+          "d_periodic_evaluation.json": {
+            "path": "scored/page_hinkley_hard_error/seed-4/d_periodic_evaluation.json",
+            "sha256": "77828d6af31d89923acbec9882310a4989f3e0df3ff69747332a034c584e9ff3"
+          },
+          "phase_c_seed_manifest.json": {
+            "path": "scored/page_hinkley_hard_error/seed-4/phase_c_seed_manifest.json",
+            "sha256": "b19c6171e387e761363ebac436a3308e257bdea00f0c9e88d1c886eb132ba886"
+          }
+        },
+        "provenance": {
+          "phase_a": {
+            "input_identity.json": {
+              "path": "provenance/page_hinkley_hard_error/seed-4/phase_a/input_identity.json",
+              "sha256": "7b1044f7cdb5308f6f98984ad1d5c42c7d8ef8c7064b5ff6fa1d3f17bd5aeea1"
+            },
+            "run_manifest.json": {
+              "path": "provenance/page_hinkley_hard_error/seed-4/phase_a/run_manifest.json",
+              "sha256": "98350815156ea79d12e9bed323f26f6f5125dbf79e1fc5f415c9acddaa754ec9"
+            },
+            "shared_identity.json": {
+              "path": "provenance/page_hinkley_hard_error/seed-4/phase_a/shared_identity.json",
+              "sha256": "91e9dec64a5afda0a717be921e7dcd6fd90f5a68038011a828055ca771a24b1f"
+            }
+          },
+          "phase_b": {
+            "c_frozen_symbolic/arm_manifest.json": {
+              "path": "provenance/page_hinkley_hard_error/seed-4/phase_b/c_frozen_symbolic/arm_manifest.json",
+              "sha256": "ae5560ba482e861abbd74045008d6837cc5760a35359ac2997ef274881b7a2a0"
+            },
+            "d_drift/arm_manifest.json": {
+              "path": "provenance/page_hinkley_hard_error/seed-4/phase_b/d_drift/arm_manifest.json",
+              "sha256": "727545d981714c964216d68488d3eeb0eccfd4606a354cb1097965bd215f00e2"
+            },
+            "d_periodic/arm_manifest.json": {
+              "path": "provenance/page_hinkley_hard_error/seed-4/phase_b/d_periodic/arm_manifest.json",
+              "sha256": "a880da8cd5876538ef12a68492c7682c15cdb7acd562468e1aeef9c0bb2e3cfc"
+            },
+            "phase_b_manifest.json": {
+              "path": "provenance/page_hinkley_hard_error/seed-4/phase_b/phase_b_manifest.json",
+              "sha256": "ab25599f64dd342d83fc75792b2a115d73668368e700a154999949badb020792"
+            }
+          }
+        }
+      }
+    },
+    "scored:static_symbolic_gate": {
+      "0": {
+        "phase_c": {
+          "c_frozen_symbolic_evaluation.json": {
+            "path": "scored/static_symbolic_gate/seed-0/c_frozen_symbolic_evaluation.json",
+            "sha256": "a9dbf9e36f0aa8f86dce6c1ea986c1fa8eabdcbe24af69e052c772a361e767ce"
+          },
+          "d_drift_evaluation.json": {
+            "path": "scored/static_symbolic_gate/seed-0/d_drift_evaluation.json",
+            "sha256": "644c0dbf2e44d0c75e951b6a5585ff5a80acedb1da9a550b61afabdcdbb1e220"
+          },
+          "d_periodic_evaluation.json": {
+            "path": "scored/static_symbolic_gate/seed-0/d_periodic_evaluation.json",
+            "sha256": "a2082cc4cb8392e8d4e1e3a9155b5148c4703e180800f0a0cbf92950e093b965"
+          },
+          "phase_c_seed_manifest.json": {
+            "path": "scored/static_symbolic_gate/seed-0/phase_c_seed_manifest.json",
+            "sha256": "a747309e70479520fb21d78b6050a24eaacd4ff33fda5abcf9e5c804db261f1c"
+          }
+        },
+        "provenance": {
+          "phase_a": {
+            "input_identity.json": {
+              "path": "provenance/static_symbolic_gate/seed-0/phase_a/input_identity.json",
+              "sha256": "102ae0351d5b90f31ca082ea1d291346d7ef4f81b92db62a87dba36f98eac662"
+            },
+            "run_manifest.json": {
+              "path": "provenance/static_symbolic_gate/seed-0/phase_a/run_manifest.json",
+              "sha256": "0acfcd966830026070282ff49c4522535308b09f64d2faca7aa691dba4f4375b"
+            },
+            "shared_identity.json": {
+              "path": "provenance/static_symbolic_gate/seed-0/phase_a/shared_identity.json",
+              "sha256": "e30d6ef41d074ce2e0e91fec83e55ce920d719e77ba443911ac34fceb2cba98d"
+            }
+          },
+          "phase_b": {
+            "c_frozen_symbolic/arm_manifest.json": {
+              "path": "provenance/static_symbolic_gate/seed-0/phase_b/c_frozen_symbolic/arm_manifest.json",
+              "sha256": "76c35f851d33462004ef8edfcbe678e0c42e4fd49e5b68bd0ebc1060d562971c"
+            },
+            "d_drift/arm_manifest.json": {
+              "path": "provenance/static_symbolic_gate/seed-0/phase_b/d_drift/arm_manifest.json",
+              "sha256": "f6b7102d18479bc636c540780bdf02e26ed91e79794ae308fa5f0eecdf1b6726"
+            },
+            "d_periodic/arm_manifest.json": {
+              "path": "provenance/static_symbolic_gate/seed-0/phase_b/d_periodic/arm_manifest.json",
+              "sha256": "5c5510237f8d2e285c00afe298925097b6ffdafc8417acc2f04bd84538bc813c"
+            },
+            "phase_b_manifest.json": {
+              "path": "provenance/static_symbolic_gate/seed-0/phase_b/phase_b_manifest.json",
+              "sha256": "965d540e7db2d756bcdd39d69a2ab8f6bfd60a9318fb0fc33736f031a774050d"
+            }
+          }
+        }
+      },
+      "1": {
+        "phase_c": {
+          "c_frozen_symbolic_evaluation.json": {
+            "path": "scored/static_symbolic_gate/seed-1/c_frozen_symbolic_evaluation.json",
+            "sha256": "33f0666084c302577d99c3d7fc33629457a14438e9c35eb5661b80ed8bd5b1c2"
+          },
+          "d_drift_evaluation.json": {
+            "path": "scored/static_symbolic_gate/seed-1/d_drift_evaluation.json",
+            "sha256": "34ce2097d047bb2fd2cd1b3b277c341fd8e1f67d9ce956a10cbaf24e4ee6e7fa"
+          },
+          "d_periodic_evaluation.json": {
+            "path": "scored/static_symbolic_gate/seed-1/d_periodic_evaluation.json",
+            "sha256": "0557be5f0201732c504b7ecd0550997a6280fc099e3a566181b26060be22cb48"
+          },
+          "phase_c_seed_manifest.json": {
+            "path": "scored/static_symbolic_gate/seed-1/phase_c_seed_manifest.json",
+            "sha256": "4b3e760743a7aa4a6d85e30400821b63f0b33df900bc36616b9117d365da12ad"
+          }
+        },
+        "provenance": {
+          "phase_a": {
+            "input_identity.json": {
+              "path": "provenance/static_symbolic_gate/seed-1/phase_a/input_identity.json",
+              "sha256": "55b516867eb08d7f5bbeccd7d36c9a7cbc3fffc6269d09a1ba059194250e916e"
+            },
+            "run_manifest.json": {
+              "path": "provenance/static_symbolic_gate/seed-1/phase_a/run_manifest.json",
+              "sha256": "df6bd73c0511ab7b4db9935cdbd08595ed85b1e6210369a75a1c887911d74539"
+            },
+            "shared_identity.json": {
+              "path": "provenance/static_symbolic_gate/seed-1/phase_a/shared_identity.json",
+              "sha256": "6e34731796572c4e4e212c6bfc3bc4fe073d706d9930a054b3d3a342f11ea01e"
+            }
+          },
+          "phase_b": {
+            "c_frozen_symbolic/arm_manifest.json": {
+              "path": "provenance/static_symbolic_gate/seed-1/phase_b/c_frozen_symbolic/arm_manifest.json",
+              "sha256": "72a4eb946386234cf90b14e3bfd92d8405ca7001bdcd97a0a06e3ac1c5eaf0c0"
+            },
+            "d_drift/arm_manifest.json": {
+              "path": "provenance/static_symbolic_gate/seed-1/phase_b/d_drift/arm_manifest.json",
+              "sha256": "c31b049ef286d3432a59e81f57bc148ffb7d0748acecf8b702c1faa1de6b33bc"
+            },
+            "d_periodic/arm_manifest.json": {
+              "path": "provenance/static_symbolic_gate/seed-1/phase_b/d_periodic/arm_manifest.json",
+              "sha256": "6daf1ea86bc7669a4579ff60ec89f41f4f329c694fd548446ae1db008f3de223"
+            },
+            "phase_b_manifest.json": {
+              "path": "provenance/static_symbolic_gate/seed-1/phase_b/phase_b_manifest.json",
+              "sha256": "92410cf8e8aac39e729b415f77b4aef5e2414bcc34c0457b7fb2e17c104882c0"
+            }
+          }
+        }
+      },
+      "2": {
+        "phase_c": {
+          "c_frozen_symbolic_evaluation.json": {
+            "path": "scored/static_symbolic_gate/seed-2/c_frozen_symbolic_evaluation.json",
+            "sha256": "a0906dfddca6ce9a55fedad8d5485942e76f6bce4996794eb5750401e450bf0f"
+          },
+          "d_drift_evaluation.json": {
+            "path": "scored/static_symbolic_gate/seed-2/d_drift_evaluation.json",
+            "sha256": "7fa3bf956d193271b8980fb569a7ed2ac96faa615d48f7d48354482146dbfadf"
+          },
+          "d_periodic_evaluation.json": {
+            "path": "scored/static_symbolic_gate/seed-2/d_periodic_evaluation.json",
+            "sha256": "eeec1d98d17134bd83471594f1e5b8810e653624db00374ca2469b94a3f497fc"
+          },
+          "phase_c_seed_manifest.json": {
+            "path": "scored/static_symbolic_gate/seed-2/phase_c_seed_manifest.json",
+            "sha256": "68baab6aa9c198d12acda427027f53fb1ffa11218245cf225be16dbac8f15ef2"
+          }
+        },
+        "provenance": {
+          "phase_a": {
+            "input_identity.json": {
+              "path": "provenance/static_symbolic_gate/seed-2/phase_a/input_identity.json",
+              "sha256": "531178515888501aae804812756405097732f173890f76304ec3ad851d241d4b"
+            },
+            "run_manifest.json": {
+              "path": "provenance/static_symbolic_gate/seed-2/phase_a/run_manifest.json",
+              "sha256": "f8d9d44f9b7b505cbf247fb338d933ee16daf3c4b903e0ad82f39473899a8864"
+            },
+            "shared_identity.json": {
+              "path": "provenance/static_symbolic_gate/seed-2/phase_a/shared_identity.json",
+              "sha256": "41c16e650be945ec17977f6f05d86690d8fb1cce24034a9d289bb47af0285978"
+            }
+          },
+          "phase_b": {
+            "c_frozen_symbolic/arm_manifest.json": {
+              "path": "provenance/static_symbolic_gate/seed-2/phase_b/c_frozen_symbolic/arm_manifest.json",
+              "sha256": "25daaf878ba4cc90d411002b64c6b2c878e09dd024adadda10d944348d649e07"
+            },
+            "d_drift/arm_manifest.json": {
+              "path": "provenance/static_symbolic_gate/seed-2/phase_b/d_drift/arm_manifest.json",
+              "sha256": "f6cc297f8fe52da38b581d5a7161fd3cdcd6cc5ee92e255324df3f9608d998e0"
+            },
+            "d_periodic/arm_manifest.json": {
+              "path": "provenance/static_symbolic_gate/seed-2/phase_b/d_periodic/arm_manifest.json",
+              "sha256": "f749f924ce25b00ac7abd01b5107207d9dfd98f71a9896e85afaea0b664052a2"
+            },
+            "phase_b_manifest.json": {
+              "path": "provenance/static_symbolic_gate/seed-2/phase_b/phase_b_manifest.json",
+              "sha256": "39f4d4e6b18cb14920557f0d3392ad799a96629b689b11bd48d33c7b57c15cc3"
+            }
+          }
+        }
+      },
+      "3": {
+        "phase_c": {
+          "c_frozen_symbolic_evaluation.json": {
+            "path": "scored/static_symbolic_gate/seed-3/c_frozen_symbolic_evaluation.json",
+            "sha256": "749981d5b462724a8191a73b6ded87838464009813794b14c0654ee83d1f2133"
+          },
+          "d_drift_evaluation.json": {
+            "path": "scored/static_symbolic_gate/seed-3/d_drift_evaluation.json",
+            "sha256": "1108093fee0a5efd3c76e37e9c76b0cce4c58e776f49ac8938e736aea10928b6"
+          },
+          "d_periodic_evaluation.json": {
+            "path": "scored/static_symbolic_gate/seed-3/d_periodic_evaluation.json",
+            "sha256": "7c736c32f3a984a31d396f54d80b7ab265f2edab31cc106c413b15962cdbe392"
+          },
+          "phase_c_seed_manifest.json": {
+            "path": "scored/static_symbolic_gate/seed-3/phase_c_seed_manifest.json",
+            "sha256": "d10456e4526c654b038777d6f34c61041ca48af16d4534ecc0bf6bd3dc7dba8d"
+          }
+        },
+        "provenance": {
+          "phase_a": {
+            "input_identity.json": {
+              "path": "provenance/static_symbolic_gate/seed-3/phase_a/input_identity.json",
+              "sha256": "f87f1ed36fe427225dc848bfd51c8a87726224a6721e2b6769ea3969a8b01276"
+            },
+            "run_manifest.json": {
+              "path": "provenance/static_symbolic_gate/seed-3/phase_a/run_manifest.json",
+              "sha256": "79fd5ca3fb1f360e3aba618338e752452f28092b2ba9a26834c64d3752270b58"
+            },
+            "shared_identity.json": {
+              "path": "provenance/static_symbolic_gate/seed-3/phase_a/shared_identity.json",
+              "sha256": "08ca9dfda994e4ecb80c4836b17d20b2d222c707b49171f5e4dd23d7d4b079a3"
+            }
+          },
+          "phase_b": {
+            "c_frozen_symbolic/arm_manifest.json": {
+              "path": "provenance/static_symbolic_gate/seed-3/phase_b/c_frozen_symbolic/arm_manifest.json",
+              "sha256": "e23d4eaeabdb3ef5f9f8e6014badbe691d23d65856a6b00db236506b8a82b299"
+            },
+            "d_drift/arm_manifest.json": {
+              "path": "provenance/static_symbolic_gate/seed-3/phase_b/d_drift/arm_manifest.json",
+              "sha256": "713ab48d229e7b7152897485de4808a1f534a2ab56564444ad2d7d89a4b0ea16"
+            },
+            "d_periodic/arm_manifest.json": {
+              "path": "provenance/static_symbolic_gate/seed-3/phase_b/d_periodic/arm_manifest.json",
+              "sha256": "2a0d94cc38ea72eed677adf7f77a0667ad96917124715ed919be77cdd1f55585"
+            },
+            "phase_b_manifest.json": {
+              "path": "provenance/static_symbolic_gate/seed-3/phase_b/phase_b_manifest.json",
+              "sha256": "e8b880b51fc3f1adc909d6ed1c5d8379a074823221b601d4ac5dc6ce4edd4a67"
+            }
+          }
+        }
+      },
+      "4": {
+        "phase_c": {
+          "c_frozen_symbolic_evaluation.json": {
+            "path": "scored/static_symbolic_gate/seed-4/c_frozen_symbolic_evaluation.json",
+            "sha256": "a6ec30f010041c28a03ba040d9772b0522b19abc5468775df2e1233beeaa8de9"
+          },
+          "d_drift_evaluation.json": {
+            "path": "scored/static_symbolic_gate/seed-4/d_drift_evaluation.json",
+            "sha256": "d5e9bfc36333d2a91f4083bfb59fd9c04005e56802762821d660960dad6cd055"
+          },
+          "d_periodic_evaluation.json": {
+            "path": "scored/static_symbolic_gate/seed-4/d_periodic_evaluation.json",
+            "sha256": "8ae3b6012caead54e2a0d55e00d015ace20275cf4c50b3fa7b31ea2dd25b1b64"
+          },
+          "phase_c_seed_manifest.json": {
+            "path": "scored/static_symbolic_gate/seed-4/phase_c_seed_manifest.json",
+            "sha256": "d9c43e3284d258bdabbc4fbf1ddb7b5b702bf698890310323a939993eab802e0"
+          }
+        },
+        "provenance": {
+          "phase_a": {
+            "input_identity.json": {
+              "path": "provenance/static_symbolic_gate/seed-4/phase_a/input_identity.json",
+              "sha256": "7b1044f7cdb5308f6f98984ad1d5c42c7d8ef8c7064b5ff6fa1d3f17bd5aeea1"
+            },
+            "run_manifest.json": {
+              "path": "provenance/static_symbolic_gate/seed-4/phase_a/run_manifest.json",
+              "sha256": "949a651da7ec69bb89e953f3de497b20957dc1bfa782c4447d873529543602dc"
+            },
+            "shared_identity.json": {
+              "path": "provenance/static_symbolic_gate/seed-4/phase_a/shared_identity.json",
+              "sha256": "f33e3690a79454fd21feb08c77a4fb5d731a629f498f3edde09278713d95afef"
+            }
+          },
+          "phase_b": {
+            "c_frozen_symbolic/arm_manifest.json": {
+              "path": "provenance/static_symbolic_gate/seed-4/phase_b/c_frozen_symbolic/arm_manifest.json",
+              "sha256": "c1aac5ba131f7bb0fba77e5c9a9c4812a262c3e1446fcc221203991d3a4bfab7"
+            },
+            "d_drift/arm_manifest.json": {
+              "path": "provenance/static_symbolic_gate/seed-4/phase_b/d_drift/arm_manifest.json",
+              "sha256": "38d8f6bfdb298a728ba215cb7e662905aeacead0f8f4654856759050fa1cd2c4"
+            },
+            "d_periodic/arm_manifest.json": {
+              "path": "provenance/static_symbolic_gate/seed-4/phase_b/d_periodic/arm_manifest.json",
+              "sha256": "63c8d2db36d41dead8b6d0f1f4144632d6d44d6acfb79d98a831e93658f1da8d"
+            },
+            "phase_b_manifest.json": {
+              "path": "provenance/static_symbolic_gate/seed-4/phase_b/phase_b_manifest.json",
+              "sha256": "e9ad2fad614d4cbccc7f99e080b2db277d77d881808f08d8fd48592233275a42"
+            }
+          }
+        }
+      }
+    }
+  },
+  "identity_context": {
+    "frozen_primary_contract_sha256": "4bd0d2d2cb3b33b12286f19fcbae0c823e67c50a9c690f797d07a333fc6c9dc7",
+    "fusion_contract_sha256": "acb2ba17bad35700cfc2f6d539548c31cf86f944eb1aa2aea566828278bbde69",
+    "preprocessing_state_hash": "4527f77220f2cf6063108a7d71d80aaa0e82099ad282ff25408a2d9ce3488b1e",
+    "primary_control_plane_config_sha256": "7491733fe4bb7524eb38960b78067df44081fd4513055664985f3fd0d9841384",
+    "primary_symbolic_operator_config_sha256": "197360bb33718f32d7aebeb60b5e5fe3ba0619941c4a38a4f4c6ba3b529b7532",
+    "r0_v2_manifest_sha256": "131027d2f136494eb388183f18dcb7eb0e9d7e9fe786f22dba25f4e1624c1483",
+    "runtime_identity_sha256": "2c8058035fcb66ad7fa99559de9a8611f81a954f4f9055a832b59ec01d3bfa3b",
+    "scenario_manifest_canonical_sha256": "3d1c3f9775ac5c8a73053634784be513bb1714ef7f26fa9db406ccd78c4344e3",
+    "stage8_closure_commit": "f8a424389056a048a6ad6be0b744bf6d12b69df2",
+    "stage8_parent_evidence_commit": "c2ded83b8195b9321e715626c1f305f9627936e8",
+    "stage9_config_manifest_sha256": "b72fc0dce0df46974737cd0c33714cc17b23f31ce188e92d318b1787c0ae027e",
+    "system_a_manifest_sha256": "42004b5ed100b690023b9998bdc959fac41ab947b996fb7c58e44cee5e8dc6de"
+  },
+  "manifest_sha256": "d2d6f1a75aa427f2ba1769b8fef2d51253a5f10b5d3bfdb6c31de10d811aae22",
+  "payload_sha256": "08f7f6048a57dabf852af1cec12f36476bb03d52999acc5b4db72dc40fb30f66",
+  "schema_version": 1,
+  "stage8_parent": {
+    "closure_commit": "f8a424389056a048a6ad6be0b744bf6d12b69df2",
+    "compact_export_manifest_sha256": "409b516d75cbc5e71d3633019008432ea6088d1d923b4e4a95570263528ed523",
+    "confirmatory_aggregate_sha256": "1be77ce4be9f3faad021a3f3bfd636488e5de6aa1b2a6e7c596e48feb41bb54d",
+    "corrected_config_manifest_sha256": "d380fce5f9db8f0b639dc999298a263b10a10a3d02e35def226a121d098e2222",
+    "evidence_commit": "c2ded83b8195b9321e715626c1f305f9627936e8",
+    "reused_stage8_scientific_source_tree_sha256": "7c45387f04568300a4e2d1c9cfae5a70b69120359ee4426664bca61bbe8e8e2a"
+  },
+  "stage9_config_manifest_sha256": "b72fc0dce0df46974737cd0c33714cc17b23f31ce188e92d318b1787c0ae027e",
+  "status": "stage9_compact_export_complete"
+}

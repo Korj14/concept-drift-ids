@@ -1,0 +1,575 @@
+{
+  "analysis": {
+    "all_five_seeds_required": true,
+    "classification": "prespecified_robustness_no_new_confirmatory_family",
+    "early_stop_for_outcome_direction_forbidden": true,
+    "inferential_unit": "matched_seed_within_fixed_primary_scenario",
+    "stage8_primary_replacement_forbidden": true
+  },
+  "conditions": {
+    "adaptive": {
+      "adwin_brier": {
+        "base_primary_contract_sha256": "4bd0d2d2cb3b33b12286f19fcbae0c823e67c50a9c690f797d07a333fc6c9dc7",
+        "changed_factors": [
+          "detector_signal"
+        ],
+        "detector_config": {
+          "clock": 32,
+          "delta": 0.002,
+          "grace_period": 10,
+          "max_buckets": 5,
+          "min_window_length": 5
+        },
+        "detector_family": "adwin",
+        "detector_signal": "brier",
+        "label_latency": 5000,
+        "replay_enabled": true
+      },
+      "latency_0": {
+        "base_primary_contract_sha256": "4bd0d2d2cb3b33b12286f19fcbae0c823e67c50a9c690f797d07a333fc6c9dc7",
+        "changed_factors": [
+          "label_latency"
+        ],
+        "detector_family": "adwin",
+        "detector_signal": "hard_error",
+        "label_latency": 0,
+        "replay_enabled": true
+      },
+      "latency_10000": {
+        "base_primary_contract_sha256": "4bd0d2d2cb3b33b12286f19fcbae0c823e67c50a9c690f797d07a333fc6c9dc7",
+        "changed_factors": [
+          "label_latency"
+        ],
+        "detector_family": "adwin",
+        "detector_signal": "hard_error",
+        "label_latency": 10000,
+        "replay_enabled": true
+      },
+      "no_replay": {
+        "base_primary_contract_sha256": "4bd0d2d2cb3b33b12286f19fcbae0c823e67c50a9c690f797d07a333fc6c9dc7",
+        "changed_factors": [
+          "replay_training_rows"
+        ],
+        "detector_family": "adwin",
+        "detector_signal": "hard_error",
+        "label_latency": 5000,
+        "replay_enabled": false
+      },
+      "page_hinkley_hard_error": {
+        "base_primary_contract_sha256": "4bd0d2d2cb3b33b12286f19fcbae0c823e67c50a9c690f797d07a333fc6c9dc7",
+        "changed_factors": [
+          "detector_family",
+          "detector_family_specific_parameters"
+        ],
+        "detector_config": {
+          "alpha": 0.9999,
+          "delta": 0.005,
+          "min_instances": 30,
+          "mode": "both",
+          "threshold": 50.0
+        },
+        "detector_family": "page_hinkley",
+        "detector_signal": "hard_error",
+        "label_latency": 5000,
+        "replay_enabled": true
+      }
+    },
+    "offline": {
+      "lambda_0_7": {
+        "base_primary_contract_sha256": "4bd0d2d2cb3b33b12286f19fcbae0c823e67c50a9c690f797d07a333fc6c9dc7",
+        "changed_factors": [
+          "fusion_neural_weight",
+          "frozen_seed_specific_fusion_threshold"
+        ],
+        "neural_weight": 0.7,
+        "source": "frozen_stage8_trace",
+        "threshold_source": "frozen_stage8_seed_specific_threshold_for_weight"
+      },
+      "lambda_0_9": {
+        "base_primary_contract_sha256": "4bd0d2d2cb3b33b12286f19fcbae0c823e67c50a9c690f797d07a333fc6c9dc7",
+        "changed_factors": [
+          "fusion_neural_weight",
+          "frozen_seed_specific_fusion_threshold"
+        ],
+        "neural_weight": 0.9,
+        "source": "frozen_stage8_trace",
+        "threshold_source": "frozen_stage8_seed_specific_threshold_for_weight"
+      },
+      "lambda_1_0": {
+        "base_primary_contract_sha256": "4bd0d2d2cb3b33b12286f19fcbae0c823e67c50a9c690f797d07a333fc6c9dc7",
+        "changed_factors": [
+          "fusion_neural_weight",
+          "frozen_seed_specific_fusion_threshold"
+        ],
+        "neural_weight": 1.0,
+        "source": "frozen_stage8_trace",
+        "threshold_source": "frozen_stage8_seed_specific_threshold_for_weight"
+      },
+      "window_10000": {
+        "base_primary_contract_sha256": "4bd0d2d2cb3b33b12286f19fcbae0c823e67c50a9c690f797d07a333fc6c9dc7",
+        "changed_factors": [
+          "reporting_window_rows"
+        ],
+        "reporting_window_rows": 10000,
+        "source": "frozen_stage8_trace"
+      },
+      "window_2500": {
+        "base_primary_contract_sha256": "4bd0d2d2cb3b33b12286f19fcbae0c823e67c50a9c690f797d07a333fc6c9dc7",
+        "changed_factors": [
+          "reporting_window_rows"
+        ],
+        "reporting_window_rows": 2500,
+        "source": "frozen_stage8_trace"
+      }
+    },
+    "symbolic_gate": {
+      "static_symbolic_gate": {
+        "base_primary_contract_sha256": "4bd0d2d2cb3b33b12286f19fcbae0c823e67c50a9c690f797d07a333fc6c9dc7",
+        "bootstrap_replicates": 100,
+        "changed_factors": [
+          "symbolic_acceptance_gate"
+        ],
+        "max_complexity": 4,
+        "min_class_precision": 0.8,
+        "min_covered": 100,
+        "min_neural_fidelity": 0.9,
+        "min_stability": 0.9,
+        "min_support": 0.001,
+        "use_wilson_lcb": false
+      }
+    }
+  },
+  "execution": {
+    "compact_root": "results/frozen/cd_robustness_v1",
+    "config_only_freeze_commit_required": true,
+    "exact_head_ci_required_before_adaptive_access": true,
+    "heavy_root": "artifacts/cd_robustness_v1",
+    "write_once": true
+  },
+  "frozen_primary_contract": {
+    "contract": {
+      "analysis": {
+        "confirmatory_endpoints": [
+          "E1_post_mcc_d_drift_minus_c",
+          "E2_post_mcsc_d_drift_minus_c",
+          "E3_post_mcsc_d_drift_minus_d_periodic"
+        ],
+        "confirmatory_unit": "matched_seed_within_fixed_primary_scenario",
+        "paired_seeds": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      "fusion": {
+        "post_hoc_recalibration": false,
+        "primary_neural_weight": 0.5,
+        "thresholds": {
+          "0.5": {
+            "0": 0.692427396774292,
+            "1": 0.9354645609855652,
+            "2": 0.8299936652183533,
+            "3": 0.9747405052185059,
+            "4": 0.9527904391288757
+          },
+          "0.7": {
+            "0": 0.698998749256134,
+            "1": 0.9423287034034729,
+            "2": 0.8308807015419006,
+            "3": 0.9747405052185059,
+            "4": 0.9527904391288757
+          },
+          "0.9": {
+            "0": 0.9025245904922485,
+            "1": 0.9258511900901795,
+            "2": 0.8964613080024719,
+            "3": 0.9747405052185059,
+            "4": 0.9527904391288757
+          },
+          "1.0": {
+            "0": 0.9448108673095703,
+            "1": 0.9337316751480103,
+            "2": 0.9123510122299194,
+            "3": 0.9789738655090332,
+            "4": 0.9561389088630676
+          }
+        }
+      },
+      "primary_control_plane": {
+        "adwin": {
+          "clock": 32,
+          "delta": 0.002,
+          "grace_period": 10,
+          "max_buckets": 5,
+          "min_window_length": 5
+        },
+        "config": {
+          "current_window": 10000,
+          "label_latency": 5000,
+          "neural_update": {
+            "batch_size": 1024,
+            "epochs": 5,
+            "learning_rate": 0.0001,
+            "pos_weight": 4.138247558496975,
+            "weight_decay": 1e-05
+          },
+          "replay_anchor_rows": 5000,
+          "replay_online_rows": 5000,
+          "reservoir_capacity": 10000
+        },
+        "config_sha256": "7491733fe4bb7524eb38960b78067df44081fd4513055664985f3fd0d9841384",
+        "rng": {
+          "adaptation_shuffle_seed_base": 20261011,
+          "anchor_seed": 20261008,
+          "online_reservoir_seed": 20261009,
+          "replay_sample_seed_base": 20261010
+        }
+      },
+      "primary_symbolic_operator": {
+        "config": {
+          "cross_class_overlap": 0.5,
+          "gate": {
+            "bootstrap_replicates": 100,
+            "max_complexity": 4,
+            "min_class_precision": 0.8,
+            "min_covered": 25,
+            "min_fidelity_lcb": 0.9,
+            "min_neural_fidelity": 0.9,
+            "min_precision_lcb": 0.8,
+            "min_stability": 0.9,
+            "min_support": 0.001,
+            "wilson_z": 1.6448536269514722
+          },
+          "generation": {
+            "attribution_per_class": 1024,
+            "background_per_class": 128,
+            "max_depth": 4,
+            "min_samples_leaf": 100,
+            "selected_features": 12
+          },
+          "refinement_overlap": 0.5,
+          "same_class_redundancy": 0.95,
+          "validation_rows": 10000
+        },
+        "config_sha256": "197360bb33718f32d7aebeb60b5e5fe3ba0619941c4a38a4f4c6ba3b529b7532",
+        "maximum_opportunities_per_seed": 4,
+        "periodic_clocks": [
+          27706,
+          55412,
+          83118,
+          110824
+        ]
+      },
+      "r0_v2": {
+        "active_rule_counts": {
+          "0": 7,
+          "1": 6,
+          "2": 7,
+          "3": 6,
+          "4": 6
+        },
+        "manifest_sha256": "131027d2f136494eb388183f18dcb7eb0e9d7e9fe786f22dba25f4e1624c1483",
+        "text_hash_policy": "utf8_eol_normalized_to_repository_lf_identity"
+      },
+      "scenario": {
+        "boundary_role": "offline_scoring_and_diagnostics_only",
+        "logical_time": "zero_based_stream_row_index",
+        "manifest_canonical_sha256": "3d1c3f9775ac5c8a73053634784be513bb1714ef7f26fa9db406ccd78c4344e3",
+        "manifest_raw_sha256": "c864cd53b155ae1b29f2321d28b18562381fb6d1a77dc563b5f5eba3ec3eb82c",
+        "preprocessing_state_hash": "4527f77220f2cf6063108a7d71d80aaa0e82099ad282ff25408a2d9ce3488b1e",
+        "scenario_id": "cicids2017_sudden_benign_v1",
+        "scenario_version": 1,
+        "stream_order": [
+          "pre_drift",
+          "post_drift"
+        ],
+        "stream_rows": 138530
+      },
+      "system_a": {
+        "checkpoint_sha256_by_seed": {
+          "0": "514c6d552b3cd680ae966bbb568105bd2871bc68d3a47aded070a70ba0615bd1",
+          "1": "07696c3f580645d9c96ac3e736cfb5eeaa8033f148bf64822e8ee105861cf552",
+          "2": "7630514cf409256bd2bbe27eca59f881acb238be698b5fdb1ee12bca8e402491",
+          "3": "cce1ce47db047b9d441bbe6dad9bd53f1ee6ff3ad7d404521cae72a38bccd4b4",
+          "4": "9b9e56371f3246482998c4efea4829e1e6d5aaf549bb43e1af05e471dfcb9e93"
+        },
+        "manifest_sha256": "42004b5ed100b690023b9998bdc959fac41ab947b996fb7c58e44cee5e8dc6de",
+        "monitor_threshold_by_seed": {
+          "0": 0.939024031162262,
+          "1": 0.9333740472793579,
+          "2": 0.9121250510215759,
+          "3": 0.9789621233940125,
+          "4": 0.954619288444519
+        }
+      }
+    },
+    "contract_sha256": "4bd0d2d2cb3b33b12286f19fcbae0c823e67c50a9c690f797d07a333fc6c9dc7",
+    "source_config_manifest_sha256": "d380fce5f9db8f0b639dc999298a263b10a10a3d02e35def226a121d098e2222"
+  },
+  "manifest_sha256": "84357c4a29e8c48ea15669412f2cf562c9e6be528100bb3007936f18d918b017",
+  "matched_baseline_required": false,
+  "payload_sha256": "7d0601be511020808ddcc3f4c80337acb30cfaa4707f4cbdf0444398ddd4ae07",
+  "prepared_from_git_commit": "0d35c76a115e3007b645b45340acafc97fa1d0ea",
+  "primary_runtime_reference": {
+    "common_fingerprint": {
+      "locked_distributions_sha256": "8a928d5c9df8554f88ba80edd2918f5f6a18b382697f6f561dbe87a8ed9a0052",
+      "platform": "Windows-10-10.0.26200-SP0",
+      "processor": "AMD64 Family 25 Model 80 Stepping 0, AuthenticAMD",
+      "python_implementation": "CPython",
+      "python_version": "3.11.9",
+      "thread_environment": {
+        "MKL_NUM_THREADS": "1",
+        "NUMEXPR_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "OPENBLAS_NUM_THREADS": "1",
+        "PYTHONHASHSEED": "0"
+      },
+      "torch_deterministic_algorithms": true,
+      "torch_num_interop_threads": 1,
+      "torch_num_threads": 1,
+      "torch_version": "2.14.1+cpu"
+    },
+    "common_fingerprint_sha256": "24209d8bbde83cde3764c9882255fef83a5c6d87454d3304442dbf012f27bac5",
+    "seed_fingerprints": {
+      "0": {
+        "locked_distributions_sha256": "8a928d5c9df8554f88ba80edd2918f5f6a18b382697f6f561dbe87a8ed9a0052",
+        "platform": "Windows-10-10.0.26200-SP0",
+        "processor": "AMD64 Family 25 Model 80 Stepping 0, AuthenticAMD",
+        "python_implementation": "CPython",
+        "python_version": "3.11.9",
+        "thread_environment": {
+          "MKL_NUM_THREADS": "1",
+          "NUMEXPR_NUM_THREADS": "1",
+          "OMP_NUM_THREADS": "1",
+          "OPENBLAS_NUM_THREADS": "1",
+          "PYTHONHASHSEED": "0"
+        },
+        "torch_deterministic_algorithms": true,
+        "torch_num_interop_threads": 1,
+        "torch_num_threads": 1,
+        "torch_version": "2.14.1+cpu"
+      },
+      "1": {
+        "locked_distributions_sha256": "8a928d5c9df8554f88ba80edd2918f5f6a18b382697f6f561dbe87a8ed9a0052",
+        "platform": "Windows-10-10.0.26200-SP0",
+        "processor": "AMD64 Family 25 Model 80 Stepping 0, AuthenticAMD",
+        "python_implementation": "CPython",
+        "python_version": "3.11.9",
+        "thread_environment": {
+          "MKL_NUM_THREADS": "1",
+          "NUMEXPR_NUM_THREADS": "1",
+          "OMP_NUM_THREADS": "1",
+          "OPENBLAS_NUM_THREADS": "1",
+          "PYTHONHASHSEED": "0"
+        },
+        "torch_deterministic_algorithms": true,
+        "torch_num_interop_threads": 1,
+        "torch_num_threads": 1,
+        "torch_version": "2.14.1+cpu"
+      },
+      "2": {
+        "locked_distributions_sha256": "8a928d5c9df8554f88ba80edd2918f5f6a18b382697f6f561dbe87a8ed9a0052",
+        "platform": "Windows-10-10.0.26200-SP0",
+        "processor": "AMD64 Family 25 Model 80 Stepping 0, AuthenticAMD",
+        "python_implementation": "CPython",
+        "python_version": "3.11.9",
+        "thread_environment": {
+          "MKL_NUM_THREADS": "1",
+          "NUMEXPR_NUM_THREADS": "1",
+          "OMP_NUM_THREADS": "1",
+          "OPENBLAS_NUM_THREADS": "1",
+          "PYTHONHASHSEED": "0"
+        },
+        "torch_deterministic_algorithms": true,
+        "torch_num_interop_threads": 1,
+        "torch_num_threads": 1,
+        "torch_version": "2.14.1+cpu"
+      },
+      "3": {
+        "locked_distributions_sha256": "8a928d5c9df8554f88ba80edd2918f5f6a18b382697f6f561dbe87a8ed9a0052",
+        "platform": "Windows-10-10.0.26200-SP0",
+        "processor": "AMD64 Family 25 Model 80 Stepping 0, AuthenticAMD",
+        "python_implementation": "CPython",
+        "python_version": "3.11.9",
+        "thread_environment": {
+          "MKL_NUM_THREADS": "1",
+          "NUMEXPR_NUM_THREADS": "1",
+          "OMP_NUM_THREADS": "1",
+          "OPENBLAS_NUM_THREADS": "1",
+          "PYTHONHASHSEED": "0"
+        },
+        "torch_deterministic_algorithms": true,
+        "torch_num_interop_threads": 1,
+        "torch_num_threads": 1,
+        "torch_version": "2.14.1+cpu"
+      },
+      "4": {
+        "locked_distributions_sha256": "8a928d5c9df8554f88ba80edd2918f5f6a18b382697f6f561dbe87a8ed9a0052",
+        "platform": "Windows-10-10.0.26200-SP0",
+        "processor": "AMD64 Family 25 Model 80 Stepping 0, AuthenticAMD",
+        "python_implementation": "CPython",
+        "python_version": "3.11.9",
+        "thread_environment": {
+          "MKL_NUM_THREADS": "1",
+          "NUMEXPR_NUM_THREADS": "1",
+          "OMP_NUM_THREADS": "1",
+          "OPENBLAS_NUM_THREADS": "1",
+          "PYTHONHASHSEED": "0"
+        },
+        "torch_deterministic_algorithms": true,
+        "torch_num_interop_threads": 1,
+        "torch_num_threads": 1,
+        "torch_version": "2.14.1+cpu"
+      }
+    }
+  },
+  "protocol": {
+    "path": "STAGE9_PRESPECIFIED_ROBUSTNESS_PROTOCOL.md",
+    "sha256": "c254408a68cfa2281cd4e6c656376e248c6fcb68e4878c9538d4d7b8e61b87e6"
+  },
+  "requirements": {
+    "binding_normalized_text_sha256": "9f63cbe19dcb1b916c16603f5b7c01a2fa33ac11271ce2ef0014910158d6741d",
+    "installed_distributions": {
+      "Jinja2": "3.1.6",
+      "MarkupSafe": "3.0.4",
+      "Pygments": "2.21.0",
+      "cloudpickle": "3.1.2",
+      "colorama": "0.4.6",
+      "contourpy": "1.3.3",
+      "cycler": "0.12.1",
+      "filelock": "4.0.12",
+      "fonttools": "4.66.1",
+      "fsspec": "2026.9.0",
+      "iniconfig": "2.3.0",
+      "joblib": "1.6.0",
+      "kiwisolver": "1.5.1",
+      "llvmlite": "0.50.0",
+      "matplotlib": "3.11.2",
+      "mpmath": "1.3.0",
+      "narwhals": "2.26.0",
+      "networkx": "3.6.1",
+      "numba": "0.68.0",
+      "numpy": "2.4.6",
+      "packaging": "26.3",
+      "pandas": "3.0.6",
+      "pillow": "12.3.0",
+      "pluggy": "1.6.0",
+      "pyparsing": "3.3.3",
+      "pytest": "9.1.1",
+      "python-dateutil": "2.9.0.post0",
+      "river": "0.26.1",
+      "scikit-learn": "1.9.1",
+      "scipy": "1.17.1",
+      "shap": "0.51.0",
+      "six": "1.17.0",
+      "slicer": "0.0.8",
+      "sympy": "1.14.0",
+      "threadpoolctl": "3.7.0",
+      "torch": "2.14.1",
+      "tqdm": "4.70.1",
+      "typing_extensions": "4.16.0",
+      "tzdata": "2026.5"
+    },
+    "installed_distributions_sha256": "8a928d5c9df8554f88ba80edd2918f5f6a18b382697f6f561dbe87a8ed9a0052",
+    "path": "requirements-lock.txt"
+  },
+  "run_id": "cd-robustness-v1",
+  "runtime": {
+    "configured_runtime": {
+      "torch_deterministic_algorithms": true,
+      "torch_num_interop_threads": 1,
+      "torch_num_threads": 1
+    },
+    "machine": "AMD64",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "processor": "AMD64 Family 25 Model 80 Stepping 0, AuthenticAMD",
+    "python_implementation": "CPython",
+    "python_version": "3.11.9",
+    "thread_environment": {
+      "MKL_NUM_THREADS": "1",
+      "NUMEXPR_NUM_THREADS": "1",
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1",
+      "PYTHONHASHSEED": "0"
+    },
+    "torch_cuda_available": false,
+    "torch_deterministic_algorithms": true,
+    "torch_num_interop_threads": 1,
+    "torch_num_threads": 1,
+    "torch_version": "2.14.1+cpu"
+  },
+  "scenario": {
+    "boundary_index": 69260,
+    "boundary_role": "offline_scoring_and_diagnostics_only",
+    "boundary_visibility_to_adaptive_runner": false,
+    "post_reference_rows": 69270,
+    "pre_reference_rows": 69260,
+    "random_reshuffle_allowed": false,
+    "scenario_id": "cicids2017_sudden_benign_v1",
+    "stream_rows": 138530
+  },
+  "schema_version": 1,
+  "scientific_source_hashes": {
+    ".github/workflows/stage9-unit.yml": "04e3862ef161024501c1d084f7b617271f9da4f9289c6ca1428d74da9dd2fb29",
+    "STAGE9_IMPLEMENTATION.md": "d0d068afff9c0d6027f7e79e165e171a036790779643a26e919f272864ef30c7",
+    "STAGE9_PRESPECIFIED_ROBUSTNESS_PROTOCOL.md": "c254408a68cfa2281cd4e6c656376e248c6fcb68e4878c9538d4d7b8e61b87e6",
+    "data/manifests/.gitattributes": "25d8d1033de31ef3a3c2f3c079be1c9d09e0e9d2bae0584aabbe003ebe43954e",
+    "results/frozen/.gitattributes": "da28f1fe3b759bf346dfb9399c32f9e4790129ed3d2b2ee5f41de8fe02827e44",
+    "run_stage9.py": "ced39c832c4cc7494518c4d92aa07f2ca942337fe4da036fc0d76d7b1f3af6e0",
+    "scripts/run_stage9.ps1": "2729b214893728cdd3fc093e436ab52e1b022e6a44be21f376be7b331e4f8cf0",
+    "src/concept_drift_ids/cd_analysis.py": "3313d66b402e1cb7d2bd66741db0d04ecfef67f0ebaf6a83280eef2534f2ed9f",
+    "src/concept_drift_ids/cd_control_plane.py": "79413f98e8be435aebc9234e2b759b0d26b5a9cfbdbde4548547756293f9a0f8",
+    "src/concept_drift_ids/cd_evidence.py": "9febb5987370f8c5ba8f1af21b6ad12341cafbde73cd662499574bde4b01e676",
+    "src/concept_drift_ids/cd_implementation_preflight.py": "bf205e56a2d4d8b6b0e62adcb6765f0d8591fb1e942873fa95b5b4ba80090106",
+    "src/concept_drift_ids/cd_primary_adapter.py": "0edbd62192760ada3872a31f41dd3d47d4105003fca85ed51dc30919c900661f",
+    "src/concept_drift_ids/cd_primary_config.py": "d9f3a61dcecaa4dbfbdd8d42c4fb65de073d21b54c46d611a4f79ef9c426ee8f",
+    "src/concept_drift_ids/cd_primary_phase_a.py": "f6ac9e1235acce10cc32c78be27edbc91523e3d280421e51ef1c3e281dd8c62c",
+    "src/concept_drift_ids/cd_primary_phase_b.py": "370e5f7cfee1a63f0b2f79d2770de04823eab4133e640718bda807e3a6aef6d1",
+    "src/concept_drift_ids/cd_primary_phase_c.py": "63734b929c95f324e760945dc2ab29d15d14b009ea8b8ba239af317e8a3e3d9f",
+    "src/concept_drift_ids/cd_r0_lifecycle.py": "18c455cc32fe06c0d613695bda90e76fccfafa1df70b4d8aeb540a065fc21eed",
+    "src/concept_drift_ids/cd_runtime.py": "c046fe19e257812c1616d9405a02c8c8bb5e4f4ee5dbb7b27041ab213be1dcd0",
+    "src/concept_drift_ids/cd_shared_runner.py": "df2f58c10d68334c298f8aecc4a836f6749d004d0aa13ce503b1da2d8b78f40e",
+    "src/concept_drift_ids/cd_stage9_config.py": "2d2d2a9628695a0a4a9d1ad92f44b5712adf7ef51fd1a49726ae1cdfa0aa623a",
+    "src/concept_drift_ids/cd_stage9_execute.py": "7e768cefdb136fb4c480f8b7e0d38cbd2969c8a0d36b1d6967efa8dc7838de09",
+    "src/concept_drift_ids/cd_stage9_export.py": "4af410a134f2272506de5a91f00885cf915083884a64e2f0bf7bbb40be32dfd5",
+    "src/concept_drift_ids/cd_stage9_monitor.py": "c113e1ce6f060472c56a28013e9c0c1c103d5761a05df7a2c4e728e5b709cc5e",
+    "src/concept_drift_ids/cd_stage9_offline.py": "fb8d61a718c65a9681299c891c0e1c9644c1cbb717eece988eb1992baacefc30",
+    "src/concept_drift_ids/cd_stage9_phase_a.py": "9706275693def037143348edaf26408ffb10759c81a945d9a39f55354550d7ef",
+    "src/concept_drift_ids/cd_stage9_phase_b.py": "7708496dfe05162d8fc9f0ad90fa5e255007dae3e4d9e00a313ef34d7975a012",
+    "src/concept_drift_ids/cd_stage9_phase_c.py": "6b4d0293ea5963a1ca203bca37c7592b043d003aa1c4d550dc2ca085011bb192",
+    "src/concept_drift_ids/cd_stage9_shared_runner.py": "def33d4eacb877d404d036f5b92814403e50fe79a5b6b58905851ef07a3ccaf3",
+    "src/concept_drift_ids/cd_symbolic_arms.py": "3ac61b2c4bf63e57d514300393a4feb6d41048ab1ec9fb6df0faee6c97a32a77",
+    "src/concept_drift_ids/cd_symbolic_candidates.py": "533514521f5a83fdbe1f5b5ed2d915d5d26734d28dd1fdabfdd4737253175e00",
+    "src/concept_drift_ids/cd_symbolic_evaluation.py": "fb71c7689b1505dad7200ef247e46d997705eae5d93b5c12bd7265c777a114b1",
+    "src/concept_drift_ids/cd_symbolic_evidence.py": "2f30c92c8406ee0c08c78ddcebeb49b0e5112648c6e7d3902f26ec3090359784",
+    "src/concept_drift_ids/cd_symbolic_lifecycle.py": "83d58de928f099806be1d439220f21c43409c2d944918fe9069791d509129d42",
+    "src/concept_drift_ids/cd_symbolic_runner.py": "2dd3d9b0ab2e24aa552b8e45282b0135e286ecb3953191787e12f38f71c4db8f",
+    "src/concept_drift_ids/frozen_preprocessing.py": "826d19f8b58c6ccc47ee23268a8893123df7264988698f4868cc998a92e8e25f",
+    "src/concept_drift_ids/neural.py": "27113fdffd2f5bdb5319d110bd882628ab83d6a5948c4080e1482c6e4a4a482b",
+    "src/concept_drift_ids/scenario_loader.py": "722ee139c3f1338593a221b6d81e009974b5db6e6781dd2fe8edea902633e67c",
+    "src/concept_drift_ids/scenario_manifest.py": "79b9f13522bd340d902b8763ed72907a5c3bbe8af5d2bbe215505ff83866ed54",
+    "src/concept_drift_ids/symbolic.py": "4e33d6395a0bcf2968ac912971ce7cfa8d24cd728c87f1759e28bd0e8926ead0",
+    "src/concept_drift_ids/system_a.py": "513b76f324455ff561e07c3f405889b1b3c016dc95165d4d8356d248242f4cd6",
+    "tests/test_cd_stage9_unit.py": "12428eed964334cad6e7af47269f93c6df29cca9c21f6fad8ade482eb655b8b6"
+  },
+  "scientific_source_tree_sha256": "cdcfecf34f01e5c4062dbbcf6410ecc724ceee71e000d1e1c78408d1e857932d",
+  "seeds": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "stage8_parent": {
+    "closure_commit": "f8a424389056a048a6ad6be0b744bf6d12b69df2",
+    "compact_export_manifest_sha256": "409b516d75cbc5e71d3633019008432ea6088d1d923b4e4a95570263528ed523",
+    "confirmatory_aggregate_sha256": "1be77ce4be9f3faad021a3f3bfd636488e5de6aa1b2a6e7c596e48feb41bb54d",
+    "corrected_config_manifest_sha256": "d380fce5f9db8f0b639dc999298a263b10a10a3d02e35def226a121d098e2222",
+    "evidence_commit": "c2ded83b8195b9321e715626c1f305f9627936e8",
+    "reused_stage8_scientific_source_tree_sha256": "7c45387f04568300a4e2d1c9cfae5a70b69120359ee4426664bca61bbe8e8e2a"
+  },
+  "stage9_outcomes_accessed_during_preparation": false,
+  "status": "frozen_before_stage9_robustness_access"
+}

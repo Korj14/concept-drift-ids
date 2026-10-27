@@ -1,0 +1,38 @@
+{
+  "all_phase_a_shared_identity_sha256": {
+    "0": "77331729e4e10e9390197397645443a400dc7cf4c5da0a2f7ab6830c3fc44035",
+    "1": "18d4c4c9669d4a8ccf059f7fbac7baee27ae9ddb501bd70efdb0b4376f9e3136",
+    "2": "3e7275eb4e5effddac28d89369245e3f90b08170a3727e16f48adac7ba3de525",
+    "3": "565951dc80c125d68488db7b8f9821a48dd426c3f343026b870b7a70234c1610",
+    "4": "be7a646d44665cd646bf5981ead9fe71962ef4b7c212aeb4e672d46b6df5ea11"
+  },
+  "arm_isolation_sha256": "0a6f204c200199fa725252b8896f768701b3a699caecd5cdfce23345cf64d3f2",
+  "arms": {
+    "c_frozen_symbolic": {
+      "manifest_sha256": "12a4158d9c72e477915f44733cea580b42b5281f1d78648cd608453479dcf845",
+      "path": "c_frozen_symbolic/arm_manifest.json",
+      "sha256": "682c9b6065329bdb5d23c5a937acb5f656d73af3120e452852572b7ce00d3621"
+    },
+    "d_drift": {
+      "manifest_sha256": "023666567609a94745f84907cd6c09c0bd24119ab641bd70607bc2423c1d63e9",
+      "path": "d_drift/arm_manifest.json",
+      "sha256": "edfa6946cac4453f5d6e506cfd634e78781b06cb54bb3dc1424e703c1eb259c9"
+    },
+    "d_periodic": {
+      "manifest_sha256": "4199245cbc43142d2f408a52565f712fce5b264f95a0ffd0e884bc727a4ae8a2",
+      "path": "d_periodic/arm_manifest.json",
+      "sha256": "45ead264d2468aab5a65f3f8505fabd7a6f29b3c29ec0651447807d91add3900"
+    }
+  },
+  "git_commit": "bfa14b942e4a5b2fbfa8aa3c43728a7f1cd81645",
+  "manifest_sha256": "c0a98e92d22d9efc5626c1f94c08b408c74593d9792417e0eef67fe80df2c9b7",
+  "operator_config_sha256": "197360bb33718f32d7aebeb60b5e5fe3ba0619941c4a38a4f4c6ba3b529b7532",
+  "payload_sha256": "58b40a95cd85f94cfbea99ab73aa0128257a01a0995ab67d57f8192480947e1e",
+  "primary_boundary_scored": false,
+  "primary_config_manifest_sha256": "3e3f768b5aa32f469440bb334508f747bbf2f7f5b08d9570a7aef2dbb9cb0257",
+  "run_id": "cd-primary-v1-phase-b-seed-1",
+  "schema_version": 1,
+  "seed": 1,
+  "shared_identity_sha256": "18d4c4c9669d4a8ccf059f7fbac7baee27ae9ddb501bd70efdb0b4376f9e3136",
+  "status": "complete_unscored_symbolic_trajectories"
+}

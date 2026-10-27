@@ -1,0 +1,85 @@
+{
+  "arm": "d_periodic",
+  "files": {
+    "final_state": {
+      "path": "final_state.json",
+      "sha256": "d1dfc0ce09b4107837a7c224ed3dedbf611a3b82bb1105b74d968c21d694d543"
+    },
+    "initial_state": {
+      "path": "initial_state.json",
+      "sha256": "837d08e10a92fc9c33514dea1354b42305a60f216b4c7962a05631d63468e8f8"
+    },
+    "maintenance": {
+      "path": "maintenance.jsonl",
+      "sha256": "97c55dd8b920f910dd859e7fcc83bb566268feb25be4866683f81c99ddcbaf5e"
+    },
+    "version_0001": {
+      "path": "versions/0001-d-s3-v0001.json",
+      "sha256": "0c6784d98e0b31c8cbf5edff5aa86355c97b22bfcd5f486b6f99560abe2d6bad"
+    }
+  },
+  "final_history_sha256": "52cc43922197fac1a1273d82c421404cb89940869e3484363d42a9122822cc90",
+  "final_rule_base_sha256": "fe88fd0d5032e124888a6b44810a9d875cb5d5dbbfbf51045c0bdc3c336f1d7f",
+  "final_rule_base_version_id": "d-s3-v0001",
+  "identity_context": {
+    "condition_id": "adwin_brier",
+    "condition_spec_sha256": "c63435fa42c99901e82aca29dabdca9de02dc150cd134b4e81afeadb5a3d7537",
+    "frozen_primary_contract_sha256": "4bd0d2d2cb3b33b12286f19fcbae0c823e67c50a9c690f797d07a333fc6c9dc7",
+    "fusion_contract_sha256": "acb2ba17bad35700cfc2f6d539548c31cf86f944eb1aa2aea566828278bbde69",
+    "preprocessing_state_hash": "4527f77220f2cf6063108a7d71d80aaa0e82099ad282ff25408a2d9ce3488b1e",
+    "primary_control_plane_config_sha256": "7491733fe4bb7524eb38960b78067df44081fd4513055664985f3fd0d9841384",
+    "primary_symbolic_operator_config_sha256": "197360bb33718f32d7aebeb60b5e5fe3ba0619941c4a38a4f4c6ba3b529b7532",
+    "r0_v2_manifest_sha256": "131027d2f136494eb388183f18dcb7eb0e9d7e9fe786f22dba25f4e1624c1483",
+    "runtime_identity_sha256": "2c8058035fcb66ad7fa99559de9a8611f81a954f4f9055a832b59ec01d3bfa3b",
+    "scenario_manifest_canonical_sha256": "3d1c3f9775ac5c8a73053634784be513bb1714ef7f26fa9db406ccd78c4344e3",
+    "seed": 3,
+    "stage8_closure_commit": "f8a424389056a048a6ad6be0b744bf6d12b69df2",
+    "stage8_parent_evidence_commit": "c2ded83b8195b9321e715626c1f305f9627936e8",
+    "stage9_config_manifest_sha256": "b72fc0dce0df46974737cd0c33714cc17b23f31ce188e92d318b1787c0ae027e",
+    "system_a_checkpoint_sha256": "cce1ce47db047b9d441bbe6dad9bd53f1ee6ff3ad7d404521cae72a38bccd4b4",
+    "system_a_manifest_sha256": "42004b5ed100b690023b9998bdc959fac41ab947b996fb7c58e44cee5e8dc6de"
+  },
+  "initial_rule_base_sha256": "94294b3d3227b569453f4e576a8b0276e2dbbb17ebe7d85e2f3e44dbbfb536cc",
+  "initial_rule_base_version_id": "d-s3-r0v2",
+  "maintenance_summary": {
+    "candidate_count": 29,
+    "censored_or_blocked_count": 2,
+    "completed_validation_count": 2,
+    "compute_seconds": 30.2263367,
+    "compute_seconds_per_opportunity": 7.556584175,
+    "compute_seconds_per_publication": 30.2263367,
+    "lifecycle_decision_counts": {
+      "candidate_rejected_quality_gate": 4,
+      "candidate_rejected_redundant": 3,
+      "demoted": 3,
+      "merge_consolidation": 2,
+      "no_refinement_gain": 1,
+      "refined": 3,
+      "retained": 9,
+      "retired": 2
+    },
+    "lifecycle_seconds": 0.43674090000000004,
+    "mean_validation_wait_rows": 24089.5,
+    "no_op_count": 1,
+    "opportunity_count": 4,
+    "publication_count": 1,
+    "publication_per_opportunity": 0.25,
+    "shap_seconds": 29.7486666,
+    "surrogate_seconds": 0.040929200000000006
+  },
+  "manifest_sha256": "73ead2ffd29256a32e31df4e1a795866c0191985d4ad65e4c6ca4be0c8adc824",
+  "operator_config_sha256": "197360bb33718f32d7aebeb60b5e5fe3ba0619941c4a38a4f4c6ba3b529b7532",
+  "payload_sha256": "f592b56ce4a38b61a9344993e0b1804a7499a9d92668307748024b55bc53b607",
+  "publications": [
+    {
+      "canonical_sha256": "fe88fd0d5032e124888a6b44810a9d875cb5d5dbbfbf51045c0bdc3c336f1d7f",
+      "effective_index": 42707,
+      "file_key": "version_0001",
+      "history_sha256": "30418f2d3c808e078fa76952c3d0762cfbec5f18ee4f21c160399ad6262f9a68",
+      "rule_base_version_id": "d-s3-v0001"
+    }
+  ],
+  "schema_version": 1,
+  "seed": 3,
+  "shared_identity_sha256": "6f08fcffa283518d8f6ea812fbb5135037ee8ab3118881b06ce24b38ffb4e118"
+}

@@ -1,0 +1,65 @@
+{
+  "arm": "d_periodic",
+  "files": {
+    "final_state": {
+      "path": "final_state.json",
+      "sha256": "1b401ea6480170a5a1d80801794d508a60abbc31bf027e76d6a7cbbe054397ac"
+    },
+    "initial_state": {
+      "path": "initial_state.json",
+      "sha256": "518c96c1391a99b9588df23e5bcccf8e42716df16fd5fc7ce919ef8276e5c85e"
+    },
+    "maintenance": {
+      "path": "maintenance.jsonl",
+      "sha256": "dc7ac230be88ce08003f0606ded07de3ce55755e2eba178811e3f89cf75b39c1"
+    },
+    "version_0001": {
+      "path": "versions/0001-d-s1-v0001.json",
+      "sha256": "072c5385f45baa656677e597fcec9724c25b2d6458c4fdd20afe8337d0d9c678"
+    }
+  },
+  "final_history_sha256": "b59e91543b0447a639e12e1675f5411e5a64bffd5b0813944dc297a3ca3c7fbf",
+  "final_rule_base_sha256": "efb515786523a6354247ee2a37b085e7bc902ded1407092d0a477adc84fda863",
+  "final_rule_base_version_id": "d-s1-v0001",
+  "initial_rule_base_sha256": "bb84bdb7504bd8174482a6b180dd420468d11ddeb2f982dfbb877acaf3903b7b",
+  "initial_rule_base_version_id": "d-s1-r0v2",
+  "maintenance_summary": {
+    "candidate_count": 32,
+    "censored_or_blocked_count": 3,
+    "completed_validation_count": 1,
+    "compute_seconds": 43.35162880000001,
+    "compute_seconds_per_opportunity": 10.837907200000002,
+    "compute_seconds_per_publication": 43.35162880000001,
+    "lifecycle_decision_counts": {
+      "candidate_rejected_quality_gate": 2,
+      "demoted": 2,
+      "merge_consolidation": 1,
+      "no_refinement_gain": 3,
+      "refined": 1,
+      "retained": 4
+    },
+    "lifecycle_seconds": 0.3085668999999999,
+    "mean_validation_wait_rows": 26027.0,
+    "no_op_count": 0,
+    "opportunity_count": 4,
+    "publication_count": 1,
+    "publication_per_opportunity": 0.25,
+    "shap_seconds": 42.9795584,
+    "surrogate_seconds": 0.0635035
+  },
+  "manifest_sha256": "4199245cbc43142d2f408a52565f712fce5b264f95a0ffd0e884bc727a4ae8a2",
+  "operator_config_sha256": "197360bb33718f32d7aebeb60b5e5fe3ba0619941c4a38a4f4c6ba3b529b7532",
+  "payload_sha256": "33ef21385aba4dda1ee5054d307ea4e6f03435c2917f9a1bb854fa7fbb4d6ece",
+  "publications": [
+    {
+      "canonical_sha256": "efb515786523a6354247ee2a37b085e7bc902ded1407092d0a477adc84fda863",
+      "effective_index": 70413,
+      "file_key": "version_0001",
+      "history_sha256": "b59e91543b0447a639e12e1675f5411e5a64bffd5b0813944dc297a3ca3c7fbf",
+      "rule_base_version_id": "d-s1-v0001"
+    }
+  ],
+  "schema_version": 1,
+  "seed": 1,
+  "shared_identity_sha256": "18d4c4c9669d4a8ccf059f7fbac7baee27ae9ddb501bd70efdb0b4376f9e3136"
+}

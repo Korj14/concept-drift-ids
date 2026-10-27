@@ -1,0 +1,111 @@
+{
+  "arm": "d_drift",
+  "files": {
+    "final_state": {
+      "path": "final_state.json",
+      "sha256": "c894aae5463ee26a4cecc5d02976258afe3327a2d69751c3b0bf74d522d7803c"
+    },
+    "initial_state": {
+      "path": "initial_state.json",
+      "sha256": "8f5dac1d1ed1e225a97f080c65dfe70d4a0c00bf61dbac9528b31a7e8cc39f63"
+    },
+    "maintenance": {
+      "path": "maintenance.jsonl",
+      "sha256": "e3c94f6754dd6e24bdfb07300416b8fa58aaeb73b5601c683d4361bca193ffd7"
+    },
+    "version_0001": {
+      "path": "versions/0001-d-s2-v0001.json",
+      "sha256": "b071097ef4d1acce67207d5b3fb43df87322cbb8567690df585729736d271c1b"
+    },
+    "version_0002": {
+      "path": "versions/0002-d-s2-v0002.json",
+      "sha256": "5c01e4debe02497d325a619c36998830dbf898aff92f6175495c9edcc3e2136f"
+    },
+    "version_0003": {
+      "path": "versions/0003-d-s2-v0003.json",
+      "sha256": "22efc390eec14f1c5f95c6930c8e9f0b1f08e584521c82e6844115f7dab98396"
+    }
+  },
+  "final_history_sha256": "ae06721ee0de4a3555b92975ca30090b0bfbd03db9592b717267fe9b35dcca02",
+  "final_rule_base_sha256": "7cfe42cdf7b00eba1e0c0abeed1a2a582e74fc0dc61e5ed67d6a0d060fdcf386",
+  "final_rule_base_version_id": "d-s2-v0003",
+  "identity_context": {
+    "condition_id": "latency_10000",
+    "condition_spec_sha256": "6adb3905a2db4fc6e3cfa0719e09191063eb99c08fd08b9463ea204706c34f0e",
+    "frozen_primary_contract_sha256": "4bd0d2d2cb3b33b12286f19fcbae0c823e67c50a9c690f797d07a333fc6c9dc7",
+    "fusion_contract_sha256": "acb2ba17bad35700cfc2f6d539548c31cf86f944eb1aa2aea566828278bbde69",
+    "preprocessing_state_hash": "4527f77220f2cf6063108a7d71d80aaa0e82099ad282ff25408a2d9ce3488b1e",
+    "primary_control_plane_config_sha256": "7491733fe4bb7524eb38960b78067df44081fd4513055664985f3fd0d9841384",
+    "primary_symbolic_operator_config_sha256": "197360bb33718f32d7aebeb60b5e5fe3ba0619941c4a38a4f4c6ba3b529b7532",
+    "r0_v2_manifest_sha256": "131027d2f136494eb388183f18dcb7eb0e9d7e9fe786f22dba25f4e1624c1483",
+    "runtime_identity_sha256": "2c8058035fcb66ad7fa99559de9a8611f81a954f4f9055a832b59ec01d3bfa3b",
+    "scenario_manifest_canonical_sha256": "3d1c3f9775ac5c8a73053634784be513bb1714ef7f26fa9db406ccd78c4344e3",
+    "seed": 2,
+    "stage8_closure_commit": "f8a424389056a048a6ad6be0b744bf6d12b69df2",
+    "stage8_parent_evidence_commit": "c2ded83b8195b9321e715626c1f305f9627936e8",
+    "stage9_config_manifest_sha256": "b72fc0dce0df46974737cd0c33714cc17b23f31ce188e92d318b1787c0ae027e",
+    "system_a_checkpoint_sha256": "7630514cf409256bd2bbe27eca59f881acb238be698b5fdb1ee12bca8e402491",
+    "system_a_manifest_sha256": "42004b5ed100b690023b9998bdc959fac41ab947b996fb7c58e44cee5e8dc6de"
+  },
+  "initial_rule_base_sha256": "c2451d8153862285a0fe60f88c6b9258101330dd28550b8ff906f73329dba08f",
+  "initial_rule_base_version_id": "d-s2-r0v2",
+  "maintenance_summary": {
+    "candidate_count": 30,
+    "censored_or_blocked_count": 1,
+    "completed_validation_count": 3,
+    "compute_seconds": 35.410477199999995,
+    "compute_seconds_per_opportunity": 8.852619299999999,
+    "compute_seconds_per_publication": 11.803492399999998,
+    "lifecycle_decision_counts": {
+      "candidate_rejected_quality_gate": 8,
+      "candidate_rejected_redundant": 1,
+      "demoted": 4,
+      "existing_same_class_consolidation": 1,
+      "merge_consolidation": 3,
+      "new_addition": 2,
+      "no_refinement_gain": 2,
+      "reactivated": 2,
+      "refined": 5,
+      "retained": 11,
+      "retired": 3,
+      "retired_failed": 1
+    },
+    "lifecycle_seconds": 0.7751544,
+    "mean_validation_wait_rows": 19999.0,
+    "no_op_count": 0,
+    "opportunity_count": 4,
+    "publication_count": 3,
+    "publication_per_opportunity": 0.75,
+    "shap_seconds": 34.589738999999994,
+    "surrogate_seconds": 0.0455838
+  },
+  "manifest_sha256": "c5fa2c754308778848d4b0de994a84e22e157e1af96207e1ed211e70cf25a0b8",
+  "operator_config_sha256": "197360bb33718f32d7aebeb60b5e5fe3ba0619941c4a38a4f4c6ba3b529b7532",
+  "payload_sha256": "00375e55ab3f846c5d32fc63a2861019c7acfbd04f03b00ab94ca1ef941befc5",
+  "publications": [
+    {
+      "canonical_sha256": "4a60f0bbcc9e8058b156bd4070e5550ae06f58c5f43b70fc598b0bbb7f6ea342",
+      "effective_index": 40000,
+      "file_key": "version_0001",
+      "history_sha256": "208b8aa279425a277507b5c5b1586930b8f4b19d5cbe337d12bba7bbd58601e2",
+      "rule_base_version_id": "d-s2-v0001"
+    },
+    {
+      "canonical_sha256": "37113eebd9cbe6251a502162c31abb6862825720c2c6ef4a3bd98a78dde44671",
+      "effective_index": 80208,
+      "file_key": "version_0002",
+      "history_sha256": "9681ff7298680349c497ae4b4a80033c472a4eb42d6520c38f3e3c5fb5195a14",
+      "rule_base_version_id": "d-s2-v0002"
+    },
+    {
+      "canonical_sha256": "7cfe42cdf7b00eba1e0c0abeed1a2a582e74fc0dc61e5ed67d6a0d060fdcf386",
+      "effective_index": 117216,
+      "file_key": "version_0003",
+      "history_sha256": "ae06721ee0de4a3555b92975ca30090b0bfbd03db9592b717267fe9b35dcca02",
+      "rule_base_version_id": "d-s2-v0003"
+    }
+  ],
+  "schema_version": 1,
+  "seed": 2,
+  "shared_identity_sha256": "cd35129831c0267cf2da506aaee19790318a4a2cb7b3541de1d1cebf0bde06d0"
+}

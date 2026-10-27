@@ -289,3 +289,22 @@ Interpretation boundary: the negative closure terminates the Stage-9.5-1 assuran
 
 Reopening is permitted only if the exact original bytes are later recovered and the unchanged v1.2 verifier independently passes the frozen five-seed / 145-of-145 predicate. Otherwise any continuation requires a separately governed restart/new evidence-generation campaign rather than substitution into the accepted evidence chain.
 
+---
+
+## Stage 10A pre-outcome attack-pattern replication controls — 27 October 2026
+
+| Variable / control | Frozen Stage-10A value or rule | Selection evidence | Match / gate requirement | Freeze state |
+| --- | --- | --- | --- | --- |
+| Stage-10A scenario | `cicids2017_goldeneye_temporal_attack_shift_v1` | Pre-outcome source audit only; no Stage-10 treatment outcomes | All Stage-10A arms | **FROZEN PRE-OUTCOME** |
+| Scenario interpretation | Same-family DoS GoldenEye attack-pattern / class-conditional feature shift under an essentially stationary BENIGN background; CICIDS2017 pseudo-chronology; no natural-production or unqualified `P(Y|X)` claim | Source-only row/feature audit | All Stage-10A reporting | **FROZEN PRE-OUTCOME** |
+| Stage-10A pre regime | Wednesday rows `[554162,623433)`, excluding the already frozen 11 Heartbleed rows; 69,260 retained = 65,671 BENIGN + 3,589 DoS GoldenEye | Exact raw source identity and row audit | All Stage-10A arms | **FROZEN PRE-OUTCOME** |
+| Stage-10A post regime | Wednesday rows `[623433,692703)`; no BENIGN source replacement; 69,270 retained = 65,697 BENIGN + 3,573 DoS GoldenEye | Exact raw source identity and row audit | All Stage-10A arms | **FROZEN PRE-OUTCOME** |
+| Stage-10A boundary | Logical stream index 69,260 after the frozen Heartbleed exclusion; evaluator/scoring diagnostics only | Prospective scenario design | Never supplied to detector/updater/symbolic lifecycle | **FROZEN PRE-OUTCOME** |
+| Stage-10A raw source | `Wednesday-workingHours.pcap_ISCX.csv`; SHA-256 `893c27dc968bf7a8adef1689f90be55ca4a4dc3088fb63d6ff247ac56856df2a`; 225,166,395 bytes | Accepted CICIDS raw source identity | Exact bytes required | **FROZEN PRE-OUTCOME** |
+| Stage-10A inherited start state | Existing training/development information set, preprocessing core `4527f77220f2cf6063108a7d71d80aaa0e82099ad282ff25408a2d9ce3488b1e`, System-A manifest `42004b5ed100b690023b9998bdc959fac41ab947b996fb7c58e44cee5e8dc6de`, R0.v2 manifest `131027d2f136494eb388183f18dcb7eb0e9d7e9fe786f22dba25f4e1624c1483` | Accepted pre-existing evidence only | Same within matched seed | **FROZEN PRE-OUTCOME** |
+| Stage-10A seeds | 0,1,2,3,4 exactly; no extension after outcome access | Accepted paired-seed design | C/D/D-periodic matched by seed | **FROZEN PRE-OUTCOME** |
+| Stage-10A primary family | E1 post MCC D-drift−C; E2 post MCSC D-drift−C; E3 post MCSC D-drift−D-periodic; paired seed is causal unit | Accepted confirmatory family carried prospectively | No window/event/rule pseudo-replication | **FROZEN PRE-OUTCOME** |
+| Stage-10A adaptive mechanism | Accepted primary detector, timing, neural update, fusion and symbolic-lifecycle semantics inherited unless a prospectively versioned pre-outcome incompatibility correction is required | Accepted Stage-8 design | C/D neural path matched; symbolic state transition remains intended C-vs-D difference | **FROZEN PRE-OUTCOME** |
+| Stage-10A execution gate | Source-only protocol/readiness work is permitted; C/D/D-periodic treatment execution and outcome access remain prohibited until legitimate Stage-9.5 closure | Post-Stage-9 governance addendum + Stage-10+ master protocol | Hard gate; no local or CI bypass | **FROZEN GOVERNANCE RULE** |
+| Stage-10A source verifier | `tools/stage10/stage10a_source_readiness.py`; source identities/counts/row hashes/class-conditional diagnostics only; report must always state treatment execution unauthorized | Pre-outcome engineering assurance | Must stop before adaptive treatment execution | **FROZEN PRE-OUTCOME** |
+

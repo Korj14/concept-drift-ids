@@ -2738,3 +2738,33 @@ The inherited paired-seed causal unit, seeds 0–4, primary E1/E2/E3 family, lab
 
 The Stage-9.5 hard gate remains binding. Passing Stage-10A source-only readiness does not authorize treatment execution.
 
+---
+
+## 27 October 2026 — Stage-10A repository-artifact Git-blob identity correction before source readiness execution
+
+The first Stage-10A repository-only CI contract on head
+`a4a726c0be0687d9a09b70e7aa00ea2aa38cb488` failed its
+`test_frozen_stage10a_artifacts_self_verify` check; GitHub Actions Stage-10
+run `40573125857` preserves that negative engineering evidence. The paired
+Research Contract on the same head (`40573125860`) passed.
+
+A matching Windows local failure compared the expected Git blob SHA-1 for the
+frozen protocol (`2785e94380cc29e20f014738e2837d708649f5bc`) against a
+different computed value. The bug was confined to the new
+`_git_blob_sha1` helper: it constructed a literal backslash-zero sequence
+instead of the required single NUL separator in a Git blob header and hashed
+platform checkout line endings without their permitted LF text normalization.
+
+The correction uses an explicit NUL byte (`bytes((0,))`) and normalizes only
+CRLF to LF before computing repository-text Git blob identity. New repository
+tests reject non-EOL content mutation and exercise a Windows CRLF copy.
+The source raw-file SHA-256 remains exact-byte verified, with no EOL
+normalization. The corrected Python/test commits are `fb3d710fff76ab33b4ab95540e1608c4968bc048`,
+`04230eca0db17938495a88a3c85ca2006edea2e3`, and
+`45f6508e57ce66f044dc31bf903f4d290640ea2c`.
+
+The frozen Stage-10A scientific protocol, machine manifest, source audit,
+row/feature identities, treatment controls and endpoints remain unchanged.
+Accepted Stage-8/9 evidence remains immutable. The failure does not authorize
+C/D/D-periodic treatment execution; Stage-9.5 remains the hard gate.
+

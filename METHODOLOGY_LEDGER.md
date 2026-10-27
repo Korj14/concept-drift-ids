@@ -2922,3 +2922,41 @@ claimed validated by source-readiness tests. Those require a separate,
 prospectively governed implementation chain **after** Stage-9.5 formally
 closes; source-only success does not unlock Stage-10 outcomes.
 
+---
+
+## 28 October 2026 — migration-ready 9.5 execution gate interpretation and Dropbox access verification
+
+The project selected a bounded, risk-gated assurance strategy, rather than either
+indefinite assurance expansion or unrestricted execution before historical
+evidence integrity closes. The additive clarification
+`STAGE9_5_EXECUTION_GATE_AND_DEFERRED_ASSURANCE_SCOPE_CLARIFICATION_2026_10_28.md`
+records that the **formal Stage-9.5 work-package sequence (0 through 9)
+remains a binding predecessor to any Stage-10 treatment-outcome access**,
+per the Reconciled Plan's post-Stage-9 addendum. Only broader Stage-10+
+sensitivities, independent-environment, operational/backbone tests, and
+final manuscript-specific re-audits are deferred. No governing DOCX,
+scientific protocol, outcome or immutable prior Stage-8/9 evidence changed.
+
+Dropbox was independently reconnected and queried. Its root contains five
+`seed_*.pt` files, each 76,105 bytes, and `/cd_primary_v1`. A complete
+recursive list of the latter yielded 253 entries, 203 files and 50 folders,
+matching the historical archive listing of 1,863,975,043 file bytes.
+Dropbox issued temporary download links for all 203 files in nine batches
+and for the five checkpoints. This verifies connector access/issuance,
+**not** local checkpoint SHA-256 or archive-descriptor hash compliance.
+A direct attempt to move one checkpoint download link to the conversation
+container was rejected by the container transport. No original checkpoint
+or heavy archive byte is therefore claimed to have been materialized on
+a verifier-capable filesystem by this session. The five frozen
+C-frozen-symbolic zero-byte maintenance paths remain absent from Dropbox
+and have a previously frozen, narrowly approved transport-reconstruction
+route; the unchanged Stage-9.5-1 verifier remains mandatory.
+
+The next authoritative action after migration is local exact-byte
+materialization of the five checkpoint files and the Dropbox heavy tree,
+followed by the frozen five-zero-byte correction, unchanged Stage-9.5-1
+145/145 verifier and historical Stage-9.5-6 replay sequence. Preserve all
+historical failed and negative evidence, including the lengthy
+`STAGE9_5_ASSURANCE_DIVERSION_RETROSPECTIVE_WORKING_NOTES.md`.
+There is no treatment-access unlock and no silent change to the gate.
+

@@ -91,7 +91,7 @@ def test_exact_five_seed_arm_structure(frozen) -> None:
     assert tuple(result) == SEEDS
     with pytest.raises(ValueError, match="Five paired"):
         verify_all_seeds(records[:-1], primary, required_prediction_count=1)
-    with pytest.raises(ValueError, match="unfrozen"):
+    with pytest.raises(ValueError, match="Unfrozen"):
         verify_all_seeds(records[:-1] + [replace(records[-1], seed=5)], primary, required_prediction_count=1)
 
 

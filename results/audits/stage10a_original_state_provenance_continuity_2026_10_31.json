@@ -1,0 +1,97 @@
+{
+  "audit_id": "stage10a-original-state-provenance-continuity-2026-10-31",
+  "basis": {
+    "frozen_checkpoint_catalog": "data/manifests/stage9_5_fresh_clone_reconstruction_v1_2.json",
+    "historical_dropbox_identity": "data/manifests/stage9_5_1_dropbox_recovery_discovery_v1.json",
+    "source_authority": "data/manifests/cd_primary_run_config_v1_1.json",
+    "stage10a_binding": "data/manifests/stage10a_execution_candidate_v1.json"
+  },
+  "checks": {
+    "dropbox_candidates_matching_frozen_ordinary_sha256_via_documented_single_block_hash": 5,
+    "model_execution_attempted": false,
+    "original_checkpoint_binary_materialized_in_execution_container": false,
+    "python_3_11_9_clean_checkout_canonical_csv_receipt_complete": false,
+    "r0_rule_git_blobs_identical_to_accepted_stage8": 5,
+    "r0_text_and_artifact_hashes_rechecked_in_standalone_execution_environment": false,
+    "treatment_outcomes_accessed": false
+  },
+  "date": "2026-10-31",
+  "external_original_checkpoint_candidates": [
+    {
+      "dropbox_path": "/seed_0.pt",
+      "file_size_bytes": 76105,
+      "frozen_ordinary_sha256": "514c6d552b3cd680ae966bbb568105bd2871bc68d3a47aded070a70ba0615bd1",
+      "observed_dropbox_content_hash": "ddc75eaaae68cf1e6ee34a5a68c264f922d64543ca883cd03234763a182a1719",
+      "seed": 0,
+      "single_block_double_sha256_verified": true
+    },
+    {
+      "dropbox_path": "/seed_1.pt",
+      "file_size_bytes": 76105,
+      "frozen_ordinary_sha256": "07696c3f580645d9c96ac3e736cfb5eeaa8033f148bf64822e8ee105861cf552",
+      "observed_dropbox_content_hash": "b6288356dd06f134aa18ea886c5ec17e695488f57074a455115f0cd17fef4feb",
+      "seed": 1,
+      "single_block_double_sha256_verified": true
+    },
+    {
+      "dropbox_path": "/seed_2.pt",
+      "file_size_bytes": 76105,
+      "frozen_ordinary_sha256": "7630514cf409256bd2bbe27eca59f881acb238be698b5fdb1ee12bca8e402491",
+      "observed_dropbox_content_hash": "f9ad4465f34aa3e525722a989bcf7b3588a1e57973cdbe2e1fe5e30a00378b05",
+      "seed": 2,
+      "single_block_double_sha256_verified": true
+    },
+    {
+      "dropbox_path": "/seed_3.pt",
+      "file_size_bytes": 76105,
+      "frozen_ordinary_sha256": "cce1ce47db047b9d441bbe6dad9bd53f1ee6ff3ad7d404521cae72a38bccd4b4",
+      "observed_dropbox_content_hash": "0f6d6b65cdadc92f7aaf3e345845bdb6c9014f7512f8fff7a7026a8e3c0fd716",
+      "seed": 3,
+      "single_block_double_sha256_verified": true
+    },
+    {
+      "dropbox_path": "/seed_4.pt",
+      "file_size_bytes": 76105,
+      "frozen_ordinary_sha256": "9b9e56371f3246482998c4efea4829e1e6d5aaf549bb43e1af05e471dfcb9e93",
+      "observed_dropbox_content_hash": "2cbb2afd97b9be46964901e8a66413a09b5cbbb9e041dd8530fc5834ab7e722e",
+      "seed": 4,
+      "single_block_double_sha256_verified": true
+    }
+  ],
+  "r0_v2_committed_rules": [
+    {
+      "equal_to_accepted_stage8_base": true,
+      "git_blob_sha1": "913335359cd6192ac70fc3b26b0c6d6216c3ea2d",
+      "path": "data/rules/system_b_r0_v2/seed_0.json",
+      "seed": 0
+    },
+    {
+      "equal_to_accepted_stage8_base": true,
+      "git_blob_sha1": "612cb07126c12c89e593d118eca79239dda3500f",
+      "path": "data/rules/system_b_r0_v2/seed_1.json",
+      "seed": 1
+    },
+    {
+      "equal_to_accepted_stage8_base": true,
+      "git_blob_sha1": "81578ead2b4242b2d7213899568a44ca20462883",
+      "path": "data/rules/system_b_r0_v2/seed_2.json",
+      "seed": 2
+    },
+    {
+      "equal_to_accepted_stage8_base": true,
+      "git_blob_sha1": "4176800834326d2741769a73e1504952eb5ff578",
+      "path": "data/rules/system_b_r0_v2/seed_3.json",
+      "seed": 3
+    },
+    {
+      "equal_to_accepted_stage8_base": true,
+      "git_blob_sha1": "728209993931262b88a9ed8d40c70bba75474be1",
+      "path": "data/rules/system_b_r0_v2/seed_4.json",
+      "seed": 4
+    }
+  ],
+  "role": "warm_evidence_bounded_metadata_identity_only",
+  "scope": "read_only_source_state_continuity_no_model_loading",
+  "status": "PASS_METADATA_CONTINUITY__HOLD_EXECUTION_BYTES",
+  "stop_boundary": "source metadata continuity does not establish Stage-10A runtime-local original bytes or RELEASE"
+}

@@ -2218,3 +2218,56 @@ No recovered checkpoint bytes were committed or uploaded as assurance
 artifacts, no accepted Stage-8/9 scientific object changed, and no Stage-10
 outcome was accessed.
 
+
+## Stage-9.5-6 evidence recovery and deterministic replay - 30 October 2026
+
+This section records the operator-observed Windows/Python-3.11.9 execution and does
+not replace the authoritative canonical machine reports. The historical
+Stage-9.5-1 CLOSED-FAILED decision remains preserved and was prospectively
+superseded for gate accounting only by a new, unchanged v1.2 verifier PASS.
+
+- The exact original System-A checkpoint bytes matched all five frozen hashes;
+  the accepted Stage-8 heavy archive satisfied 145/145 descriptors. All five
+  original empty C-arm maintenance records were verified as already present;
+  no replacement of the historical zero-byte records was needed.
+- Stage-9.5-1 recovery verifier v1.2 passed, with no failures or blockers.
+  Canonical recovery report: 35cbefc053ae910b0eb20ace3443b70ea4972a511b6549f430f3d2ced0980c7d.
+- Stage-9.5-6 raw-source preflight matched eight original CICIDS2017 CSVs.
+  A new historical worktree at bfa14b942e4a5b2fbfa8aa3c43728a7f1cd81645
+  materialized eight independently verified Stage-1 interim tables, without
+  modifying the earlier authoritative Stage-1 report. Stage-1 canonical report:
+  4bafa772f9737d934f40c90bf7be8d80a62108cf89a9c74895fbe5c12c4a88af.
+- Historical Phase A seeds 0-4 all completed and passed frozen verification;
+  each recorded 138530 predictions and remained unscored. Historical Phase B
+  seeds 0-4 completed and passed frozen verification for all three arms.
+- An initial Phase-B PowerShell wrapper aborted before execution because it
+  referenced a nonexistent Phase-A manifest field. The wrapper alone was
+  corrected to inspect the frozen scenario-identity field; frozen scientific
+  implementations and existing replay evidence were unchanged.
+- The unchanged frozen diagnostic comparator passed all five Phase-A seeds,
+  five Phase-B seeds, fifteen seed-arm comparisons, and accepted maintenance
+  records, with no mismatches or failures.
+- At the original historical head, Phase-C v1 seed 0 reproduced the exact
+  frozen read_jsonl NameError; the original attempt/failure files matched the
+  frozen failure-lineage comparator and no successful outcome was produced.
+- A separate correction worktree at 79ddc4c6d6dea52c7cabc55a6d082448fc24fcf9
+  re-used the fresh A/B artifacts. The regenerated correction config passed
+  independent scientific-block verification and was frozen in the config-only
+  local commit 431b8fa7de915c93706d4593109c35964be83b54. The canonical
+  Phase-C pre-rerun verifier passed before corrected evaluation.
+- Corrected Phase-C v1.1 seed 0 alone completed and passed frozen verification,
+  including lambda=1 predictive equality; seeds 1-4 were not rerun and no
+  confirmatory aggregate was regenerated.
+- The unchanged frozen integrated replay comparator and finalizer passed with
+  0 mismatches, 0 failures, and 0 unresolved Class-A defects. Comparator
+  canonical SHA-256: 5563d38b002fe793c0bcaffdfdfe3c9b96f62d9b028a95ae9597a4dc672ab536.
+  Final replay report canonical SHA-256:
+  f169ae5fd9dc246ad8e2abe7b321b5d2ad67cb1f2c7ec6a1d3bcb73d4ec58052.
+- An evidence-derived Stage-9.5-6 success record and closure candidate passed
+  the unchanged local order gate, later_packages_unlocked=true. GitHub Actions
+  Stage 9 robustness contract run 39415218195 was successful on the exact
+  audited assurance head c3356e6e062b41f3127cc022eb7571b52758272c.
+- The original Stage-9.5-1 negative record and earlier out-of-order Stage-9.5-7,
+  8, and 9 records remain preserved. The latter packages still require valid
+  post-9.5-6 revalidation in sequence. No accepted Stage-8/9 scientific object
+  or Stage-10 treatment was modified/executed by this assurance run.

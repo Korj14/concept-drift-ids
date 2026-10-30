@@ -1,0 +1,342 @@
+{
+  "audit_id": "stage9.5-1-fresh-clone-reconstruction-v1_2",
+  "blockers": [],
+  "canonical_sha256": "35cbefc053ae910b0eb20ace3443b70ea4972a511b6549f430f3d2ced0980c7d",
+  "checks": [
+    {
+      "detail": {
+        "head": "c3356e6e062b41f3127cc022eb7571b52758272c",
+        "status": ""
+      },
+      "name": "git_worktree_clean",
+      "passed": true
+    },
+    {
+      "detail": {
+        "closure": "9b2796b2d0085660e981ad82f7b22070f88eefb9",
+        "head": "c3356e6e062b41f3127cc022eb7571b52758272c"
+      },
+      "name": "stage9_5_0_closure_in_ancestry",
+      "passed": true
+    },
+    {
+      "detail": "3.11.9 (tags/v3.11.9:de54cf5, Apr  2 2024, 10:12:12) [MSC v.1938 64 bit (AMD64)]",
+      "name": "python_version",
+      "passed": true
+    },
+    {
+      "detail": {
+        "actual": "0",
+        "expected": "0"
+      },
+      "name": "thread_env:PYTHONHASHSEED",
+      "passed": true
+    },
+    {
+      "detail": {
+        "actual": "1",
+        "expected": "1"
+      },
+      "name": "thread_env:OMP_NUM_THREADS",
+      "passed": true
+    },
+    {
+      "detail": {
+        "actual": "1",
+        "expected": "1"
+      },
+      "name": "thread_env:MKL_NUM_THREADS",
+      "passed": true
+    },
+    {
+      "detail": {
+        "actual": "1",
+        "expected": "1"
+      },
+      "name": "thread_env:OPENBLAS_NUM_THREADS",
+      "passed": true
+    },
+    {
+      "detail": {
+        "actual": "1",
+        "expected": "1"
+      },
+      "name": "thread_env:NUMEXPR_NUM_THREADS",
+      "passed": true
+    },
+    {
+      "detail": "5ef6553f286b84c117cd67febaf20292baf9930e7f4b6cf57918e2e00f965dd4",
+      "name": "requirements_lock_raw_sha256",
+      "passed": true
+    },
+    {
+      "detail": "9f63cbe19dcb1b916c16603f5b7c01a2fa33ac11271ce2ef0014910158d6741d",
+      "name": "requirements_lock_normalized_sha256",
+      "passed": true
+    },
+    {
+      "detail": "8a928d5c9df8554f88ba80edd2918f5f6a18b382697f6f561dbe87a8ed9a0052",
+      "name": "installed_distributions_sha256",
+      "passed": true
+    },
+    {
+      "detail": "2.14.1+cpu",
+      "name": "torch_version",
+      "passed": true
+    },
+    {
+      "detail": 1,
+      "name": "torch_num_threads",
+      "passed": true
+    },
+    {
+      "detail": 1,
+      "name": "torch_num_interop_threads",
+      "passed": true
+    },
+    {
+      "detail": true,
+      "name": "torch_deterministic_algorithms",
+      "passed": true
+    },
+    {
+      "detail": {
+        "canonical": "3d1c3f9775ac5c8a73053634784be513bb1714ef7f26fa9db406ccd78c4344e3",
+        "checkout_raw": "1771b2dbdf0f6b8b47207af04d31a6d6b015f8ea2bdadfe5dfdb293f0a552fd1",
+        "expected_repository_lf_text_sha256": "c864cd53b155ae1b29f2321d28b18562381fb6d1a77dc563b5f5eba3ec3eb82c",
+        "repository_lf_text_sha256": "c864cd53b155ae1b29f2321d28b18562381fb6d1a77dc563b5f5eba3ec3eb82c",
+        "scenario_id": "cicids2017_sudden_benign_v1",
+        "scenario_version": 1
+      },
+      "name": "scenario_identity",
+      "passed": true
+    },
+    {
+      "detail": {
+        "core_state_sha256": "4527f77220f2cf6063108a7d71d80aaa0e82099ad282ff25408a2d9ce3488b1e",
+        "training_identity": "a97cc6486501cd741ec0eec99512db95d40d947c1f30f119d75eafaa7d73476a"
+      },
+      "name": "preprocessing_identity",
+      "passed": true
+    },
+    {
+      "detail": {
+        "actual": "42004b5ed100b690023b9998bdc959fac41ab947b996fb7c58e44cee5e8dc6de",
+        "expected": "42004b5ed100b690023b9998bdc959fac41ab947b996fb7c58e44cee5e8dc6de",
+        "path": "data\\manifests\\system_a_v1.json",
+        "stored": "42004b5ed100b690023b9998bdc959fac41ab947b996fb7c58e44cee5e8dc6de",
+        "writer_payload_hash_ok": true,
+        "writer_payload_sha256": null
+      },
+      "name": "system_a_manifest_identity",
+      "passed": true
+    },
+    {
+      "detail": {
+        "expected": "4527f77220f2cf6063108a7d71d80aaa0e82099ad282ff25408a2d9ce3488b1e",
+        "manifest": "4527f77220f2cf6063108a7d71d80aaa0e82099ad282ff25408a2d9ce3488b1e"
+      },
+      "name": "system_a_preprocessing_link",
+      "passed": true
+    },
+    {
+      "detail": {
+        "mismatches": []
+      },
+      "name": "system_a_checkpoint_declarations",
+      "passed": true
+    },
+    {
+      "detail": {
+        "actual": "131027d2f136494eb388183f18dcb7eb0e9d7e9fe786f22dba25f4e1624c1483",
+        "expected": "131027d2f136494eb388183f18dcb7eb0e9d7e9fe786f22dba25f4e1624c1483",
+        "path": "data\\manifests\\system_b_v2.json",
+        "stored": "131027d2f136494eb388183f18dcb7eb0e9d7e9fe786f22dba25f4e1624c1483",
+        "writer_payload_hash_ok": true,
+        "writer_payload_sha256": null
+      },
+      "name": "r0_v2_manifest_identity",
+      "passed": true
+    },
+    {
+      "detail": {
+        "mismatches": [],
+        "rule_count": 5
+      },
+      "name": "r0_v2_rule_bytes",
+      "passed": true
+    },
+    {
+      "detail": {
+        "actual": "409b516d75cbc5e71d3633019008432ea6088d1d923b4e4a95570263528ed523",
+        "expected": "409b516d75cbc5e71d3633019008432ea6088d1d923b4e4a95570263528ed523",
+        "path": "results\\frozen\\cd_primary_v1\\compact_export_manifest.json",
+        "stored": "409b516d75cbc5e71d3633019008432ea6088d1d923b4e4a95570263528ed523",
+        "writer_payload_hash_ok": true,
+        "writer_payload_sha256": "916049362f58aa30effba20f8c7d20bb4ef4e0180d762ddd141deb821b76d3e8"
+      },
+      "name": "stage8_compact_manifest_identity",
+      "passed": true
+    },
+    {
+      "detail": {
+        "file_count": 109,
+        "mismatches": []
+      },
+      "name": "stage8_compact_export_bytes",
+      "passed": true
+    },
+    {
+      "detail": {
+        "actual": "1be77ce4be9f3faad021a3f3bfd636488e5de6aa1b2a6e7c596e48feb41bb54d",
+        "expected": "1be77ce4be9f3faad021a3f3bfd636488e5de6aa1b2a6e7c596e48feb41bb54d",
+        "path": "results\\frozen\\cd_primary_v1\\phase_c_offline_evaluation_v1_1\\confirmatory_analysis.json",
+        "stored": "1be77ce4be9f3faad021a3f3bfd636488e5de6aa1b2a6e7c596e48feb41bb54d",
+        "writer_payload_hash_ok": true,
+        "writer_payload_sha256": "1dd1383aed8fd56109c0b92acc41ed6f78134d94c92ac846238cf219022af038"
+      },
+      "name": "stage8_confirmatory_analysis_identity",
+      "passed": true
+    },
+    {
+      "detail": {
+        "compact": "d380fce5f9db8f0b639dc999298a263b10a10a3d02e35def226a121d098e2222",
+        "confirmatory": "d380fce5f9db8f0b639dc999298a263b10a10a3d02e35def226a121d098e2222"
+      },
+      "name": "stage8_confirmatory_config_link",
+      "passed": true
+    },
+    {
+      "detail": {
+        "actual": "d2d6f1a75aa427f2ba1769b8fef2d51253a5f10b5d3bfdb6c31de10d811aae22",
+        "expected": "d2d6f1a75aa427f2ba1769b8fef2d51253a5f10b5d3bfdb6c31de10d811aae22",
+        "path": "results\\frozen\\cd_robustness_v1_1\\compact_export_manifest.json",
+        "stored": "d2d6f1a75aa427f2ba1769b8fef2d51253a5f10b5d3bfdb6c31de10d811aae22",
+        "writer_payload_hash_ok": true,
+        "writer_payload_sha256": "08f7f6048a57dabf852af1cec12f36476bb03d52999acc5b4db72dc40fb30f66"
+      },
+      "name": "stage9_compact_manifest_identity",
+      "passed": true
+    },
+    {
+      "detail": {
+        "file_count": 357,
+        "mismatches": []
+      },
+      "name": "stage9_compact_evidence_bytes",
+      "passed": true
+    },
+    {
+      "detail": {
+        "actual_canonical": "6432dd5791f0baa9bdb2597c072b866814fb614f5a1f670dffec7f760bd1491a",
+        "expected_canonical": "6432dd5791f0baa9bdb2597c072b866814fb614f5a1f670dffec7f760bd1491a",
+        "expected_raw": "d6e70aaa591de7169ed9acc7f1da7c0aa6edfc7e7d3e8b5e72657d7d1e57be70",
+        "raw": "d6e70aaa591de7169ed9acc7f1da7c0aa6edfc7e7d3e8b5e72657d7d1e57be70",
+        "stored_canonical": "6432dd5791f0baa9bdb2597c072b866814fb614f5a1f670dffec7f760bd1491a",
+        "writer_payload_hash_ok": true,
+        "writer_payload_sha256": "4226c91322fb2c858ba20b7ff176040775524a89a03568347a4796a353bfa5af"
+      },
+      "name": "stage9_aggregate_identity",
+      "passed": true
+    },
+    {
+      "detail": {
+        "actual": "4ae426dd32ffed2384b4565710364459f4ee0ac2752543d6ec075facf66e53c8",
+        "expected": "4ae426dd32ffed2384b4565710364459f4ee0ac2752543d6ec075facf66e53c8",
+        "stored": "4ae426dd32ffed2384b4565710364459f4ee0ac2752543d6ec075facf66e53c8",
+        "writer_payload_hash_ok": true,
+        "writer_payload_sha256": "cc79a429e8658ba5fce55b31eb23e7c233b11bcda48a10a8de638264b074ec6e"
+      },
+      "name": "stage9_execution_plan_identity",
+      "passed": true
+    }
+  ],
+  "external_artifacts": {
+    "raw_dataset": {
+      "files": [
+        {
+          "name": "Monday-WorkingHours.pcap_ISCX.csv",
+          "sha256": "852c4beb34eda186f32561fa79df7a0747e92e1a6535b01270820dd9ffe17f34",
+          "size_bytes": 176927918
+        },
+        {
+          "name": "Tuesday-WorkingHours.pcap_ISCX.csv",
+          "sha256": "52b8692ae8c7d2ed04671fe2b98335693c0a92c7ab157d8c8b534d6523080851",
+          "size_bytes": 135078995
+        },
+        {
+          "name": "Wednesday-workingHours.pcap_ISCX.csv",
+          "sha256": "893c27dc968bf7a8adef1689f90be55ca4a4dc3088fb63d6ff247ac56856df2a",
+          "size_bytes": 225166395
+        },
+        {
+          "name": "Thursday-WorkingHours-Morning-WebAttacks.pcap_ISCX.csv",
+          "sha256": "d67066211fb1689c78406f1506f4c44704ecb92088353d5c96d96d6474eb819d",
+          "size_bytes": 52023263
+        },
+        {
+          "name": "Thursday-WorkingHours-Afternoon-Infilteration.pcap_ISCX.csv",
+          "sha256": "6bcda3857c2504676034e3ea57762d38393cc734cb377a726bd5cb153961b1b5",
+          "size_bytes": 83102436
+        },
+        {
+          "name": "Friday-WorkingHours-Morning.pcap_ISCX.csv",
+          "sha256": "53a41c24d570ea83b7ac55b2e94df94e7a8216aeb80a2af0246b6bc8bb543000",
+          "size_bytes": 58316725
+        },
+        {
+          "name": "Friday-WorkingHours-Afternoon-PortScan.pcap_ISCX.csv",
+          "sha256": "ca1824c51bfbb7b3c72290a11be04366ba8815878c6a1cc5c44cb1cee269e99b",
+          "size_bytes": 76906168
+        },
+        {
+          "name": "Friday-WorkingHours-Afternoon-DDos.pcap_ISCX.csv",
+          "sha256": "6ff1580f5f81c0ae28a26f7631721018577f5f7c5e0feac28b795fcfe7b411ee",
+          "size_bytes": 77123859
+        }
+      ],
+      "repository_committed": false,
+      "required_for_full_historical_rerun": true,
+      "required_for_repo_only_identity_verification": false,
+      "session_verification_date": "2026-10-13",
+      "session_verification_result": "all_eight_files_match_frozen_sha256"
+    },
+    "stage8_large_artifact_archive": {
+      "mismatches": [],
+      "missing": [],
+      "required": true,
+      "requirement_count": 145,
+      "retrieval": {
+        "accepted_stage8_actions_artifact_found": false,
+        "current_project_surface_found": false,
+        "repository_committed": false,
+        "repository_release_asset_found": false
+      },
+      "root": "C:\\Dev\\concept-drift-ids\\artifacts\\cd_primary_v1",
+      "verified_count": 145
+    },
+    "system_a_checkpoints": {
+      "mismatches": [],
+      "missing": [],
+      "required": true,
+      "retrieval": {
+        "default_external_root": "artifacts/system_a/checkpoints",
+        "documented_repository_retrieval_mechanism_found": false,
+        "historical_actions_artifact_found": false,
+        "repository_committed": false
+      },
+      "verified_seeds": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ]
+    }
+  },
+  "failures": [],
+  "identity_manifest": "data\\manifests\\stage9_5_fresh_clone_reconstruction_v1_2.json",
+  "pass": true,
+  "repository_head": "c3356e6e062b41f3127cc022eb7571b52758272c",
+  "status": "pass"
+}

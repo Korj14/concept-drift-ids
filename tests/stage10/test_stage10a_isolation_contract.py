@@ -164,7 +164,7 @@ def test_cross_arm_shared_event_mutation_and_boundary_leak_rejected(frozen) -> N
     events = list(copy.deepcopy(a.events))
     events[0]["boundary_index"] = 69260
     with pytest.raises(ValueError, match="evaluator-only"):
-        verify_seed(0, (replace(a, events=tuple(events)), c, c), primary)
+        verify_seed(0, (replace(a, events=tuple(events)), *_trio(primary)[1:]), primary)
 
 
 def test_required_full_stream_count_cannot_be_claimed_from_sparse_fixture(frozen) -> None:

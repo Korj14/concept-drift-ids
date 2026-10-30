@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "audit_id": "stage9.5-1-negative-closure-v1",
+  "status": "closed_failed_external_provenance_unresolved",
+  "closure_kind": "negative",
+  "pass": false,
+  "observed_head": "260351e3cd77c5e5ddff6b40b810d9e75c1fe5f4",
+  "observed_date": "2026-10-17",
+  "governing_success_criteria_unchanged": true,
+  "identity_failures": 0,
+  "external_artifact_blockers": [
+    "system_a_checkpoint_bytes_missing",
+    "stage8_large_artifact_archive_missing"
+  ],
+  "system_a_checkpoints": {
+    "required": true,
+    "verified_seeds": [],
+    "required_seed_hashes": {
+      "0": "514c6d552b3cd680ae966bbb568105bd2871bc68d3a47aded070a70ba0615bd1",
+      "1": "07696c3f580645d9c96ac3e736cfb5eeaa8033f148bf64822e8ee105861cf552",
+      "2": "7630514cf409256bd2bbe27eca59f881acb238be698b5fdb1ee12bca8e402491",
+      "3": "cce1ce47db047b9d441bbe6dad9bd53f1ee6ff3ad7d404521cae72a38bccd4b4",
+      "4": "9b9e56371f3246482998c4efea4829e1e6d5aaf549bb43e1af05e471dfcb9e93"
+    }
+  },
+  "stage8_large_artifact_archive": {
+    "required": true,
+    "root": "artifacts/cd_primary_v1",
+    "descriptor_linked_requirement_count": 145,
+    "verified_count": 0
+  },
+  "exact_head_ci": {
+    "stage9_run_id": 39050628185,
+    "stage9_conclusion": "success",
+    "stage9_5_run_id": 39050628180,
+    "assurance_contract_tests_passed": 87,
+    "fresh_clone_job_id": 117448298396,
+    "fresh_clone_identity_failures": 0,
+    "fresh_clone_external_artifact_blockers": 2,
+    "work_package_order_gate_job_id": 117448298419,
+    "later_packages_unlocked": false,
+    "stage9_5_7_8_9": "skipped"
+  },
+  "recovery_sweep": {
+    "project_and_conversation_files_checked": true,
+    "local_container_paths_checked": true,
+    "github_releases_checked": true,
+    "github_system_a_freeze_run_artifacts_checked": true,
+    "github_stage8_accepted_run_artifacts_checked": true,
+    "public_web_exact_hash_search_checked": true,
+    "stage1_transport_surface_checked": true,
+    "connected_personal_cloud_storage_checked": false,
+    "connected_personal_cloud_storage_note": "Google Drive/Dropbox/Box/SharePoint connectors are not installed/connected in this session. This negative closure therefore does not claim global physical irrecoverability of user-held copies; it closes the current assurance package as failed on all presently accessible authoritative surfaces."
+  },
+  "scientific_disposition": {
+    "accepted_stage8_9_numerical_evidence_declared_wrong": false,
+    "reproducibility_claim_supported": false,
+    "class_a_status": "unresolved",
+    "stage10_authorized": false
+  },
+  "prohibited_resolutions": [
+    "retrain_or_regenerate_System_A_and_substitute_new_checkpoint_serializations",
+    "regenerate_or_reconstruct_the_Stage8_heavy_archive_and_treat_it_as_the_original_archive_without_the_exact_frozen_byte identities",
+    "weaken_or_reclassify_the_frozen_success criterion after observing recovery failure",
+    "manually author a successful fresh-clone report"
+  ],
+  "reopen_predicate": "Reopen this negative closure only if the exact original five checkpoint bytes and original Stage-8 heavy archive are supplied from an authoritative source and the frozen v1.2 verifier reports pass=true, five verified seeds, 145/145 archive files, zero failures, and zero blockers.",
+  "downstream_effect": "Stage-9.5-6 cannot execute to valid closure; Stage-9.5-7/8/9 remain locked; Stage 10 remains prohibited."
+}

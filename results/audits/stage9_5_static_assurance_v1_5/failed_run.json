@@ -1,0 +1,54 @@
+{
+  "audit_id": "stage9.5-5-static-software-assurance-v1_5-supplemental-failed",
+  "status": "failed_supplemental_static_iteration_preserved",
+  "classification": "mypy_package_base_configuration_defect",
+  "scientific_class": "not_Class_A",
+  "audited_head": "0ea552ddf5a1505eefa852172134db3c543fe385",
+  "workflow_run_id": 38650426692,
+  "static_job_id": 116147559969,
+  "artifact": {
+    "id": 11934868091,
+    "name": "stage9-5-static-assurance-v1-5",
+    "zip_sha256": "0c364e47f249769367c3b6fecdd68c33cb4690fb0e7b21f6b99d85364829924a",
+    "report_canonical_sha256": "08f7c0d5f22944f06eb1d39ae81185334862257b7784a1e909f88d3c806c0fdd"
+  },
+  "tool_execution": {
+    "ruff": {
+      "returncode": 1,
+      "finding_count": 158,
+      "parse_error": null
+    },
+    "mypy": {
+      "returncode": 2,
+      "finding_count": 1
+    },
+    "historical_runtime_lock_identity_match": true,
+    "missing_scope_files": []
+  },
+  "mypy_failure": {
+    "path": "tools/stage9_5/claim_traceability.py",
+    "message": "Source file found twice under different module names: \"stage9_5.claim_traceability\" and \"tools.stage9_5.claim_traceability\"",
+    "consequence": "mypy aborted before checking the supplemental Stage 9.5-7/8 assurance modules",
+    "correction": "add --explicit-package-bases to the pinned mypy invocation"
+  },
+  "new_ruff_findings": [
+    {
+      "path": "tools/stage9_5/claim_traceability.py",
+      "code": "UP035",
+      "classification": "cosmetic_legacy"
+    },
+    {
+      "path": "tools/stage9_5/independent_reporting.py",
+      "code": "I001",
+      "classification": "cosmetic_legacy"
+    },
+    {
+      "path": "tools/stage9_5/independent_reporting.py",
+      "code": "UP035",
+      "classification": "cosmetic_legacy"
+    }
+  ],
+  "scientific_source_changes": false,
+  "historical_runtime_lock_changes": false,
+  "stage10_outcomes_accessed": false
+}

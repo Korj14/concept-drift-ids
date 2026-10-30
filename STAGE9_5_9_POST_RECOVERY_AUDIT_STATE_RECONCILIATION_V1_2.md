@@ -1,0 +1,19 @@
+# Stage-9.5-9 post-recovery auditor state reconciliation — v1.2 candidate
+
+**Status:** Assurance-only proposed correction, requiring local and exact-head CI verification; **not Stage-9.5 formal closure**.
+
+**Fixed parent** `4460439b2d25dbcc3cafe18af5a647d334f22a22`. Earlier failed PR assurance run `40999618916`, hostile-review job `123882441056`; 9.5-7/8 succeeded in correct order at this head, 9.5-9 tests failed prior to audit generation. The separate static delta `40999613219` observed Ruff `I001` (claim-test imports) and mypy `[index]` (claim-source frozen-pins typing). The historical v1.4 static baseline remains triaged; ephemeral fresh-clone CI still lacks uncommitted external objects.
+
+## Exact root causes
+
+1. The frozen `data/manifests/stage9_5_hostile_review_v1.json` records a historical *pre-recovery* `A-PROV-01` Class-A blocker. The v1.1 auditor mistakenly treated the historical array as perpetual *current* unresolved state and its integration test hard-coded the old blocked outcome. The accepted 9.5-1 original checkpoint/archive recovery and 9.5-6 replay subsequently produced immutable reports, now checked by the existing frozen `work_package_order_gate.evaluate()` and published closure records. The original v1 contract and old adverse outcomes are preserved verbatim. The new audit may report no *current* A-PROV-01 only if that independent predecessor gate passes; otherwise the historical A is restored as a current blocker.
+2. The original frozen Q1 adversarial register source blob `e1db2f5d9031e502668ec3960bac4a16d710fd57` had append-only historical status notes and is now `54f604941a61443330e4d49541471c0c4e2c4400`. Under the strict original v1.1 `HEAD` equality this always failed even though the frozen bytes survived. The v1.2 manifest binds the original freeze commit (`4c3c74b...`), frozen blob, published snapshot commit (`4460439...`) and snapshot blob. The auditor reads actual Git blob bytes; both preserved prefixes must match. Any modification/truncation of old history, frozen hostile contract, or original Stage-9.5 protocol fails closed.
+3. The newly added Stage-9.5-7 compatibility implementation introduced one static type annotation omission and one import-sort warning. Both are corrected on assurance code only; the frozen static v1.9 scope, historical runtime lock, accepted scientific source and baseline triage are unchanged.
+
+## Bounded conclusion and final exit gate
+
+The new v1.2 `hostile_review_report.json` contains both `historical_unresolved_class_a` and `unresolved_class_a`, a fresh independently derived 9.5-1/6 order-gate report, source-provenance checks, B/C attack disposition and a distinct `formal_stage9_5_closure_established=false` safeguard. **Passing 9.5-9 is an assurance package pass, not Stage-9.5 overall closure**. The job graph still provides 7→8→9 sequential dependency. Do not silently rewrite the old 9.5-9 closure or treat merely present old 7/8 document names as current closure.
+
+The hosted fresh-clone verifier's two absent external artifact classes remain real *hosted-runner* failures and must not override the separate genuine local 5-checkpoint/145-of-145 report. The baseline static discovery job's `ruff=154,mypy=55` red finding state remains historically triaged: it requires an explicit exact-fingerprint verified CI disposition or a documented governance stop, not `continue-on-error` or fabricated zero findings. A separately verified prospective supplemental v1.9 zero-finding result is required for new assurance code.
+
+**No repeat of Stage-9.5-1/6, no scientific file edits, no force-push, no merge, no Stage-10 treatment outcomes.** After one fresh exact-head run, decide terminally: either final retrospective plus reviewer-facing closure with zero unresolved A and explicit static/hosted-CI dispositions, or `BLOCKED / STOP` with exact remaining defect(s) and required prospective governance decision. Do not initiate another untargeted assurance loop.

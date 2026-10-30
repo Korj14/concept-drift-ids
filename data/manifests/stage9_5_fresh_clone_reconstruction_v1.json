@@ -1,0 +1,189 @@
+{
+  "schema_version": 1,
+  "status": "frozen_before_stage9_5_1_execution",
+  "governing_protocol": {
+    "path": "STAGE9_5_Q1_INDEPENDENT_ASSURANCE_PROTOCOL.md",
+    "freeze_commit": "cf9bb49cc18c751872a12d3530df8ff78d26d67a"
+  },
+  "prerequisite": {
+    "stage9_5_0_closure_commit": "9b2796b2d0085660e981ad82f7b22070f88eefb9",
+    "upstream_stage9_closure_head": "4dca828acb3916feb3f30d61f1b587240a6eba19"
+  },
+  "runtime": {
+    "python_version": "3.11.9",
+    "requirements_lock_path": "requirements-lock.txt",
+    "requirements_lock_sha256": "5ef6553f286b84c117cd67febaf20292baf9930e7f4b6cf57918e2e00f965dd4",
+    "requirements_lock_normalized_text_sha256": "9f63cbe19dcb1b916c16603f5b7c01a2fa33ac11271ce2ef0014910158d6741d",
+    "installed_distributions_sha256": "8a928d5c9df8554f88ba80edd2918f5f6a18b382697f6f561dbe87a8ed9a0052",
+    "thread_environment": {
+      "PYTHONHASHSEED": "0",
+      "OMP_NUM_THREADS": "1",
+      "MKL_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1",
+      "NUMEXPR_NUM_THREADS": "1"
+    },
+    "torch_version": "2.14.1+cpu",
+    "torch_num_threads": 1,
+    "torch_num_interop_threads": 1,
+    "torch_deterministic_algorithms": true
+  },
+  "scenario": {
+    "manifest_path": "data/manifests/sudden_benign_v1.json",
+    "raw_sha256": "c864cd53b155ae1b29f2321d28b18562381fb6d1a77dc563b5f5eba3ec3eb82c",
+    "canonical_sha256": "3d1c3f9775ac5c8a73053634784be513bb1714ef7f26fa9db406ccd78c4344e3",
+    "scenario_id": "cicids2017_sudden_benign_v1",
+    "scenario_version": 1
+  },
+  "preprocessing": {
+    "artifact_path": "data/manifests/sudden_benign_v1_preprocessing_v1.json",
+    "core_state_sha256": "4527f77220f2cf6063108a7d71d80aaa0e82099ad282ff25408a2d9ce3488b1e",
+    "training_rows_identity_sha256": "a97cc6486501cd741ec0eec99512db95d40d947c1f30f119d75eafaa7d73476a",
+    "feature_count": 77
+  },
+  "system_a": {
+    "manifest_path": "data/manifests/system_a_v1.json",
+    "manifest_sha256": "42004b5ed100b690023b9998bdc959fac41ab947b996fb7c58e44cee5e8dc6de",
+    "checkpoint_bytes_required_for_stage9_5_1": true,
+    "checkpoint_retrieval": {
+      "repository_committed": false,
+      "historical_actions_artifact_found": false,
+      "documented_repository_retrieval_mechanism_found": false,
+      "default_external_root": "artifacts/system_a/checkpoints"
+    },
+    "checkpoints": [
+      {
+        "seed": 0,
+        "path": "artifacts/system_a/checkpoints/seed_0.pt",
+        "sha256": "514c6d552b3cd680ae966bbb568105bd2871bc68d3a47aded070a70ba0615bd1"
+      },
+      {
+        "seed": 1,
+        "path": "artifacts/system_a/checkpoints/seed_1.pt",
+        "sha256": "07696c3f580645d9c96ac3e736cfb5eeaa8033f148bf64822e8ee105861cf552"
+      },
+      {
+        "seed": 2,
+        "path": "artifacts/system_a/checkpoints/seed_2.pt",
+        "sha256": "7630514cf409256bd2bbe27eca59f881acb238be698b5fdb1ee12bca8e402491"
+      },
+      {
+        "seed": 3,
+        "path": "artifacts/system_a/checkpoints/seed_3.pt",
+        "sha256": "cce1ce47db047b9d441bbe6dad9bd53f1ee6ff3ad7d404521cae72a38bccd4b4"
+      },
+      {
+        "seed": 4,
+        "path": "artifacts/system_a/checkpoints/seed_4.pt",
+        "sha256": "9b9e56371f3246482998c4efea4829e1e6d5aaf549bb43e1af05e471dfcb9e93"
+      }
+    ]
+  },
+  "r0_v2": {
+    "manifest_path": "data/manifests/system_b_v2.json",
+    "manifest_sha256": "131027d2f136494eb388183f18dcb7eb0e9d7e9fe786f22dba25f4e1624c1483",
+    "rules": [
+      {
+        "seed": 0,
+        "path": "data/rules/system_b_r0_v2/seed_0.json",
+        "text_sha256": "d84aecb25c1645745bab08449e8b79f5c5485631847673a274ec9b3bcbef627f",
+        "artifact_sha256": "7a214653d56c4ba4c2803af1560b4c28e4c22d709309fb3aa5d9cc06c56636ed"
+      },
+      {
+        "seed": 1,
+        "path": "data/rules/system_b_r0_v2/seed_1.json",
+        "text_sha256": "bb59e5ef4e819df785dbb2af55a376f2a9ef62d87c78cdb9ea1d2d5502cc50e6",
+        "artifact_sha256": "bc4bed6e64fced832dd78a796e7eb32468bb90f95317863c482796a5a8044aaf"
+      },
+      {
+        "seed": 2,
+        "path": "data/rules/system_b_r0_v2/seed_2.json",
+        "text_sha256": "ea04c858de1b7a74ab33c07dac34b3b3cf507d2b0239dc4e9d82cb81d7f88829",
+        "artifact_sha256": "dbcf86b1be9b458e2f37aa4ddc4c1a5683e1d660205eae43957c33506d5dcac6"
+      },
+      {
+        "seed": 3,
+        "path": "data/rules/system_b_r0_v2/seed_3.json",
+        "text_sha256": "ed11d3e769174cab4d09a7a8c1ad8dd031d729e3d4b8c6ddb984eb6284808899",
+        "artifact_sha256": "1ef1f1f1fb1ee2285f4fcc37962b16411cbe62e78a96412fb241c0ef42b6ccdb"
+      },
+      {
+        "seed": 4,
+        "path": "data/rules/system_b_r0_v2/seed_4.json",
+        "text_sha256": "b6fa780fb10a3b4802aa334e929e0480a863bce5ffc593e457dbf2516b3760db",
+        "artifact_sha256": "1472e4fd9421ee379946e07cce8a884c72a290a357fe02ad2b359da756e2eaa4"
+      }
+    ]
+  },
+  "stage8_compact": {
+    "root": "results/frozen/cd_primary_v1",
+    "manifest_path": "results/frozen/cd_primary_v1/compact_export_manifest.json",
+    "manifest_sha256": "409b516d75cbc5e71d3633019008432ea6088d1d923b4e4a95570263528ed523",
+    "confirmatory_aggregate_sha256": "1be77ce4be9f3faad021a3f3bfd636488e5de6aa1b2a6e7c596e48feb41bb54d"
+  },
+  "stage9_compact": {
+    "root": "results/frozen/cd_robustness_v1_1",
+    "manifest_path": "results/frozen/cd_robustness_v1_1/compact_export_manifest.json",
+    "manifest_sha256": "d2d6f1a75aa427f2ba1769b8fef2d51253a5f10b5d3bfdb6c31de10d811aae22",
+    "aggregate_path": "results/frozen/cd_robustness_v1_1/aggregate.json",
+    "aggregate_raw_sha256": "d6e70aaa591de7169ed9acc7f1da7c0aa6edfc7e7d3e8b5e72657d7d1e57be70",
+    "aggregate_canonical_sha256": "6432dd5791f0baa9bdb2597c072b866814fb614f5a1f670dffec7f760bd1491a",
+    "execution_plan_sha256": "4ae426dd32ffed2384b4565710364459f4ee0ac2752543d6ec075facf66e53c8"
+  },
+  "external_raw_dataset": {
+    "required_for_full_historical_rerun": true,
+    "required_for_repo_only_identity_verification": false,
+    "repository_committed": false,
+    "session_verification_date": "2026-10-13",
+    "session_verification_result": "all_eight_files_match_frozen_sha256",
+    "files": [
+      {
+        "name": "Monday-WorkingHours.pcap_ISCX.csv",
+        "size_bytes": 176927918,
+        "sha256": "852c4beb34eda186f32561fa79df7a0747e92e1a6535b01270820dd9ffe17f34"
+      },
+      {
+        "name": "Tuesday-WorkingHours.pcap_ISCX.csv",
+        "size_bytes": 135078995,
+        "sha256": "52b8692ae8c7d2ed04671fe2b98335693c0a92c7ab157d8c8b534d6523080851"
+      },
+      {
+        "name": "Wednesday-workingHours.pcap_ISCX.csv",
+        "size_bytes": 225166395,
+        "sha256": "893c27dc968bf7a8adef1689f90be55ca4a4dc3088fb63d6ff247ac56856df2a"
+      },
+      {
+        "name": "Thursday-WorkingHours-Morning-WebAttacks.pcap_ISCX.csv",
+        "size_bytes": 52023263,
+        "sha256": "d67066211fb1689c78406f1506f4c44704ecb92088353d5c96d96d6474eb819d"
+      },
+      {
+        "name": "Thursday-WorkingHours-Afternoon-Infilteration.pcap_ISCX.csv",
+        "size_bytes": 83102436,
+        "sha256": "6bcda3857c2504676034e3ea57762d38393cc734cb377a726bd5cb153961b1b5"
+      },
+      {
+        "name": "Friday-WorkingHours-Morning.pcap_ISCX.csv",
+        "size_bytes": 58316725,
+        "sha256": "53a41c24d570ea83b7ac55b2e94df94e7a8216aeb80a2af0246b6bc8bb543000"
+      },
+      {
+        "name": "Friday-WorkingHours-Afternoon-PortScan.pcap_ISCX.csv",
+        "size_bytes": 76906168,
+        "sha256": "ca1824c51bfbb7b3c72290a11be04366ba8815878c6a1cc5c44cb1cee269e99b"
+      },
+      {
+        "name": "Friday-WorkingHours-Afternoon-DDos.pcap_ISCX.csv",
+        "size_bytes": 77123859,
+        "sha256": "6ff1580f5f81c0ae28a26f7631721018577f5f7c5e0feac28b795fcfe7b411ee"
+      }
+    ]
+  },
+  "closure_rule": {
+    "fail_on_repository_identity_mismatch": true,
+    "fail_on_runtime_mismatch": true,
+    "fail_on_compact_evidence_mismatch": true,
+    "fail_on_r0_identity_mismatch": true,
+    "fail_on_missing_or_mismatched_system_a_checkpoint_bytes": true,
+    "fail_on_undocumented_local_state": true
+  }
+}

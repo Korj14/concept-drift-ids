@@ -1,0 +1,109 @@
+{
+  "audit_id": "stage10b-gradual-benign-source-audit-v1",
+  "blended_benign_pre_post_ks": {
+    "feature_count": 77,
+    "features_ge_0_1": 46,
+    "max": 0.2116328939912442,
+    "mean": 0.09832351548615437
+  },
+  "canonical_sha256": "cf89c94cc860b4cbd8b34b3bb60e6a25cb1153bdbb9245848a0c669c0781caaa",
+  "claim_limit": "controlled gradual BENIGN source-regime covariate shift, not natural drift, attack-pattern evolution, or proven P(Y|X) change",
+  "hashes": {
+    "benign_slots": "e393262d5ba7f02dd167aee8575e4980fa108b9471cef8034bb069a1340f5527",
+    "full_candidate_thursday_benign": "2ab5636a81923eae27faa0eac8de4dd8b55af9fb991bf0ddfdf5419e69c017c9",
+    "packed_replacement_mask_lsb": "145afea0b0b467698d7d9871d6cb40ca5731c75ae7bf8e6f132458f5eefe7513",
+    "post_ids": "186aec7f816faca89484c537b77ed8e729a9ac55982a7e1bec6f37750c1c30d8",
+    "pre_ids": "ef7773f88374c82a663723c0c1125f4a8bfee75a58fe4d8e35355b492e07b354",
+    "replaced_slot_ids": "9e38380ee80f3341883cd378dcacfc49d60f50feaba0d3798905f67238aa2e10",
+    "replaced_thursday_source_ids": "927f09c807b6897353c26e0dec60f1f683595b9ff853eef6acdf439f54e3574a",
+    "replacement_mapping": "5c0649649b6b3ee3c8e04476272a6292616078cf579fc4735c8a898bafc985b4"
+  },
+  "post_label_counts": {
+    "BENIGN": 65697,
+    "DoS GoldenEye": 3573
+  },
+  "post_rows": 69270,
+  "pre_label_counts": {
+    "BENIGN": 65671,
+    "DoS GoldenEye": 3589
+  },
+  "pre_rows": 69260,
+  "ramp": {
+    "duration_post_rows": 50000,
+    "plateau_post_rows": 19270,
+    "pre_boundary_stream_index": 69260,
+    "ramp_completion_stream_index": 119260,
+    "replacement_rule": "t>=50000 or 100000*u64<(2*t+1)*2^64; u64 is first 8 SHA256 bytes big-endian of stage10b-gradual-benign-v1:slot:{wednesday_source_row_id}",
+    "salt": "stage10b-gradual-benign-v1",
+    "thursday_candidate_ordinal": "floor(j*168186/65697)"
+  },
+  "replacement": {
+    "eligible_benign_slots": 65697,
+    "nominal_ramp_rows": 50000,
+    "plateau_replaced": 18274,
+    "ramp_replaced": 23661,
+    "replaced": 41935,
+    "retained": 23762
+  },
+  "scenario_id": "cicids2017_gradual_benign_source_v1",
+  "source": {
+    "Thursday_morning": {
+      "sha256": "d67066211fb1689c78406f1506f4c44704ecb92088353d5c96d96d6474eb819d",
+      "size": 52023263
+    },
+    "Wednesday": {
+      "sha256": "893c27dc968bf7a8adef1689f90be55ca4a4dc3088fb63d6ff247ac56856df2a",
+      "size": 225166395
+    }
+  },
+  "stage10_treatment_outcomes_accessed": false,
+  "status": "source_only_preoutcome_audit",
+  "window_benign_slots": [
+    4742,
+    4745,
+    4723,
+    4743,
+    4732,
+    4768,
+    4737,
+    4738,
+    4739,
+    4756,
+    4742,
+    4741,
+    4736,
+    4055
+  ],
+  "window_post_end_exclusive": [
+    5000,
+    10000,
+    15000,
+    20000,
+    25000,
+    30000,
+    35000,
+    40000,
+    45000,
+    50000,
+    55000,
+    60000,
+    65000,
+    69270
+  ],
+  "window_replacements": [
+    229,
+    704,
+    1185,
+    1672,
+    2092,
+    2624,
+    3125,
+    3512,
+    4005,
+    4513,
+    4742,
+    4741,
+    4736,
+    4055
+  ]
+}

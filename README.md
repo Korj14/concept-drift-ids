@@ -2,6 +2,19 @@
 
 Research code for an adaptive neuro-symbolic network intrusion-detection system with concept-drift-driven symbolic rule evolution.
 
+
+## Stage-9.5 status and next-phase boundary — 31 October 2026
+
+**Stage 9.5 Q1 technical assurance: COMPLETED and explicitly accepted on 30 October 2026**, evaluated at `cdc4b5eaea7e337802f93563b708b89f3025c3d8`. This is not a PR merge, a repository-administrator sign-off, or a Stage-10 execution release.
+
+The **current administrative/status interpretation** is recorded in [`STAGE9_5_TERMINAL_ACCEPTANCE_ADMINISTRATIVE_RECONCILIATION_2026_10_31.md`](STAGE9_5_TERMINAL_ACCEPTANCE_ADMINISTRATIVE_RECONCILIATION_2026_10_31.md). The original [`STAGE9_5_Q1_FORMAL_CLOSURE.md`](STAGE9_5_Q1_FORMAL_CLOSURE.md) remains the earlier *formal-closure candidate*, preserved unchanged for provenance; its pre-v1.3 audit assessment is not the final terminal technical verdict. PR [#21](https://github.com/Korj14/concept-drift-ids/pull/21) remains subject to separate review/merge governance.
+
+The **16–17 October Stage-9.5-1 failed/blocked reconstruction and its two external-byte blockers were genuine at that historical date**, not the current technical outcome. The later independently verified original-byte recovery (5/5 checkpoints; 145/145 archive descriptor requirements), deterministic historical replay, and ordered claim/reporting/hostile-review checks resolved the current Class-A assurance disposition without deleting the historical negative reports. At terminal acceptance there were **zero current unresolved Class A**; one historical Class-A record remains retained. The old overall red GitHub Actions jobs and known hosted-runner/static negative findings must continue to be reported accurately.
+
+**Stage-10A/B/C treatment execution remains prohibited.** Stage-10 master v1.1 and stage-specific source-only protocols are frozen but are **not** execution authorization; the machine gate remains `stage10_execution_permitted=false` pending separate legitimate governance and an explicit Stage-10 RELEASE/HOLD decision. Current planning focus is Stage-10A.
+
+This section supersedes this README's former *17 October current assurance status* navigation text; the underlying historical failed-closure evidence remains unchanged in `STAGE9_5_1_FRESH_CLONE_RECONSTRUCTION_NEGATIVE_CLOSURE.md` and the append-only audit record.
+
 ## Environment
 
 The project is frozen to:

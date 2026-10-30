@@ -1,0 +1,633 @@
+{
+  "schema_version": 1,
+  "contract_id": "stage9.5-6-replay-report-construction-v1",
+  "status": "prospectively_frozen_before_stage9_5_6_execution",
+  "output_report_path": "results/audits/stage9_5_full_seed_rerun_v1/replay_equivalence_report.json",
+  "replay_protocol_id": "stage9.5-6-replay-equivalence-correction-v1_1",
+  "manual_success_report_permitted": false,
+  "deterministic_comparator_required": true,
+  "deterministic_producer": {
+    "producer_id": "stage9.5-6-replay-equivalence-assurance-v1",
+    "comparator_id": "stage9.5-6-replay-equivalence-comparator-v1",
+    "finalizer_id": "stage9.5-6-replay-report-finalizer-v1",
+    "comparator_status": "phase_a_b_c_integrated_recovery_gated_finalizer_bound_hostile_audited_v2_frozen",
+    "finalizer_status": "implemented_prospectively_frozen_hostile_audited_v2",
+    "comparator_and_finalizer_must_be_frozen_before_replay_outcomes": true,
+    "post_outcome_projection_changes_permitted": false
+  },
+  "external_prerequisites": {
+    "system_a_initial_checkpoints": {
+      "required_count": 5,
+      "status": "missing"
+    },
+    "accepted_stage8_large_artifact_archive": {
+      "root": "artifacts/cd_primary_v1",
+      "status": "missing",
+      "descriptor_linked_requirement_count": 145
+    }
+  },
+  "comparison_scope": {
+    "phase_a": {
+      "seeds": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "accepted_root": "phase_a_shared_control_plane",
+      "fresh_root_required": true,
+      "exact_scientific_content_required": true,
+      "allowed_diagnostic_projection": [
+        "runtime.platform",
+        "runtime.processor",
+        "runtime.threadpool_info[*].filepath"
+      ],
+      "self_hash_and_transitive_hash_handling_must_be_explicitly_implemented_before_execution": false,
+      "projection_implementation": {
+        "implementation_status": "implemented_prospectively_frozen",
+        "tool_path": "tools/stage9_5/replay_equivalence_comparator.py",
+        "test_path": "tests/stage9_5/test_replay_equivalence_comparator.py",
+        "historical_phase_a_head": "bfa14b942e4a5b2fbfa8aa3c43728a7f1cd81645",
+        "historical_phase_a_source_blob_sha1": "153443bb161723ef083bb14f97d526f8e0bb1333",
+        "historical_manifest_builder_blob_sha1": "2a4b9a77ff7e5380269740b34d9e249b27790af2",
+        "raw_integrity_verification_order": [
+          "verify payload_sha256 as canonical SHA-256 of the raw JSON object without payload_sha256 but including manifest_sha256",
+          "verify manifest_sha256 as canonical SHA-256 of the raw JSON object without payload_sha256 and manifest_sha256",
+          "verify every files descriptor path remains within its seed root and every descriptor SHA-256 matches the referenced file bytes"
+        ],
+        "normalized_fields": [
+          "runtime.platform",
+          "runtime.processor",
+          "runtime.threadpool_info[*].filepath"
+        ],
+        "normalization_sentinel": "<stage9.5-6-diagnostic-normalized>",
+        "derived_hash_fields_removed_after_raw_integrity_verification": [
+          "payload_sha256",
+          "manifest_sha256"
+        ],
+        "equality_rule": "accepted and fresh projected run manifests must have identical canonical JSON SHA-256 and exact recursive content equality; any difference outside the three normalized diagnostic fields is a mismatch"
+      }
+    },
+    "phase_b": {
+      "seeds": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "arms": [
+        "c_frozen_symbolic",
+        "d_drift",
+        "d_periodic"
+      ],
+      "accepted_root": "phase_b_symbolic_arms",
+      "fresh_root_required": true,
+      "accepted_maintenance_jsonl_required": true,
+      "exact_scientific_projection_required": true,
+      "allowed_timing_projection": [
+        "maintenance[*].shap_seconds",
+        "maintenance[*].surrogate_seconds",
+        "maintenance[*].lifecycle_seconds",
+        "maintenance[*].generation_payload.timing_seconds",
+        "maintenance_summary.compute_seconds",
+        "maintenance_summary.shap_seconds",
+        "maintenance_summary.surrogate_seconds",
+        "maintenance_summary.lifecycle_seconds",
+        "maintenance_summary.compute_seconds_per_opportunity",
+        "maintenance_summary.compute_seconds_per_publication"
+      ],
+      "self_hash_and_transitive_hash_handling_must_be_explicitly_implemented_before_execution": false,
+      "projection_implementation": {
+        "implementation_status": "implemented_prospectively_frozen_with_seed_binding",
+        "tool_path": "tools/stage9_5/replay_equivalence_comparator.py",
+        "test_path": "tests/stage9_5/test_replay_equivalence_comparator.py",
+        "historical_phase_b_head": "bfa14b942e4a5b2fbfa8aa3c43728a7f1cd81645",
+        "historical_phase_b_source_blob_sha1": "6a9e14041d5d445141408aaf4df3ba673d34302f",
+        "historical_maintenance_summary_blob_sha1": "e074791f364e803eed74e322fa3b8fc8b9c7dfeb",
+        "raw_integrity_verification_order": [
+          "verify each arm-manifest payload_sha256 and manifest_sha256 against the raw JSON object before any projection",
+          "verify every arm files descriptor remains within its arm root and every descriptor SHA-256 matches the referenced file bytes",
+          "verify each seed-level phase_b_manifest payload_sha256 and manifest_sha256 against the raw JSON object before any projection",
+          "verify every seed-level arm descriptor SHA-256 matches the referenced arm-manifest bytes and its manifest_sha256 matches the arm manifest"
+        ],
+        "maintenance_record_projection": {
+          "record_level_contract_id": "stage9.5-6-phase-b-maintenance-record-projection-v1",
+          "record_level_contract_path": "data/manifests/stage9_5_6_phase_b_maintenance_record_projection_v1.json",
+          "scope_limited_to_record_projection": true,
+          "removed_fields": [
+            "shap_seconds",
+            "surrogate_seconds",
+            "lifecycle_seconds",
+            "generation_payload.timing_seconds"
+          ],
+          "equality_rule": "accepted and fresh ordered maintenance record sequences must be exactly recursively equal after removing only the four predeclared timing fields"
+        },
+        "nonmaintenance_file_rule": "all initial_state, final_state, and version-file descriptors remain exact; any descriptor/hash difference is a mismatch",
+        "arm_manifest_projection": {
+          "removed_after_raw_integrity_verification": [
+            "payload_sha256",
+            "manifest_sha256",
+            "files.maintenance.sha256"
+          ],
+          "removed_timing_summary_fields": [
+            "maintenance_summary.compute_seconds",
+            "maintenance_summary.shap_seconds",
+            "maintenance_summary.surrogate_seconds",
+            "maintenance_summary.lifecycle_seconds",
+            "maintenance_summary.compute_seconds_per_opportunity",
+            "maintenance_summary.compute_seconds_per_publication"
+          ],
+          "equality_rule": "projected accepted and fresh arm manifests must have identical canonical JSON SHA-256 and exact recursive content equality",
+          "standalone_contract_id": "stage9.5-6-phase-b-arm-manifest-projection-v1",
+          "standalone_contract_path": "data/manifests/stage9_5_6_phase_b_arm_manifest_projection_v1.json",
+          "standalone_contract_blob_sha1": "140b123c706be6d2bcb60bfeb98b8aad3e6be1e8"
+        },
+        "seed_manifest_projection": {
+          "standalone_contract_id": "stage9.5-6-phase-b-seed-manifest-projection-v1",
+          "standalone_contract_path": "data/manifests/stage9_5_6_phase_b_seed_manifest_projection_v1.json",
+          "standalone_contract_blob_sha1": "3ab53d1af9131a1147cee60df293ff3e2900fb47",
+          "all_five_seeds_required": true,
+          "exact_three_arms_per_seed_required": true,
+          "phase_a_binding_rule": "each seed manifest shared_identity_sha256 and all_phase_a_shared_identity_sha256 must bind exactly to the passed aggregate Phase-A comparator result",
+          "arm_binding_rule": "each descriptor must target its expected arm path, bind to that arm comparator raw manifest identity, and the corresponding projected arm identities must be valid and equal",
+          "removed_after_raw_integrity_and_arm_projection_verification": [
+            "payload_sha256",
+            "manifest_sha256",
+            "arms.c_frozen_symbolic.sha256",
+            "arms.c_frozen_symbolic.manifest_sha256",
+            "arms.d_drift.sha256",
+            "arms.d_drift.manifest_sha256",
+            "arms.d_periodic.sha256",
+            "arms.d_periodic.manifest_sha256"
+          ],
+          "all_other_seed_manifest_content_exact": true,
+          "equality_rule": "projected accepted and fresh seed manifests must have identical canonical JSON SHA-256 and exact recursive content equality"
+        }
+      },
+      "summary_fallback_permitted": false,
+      "completion_predicate": {
+        "seeds_exactly": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "arms_exactly": [
+          "c_frozen_symbolic",
+          "d_drift",
+          "d_periodic"
+        ],
+        "every_arm_projected_comparison_passes": true,
+        "every_seed_projected_comparison_passes": true,
+        "accepted_maintenance_archive_required": true,
+        "summary_fallback_permitted": false,
+        "timing_exclusions_exactly_frozen": true,
+        "phase_a_identity_binding_required": true,
+        "missing_or_mismatch_fails_closed": true
+      },
+      "test_coverage_required": [
+        "missing required arm fails closed",
+        "extra arm fails closed",
+        "Phase-A shared identity mismatch fails closed",
+        "accepted maintenance JSONL missing while summary remains fails closed",
+        "all five seeds with all three verified arms pass only under frozen timing projection",
+        "missing fifth seed fails closed"
+      ]
+    },
+    "phase_c": {
+      "rerun_seed": 0,
+      "accepted_root": "phase_c_offline_evaluation_v1_1/seed-0",
+      "fresh_root_required": true,
+      "exact_scientific_projection_required": true,
+      "accepted_failure_lineage_required": true,
+      "original_failure_root": "phase_c_failed_v1/seed-0",
+      "correction_manifest_sha256": "d380fce5f9db8f0b639dc999298a263b10a10a3d02e35def226a121d098e2222",
+      "correction_source_head": "79ddc4c6d6dea52c7cabc55a6d082448fc24fcf9",
+      "phase_a_b_head": "bfa14b942e4a5b2fbfa8aa3c43728a7f1cd81645",
+      "accepted_stage8_evidence_commit": "c2ded83b8195b9321e715626c1f305f9627936e8",
+      "self_hash_and_transitive_hash_handling_must_be_explicitly_implemented_before_execution": false,
+      "preconditions_implementation": {
+        "implementation_status": "implemented_prospectively_frozen",
+        "tool_path": "tools/stage9_5/replay_equivalence_comparator.py",
+        "test_path": "tests/stage9_5/test_replay_equivalence_comparator.py",
+        "accepted_correction_manifest_sha256": "d380fce5f9db8f0b639dc999298a263b10a10a3d02e35def226a121d098e2222",
+        "correction_source_head": "79ddc4c6d6dea52c7cabc55a6d082448fc24fcf9",
+        "frozen_scientific_blocks": [
+          "governing_source_hashes",
+          "scenario",
+          "system_a",
+          "r0_v2",
+          "primary_control_plane",
+          "primary_symbolic_operator",
+          "fusion",
+          "analysis"
+        ],
+        "normalized_upstream_identity_fields": [
+          "correction.reused_upstream_artifacts.phase_a.*.run_manifest_sha256",
+          "correction.reused_upstream_artifacts.phase_b.*.phase_b_manifest_sha256"
+        ],
+        "raw_integrity_and_binding_order": [
+          "verify accepted and regenerated correction-config payload_sha256 and manifest_sha256 before projection",
+          "require the accepted correction manifest identity d380fce5f9db8f0b639dc999298a263b10a10a3d02e35def226a121d098e2222",
+          "require both correction configs to bind prepared_from_git_commit to historical correction source 79ddc4c6d6dea52c7cabc55a6d082448fc24fcf9",
+          "require every frozen scientific block to match exactly",
+          "bind every accepted/fresh Phase-A run_manifest_sha256 and Phase-B phase_b_manifest_sha256 in the correction config to the actual corresponding artifact manifest before normalization",
+          "bind accepted and fresh failed-v1 attempt.json/failure.json to the accepted correction config file/payload SHA-256 identities and require exactly those two lineage files"
+        ],
+        "derived_hash_fields_removed_after_raw_integrity_verification": [
+          "payload_sha256",
+          "manifest_sha256"
+        ],
+        "equality_rule": "after only the ten rebound upstream raw manifest identities are normalized, accepted and regenerated correction configs must have identical canonical JSON SHA-256 and exact recursive content equality",
+        "failed_v1_seed0_lineage_identity": {
+          "implementation_status": "implemented_prospectively_frozen",
+          "seed": 0,
+          "original_config_manifest_sha256": "3e3f768b5aa32f469440bb334508f747bbf2f7f5b08d9570a7aef2dbb9cb0257",
+          "phase": "offline_boundary_aware_evaluation",
+          "adaptive_components_received_boundary": false,
+          "exception_type": "NameError",
+          "message": "name 'read_jsonl' is not defined",
+          "successful_scoring_artifacts_present": false,
+          "exact_directory_entries": [
+            "attempt.json",
+            "failure.json"
+          ],
+          "semantic_requirements": [
+            "attempt.json seed must equal 0",
+            "attempt.json primary_config_manifest_sha256 must equal the frozen original config identity",
+            "attempt.json phase must equal offline_boundary_aware_evaluation",
+            "attempt.json adaptive_components_received_boundary must be false",
+            "failure.json seed must equal 0",
+            "failure.json phase must equal offline_boundary_aware_evaluation",
+            "failure.json adaptive_components_received_boundary must be false",
+            "failure.json exception_type must equal NameError",
+            "failure.json message must equal name 'read_jsonl' is not defined",
+            "the failed-v1 seed-0 directory must contain exactly attempt.json and failure.json; any extra outcome-bearing or successful-scoring artifact is forbidden"
+          ],
+          "raw_integrity_requirements": [
+            "accepted and fresh attempt.json file SHA-256 must match the frozen correction identity",
+            "accepted and fresh failure.json file SHA-256 must match the frozen correction identity",
+            "attempt.json and failure.json payload_sha256 must recompute exactly before semantic acceptance"
+          ]
+        }
+      },
+      "corrected_output_projection": {
+        "implementation_status": "implemented_prospectively_frozen",
+        "tool_path": "tools/stage9_5/replay_equivalence_comparator.py",
+        "test_path": "tests/stage9_5/test_replay_equivalence_comparator.py",
+        "historical_corrected_phase_c_source_head": "79ddc4c6d6dea52c7cabc55a6d082448fc24fcf9",
+        "historical_corrected_phase_c_source_blob_sha1": "83967545107ea7de29196b2e2cd187562e353ac5",
+        "raw_integrity_and_binding_order": [
+          "verify each arm evaluation payload_sha256 and summary_sha256 before projection",
+          "bind each arm evaluation primary_config_manifest_sha256 to its actual correction-config manifest",
+          "bind each arm evaluation phase_b_arm_manifest_sha256 and copied maintenance_summary to its actual Phase-B arm manifest",
+          "bind each arm evaluation shared_identity_sha256 to the actual Phase-A shared_identity.identity_sha256",
+          "verify prediction-trace path containment, compressed-file SHA-256, decompressed canonical JSONL SHA-256, row count, and frozen scenario stream-row count",
+          "verify the seed manifest payload_sha256 and manifest_sha256 before projection",
+          "bind the seed manifest to the actual correction-config, Phase-A seed-0 run manifest, Phase-B seed-0 manifest, and all three raw arm summary_sha256 values",
+          "require lambda_one_predictive_equality true and adaptive_components_received_boundary false"
+        ],
+        "normalized_fields": [
+          "arm_evaluation.primary_config_manifest_sha256",
+          "arm_evaluation.phase_b_arm_manifest_sha256",
+          "arm_evaluation.maintenance_summary.compute_seconds",
+          "arm_evaluation.maintenance_summary.shap_seconds",
+          "arm_evaluation.maintenance_summary.surrogate_seconds",
+          "arm_evaluation.maintenance_summary.lifecycle_seconds",
+          "arm_evaluation.maintenance_summary.compute_seconds_per_opportunity",
+          "arm_evaluation.maintenance_summary.compute_seconds_per_publication",
+          "phase_c_seed_manifest.primary_config_manifest_sha256",
+          "phase_c_seed_manifest.phase_a_run_manifest_sha256",
+          "phase_c_seed_manifest.phase_b_seed_manifest_sha256",
+          "phase_c_seed_manifest.arm_summary_sha256.*"
+        ],
+        "derived_hash_fields_removed_after_raw_integrity_verification": [
+          "arm_evaluation.payload_sha256",
+          "arm_evaluation.summary_sha256",
+          "phase_c_seed_manifest.payload_sha256",
+          "phase_c_seed_manifest.manifest_sha256"
+        ],
+        "exact_fields_include": [
+          "shared_identity_sha256",
+          "metrics_by_neural_weight",
+          "explanation",
+          "primary_windows",
+          "primary_recovery",
+          "all non-timing maintenance_summary fields",
+          "prediction_trace path",
+          "prediction_trace row_count",
+          "prediction_trace compressed sha256",
+          "prediction_trace canonical_jsonl_sha256",
+          "lambda_one_predictive_equality",
+          "trigger_diagnostics",
+          "neural_retention_probes",
+          "boundary_index",
+          "adaptive_components_received_boundary",
+          "seed",
+          "arm",
+          "status"
+        ],
+        "equality_rule": "after raw integrity/binding checks and only the predeclared upstream/timing projections, accepted and fresh corrected Phase-C seed-0 arm evaluations and seed manifest must have identical canonical JSON SHA-256 values and exact recursive content equality",
+        "standalone_comparison_contract": {
+          "contract_id": "stage9.5-6-phase-c-seed0-comparison-v1",
+          "contract_path": "data/manifests/stage9_5_6_phase_c_seed0_comparison_v1.json",
+          "contract_git_blob_sha1": "fb742009f96de39bff127a998607c93f63b2e485",
+          "document_path": "STAGE9_5_6_PHASE_C_SEED0_COMPARISON_CONTRACT_V1.md",
+          "document_git_blob_sha1": "7886f41a57f22cbe8bc234e0cfefcc49946e8f96",
+          "freeze_status": "prospectively_frozen_from_pre_outcome_sources",
+          "no_new_phase_c_diagnostic_exclusions": true,
+          "comparator_code_modified_in_this_freeze": false,
+          "existing_comparator_conformance_assessed_in_this_freeze": false,
+          "required_followup": "audit the existing comparator against the standalone contract before historical corrected Phase-C seed-0 replay outcomes are inspected; implementation corrections may tighten conformance only and may not add exclusions"
+        },
+        "allowed_phase_c_exclusions": {
+          "newly_added": [],
+          "inherited_phase_b_timing_only": [
+            "maintenance_summary.compute_seconds",
+            "maintenance_summary.shap_seconds",
+            "maintenance_summary.surrogate_seconds",
+            "maintenance_summary.lifecycle_seconds",
+            "maintenance_summary.compute_seconds_per_opportunity",
+            "maintenance_summary.compute_seconds_per_publication"
+          ]
+        },
+        "prediction_trace_rule": "exact accepted/fresh compressed-byte SHA-256 and exact decompressed canonical JSONL SHA-256; no projection or normalization",
+        "metrics_explanations_diagnostics_retention_rule": "exact recursive equality; no numeric tolerance or diagnostic exclusion"
+      },
+      "regenerated_correction_config_verifier": {
+        "verifier_id": "stage9.5-6-regenerated-correction-config-verifier-v1",
+        "implementation_status": "implemented_prospectively_frozen",
+        "tool_path": "tools/stage9_5/regenerated_correction_config_verifier.py",
+        "test_path": "tests/stage9_5/test_regenerated_correction_config_verifier.py",
+        "historical_phase_a_b_head": "bfa14b942e4a5b2fbfa8aa3c43728a7f1cd81645",
+        "correction_source_head": "79ddc4c6d6dea52c7cabc55a6d082448fc24fcf9",
+        "accepted_correction_manifest_sha256": "d380fce5f9db8f0b639dc999298a263b10a10a3d02e35def226a121d098e2222",
+        "accepted_stage8_evidence_commit": "c2ded83b8195b9321e715626c1f305f9627936e8",
+        "frozen_scientific_blocks": [
+          "governing_source_hashes",
+          "scenario",
+          "system_a",
+          "r0_v2",
+          "primary_control_plane",
+          "primary_symbolic_operator",
+          "fusion",
+          "analysis"
+        ],
+        "required_checks": [
+          "load the accepted correction config directly from the accepted Stage-8 evidence commit",
+          "verify accepted and regenerated correction-config payload_sha256 and manifest_sha256",
+          "require the accepted correction manifest identity exactly",
+          "require the accepted Stage-8 evidence, historical Phase-A/B head, and correction source head to exist in Git history with the accepted evidence on the current lineage",
+          "require accepted and regenerated correction configs to bind prepared_from_git_commit to the frozen correction source head",
+          "require all five accepted and regenerated Phase-A and Phase-B manifests to bind git_commit to the historical Phase-A/B head",
+          "require the regenerated correction config upstream manifest identities to equal the actual fresh Phase-A/B manifest identities",
+          "require every frozen scientific block to equal the accepted correction configuration exactly",
+          "require scientific_parameter_change, treatment_change, endpoint_change, threshold_change, and upstream_adaptive_artifact_reexecution to remain false"
+        ],
+        "post_outcome_scientific_field_changes_permitted": false,
+        "phase_c_outcomes_accessed": false,
+        "equality_rule": "all eight frozen scientific blocks must equal the accepted correction configuration exactly; no post-outcome scientific-field mutation is permitted"
+      }
+    }
+  },
+  "success_report_construction": {
+    "required_fields": {
+      "construction.contract_id": "stage9.5-6-replay-report-construction-v1",
+      "construction.producer_id": "stage9.5-6-replay-equivalence-assurance-v1",
+      "construction.manual_success_report_permitted": false,
+      "construction.deterministic_comparison_complete": true,
+      "construction.source_evidence_complete": true,
+      "construction.mismatch_count": 0,
+      "construction.comparator_id": "stage9.5-6-replay-equivalence-comparator-v1",
+      "construction.finalizer_id": "stage9.5-6-replay-report-finalizer-v1"
+    },
+    "pass_may_be_derived_only_from_deterministic_comparisons": true,
+    "missing_evidence_is_failure": true,
+    "mismatch_is_failure": true,
+    "manual_boolean_override_permitted": false,
+    "required_dynamic_fields": {
+      "construction.stage9_5_1_recovery_report_canonical_sha256": "sha256"
+    }
+  },
+  "current_blocker": {
+    "id": "stage9_5_1_recovery_not_verified",
+    "effect": "The deterministic Stage-9.5-6 producer now integrates Phase A, Phase B, exact failure lineage, correction-config verification, corrected Phase C, Stage-1 evidence, and direct replay-report finalization. It remains blocked until a successful frozen Stage-9.5-1 v1.2 recovery report proves all five exact System-A checkpoints and all 145/145 Stage-8 descriptor-linked heavy artifacts are verified."
+  },
+  "scientific_objects_modified": false,
+  "stage8_9_replacement": false,
+  "stage10_execution_permitted": false,
+  "comparison_evidence_contract": {
+    "audit_id": "stage9.5-6-replay-equivalence-comparison-v1",
+    "schema_version": 1,
+    "producer_id": "stage9.5-6-replay-equivalence-comparator-v1",
+    "manual_override_used": false,
+    "comparison_complete": true,
+    "source_evidence_complete": true,
+    "mismatch_count": 0,
+    "mismatches": [],
+    "failures": [],
+    "blockers": [],
+    "phase_a.complete_seeds": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "phase_b.complete_seeds": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "phase_c.rerun_seed": 0,
+    "phase_c.original_failure_lineage_preserved": true,
+    "phase_c.corrected_rerun_complete": true,
+    "accepted_maintenance_archive_verified": true,
+    "stage1_reconstructed_under_historical_environment": true,
+    "regenerated_correction_config_all_scientific_blocks_equal": true,
+    "historical_heads.phase_a_b": "bfa14b942e4a5b2fbfa8aa3c43728a7f1cd81645",
+    "historical_heads.correction_source": "79ddc4c6d6dea52c7cabc55a6d082448fc24fcf9",
+    "accepted_correction_manifest_sha256": "d380fce5f9db8f0b639dc999298a263b10a10a3d02e35def226a121d098e2222",
+    "accepted_stage8_evidence_commit": "c2ded83b8195b9321e715626c1f305f9627936e8",
+    "unresolved_class_a": [],
+    "scientific_objects_modified": false,
+    "stage10_outcomes_accessed": false,
+    "stage9_5_1_recovery_verified": true,
+    "stage9_5_1_recovery.system_a_checkpoints_verified": true,
+    "stage9_5_1_recovery.stage8_archive_verified": true,
+    "accepted_stage8_archive_identity_verified": true
+  },
+  "hostile_audit": {
+    "accepted_root_binding_rule": "Before comparison, the actual accepted_root must independently match the frozen accepted Stage-8 compact export surface (all 109 compact file descriptors by exact SHA-256) and the same frozen 145-file descriptor-linked heavy inventory used by Stage-9.5-1. A successful recovery report without this content binding is insufficient.",
+    "noncanonical_json_rule": "Comparator JSON and JSONL inputs reject NaN, Infinity, and -Infinity before any diagnostic or timing projection."
+  },
+  "hostile_audit_freeze": {
+    "audit_id": "stage9.5-6-comparator-finalizer-hostile-audit-v1",
+    "status": "clean_frozen_after_targeted_hostile_audit",
+    "implementation_head": "d4b9a3680b5fc4c85fb5016fc1cd2389236a94a1",
+    "exact_head_ci": {
+      "stage9_5_assurance_run_id": 39162361032,
+      "assurance_contract_job_id": 117778144027,
+      "assurance_test_result": "155 passed",
+      "stage9_robustness_run_id": 39162360963,
+      "stage9_robustness_conclusion": "success",
+      "order_gate_job_id": 117778144057,
+      "order_gate_conclusion": "success",
+      "expected_fresh_clone_state": "0 identity failures / 2 external-artifact blockers",
+      "expected_static_state": "triage_required; ruff=154; mypy=55",
+      "later_packages_unlocked": false,
+      "stage9_5_7_8_9_state": "skipped"
+    },
+    "frozen_blobs": {
+      "comparator": {
+        "path": "tools/stage9_5/replay_equivalence_comparator.py",
+        "git_blob_sha1": "ead2820b66f9499d002277084f0aa660f1ba30f0"
+      },
+      "finalizer": {
+        "path": "tools/stage9_5/replay_report_finalizer.py",
+        "git_blob_sha1": "6498663ede2ead6ed62dc26abe84b888f0b5587a"
+      },
+      "comparator_tests": {
+        "path": "tests/stage9_5/test_replay_equivalence_comparator.py",
+        "git_blob_sha1": "f64e93bb0c02d104437b8670603c420ec460bd78"
+      },
+      "finalizer_tests": {
+        "path": "tests/stage9_5/test_replay_report_finalizer.py",
+        "git_blob_sha1": "4b45ab3cdcc49327a7e875fb676cb12d88f038c9"
+      }
+    },
+    "attacks_audited": [
+      "missing files",
+      "duplicate JSON keys",
+      "NaN/noncanonical JSON",
+      "path traversal",
+      "reordered records",
+      "forged self-hashes",
+      "timing-only differences",
+      "non-timing differences",
+      "incomplete seed/arm sets",
+      "wrong historical heads",
+      "manual success fields",
+      "nonzero hidden mismatches"
+    ],
+    "concrete_fail_open_defects_corrected": [
+      {
+        "id": "noncanonical_timing_json_projection_bypass",
+        "correction": "Comparator JSON and JSONL inputs now reject NaN, Infinity, and -Infinity before diagnostic/timing projection."
+      },
+      {
+        "id": "accepted_root_substitution",
+        "correction": "The comparator now independently verifies the actual accepted_root against all 109 exact compact Stage-8 export descriptors and the frozen 145 descriptor-linked heavy-file requirements before comparison success is possible."
+      }
+    ],
+    "accepted_root_binding": {
+      "compact_exact_file_count": 109,
+      "heavy_descriptor_linked_file_count": 145,
+      "recovery_report_alone_sufficient": false
+    },
+    "audit_history": {
+      "initial_live_head": "581263aa966a94371684b676f5f1419796004356",
+      "failed_candidate_head": "7b6ce1790df5fda29bf1e78204f13d54adbcd2f7",
+      "failed_candidate_reason": "Test incorrectly treated the compact export layout as identical to the original source layout; exactly two preserved failed Phase-C files are intentionally renamed in compact export.",
+      "corrective_commit": "d4b9a3680b5fc4c85fb5016fc1cd2389236a94a1",
+      "corrective_scope": "test-only source-layout reconstruction; production comparator binding was not relaxed"
+    },
+    "residual_trust_boundary": "External Stage-9.5-6 execution is allowed by frozen governance. Canonical hashes and source identities detect evidence mutation/substitution but do not cryptographically attest that a malicious operator actually invoked the comparator. GitHub Actions identities remain supplemental unless an authoritative execution/transfer mechanism is prospectively frozen.",
+    "real_replay_executed": false,
+    "replay_outcomes_inspected": false,
+    "stage10_outcomes_accessed": false,
+    "scientific_objects_modified": false
+  },
+  "hostile_audit_freeze_v2": {
+    "audit_id": "stage9.5-6-comparator-finalizer-hostile-audit-v2",
+    "status": "clean_frozen_after_targeted_hostile_audit",
+    "freeze_scope": "comparator_finalizer_pipeline_only",
+    "implementation_head": "c0a849f2323b8f4647f27b59f90a12f29c4c1fd0",
+    "exact_head_ci": {
+      "stage9_5_assurance_run_id": 39163502855,
+      "stage9_5_assurance_conclusion": "failure_expected_only_static_and_fresh_clone",
+      "assurance_contract_job_id": 117781562788,
+      "assurance_contract_conclusion": "success",
+      "assurance_test_result": "157 passed",
+      "stage9_robustness_run_id": 39163502922,
+      "stage9_robustness_conclusion": "success",
+      "order_gate_job_id": 117781563014,
+      "order_gate_conclusion": "success",
+      "fresh_clone_job_id": 117781562940,
+      "expected_fresh_clone_state": "0 identity failures / 2 external-artifact blockers",
+      "static_assurance_job_id": 117781562974,
+      "expected_static_state": "triage_required; ruff=154; mypy=55",
+      "later_packages_unlocked": false,
+      "stage9_5_7_8_9_state": "skipped"
+    },
+    "frozen_blobs": {
+      "comparator": {
+        "path": "tools/stage9_5/replay_equivalence_comparator.py",
+        "git_blob_sha1": "ead2820b66f9499d002277084f0aa660f1ba30f0",
+        "unchanged_from_v1_freeze": true
+      },
+      "finalizer": {
+        "path": "tools/stage9_5/replay_report_finalizer.py",
+        "git_blob_sha1": "c4a6406f9c642dc2ddffd526f517af3d14e902f8"
+      },
+      "comparator_tests": {
+        "path": "tests/stage9_5/test_replay_equivalence_comparator.py",
+        "git_blob_sha1": "f64e93bb0c02d104437b8670603c420ec460bd78",
+        "unchanged_from_v1_freeze": true
+      },
+      "finalizer_tests": {
+        "path": "tests/stage9_5/test_replay_report_finalizer.py",
+        "git_blob_sha1": "0b1a59d53be08e7781f196254efd78810be441a8"
+      }
+    },
+    "attacks_audited": [
+      "missing files",
+      "duplicate JSON keys",
+      "NaN/noncanonical JSON",
+      "path traversal",
+      "reordered records",
+      "forged self-hashes",
+      "timing-only differences",
+      "non-timing differences",
+      "incomplete seed/arm sets",
+      "wrong historical heads",
+      "manual success fields",
+      "nonzero hidden mismatches"
+    ],
+    "attack_results": {
+      "missing_files": "fail_closed",
+      "duplicate_json_keys": "fail_closed",
+      "noncanonical_json": "fail_closed_before_comparator_projection_or_no_success_report",
+      "path_traversal": "fail_closed",
+      "reordered_records": "fail_closed",
+      "forged_self_hashes": "fail_closed",
+      "timing_only_differences": "accepted_only_on_frozen_projection_surface",
+      "non_timing_differences": "fail_closed",
+      "incomplete_seed_arm_sets": "fail_closed",
+      "wrong_historical_heads": "fail_closed",
+      "manual_success_fields": "fail_closed",
+      "nonzero_hidden_mismatches": "fail_closed_after_v2_correction"
+    },
+    "new_concrete_fail_open_defects_corrected": [
+      {
+        "id": "hidden_nested_comparison_contradiction",
+        "defect": "A resealed comparison-evidence document could retain clean top-level mismatch/failure totals while embedding pass=false, nonzero mismatch_count, nonempty mismatches, failures, or blockers in nested comparator detail, allowing the finalizer to emit pass=true.",
+        "correction": "The finalizer now recursively scans the entire comparison-evidence tree and rejects any nested pass=false, dependency_gate_pass=false, nonempty failures/blockers/mismatches, or nonzero mismatch_count before success can be emitted.",
+        "production_commit": "94fa07be1162c34a23233bebfe9413fa4f2e7dda",
+        "full_tree_hardening_commit": "60e24b6c76d032323ca50d91fdd376186d870957",
+        "regression_test_commit": "c0a849f2323b8f4647f27b59f90a12f29c4c1fd0"
+      }
+    ],
+    "prior_v1_freeze_preserved": true,
+    "residual_trust_boundary": "External Stage-9.5-6 execution remains allowed by frozen governance. Canonical hashes, exact source identities, direct accepted-root binding, and nested semantic consistency checks detect evidence mutation/substitution and contradictory evidence, but do not cryptographically attest that a malicious operator actually invoked the comparator. GitHub Actions identities remain supplemental unless an authoritative execution/transfer mechanism is prospectively frozen.",
+    "real_replay_executed": false,
+    "replay_outcomes_inspected": false,
+    "stage10_outcomes_accessed": false,
+    "scientific_objects_modified": false
+  }
+}

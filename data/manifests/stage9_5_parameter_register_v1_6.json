@@ -1,0 +1,2377 @@
+{
+  "schema_version": "1.3",
+  "protocol_id": "stage9.5-q1-assurance-v1",
+  "status": "v1_6_execution_mirror_and_false_positive_classification",
+  "upstream_closure_head": "4dca828acb3916feb3f30d61f1b587240a6eba19",
+  "protocol_freeze_commit": "cf9bb49cc18c751872a12d3530df8ff78d26d67a",
+  "classification_classes": [
+    "scientific_hyperparameter",
+    "algorithm_library_default",
+    "causal_design_constant",
+    "statistical_estimand_definition",
+    "scenario_construction_constant",
+    "reproducibility_rng_constant",
+    "derived_quantity"
+  ],
+  "required_entry_fields": [
+    "id",
+    "class",
+    "accepted_value",
+    "source_locations",
+    "freeze_provenance",
+    "rationale",
+    "leverage",
+    "changes_scientific_object",
+    "completed_sensitivity",
+    "future_disposition",
+    "reviewer_justification"
+  ],
+  "scan_policy": {
+    "python_ast_literals": true,
+    "json_scalar_values": true,
+    "markdown_numeric_and_policy_tokens": true,
+    "retain_exclusion_log": true,
+    "unclassified_high_leverage_blocks_closure": true,
+    "high_leverage_domains": [
+      "scenario_membership_or_chronology",
+      "target_or_feature_semantics",
+      "information_timing",
+      "drift_detection_or_event_timing",
+      "adaptation_or_replay",
+      "fusion_or_threshold_authority",
+      "symbolic_generation_validation_gate_lifecycle",
+      "trigger_budget_or_schedule",
+      "endpoint_estimand_or_inference",
+      "rng_determinism_or_identity"
+    ],
+    "canonical_config_only": true,
+    "historical_ledger_literal_scan": false,
+    "semantic_family_matching": true,
+    "provenance_runtime_mirrors_are_parameter_exclusions": true,
+    "markdown_mode": "explicit_parameter_declarations_only",
+    "q1_register_audited_outside_numeric_parameter_discovery": true,
+    "formatted_numeric_normalization": true,
+    "zero_unclassified_material_required": true
+  },
+  "scan_roots": {
+    "manifests": [
+      "data/manifests/cd_primary_run_config_v1_1.json",
+      "data/manifests/cd_stage9_run_config_v1_1.json"
+    ],
+    "scientific_source": [
+      "run.py",
+      "run_stage9.py",
+      "src/concept_drift_ids/cd_analysis.py",
+      "src/concept_drift_ids/cd_control_plane.py",
+      "src/concept_drift_ids/cd_evidence.py",
+      "src/concept_drift_ids/cd_implementation_preflight.py",
+      "src/concept_drift_ids/cd_primary_adapter.py",
+      "src/concept_drift_ids/cd_primary_config.py",
+      "src/concept_drift_ids/cd_primary_correction.py",
+      "src/concept_drift_ids/cd_primary_export.py",
+      "src/concept_drift_ids/cd_primary_phase_a.py",
+      "src/concept_drift_ids/cd_primary_phase_b.py",
+      "src/concept_drift_ids/cd_primary_phase_c.py",
+      "src/concept_drift_ids/cd_r0_lifecycle.py",
+      "src/concept_drift_ids/cd_runtime.py",
+      "src/concept_drift_ids/cd_shared_runner.py",
+      "src/concept_drift_ids/cd_stage9_config.py",
+      "src/concept_drift_ids/cd_stage9_execute.py",
+      "src/concept_drift_ids/cd_stage9_export.py",
+      "src/concept_drift_ids/cd_stage9_monitor.py",
+      "src/concept_drift_ids/cd_stage9_offline.py",
+      "src/concept_drift_ids/cd_stage9_phase_a.py",
+      "src/concept_drift_ids/cd_stage9_phase_b.py",
+      "src/concept_drift_ids/cd_stage9_phase_c.py",
+      "src/concept_drift_ids/cd_stage9_shared_runner.py",
+      "src/concept_drift_ids/cd_symbolic_arms.py",
+      "src/concept_drift_ids/cd_symbolic_candidates.py",
+      "src/concept_drift_ids/cd_symbolic_evaluation.py",
+      "src/concept_drift_ids/cd_symbolic_evidence.py",
+      "src/concept_drift_ids/cd_symbolic_lifecycle.py",
+      "src/concept_drift_ids/cd_symbolic_runner.py",
+      "src/concept_drift_ids/frozen_preprocessing.py",
+      "src/concept_drift_ids/neural.py",
+      "src/concept_drift_ids/scenario_loader.py",
+      "src/concept_drift_ids/scenario_manifest.py",
+      "src/concept_drift_ids/symbolic.py",
+      "src/concept_drift_ids/system_a.py",
+      "tests/test_cd_stage9_unit.py"
+    ],
+    "protocols": [
+      "STAGE8_PRIMARY_EXECUTION_PROTOCOL.md",
+      "STAGE9_PRESPECIFIED_ROBUSTNESS_PROTOCOL.md",
+      "STAGE9_5_Q1_INDEPENDENT_ASSURANCE_PROTOCOL.md"
+    ]
+  },
+  "entries": [
+    {
+      "id": "adaptation.current_window",
+      "class": "scientific_hyperparameter",
+      "accepted_value": 10000,
+      "source_locations": [
+        "data/manifests/cd_primary_run_config_v1.json",
+        "data/manifests/cd_primary_run_config_v1_1.json",
+        "src/concept_drift_ids/cd_control_plane.py"
+      ],
+      "freeze_provenance": "primary adaptation protocol",
+      "rationale": "Defines mature current evidence budget.",
+      "leverage": "high",
+      "changes_scientific_object": false,
+      "completed_sensitivity": "no direct window-size sensitivity",
+      "future_disposition": "prospective adaptation/evidence-budget sensitivity candidate",
+      "reviewer_justification": "Potentially high leverage, but must be tested prospectively rather than retuned.",
+      "locator_patterns": [
+        "^primary_control_plane\\.config\\.current_window$",
+        "^PRIMARY_CURRENT_WINDOW$"
+      ]
+    },
+    {
+      "id": "adaptation.optimizer",
+      "class": "scientific_hyperparameter",
+      "accepted_value": "fresh Adam lr=1e-4 weight_decay=1e-5 batch=1024 epochs=5; no scheduler/early-stop",
+      "source_locations": [
+        "data/manifests/cd_primary_run_config_v1.json",
+        "data/manifests/cd_primary_run_config_v1_1.json",
+        "src/concept_drift_ids/cd_control_plane.py"
+      ],
+      "freeze_provenance": "primary neural-adaptation protocol",
+      "rationale": "Matched neural update budget.",
+      "leverage": "medium",
+      "changes_scientific_object": false,
+      "completed_sensitivity": "none",
+      "future_disposition": "prefer bounded adaptation-strength sensitivity, not broad optimizer search",
+      "reviewer_justification": "Exact matching across C/D preserves causal isolation; broad tuning would be post-hoc.",
+      "locator_patterns": [
+        "^primary_control_plane\\.config\\.neural_update\\.(learning_rate|weight_decay)$",
+        "^PRIMARY_(LEARNING_RATE|WEIGHT_DECAY|BATCH_SIZE|EPOCHS)$",
+        "^primary_control_plane\\.config\\.neural_update\\.(learning_rate|weight_decay|batch_size|epochs)$"
+      ],
+      "scan_values": [
+        0.0001,
+        0.00001,
+        1024,
+        5
+      ]
+    },
+    {
+      "id": "adaptation.replay",
+      "class": "scientific_hyperparameter",
+      "accepted_value": {
+        "anchor_capacity": 10000,
+        "online_capacity": 10000,
+        "anchor_per_update": 5000,
+        "online_per_update": 5000
+      },
+      "source_locations": [
+        "data/manifests/cd_primary_run_config_v1.json",
+        "data/manifests/cd_primary_run_config_v1_1.json",
+        "src/concept_drift_ids/cd_control_plane.py",
+        "src/concept_drift_ids/cd_stage9_phase_a.py"
+      ],
+      "freeze_provenance": "primary adaptation protocol",
+      "rationale": "Continual-learning retention budget shared across symbolic arms.",
+      "leverage": "high",
+      "changes_scientific_object": false,
+      "completed_sensitivity": "Stage-9 no-replay",
+      "future_disposition": "bounded prospective replay-ratio/budget sensitivity only if needed",
+      "reviewer_justification": "Shared neural trajectory means it does not confound C-vs-D, but affects generalizability.",
+      "locator_patterns": [
+        "^primary_control_plane\\.config\\.(reservoir_capacity|replay_anchor_rows|replay_online_rows)$",
+        "^PRIMARY_(ANCHOR_CAPACITY|ONLINE_RESERVOIR_CAPACITY|REPLAY_ROWS|REPLAY_ANCHOR_ROWS|REPLAY_ONLINE_ROWS)$",
+        "replay_anchor_rows|replay_online_rows|reservoir_capacity"
+      ]
+    },
+    {
+      "id": "analysis.all_five_seeds_required",
+      "class": "statistical_estimand_definition",
+      "accepted_value": true,
+      "scan_values": [
+        true
+      ],
+      "source_locations": [
+        "data/manifests/cd_stage9_run_config_v1_1.json"
+      ],
+      "locator_patterns": [
+        "^analysis\\.all_five_seeds_required$"
+      ],
+      "freeze_provenance": "Stage-9 complete-condition export rule",
+      "rationale": "Every prespecified condition requires all five primary seeds.",
+      "leverage": "high",
+      "changes_scientific_object": true,
+      "completed_sensitivity": "all accepted Stage-9 conditions include five seeds",
+      "future_disposition": "freeze",
+      "reviewer_justification": "Prevents selective seed omission."
+    },
+    {
+      "id": "analysis.confirmatory_endpoint_ids",
+      "class": "statistical_estimand_definition",
+      "accepted_value": [
+        "E1_post_mcc_d_drift_minus_c",
+        "E2_post_mcsc_d_drift_minus_c",
+        "E3_post_mcsc_d_drift_minus_d_periodic"
+      ],
+      "source_locations": [
+        "data/manifests/cd_primary_run_config_v1_1.json",
+        "data/manifests/cd_stage9_run_config_v1_1.json",
+        "src/concept_drift_ids/cd_analysis.py"
+      ],
+      "locator_patterns": [
+        "(^|\\.)analysis\\.confirmatory_endpoints\\.",
+        "PRIMARY_CONFIRMATORY_ENDPOINTS",
+        "^analysis\\.confirmatory_endpoints\\["
+      ],
+      "freeze_provenance": "Stage-8 statistical analysis plan",
+      "rationale": "Names the frozen primary endpoint family.",
+      "leverage": "high",
+      "changes_scientific_object": true,
+      "completed_sensitivity": "definitions frozen",
+      "future_disposition": "leave",
+      "reviewer_justification": "Endpoint identity must not change after outcomes.",
+      "scan_values": [
+        "E1_post_mcc_d_drift_minus_c",
+        "E2_post_mcsc_d_drift_minus_c",
+        "E3_post_mcsc_d_drift_minus_d_periodic"
+      ]
+    },
+    {
+      "id": "analysis.familywise_alpha",
+      "class": "statistical_estimand_definition",
+      "accepted_value": 0.05,
+      "scan_values": [
+        0.05
+      ],
+      "source_locations": [
+        "src/concept_drift_ids/cd_analysis.py"
+      ],
+      "locator_patterns": [
+        "familywise_alpha"
+      ],
+      "freeze_provenance": "Stage-8 confirmatory analysis implementation",
+      "rationale": "Nominal familywise alpha reported for the frozen three-test family.",
+      "leverage": "medium",
+      "changes_scientific_object": true,
+      "completed_sensitivity": "none",
+      "future_disposition": "freeze",
+      "reviewer_justification": "Changing alpha after results would be post-outcome inference."
+    },
+    {
+      "id": "analysis.recovery_reference_windows",
+      "class": "statistical_estimand_definition",
+      "accepted_value": 3,
+      "scan_values": [
+        3
+      ],
+      "source_locations": [
+        "src/concept_drift_ids/cd_analysis.py",
+        "src/concept_drift_ids/cd_primary_phase_c.py"
+      ],
+      "locator_patterns": [
+        "recovery_time|final_three|pre\\[-3|pre_windows.*3|_recovery_summary"
+      ],
+      "freeze_provenance": "secondary recovery definition",
+      "rationale": "Recovery baseline uses the final three pre-reference reporting windows.",
+      "leverage": "medium",
+      "changes_scientific_object": true,
+      "completed_sensitivity": "reporting-window sensitivity already shows recovery dependence",
+      "future_disposition": "freeze as secondary/descriptive",
+      "reviewer_justification": "Recovery is not redefined to improve timing."
+    },
+    {
+      "id": "assurance.high_risk_mutant_kill_rule",
+      "class": "statistical_estimand_definition",
+      "accepted_value": "100% of defined high-risk scientific mutants must be killed; justified equivalent/non-executable mutants cannot be silently removed",
+      "source_locations": [
+        "STAGE9_5_Q1_INDEPENDENT_ASSURANCE_PROTOCOL.md"
+      ],
+      "locator_patterns": [
+        "100% kill",
+        "100%.*high-risk"
+      ],
+      "freeze_provenance": "prospective Stage-9.5 assurance protocol",
+      "rationale": "Fail-closed mutation assurance criterion.",
+      "leverage": "high",
+      "changes_scientific_object": false,
+      "completed_sensitivity": "not applicable; assurance criterion",
+      "future_disposition": "leave",
+      "reviewer_justification": "Criterion was set before mutation results.",
+      "scan_values": [
+        100
+      ]
+    },
+    {
+      "id": "assurance.numeric_tolerances",
+      "class": "statistical_estimand_definition",
+      "accepted_value": {
+        "exact_json_abs_tol": 1e-12,
+        "recomputed_float_abs_tol": 1e-10
+      },
+      "source_locations": [
+        "STAGE9_5_Q1_INDEPENDENT_ASSURANCE_PROTOCOL.md"
+      ],
+      "locator_patterns": [
+        "absolute tolerance.*1e-12",
+        "absolute tolerance.*1e-10"
+      ],
+      "freeze_provenance": "prospective Stage-9.5 assurance protocol",
+      "rationale": "Predeclares equality tolerances before independent recomputation.",
+      "leverage": "high",
+      "changes_scientific_object": false,
+      "completed_sensitivity": "not applicable; assurance criterion",
+      "future_disposition": "leave for Stage-9.5 v1",
+      "reviewer_justification": "Tolerance is an audit acceptance rule and cannot be loosened after seeing discrepancies.",
+      "scan_values": [
+        1e-12,
+        1e-10
+      ]
+    },
+    {
+      "id": "design.phase_execution_locking",
+      "class": "causal_design_constant",
+      "accepted_value": {
+        "phase_a_freeze": true,
+        "phase_a_reexecution": false,
+        "phase_b_shared_identity": true,
+        "phase_b_reexecution": false,
+        "reuse_verified_phase_a_b": true
+      },
+      "scan_values": [
+        true,
+        false
+      ],
+      "source_locations": [
+        "data/manifests/cd_primary_run_config_v1_1.json"
+      ],
+      "locator_patterns": [
+        "^execution\\.(phase_a_must_freeze_before_phase_b|phase_a_reexecution_allowed|phase_b_must_use_shared_phase_a_identity|phase_b_reexecution_allowed|reuse_verified_phase_a_b_from_parent_config)$"
+      ],
+      "freeze_provenance": "Stage-8 corrected execution contract",
+      "rationale": "Prevents treatment re-execution and requires shared Phase-A identity.",
+      "leverage": "high",
+      "changes_scientific_object": true,
+      "completed_sensitivity": "regression/identity tests",
+      "future_disposition": "freeze",
+      "reviewer_justification": "These guards enforce matched causal isolation."
+    },
+    {
+      "id": "design.primary_arms",
+      "class": "causal_design_constant",
+      "accepted_value": [
+        "c_frozen_symbolic",
+        "d_drift",
+        "d_periodic"
+      ],
+      "source_locations": [
+        "src/concept_drift_ids/cd_primary_config.py",
+        "src/concept_drift_ids/cd_primary_phase_b.py",
+        "src/concept_drift_ids/cd_stage9_phase_b.py",
+        "src/concept_drift_ids/cd_symbolic_runner.py",
+        "data/manifests/cd_primary_run_config_v1_1.json"
+      ],
+      "locator_patterns": [
+        "PRIMARY_ARMS",
+        "ARM_NAMES",
+        "^arm$",
+        "^execution\\.arms\\["
+      ],
+      "freeze_provenance": "Stage-8 primary execution protocol/config",
+      "rationale": "Defines the accepted matched treatment/comparator arms.",
+      "leverage": "high",
+      "changes_scientific_object": true,
+      "completed_sensitivity": "Stage-9 robustness perturbs implementation choices without replacing these causal arms",
+      "future_disposition": "freeze",
+      "reviewer_justification": "Arm identity is part of the estimand and cannot be changed after outcome inspection.",
+      "scan_values": [
+        "c_frozen_symbolic",
+        "d_drift",
+        "d_periodic"
+      ]
+    },
+    {
+      "id": "design.primary_execution_phases",
+      "class": "causal_design_constant",
+      "accepted_value": [
+        "phase_a_shared_control_plane",
+        "phase_b_symbolic_arms",
+        "phase_c_offline_evaluation"
+      ],
+      "source_locations": [
+        "src/concept_drift_ids/cd_primary_config.py",
+        "data/manifests/cd_primary_run_config_v1_1.json"
+      ],
+      "locator_patterns": [
+        "PRIMARY_PHASES",
+        "^execution\\.phase_order\\["
+      ],
+      "freeze_provenance": "Stage-8 execution protocol/config",
+      "rationale": "Defines the causal execution separation between shared neural adaptation, symbolic arms, and offline boundary-aware scoring.",
+      "leverage": "high",
+      "changes_scientific_object": true,
+      "completed_sensitivity": "not applicable",
+      "future_disposition": "freeze",
+      "reviewer_justification": "Collapsing or reordering these phases could change information flow and causal isolation.",
+      "scan_values": [
+        "phase_a_shared_control_plane",
+        "phase_b_symbolic_arms",
+        "phase_c_offline_evaluation"
+      ]
+    },
+    {
+      "id": "detector.epoch_state_ids",
+      "class": "derived_quantity",
+      "accepted_value": [
+        0,
+        1
+      ],
+      "source_locations": [
+        "src/concept_drift_ids/cd_stage9_monitor.py"
+      ],
+      "locator_patterns": [
+        "^epoch_id$"
+      ],
+      "freeze_provenance": "detector state-machine implementation",
+      "rationale": "0 denotes pre-start/uninitialized epoch identity and 1 denotes the first started checkpoint-pure detector epoch; later epochs increment deterministically.",
+      "leverage": "low",
+      "changes_scientific_object": false,
+      "completed_sensitivity": "not applicable",
+      "future_disposition": "verify state transitions through property/mutation tests; do not tune IDs",
+      "reviewer_justification": "These integers label state-machine epochs and are not detector sensitivity parameters.",
+      "scan_values": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "drift.adwin_defaults",
+      "class": "algorithm_library_default",
+      "accepted_value": {
+        "delta": 0.002,
+        "clock": 32,
+        "max_buckets": 5,
+        "min_window_length": 5,
+        "grace_period": 10
+      },
+      "source_locations": [
+        "data/manifests/cd_primary_run_config_v1.json",
+        "src/concept_drift_ids/cd_stage9_monitor.py",
+        "data/manifests/cd_primary_run_config_v1_1.json",
+        "src/concept_drift_ids/cd_control_plane.py"
+      ],
+      "freeze_provenance": "primary drift-monitor freeze",
+      "rationale": "Explicitly frozen River defaults.",
+      "leverage": "medium",
+      "changes_scientific_object": false,
+      "completed_sensitivity": "detector-family/signal sensitivities completed",
+      "future_disposition": "single-parameter sensitivity only if trigger-specific claim requires",
+      "reviewer_justification": "Defaults are recorded and frozen; broad post-hoc tuning grid is not warranted.",
+      "locator_patterns": [
+        "^primary_control_plane\\.adwin\\.",
+        "^ADWIN_CONFIG$",
+        "\"(delta|clock|max_buckets|min_window_length|grace_period)\""
+      ],
+      "scan_values": [
+        0.002,
+        32,
+        5,
+        10
+      ]
+    },
+    {
+      "id": "drift.primary_detector",
+      "class": "algorithm_library_default",
+      "accepted_value": "River ADWIN on delayed checkpoint-pure hard error",
+      "source_locations": [
+        "data/manifests/cd_primary_run_config_v1.json",
+        "src/concept_drift_ids/cd_stage9_monitor.py",
+        "data/manifests/cd_primary_run_config_v1_1.json",
+        "data/manifests/cd_stage9_run_config_v1_1.json"
+      ],
+      "freeze_provenance": "primary control-plane protocol",
+      "rationale": "Endogenous supervised drift gate tied to predictive degradation.",
+      "leverage": "high",
+      "changes_scientific_object": false,
+      "completed_sensitivity": "Page-Hinkley hard-error and ADWIN Brier",
+      "future_disposition": "leave primary family",
+      "reviewer_justification": "Alternative families are robustness checks, not retrospective replacements.",
+      "locator_patterns": [
+        "^conditions\\.adaptive\\.(latency_0|latency_10000|no_replay)\\.detector_family$",
+        "^conditions\\.adaptive\\.(latency_0|latency_10000|no_replay)\\.detector_signal$"
+      ],
+      "scan_values": [
+        "adwin",
+        "hard_error"
+      ]
+    },
+    {
+      "id": "evaluation.phase_c_inference_batch_size",
+      "class": "reproducibility_rng_constant",
+      "accepted_value": 4096,
+      "source_locations": [
+        "src/concept_drift_ids/cd_primary_phase_c.py",
+        "src/concept_drift_ids/cd_symbolic_runner.py"
+      ],
+      "locator_patterns": [
+        "^batch_size$",
+        "_predict_probabilities|batch_size"
+      ],
+      "freeze_provenance": "accepted Stage-8 Phase-C offline scoring implementation",
+      "rationale": "Controls only batched deterministic probability inference for development/pre-reference checkpoint diagnostics; it does not train or adapt any model and does not change the statistical estimand.",
+      "leverage": "low",
+      "changes_scientific_object": false,
+      "completed_sensitivity": "not required; numerical equivalence is protected by deterministic inference and Stage-9.5 independent recomputation",
+      "future_disposition": "record and leave historical implementation unchanged",
+      "reviewer_justification": "This is compute chunking for offline inference, not a model or treatment hyperparameter.",
+      "scan_values": [
+        4096
+      ]
+    },
+    {
+      "id": "fusion.evaluation_weight_set",
+      "class": "scientific_hyperparameter",
+      "accepted_value": [
+        0.5,
+        0.7,
+        0.9,
+        1
+      ],
+      "source_locations": [
+        "src/concept_drift_ids/cd_primary_phase_c.py",
+        "STAGE8_PRIMARY_EXECUTION_PROTOCOL.md"
+      ],
+      "locator_patterns": [
+        "PRIMARY_WEIGHTS",
+        "evaluates lambda=.*sensitivities"
+      ],
+      "freeze_provenance": "accepted Phase-C/fusion evaluation surface",
+      "rationale": "Enumerates the frozen neural-weight values used for primary/sensitivity/negative-control fusion evaluation.",
+      "leverage": "high",
+      "changes_scientific_object": false,
+      "completed_sensitivity": "lambda 0.70/0.90/1.00 reported; lambda 1.00 is the exact neural-only negative control",
+      "future_disposition": "do not select a favorable replacement primary; retain 0.50 as primary",
+      "reviewer_justification": "The evaluated set is frozen and all reported values are retained rather than winner-selected.",
+      "scan_values": [
+        0.5,
+        0.7,
+        0.9,
+        1
+      ]
+    },
+    {
+      "id": "fusion.frozen_threshold_maps",
+      "class": "derived_quantity",
+      "accepted_value": "seed-specific development-frozen fused thresholds for lambda 0.50/0.70/0.90/1.00",
+      "source_locations": [
+        "data/manifests/cd_primary_run_config_v1_1.json",
+        "src/concept_drift_ids/cd_symbolic_evaluation.py"
+      ],
+      "locator_patterns": [
+        "^fusion\\.thresholds\\.",
+        "^frozen_primary_contract\\.contract\\.fusion\\.thresholds\\.",
+        "^FUSION_THRESHOLDS$"
+      ],
+      "freeze_provenance": "development-only fusion/threshold procedure",
+      "rationale": "Preserves fixed operating points for primary and prespecified lambda sensitivities.",
+      "leverage": "high",
+      "changes_scientific_object": true,
+      "completed_sensitivity": "lambda family 0.70/0.90/1.00 completed",
+      "future_disposition": "leave exactly; no post-hoc recalibration",
+      "reviewer_justification": "Per-seed values are derived outputs of a frozen development procedure, not separate tuned hyperparameters.",
+      "scan_values": [
+        0.692427396774292,
+        0.9354645609855652,
+        0.8299936652183533,
+        0.9747405052185059,
+        0.9527904391288757,
+        0.698998749256134,
+        0.9423287034034729,
+        0.8308807015419006,
+        0.9025245904922485,
+        0.9258511900901795,
+        0.8964613080024719,
+        0.9448108673095703,
+        0.9337316751480103,
+        0.9123510122299194,
+        0.9789738655090332,
+        0.9561389088630676
+      ]
+    },
+    {
+      "id": "fusion.lambda_one_control",
+      "class": "causal_design_constant",
+      "accepted_value": "lambda=1 gives exactly zero symbolic predictive authority",
+      "source_locations": [
+        "src/concept_drift_ids/cd_stage9_phase_c.py",
+        "tests/test_cd_stage9_unit.py",
+        "STAGE8_PRIMARY_EXECUTION_PROTOCOL.md",
+        "STAGE9_PRESPECIFIED_ROBUSTNESS_PROTOCOL.md",
+        "STAGE9_5_Q1_INDEPENDENT_ASSURANCE_PROTOCOL.md",
+        "data/manifests/cd_stage9_run_config_v1_1.json"
+      ],
+      "freeze_provenance": "prespecified negative control",
+      "rationale": "Tests whether arm differences pass through symbolic state/fusion rather than neural divergence.",
+      "leverage": "high",
+      "changes_scientific_object": true,
+      "completed_sensitivity": "exact Stage-9 equality observed",
+      "future_disposition": "verify mechanically in Stage 9.5",
+      "reviewer_justification": "This is a causal falsification control, not a tunable parameter.",
+      "locator_patterns": [
+        "^conditions\\.offline\\.lambda_1_0\\.neural_weight$",
+        "negative control",
+        "lambda=1.*verification",
+        "^neural_weight$",
+        "^weight$"
+      ],
+      "scan_values": [
+        1,
+        1
+      ]
+    },
+    {
+      "id": "fusion.no_post_hoc_recalibration",
+      "class": "causal_design_constant",
+      "accepted_value": false,
+      "source_locations": [
+        "data/manifests/cd_primary_run_config_v1_1.json"
+      ],
+      "locator_patterns": [
+        "^fusion\\.post_hoc_recalibration$",
+        "^frozen_primary_contract\\.contract\\.fusion\\.post_hoc_recalibration$"
+      ],
+      "freeze_provenance": "fusion protocol",
+      "rationale": "Prevents adaptive outcomes from moving the operating threshold.",
+      "leverage": "high",
+      "changes_scientific_object": true,
+      "completed_sensitivity": "none",
+      "future_disposition": "leave",
+      "reviewer_justification": "Post-drift recalibration would introduce another adaptation treatment.",
+      "scan_values": [
+        false
+      ]
+    },
+    {
+      "id": "fusion.primary_lambda",
+      "class": "scientific_hyperparameter",
+      "accepted_value": 0.5,
+      "source_locations": [
+        "data/manifests/cd_primary_run_config_v1.json",
+        "data/manifests/cd_primary_run_config_v1_1.json",
+        "STAGE8_PRIMARY_EXECUTION_PROTOCOL.md",
+        "STAGE9_PRESPECIFIED_ROBUSTNESS_PROTOCOL.md",
+        "STAGE9_5_Q1_INDEPENDENT_ASSURANCE_PROTOCOL.md",
+        "src/concept_drift_ids/cd_symbolic_evaluation.py"
+      ],
+      "freeze_provenance": "pre-outcome fusion protocol",
+      "rationale": "Primary symbolic/neural authority split.",
+      "leverage": "high",
+      "changes_scientific_object": false,
+      "completed_sensitivity": "lambda 0.7, 0.9, 1.0",
+      "future_disposition": "leave primary",
+      "reviewer_justification": "Stage-9 directly bounded this high-leverage choice; retuning would weaken the study.",
+      "locator_patterns": [
+        "lambda\\s*=\\s*\\.?(50|5)\\b",
+        "primary.*lambda\\s*=\\s*\\.?50|lambda\\s*=\\s*\\.?50",
+        "PRIMARY_NEURAL_WEIGHT",
+        "^fusion\\.primary_neural_weight$",
+        "lambda\\s*=\\s*0?\\.50?"
+      ],
+      "scan_values": [
+        0.5
+      ]
+    },
+    {
+      "id": "gate.online_rule_gate",
+      "class": "scientific_hyperparameter",
+      "accepted_value": {
+        "min_support": 0.001,
+        "min_covered": 25,
+        "min_class_precision": 0.8,
+        "min_precision_lcb": 0.8,
+        "min_neural_fidelity": 0.9,
+        "min_fidelity_lcb": 0.9,
+        "min_stability": 0.9,
+        "max_complexity": 4,
+        "bootstrap_replicates": 100
+      },
+      "source_locations": [
+        "src/concept_drift_ids/cd_symbolic_lifecycle.py",
+        "data/manifests/cd_primary_run_config_v1_1.json",
+        "STAGE9_5_Q1_INDEPENDENT_ASSURANCE_PROTOCOL.md"
+      ],
+      "freeze_provenance": "primary symbolic validation gate",
+      "rationale": "Defines accepted rule quality/uncertainty gate.",
+      "leverage": "high",
+      "changes_scientific_object": false,
+      "completed_sensitivity": "Stage-9 static gate; upstream gate sensitivity",
+      "future_disposition": "one-factor prospective gate sensitivity; higher bootstrap replicate stability check",
+      "reviewer_justification": "High leverage is acknowledged and bounded; no favorable gate may replace primary retrospectively.",
+      "locator_patterns": [
+        "^primary_symbolic_operator\\.config\\.gate\\.",
+        "100-bootstrap",
+        "^(min_support|min_covered|min_class_precision|min_precision_lcb|min_neural_fidelity|min_fidelity_lcb|min_stability|max_complexity|bootstrap_replicates)$"
+      ],
+      "scan_values": [
+        0.001,
+        25,
+        0.8,
+        0.9,
+        4,
+        100
+      ]
+    },
+    {
+      "id": "gate.validation_horizon",
+      "class": "scientific_hyperparameter",
+      "accepted_value": 10000,
+      "source_locations": [
+        "data/manifests/cd_primary_run_config_v1.json",
+        "data/manifests/cd_primary_run_config_v1_1.json",
+        "src/concept_drift_ids/cd_symbolic_arms.py"
+      ],
+      "freeze_provenance": "primary symbolic validation protocol",
+      "rationale": "Independent future validation evidence budget.",
+      "leverage": "high",
+      "changes_scientific_object": false,
+      "completed_sensitivity": "none",
+      "future_disposition": "prospective evidence-horizon sensitivity",
+      "reviewer_justification": "Should be bounded prospectively because it affects evidence strength.",
+      "locator_patterns": [
+        "^primary_symbolic_operator\\.config\\.validation_rows$",
+        "PRIMARY_SYMBOLIC_VALIDATION_ROWS|validation_rows"
+      ]
+    },
+    {
+      "id": "gate.wilson_z",
+      "class": "derived_quantity",
+      "accepted_value": 1.6448536269514722,
+      "source_locations": [
+        "src/concept_drift_ids/cd_symbolic_lifecycle.py"
+      ],
+      "freeze_provenance": "one-sided 95% Wilson convention",
+      "rationale": "Statistical confidence-bound convention.",
+      "leverage": "low",
+      "changes_scientific_object": false,
+      "completed_sensitivity": "none",
+      "future_disposition": "leave",
+      "reviewer_justification": "Derived from the one-sided 95% convention, not tuned for performance.",
+      "locator_patterns": [
+        "WILSON_Z_ONE_SIDED_95",
+        "wilson_z",
+        "^primary_symbolic_operator\\.config\\.gate\\.wilson_z$"
+      ],
+      "scan_values": [
+        1.6448536269514722
+      ]
+    },
+    {
+      "id": "inference.confirmatory_family",
+      "class": "statistical_estimand_definition",
+      "accepted_value": "E1/E2/E3; five paired seeds; mean; Student-t 95% df=4; exact one-sided sign; Holm across 3",
+      "source_locations": [
+        "STAGE8_PRIMARY_EXECUTION_PROTOCOL.md",
+        "METHODOLOGY_LEDGER.md",
+        "data/manifests/cd_primary_run_config_v1_1.json"
+      ],
+      "freeze_provenance": "prespecified Stage-8 statistical analysis plan",
+      "rationale": "Defines confirmatory estimand and inferential summaries.",
+      "leverage": "high",
+      "changes_scientific_object": true,
+      "completed_sensitivity": "Stage-9 creates no new confirmatory p-value family",
+      "future_disposition": "leave absolutely",
+      "reviewer_justification": "Changing tests/family after outcomes would be outcome-driven inference.",
+      "locator_patterns": [
+        "^analysis\\.confirmatory_unit$"
+      ],
+      "scan_values": [
+        "matched_seed_within_fixed_primary_scenario"
+      ]
+    },
+    {
+      "id": "inference.mcsc",
+      "class": "statistical_estimand_definition",
+      "accepted_value": "0.5*(benign correct symbolic coverage + attack correct symbolic coverage)",
+      "source_locations": [
+        "STAGE8_PRIMARY_EXECUTION_PROTOCOL.md"
+      ],
+      "freeze_provenance": "prespecified explanation endpoint",
+      "rationale": "Class-balanced correct symbolic coverage.",
+      "leverage": "high",
+      "changes_scientific_object": true,
+      "completed_sensitivity": "negative result retained",
+      "future_disposition": "never redefine; triangulate with additional constructs",
+      "reviewer_justification": "Unfavorable result is preserved; redefining it would be outcome tuning."
+    },
+    {
+      "id": "lifecycle.evidence_insufficient_failure",
+      "class": "scientific_hyperparameter",
+      "accepted_value": true,
+      "source_locations": [
+        "src/concept_drift_ids/cd_symbolic_lifecycle.py"
+      ],
+      "freeze_provenance": "primary lifecycle protocol",
+      "rationale": "Defines stale-authority behavior when validation evidence is insufficient.",
+      "leverage": "high",
+      "changes_scientific_object": false,
+      "completed_sensitivity": "none",
+      "future_disposition": "mandatory prospective sensitivity",
+      "reviewer_justification": "Potentially affects withdrawal timing and is explicitly exposed for future testing."
+    },
+    {
+      "id": "lifecycle.first_failure",
+      "class": "scientific_hyperparameter",
+      "accepted_value": "active -> demoted after first failed completed validation",
+      "source_locations": [
+        "src/concept_drift_ids/cd_symbolic_lifecycle.py"
+      ],
+      "freeze_provenance": "primary lifecycle protocol",
+      "rationale": "Controls withdrawal of stale symbolic authority.",
+      "leverage": "high",
+      "changes_scientific_object": false,
+      "completed_sensitivity": "mechanism audit shows withdrawal dominance; no persistence sensitivity yet",
+      "future_disposition": "mandatory prospective lifecycle-authority sensitivity",
+      "reviewer_justification": "Because most gain is withdrawal-associated, this is a priority sensitivity rather than a hidden arbitrary rule."
+    },
+    {
+      "id": "lifecycle.local_complexity_switch",
+      "class": "causal_design_constant",
+      "accepted_value": false,
+      "source_locations": [
+        "src/concept_drift_ids/cd_symbolic_lifecycle.py"
+      ],
+      "locator_patterns": [
+        "^include_complexity$"
+      ],
+      "freeze_provenance": "bootstrap-persistence implementation",
+      "rationale": "Complexity is invariant to row resampling and checked at point gate.",
+      "leverage": "medium",
+      "changes_scientific_object": false,
+      "completed_sensitivity": "none",
+      "future_disposition": "audit implementation semantics",
+      "reviewer_justification": "This is implementation factoring of an invariant property, not a second gate threshold.",
+      "scan_values": [
+        false
+      ]
+    },
+    {
+      "id": "lifecycle.migration_opportunity_id",
+      "class": "reproducibility_rng_constant",
+      "accepted_value": 0,
+      "source_locations": [
+        "src/concept_drift_ids/cd_symbolic_lifecycle.py"
+      ],
+      "locator_patterns": [
+        "^opportunity_id$"
+      ],
+      "freeze_provenance": "R0.v2 migration lineage identity",
+      "rationale": "Deterministic identity for historical migration revision.",
+      "leverage": "low",
+      "changes_scientific_object": false,
+      "completed_sensitivity": "none",
+      "future_disposition": "verify identity; do not tune",
+      "reviewer_justification": "Lineage identifier plumbing is not a scientific hyperparameter.",
+      "scan_values": [
+        0
+      ]
+    },
+    {
+      "id": "lifecycle.overlap_thresholds",
+      "class": "scientific_hyperparameter",
+      "accepted_value": {
+        "same_class_redundancy": 0.95,
+        "refinement_lower": 0.5,
+        "cross_class_conflict": 0.5
+      },
+      "source_locations": [
+        "src/concept_drift_ids/cd_symbolic_lifecycle.py",
+        "data/manifests/cd_primary_run_config_v1_1.json",
+        "src/concept_drift_ids/cd_symbolic_arms.py"
+      ],
+      "freeze_provenance": "primary lifecycle protocol",
+      "rationale": "Defines redundancy/refinement/conflict relationships.",
+      "leverage": "medium",
+      "changes_scientific_object": false,
+      "completed_sensitivity": "none",
+      "future_disposition": "prospective lifecycle sensitivity where material",
+      "reviewer_justification": "Recorded as explicit lifecycle design choices rather than hidden constants.",
+      "locator_patterns": [
+        "^primary_symbolic_operator\\.config\\.same_class_redundancy$",
+        "same_class_redundancy|refinement_overlap|cross_class_overlap",
+        "^primary_symbolic_operator\\.config\\.(cross_class_overlap|refinement_overlap|same_class_redundancy)$"
+      ],
+      "scan_values": [
+        0.95,
+        0.5
+      ]
+    },
+    {
+      "id": "lifecycle.second_failure",
+      "class": "scientific_hyperparameter",
+      "accepted_value": "demoted -> retired after second consecutive failure",
+      "source_locations": [
+        "src/concept_drift_ids/cd_symbolic_lifecycle.py"
+      ],
+      "freeze_provenance": "primary lifecycle protocol",
+      "rationale": "Controls retirement persistence.",
+      "leverage": "high",
+      "changes_scientific_object": false,
+      "completed_sensitivity": "none",
+      "future_disposition": "mandatory prospective lifecycle-authority sensitivity",
+      "reviewer_justification": "Directly related to the dominant withdrawal mechanism."
+    },
+    {
+      "id": "preprocessing.imputation",
+      "class": "causal_design_constant",
+      "accepted_value": "training-only median SimpleImputer",
+      "source_locations": [
+        "data/manifests/cd_primary_run_config_v1.json",
+        "data/manifests/cd_primary_run_config_v1_1.json"
+      ],
+      "freeze_provenance": "Stage-3 leakage-safe preprocessing freeze",
+      "rationale": "Prevents future information from entering representation.",
+      "leverage": "high",
+      "changes_scientific_object": true,
+      "completed_sensitivity": "future-data non-interference tests",
+      "future_disposition": "freeze; adaptive preprocessing is separate treatment",
+      "reviewer_justification": "Changing preprocessing online would add a treatment mechanism."
+    },
+    {
+      "id": "preprocessing.scaling",
+      "class": "causal_design_constant",
+      "accepted_value": "training-only StandardScaler",
+      "source_locations": [
+        "data/manifests/cd_primary_run_config_v1.json",
+        "data/manifests/cd_primary_run_config_v1_1.json"
+      ],
+      "freeze_provenance": "Stage-3 leakage-safe preprocessing freeze",
+      "rationale": "Shared fixed representation for all arms.",
+      "leverage": "high",
+      "changes_scientific_object": true,
+      "completed_sensitivity": "no future-data fit permitted",
+      "future_disposition": "freeze",
+      "reviewer_justification": "Ensures treatment contrast is not representation adaptation."
+    },
+    {
+      "id": "reporting.minimum_final_remainder",
+      "class": "statistical_estimand_definition",
+      "accepted_value": 1000,
+      "scan_values": [
+        1000
+      ],
+      "source_locations": [
+        "src/concept_drift_ids/system_a.py",
+        "src/concept_drift_ids/symbolic.py",
+        "src/concept_drift_ids/cd_stage9_offline.py"
+      ],
+      "locator_patterns": [
+        "min_remainder|minimum_final_remainder"
+      ],
+      "freeze_provenance": "longitudinal reporting contract",
+      "rationale": "Minimum terminal remainder retained as a reportable window.",
+      "leverage": "medium",
+      "changes_scientific_object": true,
+      "completed_sensitivity": "window-size family 2500/5000/10000 reported",
+      "future_disposition": "freeze",
+      "reviewer_justification": "Prevents endpoint support from changing after outcome inspection."
+    },
+    {
+      "id": "reporting.primary_window",
+      "class": "statistical_estimand_definition",
+      "accepted_value": 5000,
+      "source_locations": [
+        "data/manifests/cd_primary_run_config_v1.json",
+        "data/manifests/cd_primary_run_config_v1_1.json",
+        "STAGE8_PRIMARY_EXECUTION_PROTOCOL.md",
+        "STAGE9_PRESPECIFIED_ROBUSTNESS_PROTOCOL.md",
+        "STAGE9_5_Q1_INDEPENDENT_ASSURANCE_PROTOCOL.md",
+        "src/concept_drift_ids/system_a.py",
+        "src/concept_drift_ids/symbolic.py"
+      ],
+      "freeze_provenance": "primary longitudinal reporting protocol",
+      "rationale": "Defines primary reporting granularity.",
+      "leverage": "medium",
+      "changes_scientific_object": true,
+      "completed_sensitivity": "2500 and 10000",
+      "future_disposition": "leave; recovery remains secondary/window-sensitive",
+      "reviewer_justification": "Window dependence is reported rather than optimized away.",
+      "locator_patterns": [
+        "5,?000-row.*reporting",
+        "window_size|\"stride\""
+      ],
+      "scan_values": [
+        5000
+      ]
+    },
+    {
+      "id": "reporting.stage9_metric_set",
+      "class": "statistical_estimand_definition",
+      "accepted_value": [
+        "mcc",
+        "f1",
+        "fpr",
+        "mcsc",
+        "resolved_coverage"
+      ],
+      "scan_values": [
+        "mcc",
+        "f1",
+        "fpr",
+        "mcsc",
+        "resolved_coverage"
+      ],
+      "source_locations": [
+        "src/concept_drift_ids/cd_stage9_export.py"
+      ],
+      "locator_patterns": [
+        "^metrics$"
+      ],
+      "freeze_provenance": "Stage-9 robustness aggregation implementation",
+      "rationale": "Defines the paired robustness metric set emitted for arm contrasts.",
+      "leverage": "high",
+      "changes_scientific_object": true,
+      "completed_sensitivity": "no new confirmatory p-value family",
+      "future_disposition": "freeze; reporting additions must not replace accepted endpoints",
+      "reviewer_justification": "Dropping an unfavorable metric after outcomes would be selective reporting."
+    },
+    {
+      "id": "reproducibility.id_digest_prefix_length",
+      "class": "reproducibility_rng_constant",
+      "accepted_value": 16,
+      "scan_values": [
+        16
+      ],
+      "source_locations": [
+        "src/concept_drift_ids/cd_symbolic_lifecycle.py",
+        "src/concept_drift_ids/symbolic.py"
+      ],
+      "locator_patterns": [
+        "canonical.*\\[:16\\]|sha256.*\\[:16\\]"
+      ],
+      "freeze_provenance": "deterministic rule/semantic ID construction",
+      "rationale": "Defines the displayed hash prefix used in deterministic IDs.",
+      "leverage": "low",
+      "changes_scientific_object": false,
+      "completed_sensitivity": "none",
+      "future_disposition": "verify collision-free within evidence",
+      "reviewer_justification": "Identifier formatting does not tune predictions but is provenance-relevant."
+    },
+    {
+      "id": "reproducibility.phase_c_output_version",
+      "class": "reproducibility_rng_constant",
+      "accepted_value": "phase_c_offline_evaluation_v1_1",
+      "scan_values": [
+        "phase_c_offline_evaluation_v1_1"
+      ],
+      "source_locations": [
+        "data/manifests/cd_primary_run_config_v1_1.json",
+        "src/concept_drift_ids/cd_primary_correction.py"
+      ],
+      "locator_patterns": [
+        "phase_c_output_subdir|CORRECTED_PHASE_C_SUBDIR"
+      ],
+      "freeze_provenance": "versioned Phase-C correction",
+      "rationale": "Separates corrected output from preserved failed v1 tree.",
+      "leverage": "medium",
+      "changes_scientific_object": false,
+      "completed_sensitivity": "none",
+      "future_disposition": "write-once preserve",
+      "reviewer_justification": "Versioned path is provenance identity."
+    },
+    {
+      "id": "runtime.hash_seed_threads",
+      "class": "reproducibility_rng_constant",
+      "accepted_value": {
+        "PYTHONHASHSEED": 0,
+        "OMP_NUM_THREADS": 1,
+        "MKL_NUM_THREADS": 1,
+        "OPENBLAS_NUM_THREADS": 1,
+        "NUMEXPR_NUM_THREADS": 1,
+        "torch_intra_threads": 1,
+        "torch_interop_threads": 1,
+        "dataloader_workers": 0
+      },
+      "source_locations": [
+        "scripts/run_primary.ps1",
+        "scripts/run_stage9.ps1",
+        "src/concept_drift_ids/cd_runtime.py",
+        "STAGE9_PRESPECIFIED_ROBUSTNESS_PROTOCOL.md",
+        "src/concept_drift_ids/system_a.py",
+        "STAGE8_PRIMARY_EXECUTION_PROTOCOL.md"
+      ],
+      "freeze_provenance": "historical deterministic runtime contract",
+      "rationale": "Controls reproducibility and stochastic implementation state.",
+      "leverage": "medium",
+      "changes_scientific_object": false,
+      "completed_sensitivity": "none",
+      "future_disposition": "verify application; do not performance-sensitivity-test literal integers",
+      "reviewer_justification": "These are determinism controls, not scientific tuning knobs.",
+      "locator_patterns": [
+        "PYTHONHASHSEED\\s*=\\s*0",
+        "num_workers",
+        "^execution\\.required_thread_environment\\.PYTHONHASHSEED$"
+      ],
+      "scan_values": [
+        0,
+        1,
+        "0",
+        "1"
+      ]
+    },
+    {
+      "id": "runtime.rng_namespaces",
+      "class": "reproducibility_rng_constant",
+      "accepted_value": {
+        "anchor": 20261008,
+        "online_reservoir": 20261009,
+        "replay": 20261010,
+        "shuffle": 20261011,
+        "symbolic_base": 20261020
+      },
+      "source_locations": [
+        "data/manifests/cd_primary_run_config_v1.json",
+        "data/manifests/cd_primary_run_config_v1_1.json",
+        "src/concept_drift_ids/cd_control_plane.py"
+      ],
+      "freeze_provenance": "primary deterministic namespace contract",
+      "rationale": "Separates random mechanisms reproducibly.",
+      "leverage": "medium",
+      "changes_scientific_object": false,
+      "completed_sensitivity": "none",
+      "future_disposition": "verify namespace separation; do not tune literal seed numbers",
+      "reviewer_justification": "Seed numbers identify deterministic streams; performance sensitivity to arbitrary integer labels is not scientifically meaningful.",
+      "locator_patterns": [
+        "^primary_control_plane\\.rng\\.",
+        "^(ANCHOR_SEED|ONLINE_RESERVOIR_SEED|REPLAY_SAMPLE_SEED_BASE|ADAPTATION_SHUFFLE_SEED_BASE)$"
+      ],
+      "scan_values": [
+        20261008,
+        20261009,
+        20261010,
+        20261011,
+        20261020
+      ]
+    },
+    {
+      "id": "runtime.symbolic_rng_derivation",
+      "class": "reproducibility_rng_constant",
+      "accepted_value": {
+        "base": 20261020,
+        "seed_stride": 1000,
+        "opportunity_stride": 10,
+        "attribution_offset": 1,
+        "surrogate_offset": 2,
+        "bootstrap_offset": 3
+      },
+      "scan_values": [
+        20261020,
+        1000,
+        10,
+        1,
+        2,
+        3
+      ],
+      "source_locations": [
+        "src/concept_drift_ids/cd_symbolic_candidates.py",
+        "src/concept_drift_ids/cd_symbolic_arms.py"
+      ],
+      "locator_patterns": [
+        "symbolic_seed_base|complete_symbolic_transaction|bootstrap_random_state|random_state=base"
+      ],
+      "freeze_provenance": "primary symbolic RNG namespace",
+      "rationale": "Deterministically separates symbolic opportunities and internal sampling operations.",
+      "leverage": "high",
+      "changes_scientific_object": false,
+      "completed_sensitivity": "none",
+      "future_disposition": "verify namespace; do not tune integer labels",
+      "reviewer_justification": "RNG derivation is reproducibility identity, not a performance hyperparameter."
+    },
+    {
+      "id": "scenario.binary_target_mapping",
+      "class": "scenario_construction_constant",
+      "accepted_value": "BENIGN=0; all retained attacks=1",
+      "source_locations": [
+        "data/manifests/cd_primary_run_config_v1.json",
+        "data/manifests/cd_primary_run_config_v1_1.json"
+      ],
+      "freeze_provenance": "Stage-8 primary config",
+      "rationale": "Defines binary task identity.",
+      "leverage": "high",
+      "changes_scientific_object": true,
+      "completed_sensitivity": "none; alternative multiclass/unseen tasks are new scenarios",
+      "future_disposition": "freeze for Stage 8/9; new task requires new scenario",
+      "reviewer_justification": "Changing labels after outcomes would redefine the task."
+    },
+    {
+      "id": "scenario.boundary_visibility",
+      "class": "causal_design_constant",
+      "accepted_value": false,
+      "source_locations": [
+        "data/manifests/cd_stage9_run_config_v1_1.json"
+      ],
+      "locator_patterns": [
+        "^scenario\\.boundary_visibility_to_adaptive_runner$"
+      ],
+      "freeze_provenance": "information-integrity contract",
+      "rationale": "Boundary is evaluator-only.",
+      "leverage": "high",
+      "changes_scientific_object": true,
+      "completed_sensitivity": "manifests and existing tests",
+      "future_disposition": "verify adversarially",
+      "reviewer_justification": "Supplying the boundary would invalidate endogenous-trigger interpretation.",
+      "scan_values": [
+        false
+      ]
+    },
+    {
+      "id": "scenario.conflict_diagnostic_fingerprints",
+      "class": "derived_quantity",
+      "accepted_value": "frozen conflict-pattern/row diagnostic counts",
+      "scan_values": [
+        78,
+        4877,
+        41,
+        4322,
+        46,
+        4276,
+        37,
+        513,
+        34,
+        3
+      ],
+      "source_locations": [
+        "src/concept_drift_ids/scenario_manifest.py"
+      ],
+      "locator_patterns": [
+        "EXPECTED_CONFLICT_DIAGNOSTICS|conflict_"
+      ],
+      "freeze_provenance": "scenario identity diagnostic",
+      "rationale": "Binds known label-conflict diagnostics without relabeling or deduplication.",
+      "leverage": "medium",
+      "changes_scientific_object": false,
+      "completed_sensitivity": "duplicate/pattern robustness upstream",
+      "future_disposition": "verify only",
+      "reviewer_justification": "These are diagnostics/fingerprints rather than tuning choices."
+    },
+    {
+      "id": "scenario.feature_count",
+      "class": "scenario_construction_constant",
+      "accepted_value": 77,
+      "source_locations": [
+        "data/manifests/cd_primary_run_config_v1.json",
+        "data/manifests/cd_primary_run_config_v1_1.json",
+        "src/concept_drift_ids/scenario_manifest.py",
+        "src/concept_drift_ids/frozen_preprocessing.py",
+        "src/concept_drift_ids/scenario_loader.py",
+        "src/concept_drift_ids/cd_implementation_preflight.py",
+        "src/concept_drift_ids/system_a.py"
+      ],
+      "freeze_provenance": "frozen preprocessing/scenario contract",
+      "rationale": "Defines accepted CICIDS feature substrate.",
+      "leverage": "high",
+      "changes_scientific_object": true,
+      "completed_sensitivity": "Destination Port and feature-selection robustness handled additively upstream",
+      "future_disposition": "freeze accepted substrate; use new replication for alternative feature spaces",
+      "reviewer_justification": "Feature schema is part of scenario/model identity, not a post-hoc tuning knob.",
+      "locator_patterns": [
+        "EXPECTED_FEATURE_COUNT|model_feature_count|ordered_columns|input_features|len\\(features\\)|shape\\[1\\]"
+      ],
+      "scan_values": [
+        77
+      ]
+    },
+    {
+      "id": "scenario.heartbleed_exclusion",
+      "class": "scenario_construction_constant",
+      "accepted_value": "11 pre-reference Heartbleed rows excluded",
+      "source_locations": [
+        "data/manifests/cd_primary_run_config_v1.json",
+        "data/manifests/cd_primary_run_config_v1_1.json"
+      ],
+      "freeze_provenance": "prospective scenario construction",
+      "rationale": "Keeps retained attack family controlled.",
+      "leverage": "medium",
+      "changes_scientific_object": true,
+      "completed_sensitivity": "none",
+      "future_disposition": "audit provenance; leave historical scenario unchanged",
+      "reviewer_justification": "Frozen scenario definition must not be silently rewritten."
+    },
+    {
+      "id": "scenario.label_count_fingerprints",
+      "class": "derived_quantity",
+      "accepted_value": "frozen per-partition/source-label count dictionaries",
+      "scan_values": [
+        1064858,
+        1118,
+        231073,
+        5499,
+        5796,
+        7938,
+        5897,
+        205797,
+        2013,
+        65671,
+        3589,
+        65697,
+        3573
+      ],
+      "source_locations": [
+        "src/concept_drift_ids/scenario_manifest.py"
+      ],
+      "locator_patterns": [
+        "EXPECTED_(TRAIN|DEVELOPMENT|PRE_DRIFT|POST_DRIFT)_LABELS"
+      ],
+      "freeze_provenance": "scenario identity audit",
+      "rationale": "Per-partition label counts verify the exact frozen scenario composition.",
+      "leverage": "medium",
+      "changes_scientific_object": true,
+      "completed_sensitivity": "none",
+      "future_disposition": "verify only",
+      "reviewer_justification": "Derived fingerprints detect accidental scenario drift."
+    },
+    {
+      "id": "scenario.reference_boundary",
+      "class": "scenario_construction_constant",
+      "accepted_value": 69260,
+      "source_locations": [
+        "data/manifests/cd_primary_run_config_v1.json",
+        "data/manifests/cd_primary_run_config_v1_1.json",
+        "data/manifests/cd_stage9_run_config_v1_1.json"
+      ],
+      "freeze_provenance": "frozen scenario",
+      "rationale": "Evaluation/reference boundary only.",
+      "leverage": "high",
+      "changes_scientific_object": true,
+      "completed_sensitivity": "publication-clock audit preserves pre-reference events",
+      "future_disposition": "freeze; mechanically verify no adaptive access",
+      "reviewer_justification": "Changing it after outcomes would alter evaluation and invite boundary leakage.",
+      "locator_patterns": [
+        "^scenario\\.boundary_index$"
+      ],
+      "scan_values": [
+        69260
+      ]
+    },
+    {
+      "id": "scenario.reference_boundary_role",
+      "class": "causal_design_constant",
+      "accepted_value": "offline_scoring_and_diagnostics_only",
+      "source_locations": [
+        "data/manifests/cd_primary_run_config_v1_1.json",
+        "data/manifests/cd_stage9_run_config_v1_1.json"
+      ],
+      "locator_patterns": [
+        "^scenario\\.boundary_role$"
+      ],
+      "freeze_provenance": "frozen stream-time and evaluation contract",
+      "rationale": "Reference boundary is evaluator/scoring metadata only and is not an adaptive input.",
+      "leverage": "high",
+      "changes_scientific_object": true,
+      "completed_sensitivity": "publication-clock audit plus boundary-blindness tests",
+      "future_disposition": "leave exactly; verify adversarially in Stage 9.5",
+      "reviewer_justification": "This defines information availability, not a performance-tuning choice.",
+      "scan_values": [
+        "offline_scoring_and_diagnostics_only"
+      ]
+    },
+    {
+      "id": "scenario.source_row_fingerprints",
+      "class": "derived_quantity",
+      "accepted_value": {
+        "monday": 529918,
+        "tuesday": 445909,
+        "wednesday": 692703,
+        "thursday_morning": 170366
+      },
+      "scan_values": [
+        529918,
+        445909,
+        692703,
+        170366
+      ],
+      "source_locations": [
+        "src/concept_drift_ids/scenario_manifest.py"
+      ],
+      "locator_patterns": [
+        "EXPECTED_SOURCE_ROWS"
+      ],
+      "freeze_provenance": "Stage-1 raw-source identity",
+      "rationale": "Verified source-row counts bind the raw CICIDS inputs used by scenario construction.",
+      "leverage": "medium",
+      "changes_scientific_object": true,
+      "completed_sensitivity": "none",
+      "future_disposition": "hash/row-count verify only",
+      "reviewer_justification": "These are source fingerprints, not tunable sample sizes."
+    },
+    {
+      "id": "scenario.split_boundaries",
+      "class": "scenario_construction_constant",
+      "accepted_value": {
+        "train_start": 0,
+        "train_end": 346352,
+        "development_start": 346352,
+        "development_end": 554162,
+        "pre_start": 554162,
+        "pre_end": 623433,
+        "post_template_start": 623433,
+        "post_template_end": 692703,
+        "post_benign_required": 65697
+      },
+      "scan_values": [
+        0,
+        346352,
+        554162,
+        623433,
+        692703,
+        65697
+      ],
+      "source_locations": [
+        "src/concept_drift_ids/scenario_manifest.py"
+      ],
+      "locator_patterns": [
+        "(TRAIN_WEDNESDAY|DEVELOPMENT|PRE_DRIFT|POST_DRIFT_TEMPLATE)_(START|END)|POST_BENIGN_REQUIRED"
+      ],
+      "freeze_provenance": "frozen scenario construction",
+      "rationale": "Defines training/development/pre/post source slices before adaptive evaluation.",
+      "leverage": "high",
+      "changes_scientific_object": true,
+      "completed_sensitivity": "none",
+      "future_disposition": "freeze Stage-8/9 scenario",
+      "reviewer_justification": "Changing split boundaries changes the scientific object."
+    },
+    {
+      "id": "scenario.stream_row_counts",
+      "class": "scenario_construction_constant",
+      "accepted_value": {
+        "pre_rows": 69260,
+        "post_rows": 69270,
+        "total_rows": 138530
+      },
+      "source_locations": [
+        "src/concept_drift_ids/cd_primary_adapter.py",
+        "data/manifests/cd_primary_run_config_v1.json",
+        "data/manifests/cd_primary_run_config_v1_1.json",
+        "data/manifests/cd_stage9_run_config_v1_1.json",
+        "src/concept_drift_ids/cd_symbolic_arms.py",
+        "src/concept_drift_ids/cd_stage9_offline.py",
+        "src/concept_drift_ids/cd_stage9_phase_a.py",
+        "src/concept_drift_ids/cd_stage9_config.py"
+      ],
+      "locator_patterns": [
+        "EXPECTED_PRE_ROWS",
+        "EXPECTED_POST_ROWS",
+        "pre_rows",
+        "post_rows",
+        "total_rows",
+        "PRIMARY_STREAM_LENGTH|stream_rows|post_reference_rows|pre_reference_rows|row_count.*138530"
+      ],
+      "freeze_provenance": "accepted Stage-8 scenario/stream identity",
+      "rationale": "Defines the fixed pre/post stream extents and therefore scenario membership and longitudinal evaluation support.",
+      "leverage": "high",
+      "changes_scientific_object": true,
+      "completed_sensitivity": "none; changing row membership creates a different scenario",
+      "future_disposition": "freeze for Stage 8/9; new row composition requires prospectively defined replication",
+      "reviewer_justification": "Stream extents are scenario identity, not post-outcome tuning parameters.",
+      "scan_values": [
+        69260,
+        69270,
+        138530
+      ]
+    },
+    {
+      "id": "stage9.adwin_brier",
+      "class": "scientific_hyperparameter",
+      "accepted_value": "ADWIN with Brier signal using frozen ADWIN detector parameters and primary latency/replay",
+      "source_locations": [
+        "data/manifests/cd_stage9_run_config_v1_1.json",
+        "STAGE9_PRESPECIFIED_ROBUSTNESS_PROTOCOL.md"
+      ],
+      "locator_patterns": [
+        "^conditions\\.adaptive\\.adwin_brier\\.(detector_family|detector_signal)$",
+        "^conditions\\.adaptive\\.adwin_brier\\.detector_config\\."
+      ],
+      "freeze_provenance": "Stage-9 signal sensitivity",
+      "rationale": "Tests monitor-signal dependence.",
+      "leverage": "high",
+      "changes_scientific_object": false,
+      "completed_sensitivity": "completed",
+      "future_disposition": "leave",
+      "reviewer_justification": "Prespecified signal sensitivity was reported.",
+      "scan_values": [
+        "adwin",
+        "brier",
+        0.002,
+        32,
+        5,
+        10
+      ]
+    },
+    {
+      "id": "stage9.condition_changed_factor_declarations",
+      "class": "causal_design_constant",
+      "accepted_value": "each Stage-9 condition declares intended changed factor(s)",
+      "source_locations": [
+        "data/manifests/cd_stage9_run_config_v1_1.json"
+      ],
+      "locator_patterns": [
+        "^conditions\\..*\\.changed_factors(?:\\[|$)"
+      ],
+      "freeze_provenance": "Stage-9 robustness contract",
+      "rationale": "Prevents accidental multi-factor perturbations.",
+      "leverage": "high",
+      "changes_scientific_object": true,
+      "completed_sensitivity": "verified by Stage-9 unit tests",
+      "future_disposition": "retain",
+      "reviewer_justification": "Condition identity is causal bookkeeping, not a tunable performance choice.",
+      "scan_values": [
+        "label_latency",
+        "replay_training_rows",
+        "fusion_neural_weight",
+        "frozen_seed_specific_fusion_threshold",
+        "reporting_window_rows",
+        "detector_signal",
+        "detector_family",
+        "detector_family_specific_parameters",
+        "symbolic_acceptance_gate"
+      ]
+    },
+    {
+      "id": "stage9.condition_ids",
+      "class": "causal_design_constant",
+      "accepted_value": {
+        "offline": [
+          "lambda_0_7",
+          "lambda_0_9",
+          "lambda_1_0",
+          "window_2500",
+          "window_10000"
+        ],
+        "gate": [
+          "static_symbolic_gate"
+        ],
+        "adaptive": [
+          "latency_0",
+          "latency_10000",
+          "page_hinkley_hard_error",
+          "adwin_brier",
+          "no_replay"
+        ],
+        "conditional_runtime_baseline": "matched_primary_baseline"
+      },
+      "scan_values": [
+        "lambda_0_7",
+        "lambda_0_9",
+        "lambda_1_0",
+        "window_2500",
+        "window_10000",
+        "static_symbolic_gate",
+        "latency_0",
+        "latency_10000",
+        "page_hinkley_hard_error",
+        "adwin_brier",
+        "no_replay",
+        "matched_primary_baseline"
+      ],
+      "source_locations": [
+        "src/concept_drift_ids/cd_stage9_config.py",
+        "src/concept_drift_ids/cd_stage9_export.py"
+      ],
+      "locator_patterns": [
+        "OFFLINE_CONDITIONS",
+        "GATE_CONDITIONS",
+        "ADAPTIVE_VARIANTS",
+        "MATCHED_BASELINE_CONDITION",
+        "baseline_condition"
+      ],
+      "freeze_provenance": "Stage-9 prospectively frozen condition family",
+      "rationale": "Defines the robustness matrix treatments and the runtime-conditional matched baseline identity.",
+      "leverage": "high",
+      "changes_scientific_object": true,
+      "completed_sensitivity": "all prespecified Stage-9 conditions reported; matched baseline not required in accepted runtime",
+      "future_disposition": "freeze accepted Stage-9 family",
+      "reviewer_justification": "Omitting or adding a condition after outcome inspection would alter the robustness estimand."
+    },
+    {
+      "id": "stage9.execution_groups",
+      "class": "causal_design_constant",
+      "accepted_value": [
+        "offline",
+        "symbolic_gate",
+        "adaptive"
+      ],
+      "scan_values": [
+        "offline",
+        "symbolic_gate",
+        "adaptive"
+      ],
+      "source_locations": [
+        "src/concept_drift_ids/cd_stage9_execute.py"
+      ],
+      "locator_patterns": [
+        "^group$"
+      ],
+      "freeze_provenance": "Stage-9 deterministic execution plan",
+      "rationale": "Defines condition-group dispatch in the complete execution matrix.",
+      "leverage": "high",
+      "changes_scientific_object": true,
+      "completed_sensitivity": "none",
+      "future_disposition": "freeze",
+      "reviewer_justification": "Group routing is part of the frozen matrix rather than a reporting label."
+    },
+    {
+      "id": "stage9.execution_phases",
+      "class": "causal_design_constant",
+      "accepted_value": [
+        "offline",
+        "phase_a",
+        "phase_b",
+        "phase_c"
+      ],
+      "scan_values": [
+        "offline",
+        "phase_a",
+        "phase_b",
+        "phase_c"
+      ],
+      "source_locations": [
+        "src/concept_drift_ids/cd_stage9_execute.py"
+      ],
+      "locator_patterns": [
+        "^phase$"
+      ],
+      "freeze_provenance": "Stage-9 deterministic execution plan",
+      "rationale": "Routes each condition through the prescribed execution phase.",
+      "leverage": "high",
+      "changes_scientific_object": true,
+      "completed_sensitivity": "none",
+      "future_disposition": "freeze",
+      "reviewer_justification": "Phase routing controls information flow and which treatment code executes."
+    },
+    {
+      "id": "stage9.lambda_family",
+      "class": "scientific_hyperparameter",
+      "accepted_value": [
+        0.7,
+        0.9
+      ],
+      "source_locations": [
+        "data/manifests/cd_stage9_run_config_v1_1.json",
+        "STAGE9_PRESPECIFIED_ROBUSTNESS_PROTOCOL.md"
+      ],
+      "locator_patterns": [
+        "^conditions\\.offline\\.lambda_0_[79]\\.neural_weight$",
+        "lambda\\s*=\\s*\\.?7(?:0)?|lambda\\s*=\\s*\\.?9(?:0)?"
+      ],
+      "freeze_provenance": "Stage-9 prespecified robustness protocol",
+      "rationale": "Bounds dependence on symbolic predictive authority.",
+      "leverage": "high",
+      "changes_scientific_object": false,
+      "completed_sensitivity": "completed all five seeds",
+      "future_disposition": "do not add favorable lambda after outcomes",
+      "reviewer_justification": "Full prespecified lambda family was reported.",
+      "scan_values": [
+        0.7,
+        0.9
+      ]
+    },
+    {
+      "id": "stage9.latency_family",
+      "class": "causal_design_constant",
+      "accepted_value": [
+        0,
+        10000
+      ],
+      "source_locations": [
+        "data/manifests/cd_stage9_run_config_v1_1.json",
+        "STAGE9_PRESPECIFIED_ROBUSTNESS_PROTOCOL.md",
+        "src/concept_drift_ids/cd_stage9_config.py"
+      ],
+      "locator_patterns": [
+        "^conditions\\.adaptive\\.latency_(0|10000)\\.label_latency$",
+        "label latency L\\s*=\\s*(0|10,?000)",
+        "label_latency.*10000|conditions\\.adaptive\\.latency_(0|10000)\\.label_latency"
+      ],
+      "freeze_provenance": "Stage-9 prespecified robustness protocol",
+      "rationale": "Bounds label-delay assumption.",
+      "leverage": "high",
+      "changes_scientific_object": false,
+      "completed_sensitivity": "completed",
+      "future_disposition": "leave family as robustness evidence",
+      "reviewer_justification": "Latency uncertainty was tested prospectively.",
+      "scan_values": [
+        0,
+        10000
+      ]
+    },
+    {
+      "id": "stage9.no_replay",
+      "class": "scientific_hyperparameter",
+      "accepted_value": false,
+      "source_locations": [
+        "data/manifests/cd_stage9_run_config_v1_1.json",
+        "STAGE9_PRESPECIFIED_ROBUSTNESS_PROTOCOL.md"
+      ],
+      "locator_patterns": [
+        "^conditions\\.adaptive\\.no_replay\\.replay_enabled$"
+      ],
+      "freeze_provenance": "Stage-9 replay sensitivity",
+      "rationale": "Tests whether result depends on replay.",
+      "leverage": "high",
+      "changes_scientific_object": false,
+      "completed_sensitivity": "completed",
+      "future_disposition": "leave",
+      "reviewer_justification": "No-replay sensitivity is already available.",
+      "scan_values": [
+        false
+      ]
+    },
+    {
+      "id": "stage9.offline_frozen_trace_source",
+      "class": "causal_design_constant",
+      "accepted_value": [
+        "frozen_stage8_trace",
+        "frozen_stage8_seed_specific_threshold_for_weight"
+      ],
+      "source_locations": [
+        "data/manifests/cd_stage9_run_config_v1_1.json"
+      ],
+      "locator_patterns": [
+        "^conditions\\.offline\\.lambda_0_[79]\\.source$",
+        "^conditions\\.offline\\.lambda_1_0\\.source$",
+        "^conditions\\.offline\\.window_(2500|10000)\\.source$",
+        "^conditions\\.offline\\.lambda_0_[79]\\.threshold_source$",
+        "^conditions\\.offline\\.lambda_1_0\\.threshold_source$"
+      ],
+      "freeze_provenance": "Stage-9 offline-sensitivity contract",
+      "rationale": "Offline sensitivities reuse immutable Stage-8 prediction traces and development-frozen thresholds rather than rerunning or refitting.",
+      "leverage": "high",
+      "changes_scientific_object": true,
+      "completed_sensitivity": "Stage-9 offline families completed",
+      "future_disposition": "leave exactly",
+      "reviewer_justification": "Source binding prevents treatment recomputation or post-outcome threshold refitting.",
+      "scan_values": [
+        "frozen_stage8_trace",
+        "frozen_stage8_seed_specific_threshold_for_weight"
+      ]
+    },
+    {
+      "id": "stage9.page_hinkley",
+      "class": "algorithm_library_default",
+      "accepted_value": {
+        "min_instances": 30,
+        "delta": 0.005,
+        "threshold": 50,
+        "alpha": 0.9999,
+        "mode": "both"
+      },
+      "source_locations": [
+        "data/manifests/cd_stage9_run_config_v1_1.json",
+        "STAGE9_PRESPECIFIED_ROBUSTNESS_PROTOCOL.md",
+        "src/concept_drift_ids/cd_stage9_config.py"
+      ],
+      "locator_patterns": [
+        "^conditions\\.adaptive\\.page_hinkley_hard_error\\.(detector_family|detector_signal)$",
+        "^conditions\\.adaptive\\.page_hinkley_hard_error\\.detector_config\\.(min_instances|delta|threshold|alpha|mode)$",
+        "PAGE_HINKLEY_CONFIG|min_instances|\"delta\"|\"threshold\"|\"alpha\"|\"mode\""
+      ],
+      "freeze_provenance": "Stage-9 detector-family sensitivity",
+      "rationale": "Alternative drift detector family.",
+      "leverage": "high",
+      "changes_scientific_object": false,
+      "completed_sensitivity": "completed",
+      "future_disposition": "leave",
+      "reviewer_justification": "Detector-family sensitivity is robustness evidence, not a replacement primary.",
+      "scan_values": [
+        30,
+        0.005,
+        50,
+        0.9999,
+        "both",
+        "page_hinkley",
+        "hard_error"
+      ]
+    },
+    {
+      "id": "stage9.primary_replay_enabled",
+      "class": "causal_design_constant",
+      "accepted_value": true,
+      "source_locations": [
+        "src/concept_drift_ids/cd_stage9_shared_runner.py",
+        "data/manifests/cd_stage9_run_config_v1_1.json"
+      ],
+      "locator_patterns": [
+        "^replay_enabled$",
+        "^conditions\\.adaptive\\.(latency_0|latency_10000|page_hinkley_hard_error|adwin_brier)\\.replay_enabled$",
+        "^conditions\\.adaptive\\.(adwin_brier|page_hinkley_hard_error|latency_0|latency_10000)\\.replay_enabled$"
+      ],
+      "freeze_provenance": "matched primary/adaptive robustness control",
+      "rationale": "Keeps replay unchanged in conditions not testing replay.",
+      "leverage": "high",
+      "changes_scientific_object": true,
+      "completed_sensitivity": "no-replay condition completed",
+      "future_disposition": "verify changed-factor isolation",
+      "reviewer_justification": "Changed-factor isolation prevents accidental multi-factor robustness comparisons.",
+      "scan_values": [
+        true
+      ]
+    },
+    {
+      "id": "stage9.reporting_window_family",
+      "class": "statistical_estimand_definition",
+      "accepted_value": [
+        2500,
+        10000
+      ],
+      "source_locations": [
+        "data/manifests/cd_stage9_run_config_v1_1.json",
+        "STAGE9_PRESPECIFIED_ROBUSTNESS_PROTOCOL.md",
+        "src/concept_drift_ids/cd_stage9_config.py",
+        "src/concept_drift_ids/cd_stage9_offline.py",
+        "src/concept_drift_ids/cd_stage9_export.py"
+      ],
+      "locator_patterns": [
+        "^conditions\\.offline\\.window_(2500|10000)\\.reporting_window_rows$",
+        "(2,?500|10,?000)-row.*window",
+        "reporting_window_rows|window_size = 2500|size = 2500"
+      ],
+      "freeze_provenance": "Stage-9 prespecified robustness protocol",
+      "rationale": "Tests reporting-window dependence without redefining the whole-post endpoint.",
+      "leverage": "high",
+      "changes_scientific_object": false,
+      "completed_sensitivity": "completed",
+      "future_disposition": "recovery remains descriptive/window-sensitive",
+      "reviewer_justification": "Both alternatives were frozen and reported.",
+      "scan_values": [
+        2500,
+        10000
+      ]
+    },
+    {
+      "id": "stage9.static_symbolic_gate",
+      "class": "scientific_hyperparameter",
+      "accepted_value": {
+        "min_support": 0.001,
+        "min_covered": 100,
+        "min_class_precision": 0.8,
+        "min_precision_lcb": 0,
+        "min_neural_fidelity": 0.9,
+        "min_fidelity_lcb": 0,
+        "min_stability": 0.9,
+        "max_complexity": 4,
+        "bootstrap_replicates": 100,
+        "use_wilson_lcb": false
+      },
+      "source_locations": [
+        "data/manifests/cd_stage9_run_config_v1_1.json",
+        "src/concept_drift_ids/cd_stage9_phase_b.py",
+        "src/concept_drift_ids/cd_stage9_config.py",
+        "STAGE9_PRESPECIFIED_ROBUSTNESS_PROTOCOL.md"
+      ],
+      "locator_patterns": [
+        "^conditions\\.symbolic_gate\\.static_symbolic_gate\\.",
+        "^min_class_precision$",
+        "^min_precision_lcb$",
+        "^min_neural_fidelity$",
+        "^min_fidelity_lcb$",
+        "^min_stability$",
+        "^STATIC_GATE_CONFIG$",
+        "point precision|neural fidelity|min.*covered|Wilson",
+        "STATIC_GATE_CONFIG|^min_support$|^max_complexity$|^bootstrap_replicates$",
+        "support.*\\.001|covered.*100|bootstrap.*100|complexity.*4"
+      ],
+      "freeze_provenance": "Stage-9 static-style gate sensitivity",
+      "rationale": "Tests Wilson-LCB dependence while retaining point-quality thresholds.",
+      "leverage": "high",
+      "changes_scientific_object": false,
+      "completed_sensitivity": "completed",
+      "future_disposition": "leave",
+      "reviewer_justification": "Prespecified static-gate sensitivity directly bounds gate-form dependence.",
+      "scan_values": [
+        0.001,
+        100,
+        0.8,
+        0,
+        0.9,
+        4,
+        false
+      ]
+    },
+    {
+      "id": "symbolic.generation_horizon",
+      "class": "scientific_hyperparameter",
+      "accepted_value": 10000,
+      "source_locations": [
+        "data/manifests/cd_primary_run_config_v1.json",
+        "data/manifests/cd_primary_run_config_v1_1.json",
+        "src/concept_drift_ids/cd_symbolic_runner.py"
+      ],
+      "freeze_provenance": "primary symbolic protocol",
+      "rationale": "Defines candidate-generation evidence horizon.",
+      "leverage": "high",
+      "changes_scientific_object": false,
+      "completed_sensitivity": "none",
+      "future_disposition": "mandatory prospective evidence-horizon sensitivity",
+      "reviewer_justification": "High-leverage symbolic evidence budget should be bounded prospectively.",
+      "locator_patterns": [
+        "^primary_symbolic_operator\\.config\\.generation_rows$",
+        "_periodic_generation_ids|10_000"
+      ],
+      "scan_values": [
+        10000
+      ]
+    },
+    {
+      "id": "symbolic.shap_sampling",
+      "class": "scientific_hyperparameter",
+      "accepted_value": {
+        "background_per_class": 128,
+        "attribution_per_class": 1024,
+        "minimum_per_class": 128
+      },
+      "source_locations": [
+        "data/manifests/cd_primary_run_config_v1.json",
+        "data/manifests/cd_primary_run_config_v1_1.json",
+        "src/concept_drift_ids/cd_symbolic_candidates.py",
+        "src/concept_drift_ids/cd_symbolic_runner.py"
+      ],
+      "freeze_provenance": "primary symbolic candidate-generation protocol",
+      "rationale": "Controls attribution reference/sample budget and fail-closed minimum.",
+      "leverage": "medium",
+      "changes_scientific_object": false,
+      "completed_sensitivity": "upstream SHAP background/aggregation robustness",
+      "future_disposition": "leave or prospectively vary sample size only if needed",
+      "reviewer_justification": "Already frozen and partly bounded upstream; no reason for broad post-hoc search.",
+      "locator_patterns": [
+        "background_per_class|attribution_per_class|minimum_per_class|generation.*128"
+      ],
+      "scan_values": [
+        128,
+        1024
+      ]
+    },
+    {
+      "id": "symbolic.surrogate_tree",
+      "class": "scientific_hyperparameter",
+      "accepted_value": {
+        "criterion": "gini",
+        "splitter": "best",
+        "max_depth": 4,
+        "min_samples_leaf": 100
+      },
+      "source_locations": [
+        "data/manifests/cd_primary_run_config_v1.json",
+        "data/manifests/cd_primary_run_config_v1_1.json",
+        "src/concept_drift_ids/cd_symbolic_candidates.py"
+      ],
+      "freeze_provenance": "primary symbolic protocol",
+      "rationale": "Controls candidate rule complexity/granularity.",
+      "leverage": "medium",
+      "changes_scientific_object": false,
+      "completed_sensitivity": "upstream shallow tree/min-leaf robustness",
+      "future_disposition": "prospective reuse only if addition claims depend on it",
+      "reviewer_justification": "Existing sensitivity makes retrospective retuning unnecessary.",
+      "locator_patterns": [
+        "^primary_symbolic_operator\\.config\\.generation\\.(max_depth|min_samples_leaf|criterion|splitter)$",
+        "selected_features|max_depth|min_samples_leaf|criterion|splitter"
+      ]
+    },
+    {
+      "id": "symbolic.top_k",
+      "class": "scientific_hyperparameter",
+      "accepted_value": 12,
+      "source_locations": [
+        "data/manifests/cd_primary_run_config_v1.json",
+        "data/manifests/cd_primary_run_config_v1_1.json",
+        "src/concept_drift_ids/cd_symbolic_candidates.py"
+      ],
+      "freeze_provenance": "primary symbolic protocol",
+      "rationale": "Controls surrogate feature subset.",
+      "leverage": "medium",
+      "changes_scientific_object": false,
+      "completed_sensitivity": "upstream 8/12/16",
+      "future_disposition": "reuse prospectively in attack-pattern replication if feasible",
+      "reviewer_justification": "Prior robustness exists; accepted Stage-8/9 object remains frozen.",
+      "locator_patterns": [
+        "^primary_symbolic_operator\\.config\\.generation\\.selected_features$",
+        "selected_features"
+      ]
+    },
+    {
+      "id": "system_a.architecture",
+      "class": "scientific_hyperparameter",
+      "accepted_value": {
+        "input_features": 77,
+        "hidden_layers": [
+          128,
+          64
+        ],
+        "activation": "ReLU",
+        "dropout": 0.1,
+        "weight_initialization": "kaiming_uniform_relu"
+      },
+      "source_locations": [
+        "data/manifests/cd_primary_run_config_v1.json",
+        "data/manifests/cd_primary_run_config_v1_1.json",
+        "src/concept_drift_ids/system_a.py"
+      ],
+      "freeze_provenance": "development-only System-A freeze",
+      "rationale": "Controlled non-novel neural backbone.",
+      "leverage": "medium",
+      "changes_scientific_object": false,
+      "completed_sensitivity": "none as architecture family",
+      "future_disposition": "leave accepted teacher; second backbone only for broader generalization",
+      "reviewer_justification": "Retuning after downstream outcomes would be post-hoc; architecture breadth is an external-validity question.",
+      "scan_values": [
+        77,
+        128,
+        64,
+        "ReLU",
+        0.1,
+        "kaiming_uniform_relu"
+      ],
+      "locator_patterns": [
+        "input_features|hidden_layers|activation|dropout|weight_initialization"
+      ]
+    },
+    {
+      "id": "system_a.class_weight",
+      "class": "derived_quantity",
+      "accepted_value": 4.138247558496975,
+      "source_locations": [
+        "data/manifests/cd_primary_run_config_v1.json",
+        "data/manifests/cd_primary_run_config_v1_1.json",
+        "src/concept_drift_ids/cd_control_plane.py",
+        "src/concept_drift_ids/system_a.py"
+      ],
+      "freeze_provenance": "training-data-derived System-A objective",
+      "rationale": "Frozen positive-class weight derived from training composition.",
+      "leverage": "medium",
+      "changes_scientific_object": false,
+      "completed_sensitivity": "none",
+      "future_disposition": "leave",
+      "reviewer_justification": "Data-derived training constant, not selected against Stage-8/9 outcomes.",
+      "locator_patterns": [
+        "^PRIMARY_POS_WEIGHT$",
+        "positive_class_weight"
+      ],
+      "scan_values": [
+        4.138247558496975,
+        "training_benign/training_attack"
+      ]
+    },
+    {
+      "id": "system_a.early_stopping",
+      "class": "scientific_hyperparameter",
+      "accepted_value": {
+        "metric": "development_average_precision",
+        "patience": 3,
+        "min_delta": 0.0001
+      },
+      "source_locations": [
+        "data/manifests/cd_primary_run_config_v1.json",
+        "data/manifests/cd_primary_run_config_v1_1.json",
+        "src/concept_drift_ids/system_a.py"
+      ],
+      "freeze_provenance": "development-only System-A freeze",
+      "rationale": "Controls checkpoint selection before untouched stream evaluation.",
+      "leverage": "medium",
+      "changes_scientific_object": false,
+      "completed_sensitivity": "none",
+      "future_disposition": "leave",
+      "reviewer_justification": "Reopening checkpoint-selection logic after outcomes would invalidate holdout discipline.",
+      "scan_values": [
+        "development_average_precision",
+        3,
+        0.0001
+      ],
+      "locator_patterns": [
+        "early_stopping_(metric|patience|min_delta)"
+      ]
+    },
+    {
+      "id": "system_a.monitor_thresholds_by_seed",
+      "class": "derived_quantity",
+      "accepted_value": "five development-selected seed-specific System-A monitor thresholds frozen before adaptive evaluation",
+      "source_locations": [
+        "data/manifests/cd_primary_run_config_v1_1.json",
+        "src/concept_drift_ids/cd_control_plane.py"
+      ],
+      "locator_patterns": [
+        "^system_a\\.monitor_threshold_by_seed\\.",
+        "^frozen_primary_contract\\.contract\\.system_a\\.monitor_threshold_by_seed\\.",
+        "^SYSTEM_A_MONITOR_THRESHOLDS$"
+      ],
+      "freeze_provenance": "development-only System-A threshold selection; copied into adaptive sentinel contract",
+      "rationale": "Treatment-independent seed-specific hard-decision thresholds for monitored error.",
+      "leverage": "high",
+      "changes_scientific_object": true,
+      "completed_sensitivity": "identity fixed and audited",
+      "future_disposition": "leave exactly; verify seed binding",
+      "reviewer_justification": "Changing these thresholds would alter detector evidence and arm evaluation.",
+      "scan_values": [
+        0.939024031162262,
+        0.9333740472793579,
+        0.9121250510215759,
+        0.9789621233940125,
+        0.954619288444519
+      ]
+    },
+    {
+      "id": "system_a.optimizer",
+      "class": "scientific_hyperparameter",
+      "accepted_value": {
+        "loss": "BCEWithLogitsLoss",
+        "optimizer": "Adam",
+        "learning_rate": 0.001,
+        "weight_decay": 0.00001,
+        "batch_size": 4096,
+        "max_epochs": 20
+      },
+      "source_locations": [
+        "data/manifests/cd_primary_run_config_v1.json",
+        "data/manifests/cd_primary_run_config_v1_1.json",
+        "src/concept_drift_ids/system_a.py"
+      ],
+      "freeze_provenance": "development-only System-A freeze",
+      "rationale": "Initial teacher training policy.",
+      "leverage": "medium",
+      "changes_scientific_object": false,
+      "completed_sensitivity": "none",
+      "future_disposition": "leave historical model",
+      "reviewer_justification": "Shared upstream choice cannot be retuned using accepted downstream outcomes.",
+      "scan_values": [
+        "BCEWithLogitsLoss",
+        "Adam",
+        0.001,
+        0.00001,
+        4096,
+        20
+      ],
+      "locator_patterns": [
+        "loss|optimizer|learning_rate|weight_decay|batch_size|max_epochs"
+      ]
+    },
+    {
+      "id": "system_a.primary_seeds",
+      "class": "reproducibility_rng_constant",
+      "accepted_value": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "source_locations": [
+        "data/manifests/cd_primary_run_config_v1.json",
+        "data/manifests/cd_primary_run_config_v1_1.json",
+        "src/concept_drift_ids/cd_primary_config.py",
+        "data/manifests/cd_stage9_run_config_v1_1.json",
+        "STAGE8_PRIMARY_EXECUTION_PROTOCOL.md",
+        "src/concept_drift_ids/cd_analysis.py"
+      ],
+      "freeze_provenance": "prespecified primary seeds",
+      "rationale": "Stochastic replication within fixed scenario.",
+      "leverage": "high",
+      "changes_scientific_object": false,
+      "completed_sensitivity": "leave-one-seed-out summaries",
+      "future_disposition": "do not add Stage-8/9 seeds post hoc; freeze future replication seed counts prospectively",
+      "reviewer_justification": "Post-hoc seed inflation could chase significance.",
+      "locator_patterns": [
+        "^PRIMARY_SEEDS$",
+        "^seeds\\[",
+        "seed.*0\\.\\.4",
+        "^seeds$",
+        "^analysis\\.paired_seeds\\["
+      ],
+      "scan_values": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "id": "system_a.threshold_policy",
+      "class": "scientific_hyperparameter",
+      "accepted_value": {
+        "objective": "MCC",
+        "tiebreak": [
+          "F1",
+          "lower_FPR",
+          "closest_to_0.5"
+        ],
+        "probability_calibration": "none"
+      },
+      "scan_values": [
+        "MCC",
+        "F1",
+        "lower_FPR",
+        "closest_to_0.5",
+        "none"
+      ],
+      "source_locations": [
+        "src/concept_drift_ids/system_a.py"
+      ],
+      "locator_patterns": [
+        "threshold_objective|threshold_tiebreak|probability_calibration"
+      ],
+      "freeze_provenance": "development-only System-A threshold policy",
+      "rationale": "Defines threshold selection/tie-break and absence of calibration before untouched adaptive evaluation.",
+      "leverage": "high",
+      "changes_scientific_object": false,
+      "completed_sensitivity": "none",
+      "future_disposition": "freeze historical System-A selection policy",
+      "reviewer_justification": "Post-outcome threshold-policy changes would violate holdout discipline."
+    },
+    {
+      "id": "timing.label_latency",
+      "class": "causal_design_constant",
+      "accepted_value": 5000,
+      "source_locations": [
+        "data/manifests/cd_primary_run_config_v1.json",
+        "data/manifests/cd_primary_run_config_v1_1.json",
+        "data/manifests/cd_stage9_run_config_v1_1.json",
+        "STAGE8_PRIMARY_EXECUTION_PROTOCOL.md",
+        "src/concept_drift_ids/cd_control_plane.py"
+      ],
+      "freeze_provenance": "primary information-timing protocol",
+      "rationale": "Models delayed labels and governs maturity.",
+      "leverage": "high",
+      "changes_scientific_object": true,
+      "completed_sensitivity": "latency 0 and 10000",
+      "future_disposition": "leave primary",
+      "reviewer_justification": "Latency is part of the information set; Stage-9 already bounds sensitivity.",
+      "locator_patterns": [
+        "^conditions\\.adaptive\\.(no_replay|page_hinkley_hard_error|adwin_brier|static_symbolic_gate)\\.label_latency$",
+        "label latency.*5,?000",
+        "^PRIMARY_LABEL_LATENCY$",
+        "^primary_control_plane\\.config\\.label_latency$",
+        "^conditions\\.adaptive\\.(adwin_brier|page_hinkley_hard_error|no_replay|static_symbolic_gate)\\.label_latency$"
+      ],
+      "scan_values": [
+        5000
+      ]
+    },
+    {
+      "id": "trigger.max_opportunities",
+      "class": "derived_quantity",
+      "accepted_value": 4,
+      "source_locations": [
+        "data/manifests/cd_primary_run_config_v1.json",
+        "data/manifests/cd_primary_run_config_v1_1.json",
+        "STAGE8_PRIMARY_EXECUTION_PROTOCOL.md",
+        "src/concept_drift_ids/cd_symbolic_arms.py",
+        "src/concept_drift_ids/cd_primary_config.py"
+      ],
+      "freeze_provenance": "fair-budget trigger protocol",
+      "rationale": "Maximum symbolic opportunities under the nominal evidence footprint.",
+      "leverage": "high",
+      "changes_scientific_object": true,
+      "completed_sensitivity": "none",
+      "future_disposition": "leave accepted primary",
+      "reviewer_justification": "Budget was prospectively matched; increasing it after outcomes would alter treatment intensity.",
+      "locator_patterns": [
+        "^primary_symbolic_operator\\.maximum_opportunities_per_seed$",
+        "maximum symbolic opportunities|opportunities.*4",
+        "PRIMARY_SYMBOLIC_OPPORTUNITY_BUDGET|maximum_opportunities_per_seed"
+      ],
+      "scan_values": [
+        4
+      ]
+    },
+    {
+      "id": "trigger.opportunity_id_sequence",
+      "class": "derived_quantity",
+      "accepted_value": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "scan_values": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "source_locations": [
+        "src/concept_drift_ids/cd_symbolic_arms.py"
+      ],
+      "locator_patterns": [
+        "verify_periodic_schedule.*ids"
+      ],
+      "freeze_provenance": "derived from four-opportunity budget",
+      "rationale": "Verifies one-based deterministic opportunity IDs.",
+      "leverage": "low",
+      "changes_scientific_object": false,
+      "completed_sensitivity": "none",
+      "future_disposition": "verify only",
+      "reviewer_justification": "ID sequence is structural, not a tunable treatment choice."
+    },
+    {
+      "id": "trigger.periodic_clocks",
+      "class": "derived_quantity",
+      "accepted_value": [
+        27706,
+        55412,
+        83118,
+        110824
+      ],
+      "source_locations": [
+        "data/manifests/cd_primary_run_config_v1.json",
+        "data/manifests/cd_primary_run_config_v1_1.json",
+        "STAGE8_PRIMARY_EXECUTION_PROTOCOL.md",
+        "src/concept_drift_ids/cd_symbolic_arms.py"
+      ],
+      "freeze_provenance": "matched periodic comparator protocol",
+      "rationale": "Equal-spaced four-opportunity schedule chosen relative to evidence footprint, without boundary input.",
+      "leverage": "high",
+      "changes_scientific_object": false,
+      "completed_sensitivity": "none",
+      "future_disposition": "alternative schedules only if trigger superiority is claimed",
+      "reviewer_justification": "Current schedule is one frozen comparator and is not to be changed to rescue trigger results.",
+      "locator_patterns": [
+        "exact clocks",
+        "PRIMARY_PERIODIC_CLOCKS|primary_symbolic_operator\\.periodic_clocks",
+        "^primary_symbolic_operator\\.periodic_clocks\\["
+      ],
+      "scan_values": [
+        27706,
+        55412,
+        83118,
+        110824
+      ]
+    },
+    {
+      "id": "trigger.periodic_schedule_divisor",
+      "class": "derived_quantity",
+      "accepted_value": 5,
+      "scan_values": [
+        5
+      ],
+      "source_locations": [
+        "src/concept_drift_ids/cd_symbolic_arms.py"
+      ],
+      "locator_patterns": [
+        "frozen_periodic_opportunities.*stream_length|stream_length.*// 5"
+      ],
+      "freeze_provenance": "derived equal-spacing schedule",
+      "rationale": "Derives four interior opportunities by dividing the stream into five equal intervals.",
+      "leverage": "medium",
+      "changes_scientific_object": false,
+      "completed_sensitivity": "no trigger-superiority claim",
+      "future_disposition": "alternative schedules only if trigger superiority claimed",
+      "reviewer_justification": "Derived comparator cadence is reported as one matched schedule."
+    }
+  ],
+  "correction_protocol": "STAGE9_5_V1_3_PARAMETER_COMPLETENESS_CORRECTION.md",
+  "failed_v1_scan_record": "results/audits/stage9_5_v1/parameter_scan_failure.json",
+  "parent_register_path": "data/manifests/stage9_5_parameter_register_v1_2.json",
+  "failed_v1_1_scan_record": "results/audits/stage9_5_v1_1/parameter_scan_failure.json",
+  "failed_v1_2_scan_record": "results/audits/stage9_5_v1_2/parameter_scan_failure.json",
+  "scan_scope_bindings": {
+    "scientific_source_manifests": [
+      "data/manifests/cd_primary_run_config_v1_1.json",
+      "data/manifests/cd_stage9_run_config_v1_1.json"
+    ],
+    "rule": "scientific_source must equal the union of .py paths in scientific_source_hashes from both accepted manifests"
+  }
+}

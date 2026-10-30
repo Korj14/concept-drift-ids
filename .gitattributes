@@ -24,3 +24,7 @@ data/manifests/cd_primary_mechanism_audit_v1.json text eol=lf
 data/manifests/cd_primary_mechanism_audit_v1_1.json text eol=lf
 data/manifests/cd_primary_mechanism_audit_v1_2.json text eol=lf
 results/frozen/cd_primary_mechanism_v1_2/** text eol=lf
+
+# Stage-9.5 assurance Python sources are canonical LF so source-byte
+# provenance hashes remain portable across Windows/Linux checkouts.
+tools/stage9_5/*.py text eol=lf

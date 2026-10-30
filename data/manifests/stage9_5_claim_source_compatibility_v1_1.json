@@ -1,0 +1,25 @@
+{
+  "schema_version": "1.1",
+  "status": "assurance_only_corrective_not_stage9_5_closure",
+  "scope": "stage9.5-7-claim-source-ledger-additive-compatibility",
+  "frozen_claim_contract": {
+    "path": "data/manifests/stage9_5_claim_reporting_v1.json",
+    "blob_sha": "b38302c509bda9af65e2dbf319e7e903a00ab111"
+  },
+  "frozen_claim_definitions": {
+    "path": "data/manifests/stage9_5_claim_definitions_v1.json",
+    "blob_sha": "18157779d5860b366b568926d6a89a2205e75480"
+  },
+  "ledger": {
+    "path": "METHODOLOGY_LEDGER.md",
+    "claim_source_blob_sha": "9b977705b9748138bb12745e9f0fb3d77d73c2b2",
+    "claim_source_historical_commit": "b141a65033fee1ffbe7709a54838ea1af1324225",
+    "pre_correction_snapshot_blob_sha": "8a14bd17528851e26748b993b7ae85cd90c40db3",
+    "pre_correction_commit": "207c05e5e99568fb4cb7f89996af3314be0d5ef3",
+    "compatibility_mode": "immutable_frozen_prefix_and_preserved_snapshot_prefix",
+    "report_blob_identity": "frozen_original"
+  },
+  "other_claim_sources": "require_exact_head_blob_identity",
+  "scientific_objects_modified": false,
+  "stage10_outcomes_accessed": false
+}

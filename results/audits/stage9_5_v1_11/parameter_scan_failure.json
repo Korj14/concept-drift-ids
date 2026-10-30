@@ -1,0 +1,36 @@
+{
+  "audit_id": "stage9.5-0-v1.11-real-scan-block",
+  "classification": "scanner_guard_and_provenance_false_positive",
+  "scientific_class": "not_Class_A",
+  "accepted_as_closure_evidence": false,
+  "exact_head": "10c43bb9d049b8bcee34b5a167efb5b431495af8",
+  "workflow_run_id": 38448977659,
+  "stage9_regression_same_head": "success",
+  "scanner_unit_tests": "21 passed",
+  "real_parameter_scan_executed": true,
+  "artifact_zip_sha256": "e0ace10a47fe208a82208ae1b5ee01ecbc7d2a8394421d8ec947c25c0ed57f08",
+  "scan_canonical_sha256": "35b43da01483ef055fb9f78387a862161bad5729e20ee7cbff0c89a87ea96a6c",
+  "parameter_register_sha256": "294ea5e76c4266d2011c963f737c492a1944c5d59e31f05fcaf99b4cda5057a0",
+  "counts": {
+    "registered_entries": 88,
+    "material_candidates": 515,
+    "excluded_candidates": 1439,
+    "unclassified_material_candidates": 4,
+    "ambiguous_material_candidates": 0,
+    "unclassified_high_leverage_candidates": 4
+  },
+  "residuals": [
+    "cd_control_plane.py DelayedLabelQueue latency < 0 domain-validation guard",
+    "cd_shared_runner.py label_latency < 0 domain-validation guard",
+    "cd_stage9_shared_runner.py label_latency < 0 domain-validation guard",
+    "cd_primary_correction.py failed Phase-C v1 seed == 0 historical provenance identity check"
+  ],
+  "verified_v1_11_target_controls": {
+    "stage9_latency_zero": "registered as stage9.latency_family",
+    "replay_enabled_booleans": "registered as stage9.primary_replay_enabled / stage9.no_replay",
+    "lifecycle_overlap_defaults": "registered as lifecycle.overlap_thresholds",
+    "lifecycle_failure_streak_increments": "registered as lifecycle.state_machine_policy"
+  },
+  "scientific_value_changes": false,
+  "correction": "v1.11.1 source-aware expression exclusions for validation lower bounds and preserved failed-run seed identity only"
+}

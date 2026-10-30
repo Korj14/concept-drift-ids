@@ -1,0 +1,14 @@
+{
+  "audit_id": "stage9.5-0-v1.8-test-fixture-failure",
+  "classification": "technical_test_fixture_versioning_failure",
+  "scientific_class": "not_Class_A",
+  "accepted_as_completeness_evidence": false,
+  "exact_head": "eff8802c42f7597c2c3e6671a6c49a175f291cff",
+  "workflow_run_id": 38443562186,
+  "stage9_regression_same_head": "success",
+  "scanner_unit_tests": "13 passed, 4 failed before real scan",
+  "failure": "Four temporary-root tests wrote stage9_5_parameter_register_v1_7.json while the v1.8 scanner correctly expected stage9_5_parameter_register_v1_8.json.",
+  "real_parameter_scan_executed": false,
+  "scientific_outcomes_accessed": false,
+  "correction": "fixture-only v1.8.1 filename correction; scanner logic and v1.8 register unchanged"
+}

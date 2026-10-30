@@ -1,0 +1,55 @@
+{
+  "audit_id": "stage9.5-6-clean-deterministic-full-seed-rerun-v1",
+  "audited_head": "c3356e6e062b41f3127cc022eb7571b52758272c",
+  "blockers": [],
+  "canonical_sha256": "f169ae5fd9dc246ad8e2abe7b321b5d2ad67cb1f2c7ec6a1d3bcb73d4ec58052",
+  "construction": {
+    "comparator_id": "stage9.5-6-replay-equivalence-comparator-v1",
+    "comparison_evidence_canonical_sha256": "5563d38b002fe793c0bcaffdfdfe3c9b96f62d9b028a95ae9597a4dc672ab536",
+    "contract_id": "stage9.5-6-replay-report-construction-v1",
+    "deterministic_comparison_complete": true,
+    "finalizer_id": "stage9.5-6-replay-report-finalizer-v1",
+    "manual_success_report_permitted": false,
+    "mismatch_count": 0,
+    "producer_id": "stage9.5-6-replay-equivalence-assurance-v1",
+    "source_evidence_complete": true,
+    "stage1_reconstruction_report_canonical_sha256": "4bafa772f9737d934f40c90bf7be8d80a62108cf89a9c74895fbe5c12c4a88af",
+    "stage9_5_1_recovery_report_canonical_sha256": "35cbefc053ae910b0eb20ace3443b70ea4972a511b6549f430f3d2ced0980c7d"
+  },
+  "failures": [],
+  "pass": true,
+  "replay_equivalence": {
+    "accepted_correction_manifest_sha256": "d380fce5f9db8f0b639dc999298a263b10a10a3d02e35def226a121d098e2222",
+    "accepted_maintenance_archive_verified": true,
+    "accepted_stage8_evidence_commit": "c2ded83b8195b9321e715626c1f305f9627936e8",
+    "corrected_phase_c_seed0_rerun_complete": true,
+    "historical_heads": {
+      "correction_source": "79ddc4c6d6dea52c7cabc55a6d082448fc24fcf9",
+      "phase_a_b": "bfa14b942e4a5b2fbfa8aa3c43728a7f1cd81645"
+    },
+    "original_phase_c_v1_seed0_failure_lineage_preserved": true,
+    "pass": true,
+    "phase_a_complete_seeds": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "phase_b_complete_seeds": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "protocol_id": "stage9.5-6-replay-equivalence-correction-v1_1",
+    "regenerated_correction_config_all_scientific_blocks_equal": true,
+    "rerun_seed": 0,
+    "stage1_reconstructed_under_historical_environment": true
+  },
+  "scientific_objects_modified": false,
+  "stage10_outcomes_accessed": false,
+  "status": "pass",
+  "unresolved_class_a": []
+}

@@ -1,0 +1,160 @@
+{
+  "schema_version": 1,
+  "status": "prospectively_frozen_before_stage9_5_7_8_execution",
+  "protocol_id": "stage9.5-q1-assurance-v1",
+  "packages": [
+    "stage9.5-7-claim-to-evidence-traceability",
+    "stage9.5-8-independent-table-figure-regeneration"
+  ],
+  "prerequisites": {
+    "stage9_5_0": "closed",
+    "stage9_5_1": "open_blocked_system_a_checkpoint_bytes_missing",
+    "stage9_5_2": "closed",
+    "stage9_5_3": "closed",
+    "stage9_5_4": "closed",
+    "stage9_5_5": "closed",
+    "stage9_5_6": "open_blocked_by_stage9_5_1"
+  },
+  "claim_source_freeze": [
+    {
+      "path": "STAGE8_PRIMARY_RESULTS_INTERPRETATION.md",
+      "blob_sha": "7965eccdfffb777209c15d497bdbbfec7fcf32d5"
+    },
+    {
+      "path": "STAGE8_SYMBOLIC_MECHANISM_AUDIT_INTERPRETATION.md",
+      "blob_sha": "9feadb0c87054d12d2f1573730cfcd6bc8e45d5a"
+    },
+    {
+      "path": "STAGE9_ROBUSTNESS_INTERPRETATION.md",
+      "blob_sha": "af05dc9907ec65d4c1729e5d1289525e64d751cd"
+    },
+    {
+      "path": "METHODOLOGY_LEDGER.md",
+      "blob_sha": "9b977705b9748138bb12745e9f0fb3d77d73c2b2"
+    }
+  ],
+  "immutable_evidence_roots": {
+    "primary_confirmatory": "results/frozen/cd_primary_v1/phase_c_offline_evaluation_v1_1/confirmatory_analysis.json",
+    "primary_seed_evaluations": "results/frozen/cd_primary_v1/phase_c_offline_evaluation_v1_1/seed-{seed}/{arm}_evaluation.json",
+    "primary_compact_manifest": "results/frozen/cd_primary_v1/compact_export_manifest.json",
+    "mechanism_aggregate": "results/frozen/cd_primary_mechanism_v1_2/aggregate.json",
+    "mechanism_manifest": "results/frozen/cd_primary_mechanism_v1_2/audit_manifest.json",
+    "mechanism_seed": "results/frozen/cd_primary_mechanism_v1_2/seed-{seed}.json",
+    "stage9_aggregate": "results/frozen/cd_robustness_v1_1/aggregate.json",
+    "stage9_execution_plan": "results/frozen/cd_robustness_v1_1/execution_plan.json",
+    "stage9_compact_manifest": "results/frozen/cd_robustness_v1_1/compact_export_manifest.json",
+    "publication_clock_audit": "results/audits/stage9_v1_1_publication_clock_audit.json",
+    "scenario_manifest": "data/manifests/sudden_benign_v1.json",
+    "preprocessing_manifest": "data/manifests/sudden_benign_v1_preprocessing_v1.json",
+    "system_a_manifest": "data/manifests/system_a_v1.json",
+    "r0_manifest": "data/manifests/system_b_v2.json",
+    "primary_config": "data/manifests/cd_primary_run_config_v1_1.json",
+    "stage9_config": "data/manifests/cd_stage9_run_config_v1_1.json",
+    "independent_oracle_closure": "results/audits/stage9_5_statistical_oracle_v1_1/success.json"
+  },
+  "frozen_scientific_identities": {
+    "stage8_evidence_commit": "c2ded83b8195b9321e715626c1f305f9627936e8",
+    "stage8_compact_manifest_sha256": "409b516d75cbc5e71d3633019008432ea6088d1d923b4e4a95570263528ed523",
+    "stage8_confirmatory_manifest_sha256": "1be77ce4be9f3faad021a3f3bfd636488e5de6aa1b2a6e7c596e48feb41bb54d",
+    "mechanism_evidence_commit": "90e574fd3cee278fd4514609c24dfe58d5c6d944",
+    "mechanism_aggregate_sha256": "6c35c026c52fa7bee93cd31bffa459b2bf605efe950f9645e6bea48f86a99acd",
+    "mechanism_audit_manifest_sha256": "c8edd1228942371d55b13e196c3050a9fa64d51c9e36069dc218c0dc03c89b66",
+    "stage9_evidence_commit": "9a05602b68cfaee7c45d2002a760b65115a581fd",
+    "stage9_aggregate_sha256": "6432dd5791f0baa9bdb2597c072b866814fb614f5a1f670dffec7f760bd1491a",
+    "stage9_aggregate_raw_sha256": "d6e70aaa591de7169ed9acc7f1da7c0aa6edfc7e7d3e8b5e72657d7d1e57be70",
+    "stage9_execution_plan_sha256": "4ae426dd32ffed2384b4565710364459f4ee0ac2752543d6ec075facf66e53c8",
+    "stage9_compact_manifest_sha256": "d2d6f1a75aa427f2ba1769b8fef2d51253a5f10b5d3bfdb6c31de10d811aae22",
+    "independent_oracle_report_sha256": "b36f8f9b2cf2237762298d139139bd5160c0805054b1540c3c56e6acf915819d"
+  },
+  "claim_families": [
+    "method.scenario_partition_feature_seed_counts",
+    "method.preprocessing_and_system_a_training",
+    "method.shared_control_plane_timing_replay_detector",
+    "method.symbolic_generation_validation_gate_lifecycle",
+    "primary.confirmatory_E1_E2_E3",
+    "primary.descriptive_operating_tradeoff",
+    "primary.trigger_timing_and_publication_timing",
+    "primary.maintenance_budget_compute_wait",
+    "primary.recovery_secondary",
+    "primary.lambda1_and_neural_control",
+    "mechanism.withdrawal_addition_retained_allocation",
+    "mechanism.rescue_harm_decision_counts",
+    "mechanism.timing_and_periodic_comparator",
+    "robustness.conditionwise_D_drift_minus_C",
+    "robustness.lambda1_and_neural_only",
+    "robustness.detector_replay_gate_sensitivities",
+    "robustness.D_drift_minus_periodic",
+    "robustness.explanation_and_coverage_tradeoff",
+    "robustness.publication_clock_timing",
+    "scope.fixed_scenario_and_external_validity_limitations"
+  ],
+  "stage9_5_7": {
+    "required_fields": [
+      "claim_id",
+      "claim_text_template",
+      "claim_status",
+      "interpretation_status",
+      "source_interpretation_path",
+      "source_section",
+      "immutable_evidence_path",
+      "evidence_selector",
+      "generating_code_path",
+      "verification_code_path",
+      "config_protocol_identity",
+      "evidence_commit_or_hash",
+      "display_transformation",
+      "claim_boundary"
+    ],
+    "interpretation_status_values": [
+      "confirmatory",
+      "secondary",
+      "exploratory",
+      "negative",
+      "limitation",
+      "methodology"
+    ],
+    "numerical_value_policy": "Claim definitions may contain labels and formatting templates but may not hand-enter evidence numbers. Every displayed number must be extracted from an immutable evidence selector or a prospectively declared deterministic transformation of extracted values.",
+    "evidence_selector_policy": "Use JSON Pointer/key/range or an equally exact machine-readable selector. Free-form prose citations are insufficient for quantitative claims.",
+    "orphan_policy": "No current claim may lack immutable evidence. When the manuscript is final, run a manuscript-number audit requiring zero orphan quantitative numbers.",
+    "final_manuscript_exclusions": "Dates, section/list numbering, citation numbering, version identifiers, and commit/hash text require explicit token classification; they may not be silently ignored."
+  },
+  "stage9_5_8": {
+    "independence_rule": "Reporting-only implementation must not import production aggregation/reporting code. It reads immutable evidence, the Stage-9.5 claim ledger, and independent-oracle outputs directly.",
+    "prohibited_import_prefixes": [
+      "concept_drift_ids.cd_analysis",
+      "concept_drift_ids.cd_primary_export",
+      "concept_drift_ids.cd_stage9_export"
+    ],
+    "numeric_policy": "Machine-readable table/figure source data retain unrounded evidence values. Display rounding is a separate declared transform and may not feed back into source values.",
+    "comparison_policy": {
+      "exact": [
+        "counts",
+        "signs",
+        "seed sets",
+        "condition labels",
+        "hashes",
+        "integer clocks"
+      ],
+      "floating_absolute_tolerance": 1e-10,
+      "authority": "Stage-9.5 independent oracle for recomputable endpoint/statistical values; immutable evidence selectors for non-oracle descriptive/mechanism/timing values."
+    },
+    "required_outputs": [
+      "claim_ledger.json",
+      "tables/primary_confirmatory.json",
+      "tables/primary_operating_tradeoff.json",
+      "tables/mechanism_decomposition.json",
+      "tables/stage9_robustness.json",
+      "tables/timing_and_recovery.json",
+      "figures/primary_effects_source.json",
+      "figures/robustness_effects_source.json",
+      "figures/mechanism_source.json"
+    ],
+    "provenance_rule": "Every emitted numeric table/figure datum must carry a claim_id and immutable evidence selector."
+  },
+  "closure_rules": {
+    "stage9_5_7": "All current Stage-8/9 quantitative claim families represented; zero orphan current claims; final manuscript zero-orphan gate explicitly retained.",
+    "stage9_5_8": "All required machine-readable outputs regenerated independently; every emitted number agrees with its oracle/evidence authority; presentation transformations are non-authoritative."
+  },
+  "scientific_objects_modified": false,
+  "stage10_outcomes_accessed": false
+}

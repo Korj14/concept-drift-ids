@@ -1,0 +1,72 @@
+{
+  "accepted_stage8_9_evidence_replaced": false,
+  "audit_id": "stage9.5-1-zero-byte-transport-reconstruction-v1",
+  "canonical_sha256": "0d82a977e7df5d11f2dfa38718d2756be4a73e8cfb56e303726cc009a2f50fa0",
+  "contract_id": "stage9.5-1-zero-byte-transport-reconstruction-v1",
+  "failures": [],
+  "governing_verifier_unchanged": true,
+  "items": [
+    {
+      "accepted_arm_manifest_file_sha256": "c2ce7d7917d88bdb4a1c3fc1feddca938662d328aaa1514261d050000851ea0a",
+      "accepted_arm_manifest_manifest_sha256": "6761637201b39412e4bf6154bf0fde926be891ae0c57a2b3a787017590cc9d32",
+      "accepted_arm_manifest_path": "results/frozen/cd_primary_v1/phase_b_symbolic_arms/seed-0/c_frozen_symbolic/arm_manifest.json",
+      "path": "phase_b_symbolic_arms/seed-0/c_frozen_symbolic/maintenance.jsonl",
+      "seed": 0,
+      "state_after": "preexisting_verified",
+      "state_before": "preexisting_verified",
+      "target_path": "C:\\Dev\\concept-drift-ids\\artifacts\\cd_primary_v1\\phase_b_symbolic_arms\\seed-0\\c_frozen_symbolic\\maintenance.jsonl"
+    },
+    {
+      "accepted_arm_manifest_file_sha256": "682c9b6065329bdb5d23c5a937acb5f656d73af3120e452852572b7ce00d3621",
+      "accepted_arm_manifest_manifest_sha256": "12a4158d9c72e477915f44733cea580b42b5281f1d78648cd608453479dcf845",
+      "accepted_arm_manifest_path": "results/frozen/cd_primary_v1/phase_b_symbolic_arms/seed-1/c_frozen_symbolic/arm_manifest.json",
+      "path": "phase_b_symbolic_arms/seed-1/c_frozen_symbolic/maintenance.jsonl",
+      "seed": 1,
+      "state_after": "preexisting_verified",
+      "state_before": "preexisting_verified",
+      "target_path": "C:\\Dev\\concept-drift-ids\\artifacts\\cd_primary_v1\\phase_b_symbolic_arms\\seed-1\\c_frozen_symbolic\\maintenance.jsonl"
+    },
+    {
+      "accepted_arm_manifest_file_sha256": "11165977aa78cc8ec7c3ed3b2b1948b67952563a8127f5568cc10a2e68638db5",
+      "accepted_arm_manifest_manifest_sha256": "6c54e300587dd10cab8235908f5f5d0f633193abefb6637113d8c573bd99629f",
+      "accepted_arm_manifest_path": "results/frozen/cd_primary_v1/phase_b_symbolic_arms/seed-2/c_frozen_symbolic/arm_manifest.json",
+      "path": "phase_b_symbolic_arms/seed-2/c_frozen_symbolic/maintenance.jsonl",
+      "seed": 2,
+      "state_after": "preexisting_verified",
+      "state_before": "preexisting_verified",
+      "target_path": "C:\\Dev\\concept-drift-ids\\artifacts\\cd_primary_v1\\phase_b_symbolic_arms\\seed-2\\c_frozen_symbolic\\maintenance.jsonl"
+    },
+    {
+      "accepted_arm_manifest_file_sha256": "87ef4532db827c588077d9080ee1e6174cf9879e71e1635dd704e5609e03735e",
+      "accepted_arm_manifest_manifest_sha256": "ae80781ccdf2e85beb039f6fc80911dff9295e3398e0f45bbe15ca1033313dbc",
+      "accepted_arm_manifest_path": "results/frozen/cd_primary_v1/phase_b_symbolic_arms/seed-3/c_frozen_symbolic/arm_manifest.json",
+      "path": "phase_b_symbolic_arms/seed-3/c_frozen_symbolic/maintenance.jsonl",
+      "seed": 3,
+      "state_after": "preexisting_verified",
+      "state_before": "preexisting_verified",
+      "target_path": "C:\\Dev\\concept-drift-ids\\artifacts\\cd_primary_v1\\phase_b_symbolic_arms\\seed-3\\c_frozen_symbolic\\maintenance.jsonl"
+    },
+    {
+      "accepted_arm_manifest_file_sha256": "ab1f184dca0fe7acb7d490a448dccfa533101d776e907a5685df25c5c971a22d",
+      "accepted_arm_manifest_manifest_sha256": "09b5465643a597e550ee73b8a145f0a499a5b045c0dfa2bba5e621d11ec5a3b2",
+      "accepted_arm_manifest_path": "results/frozen/cd_primary_v1/phase_b_symbolic_arms/seed-4/c_frozen_symbolic/arm_manifest.json",
+      "path": "phase_b_symbolic_arms/seed-4/c_frozen_symbolic/maintenance.jsonl",
+      "seed": 4,
+      "state_after": "preexisting_verified",
+      "state_before": "preexisting_verified",
+      "target_path": "C:\\Dev\\concept-drift-ids\\artifacts\\cd_primary_v1\\phase_b_symbolic_arms\\seed-4\\c_frozen_symbolic\\maintenance.jsonl"
+    }
+  ],
+  "next_authority": "Run unchanged Stage-9.5-1 v1.2 fresh_clone_reconstruction.py with the materialized checkpoint root and completed Stage-8 archive.",
+  "original_dropbox_objects_recovered": false,
+  "pass": true,
+  "preexisting_verified_count": 5,
+  "reconstructed_count": 0,
+  "reconstruction_kind": "manifest_bound_zero_byte_transport_reconstruction",
+  "required_path_count": 5,
+  "scientific_objects_modified": false,
+  "stage10_outcomes_accessed": false,
+  "stage8_archive_root": "C:\\Dev\\concept-drift-ids\\artifacts\\cd_primary_v1",
+  "status": "pass",
+  "transport_reconstruction_explicit": true
+}

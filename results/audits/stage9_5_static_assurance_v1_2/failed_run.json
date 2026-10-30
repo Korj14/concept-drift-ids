@@ -1,0 +1,44 @@
+{
+  "audit_id": "stage9.5-5-static-software-assurance-v1_2-failed",
+  "status": "failed_harness_iteration_preserved",
+  "classification": "assurance_edit_syntax_defect",
+  "scientific_class": "not_Class_A",
+  "exact_head": "509e796bc7deba313cad212719494bd2b31cbda4",
+  "workflow_run_id": 38554239204,
+  "static_job_id": 115819296734,
+  "same_head_stage9": {
+    "workflow_run_id": 38554239120,
+    "run_number": 471,
+    "conclusion": "success"
+  },
+  "artifact": {
+    "id": 11889247362,
+    "name": "stage9-5-static-assurance-v1-2",
+    "zip_sha256": "b94c4e87ecbcfc844c09fcc5c04daddb07c29bbb76d899f35ace11dfab941935",
+    "report_canonical_sha256": "e7141b035bd01f6759ce6d18dd362e87418d7149ff552f75e071365f43617306"
+  },
+  "static_result": {
+    "status": "tooling_error",
+    "ruff_findings": 148,
+    "mypy_findings": 3,
+    "tool_execution_valid": false,
+    "mypy_findings_all": [
+      "tools/stage9_5/parameter_scan.py:10 Expected a newline after line continuation character [syntax]",
+      "tools/stage9_5/parameter_scan.py:10 Expected comma, found name [syntax]",
+      "tools/stage9_5/parameter_scan.py:10 Simple statements must be separated by newlines or semicolons [syntax]"
+    ],
+    "interpretation": "Counts are not valid closure evidence because the scanner module did not parse."
+  },
+  "regression_jobs": {
+    "assurance_contract": "failed during scanner test collection because parameter_scan.py contained a literal backslash-n in an import line",
+    "targeted_mutations": "0/11 because test_targeted_mutations.py contained the same malformed literal backslash-n import and could not collect",
+    "statistical_oracle": "success",
+    "causal_properties": "success",
+    "fresh_clone": "known checkpoint blocker"
+  },
+  "root_cause": "Two text-replacement edits inserted the literal characters \\\\n instead of an actual newline in Python import statements.",
+  "correction": "v1.3 fixes only the malformed imports and adds a compile-scope regression test before rerunning all assurance packages.",
+  "scientific_source_changes": false,
+  "historical_runtime_lock_changes": false,
+  "stage10_outcomes_accessed": false
+}

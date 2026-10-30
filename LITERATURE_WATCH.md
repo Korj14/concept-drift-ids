@@ -257,3 +257,27 @@ Project consequence:
 
 The lifecycle design is intended as a controlled empirical treatment, not claimed to be a universally
 optimal stream-rule learner.
+
+## 16 October 2026 — Stage 9.5 blocked-state novelty refresh
+
+A bounded adversarial live refresh was performed while Stage 9.5 remained blocked on checkpoint-byte provenance. No Stage-10 treatment outcome was accessed. The search again targeted the exact conjunction rather than broad adaptive-IDS keywords: explicit statistical drift triggering, symbolic/rule-base evolution, validated/versioned lifecycle control, matched adaptive isolation, and longitudinal prediction/explanation evaluation.
+
+Three items are added to the tracker.
+
+- Hung-Cuong Nguyen et al., *Feedback guided decision boundary adaptation for stable IoT intrusion detection under distribution shift*, Discover Artificial Intelligence 6 (2026), Article 1394, DOI 10.1007/s44163-026-02370-1, published 7 October 2026. The method keeps the classifier fixed while continuously updating statistical state and adapting feature/global decision thresholds at fixed 200-sample intervals using uncertainty and a distribution-change signal. It compares against static, periodic-retraining, and continuously adaptive baselines and reports accuracy/stability/cost trade-offs. This is relevant adaptive decision-boundary control, but it is not a separately validated/versioned symbolic rule-base lifecycle and does not collapse the governing gap.
+
+- Jinliang Yuan, Yu Yang, and Mingqi Wang, *ADAWU-IDS: a dynamic adaptive weight update mechanism for concept drift-aware network intrusion detection systems*, Journal of King Saud University Computer and Information Sciences 38 (2026), Article 546, DOI 10.1007/s44443-026-00964-4. This June 2026 paper was not previously recorded in this repository watch and is therefore added as a missed close predictive-adaptation comparator, not as a newly published post-audit work. ADAWU-IDS combines an interpretable multi-scale drift-severity signal, adaptive ensemble weighting, and validation-selected response control in chronological CICIDS2017 evaluation. It explicitly reports mixed/non-significant outcomes, strong online baselines, ablations, drift diagnostics, and computational cost. MSDI is treated as a severity signal rather than a standalone binary trigger. The work materially raises the bar for conservative drift-response calibration and reporting, but it does not evolve a separately versioned symbolic rule base or isolate symbolic lifecycle value under a matched neural trajectory.
+
+- Risto Vaarandi and Alejandro Guerra-Manzanares, *NAD-CD: Addressing concept drift in network IDS alert classification for Security Operations Centers*, Journal of Information Security and Applications 103 (2026), Article 104663, DOI 10.1016/j.jisa.2026.104663. NAD-CD contributes a 1.5-year NIDS-alert dataset and evaluates supervised/semi-supervised strategies, including active-learning-based adaptation, for SOC alert classification under drift. It further occupies the adjacent SOC-alert drift-adaptation space, but it is alert-classification work rather than the project's flow-level symbolic-lifecycle treatment and does not provide the full matched symbolic-evolution conjunction.
+
+Novelty verdict at this checkpoint:
+
+- no newly identified peer-reviewed flow-level NIDS paper supplies the full conjunction of an explicit statistical drift event as endogenous symbolic trigger + independently validated/versioned symbolic lifecycle + matched adaptive comparator isolating symbolic evolution + longitudinal prediction/explanation evaluation;
+- the search remains finite evidence, not proof of universal nonexistence;
+- broad novelty language remains prohibited;
+- the final related-work matrix should explicitly include ADAWU-IDS, the Nguyen et al. adaptive-boundary paper, and NAD-CD because they strengthen the surrounding drift-aware/adaptive evaluation territory.
+
+Methodological consequence:
+
+The new/previously omitted comparators reinforce the existing doctrine rather than changing the accepted Stage-8/9 treatment: response calibration, strong adaptive baselines, paired/longitudinal evaluation, computational cost, mixed/null outcomes, and explicit failure modes are now even harder to omit. None justifies retuning the frozen primary object or reopening accepted Stage-8/9 evidence.
+

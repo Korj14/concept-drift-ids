@@ -1,0 +1,26 @@
+{
+  "audit_id": "stage9.5-5-static-software-assurance-v1_3-failed",
+  "status": "failed_harness_iteration_preserved",
+  "classification": "assurance_edit_escape_replacement_defect",
+  "scientific_class": "not_Class_A",
+  "exact_head": "536b0f9e59bc3f3f6f84074724935c63a3bd5a3e",
+  "workflow_run_id": 38557446376,
+  "same_head_stage9": {
+    "workflow_run_id": 38557446247,
+    "run_number": 486,
+    "conclusion": "success"
+  },
+  "regressions": {
+    "assurance_contract": "failed because tools/stage9_5/parameter_scan.py line 10 still contained literal backslash+n",
+    "targeted_mutations": "failed because tests/stage9_5/test_targeted_mutations.py line 6 still contained literal backslash+n",
+    "static_assurance": "compile-scope self-test correctly detected the malformed mutation-test import",
+    "statistical_oracle": "success",
+    "causal_properties": "success",
+    "fresh_clone": "known System-A checkpoint-byte blocker"
+  },
+  "root_cause": "The v1.3 repair searched for a double-backslash escape sequence rather than the actual single literal backslash+n characters.",
+  "correction": "v1.4 performs an exact literal-backslash-n replacement in both assurance files and reruns the full exact-head assurance workflow.",
+  "scientific_source_changes": false,
+  "historical_runtime_lock_changes": false,
+  "stage10_outcomes_accessed": false
+}

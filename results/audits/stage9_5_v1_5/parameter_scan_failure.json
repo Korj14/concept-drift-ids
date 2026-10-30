@@ -1,0 +1,24 @@
+{
+  "audit_id": "stage9.5-0-v1.5-strict-scan-block",
+  "classification": "strict_completeness_discovery_block",
+  "scientific_class": "not_Class_A_by_itself",
+  "accepted_as_closure_evidence": false,
+  "exact_head": "7a0da0d6da452fb34de6748082f757c6e89f38ec",
+  "workflow_run_id": 38433867260,
+  "scan_canonical_sha256": "3a31e3ab7c1a0ecb6bd28e86148709238a8f7820d939b978f14edc5776ba8846",
+  "artifact_zip_sha256": "3a5cb66d7ec6660a29d8d414a24132d0eaac0851124b1f17f3df458b425088d0",
+  "counts": {
+    "registered_entries": 67,
+    "material_candidates": 564,
+    "excluded_candidates": 1625,
+    "unclassified_material_candidates": 317,
+    "unclassified_high_leverage_candidates": 196,
+    "ambiguous_material_candidates": 5
+  },
+  "scope": {
+    "bound": true,
+    "python_sources": 38
+  },
+  "interpretation": "The larger residual set is expected after exact value+locator matching, unique-mapping enforcement, expression-literal discovery, and hash-bound source expansion. It is registry/scanner completeness debt, not evidence that accepted Stage-8/9 outcomes are invalid.",
+  "correction_protocol": "STAGE9_5_V1_6_EXECUTION_MIRROR_CLASSIFICATION_CORRECTION.md"
+}

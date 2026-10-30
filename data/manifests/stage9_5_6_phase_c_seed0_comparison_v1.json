@@ -1,0 +1,634 @@
+{
+  "schema_version": 1,
+  "contract_id": "stage9.5-6-phase-c-seed0-comparison-v1",
+  "status": "prospectively_frozen_before_historical_corrected_phase_c_seed0_replay_outcomes",
+  "purpose": "Freeze corrected Phase-C seed-0 replay comparison semantics using only pre-outcome source/config/protocol identities and the Phase-C dependency map. This contract adds no new diagnostic exclusions and does not implement or modify comparator code.",
+  "scope": {
+    "seed": 0,
+    "arms": [
+      "c_frozen_symbolic",
+      "d_drift",
+      "d_periodic"
+    ],
+    "corrected_output_subdir": "phase_c_offline_evaluation_v1_1/seed-0",
+    "original_failed_output_subdir": "phase_c_offline_evaluation/seed-0",
+    "scenario_stream_rows": 138530,
+    "boundary_index": 69260
+  },
+  "frozen_pre_outcome_authorities": {
+    "historical_corrected_phase_c_source": {
+      "git_commit": "79ddc4c6d6dea52c7cabc55a6d082448fc24fcf9",
+      "path": "src/concept_drift_ids/cd_primary_phase_c.py",
+      "git_blob_sha1": "83967545107ea7de29196b2e2cd187562e353ac5",
+      "correction_config_scientific_source_sha256": "63734b929c95f324e760945dc2ab29d15d14b009ea8b8ba239af317e8a3e3d9f"
+    },
+    "correction_config": {
+      "path": "data/manifests/cd_primary_run_config_v1_1.json",
+      "git_blob_sha1": "7ba598fec1cf8ce92f804d4123afbf01ec310b23",
+      "manifest_sha256": "d380fce5f9db8f0b639dc999298a263b10a10a3d02e35def226a121d098e2222",
+      "payload_sha256": "ee0c4e6641122774a0244ce2b2bca77da7957f8846b5469118dd19bf63be285b",
+      "prepared_from_git_commit": "79ddc4c6d6dea52c7cabc55a6d082448fc24fcf9",
+      "status": "frozen_post_access_phase_c_v1_1_correction_before_successful_scoring"
+    },
+    "correction_memorandum": {
+      "path": "STAGE8_PHASE_C_V1_1_CORRECTION.md",
+      "git_blob_sha1": "037ea42ec2d034c9d409179ae0ce734436c13dc7"
+    },
+    "replay_equivalence_protocol": {
+      "path": "STAGE9_5_6_REPLAY_EQUIVALENCE_CORRECTION_PROTOCOL_V1_1.md",
+      "git_blob_sha1": "e9b9fcb8d863aad58e543f9d60a8ea6f5341406f",
+      "governing_rule": "all fields remain fail-closed except the already-frozen Phase-A runtime diagnostic projection and Phase-B timing projection; no additional exclusion may be added after fresh replay outcomes are inspected"
+    },
+    "inherited_phase_b_projection_contracts": {
+      "arm_manifest": {
+        "path": "data/manifests/stage9_5_6_phase_b_arm_manifest_projection_v1.json",
+        "git_blob_sha1": "140b123c706be6d2bcb60bfeb98b8aad3e6be1e8"
+      },
+      "seed_manifest": {
+        "path": "data/manifests/stage9_5_6_phase_b_seed_manifest_projection_v1.json",
+        "git_blob_sha1": "3ab53d1af9131a1147cee60df293ff3e2900fb47"
+      }
+    },
+    "phase_c_dependency_sources": {
+      "historical_phase_c_source": {
+        "git_commit": "79ddc4c6d6dea52c7cabc55a6d082448fc24fcf9",
+        "path": "src/concept_drift_ids/cd_primary_phase_c.py",
+        "git_blob_sha1": "83967545107ea7de29196b2e2cd187562e353ac5",
+        "governs": [
+          "prediction-trace construction",
+          "evaluation-summary construction",
+          "metrics/explanation/window/recovery construction",
+          "trigger diagnostics",
+          "retention probes",
+          "seed-manifest construction and verification"
+        ]
+      },
+      "historical_json_writer": {
+        "git_commit": "79ddc4c6d6dea52c7cabc55a6d082448fc24fcf9",
+        "path": "src/concept_drift_ids/cd_control_plane.py",
+        "git_blob_sha1": "8006d2691be627d2a8ef8e35f08f235c39fab9eb",
+        "governs": [
+          "payload_sha256 insertion",
+          "canonical JSON hashing/writing semantics"
+        ]
+      },
+      "historical_recovery_logic": {
+        "git_commit": "79ddc4c6d6dea52c7cabc55a6d082448fc24fcf9",
+        "path": "src/concept_drift_ids/cd_analysis.py",
+        "git_blob_sha1": "e074791f364e803eed74e322fa3b8fc8b9c7dfeb",
+        "governs": [
+          "recovery_time"
+        ]
+      },
+      "historical_retention_metric_logic": {
+        "git_commit": "79ddc4c6d6dea52c7cabc55a6d082448fc24fcf9",
+        "path": "src/concept_drift_ids/neural.py",
+        "git_blob_sha1": "ec3433bbd3aedd291fe96071aa6e161e21300994",
+        "governs": [
+          "binary_metrics used by neural_retention_probes"
+        ]
+      },
+      "historical_symbolic_evaluation_logic": {
+        "git_commit": "79ddc4c6d6dea52c7cabc55a6d082448fc24fcf9",
+        "path": "src/concept_drift_ids/cd_symbolic_evaluation.py",
+        "git_blob_sha1": "edbc757cb2f6b08fc0656e359d3c21d00496fdd1",
+        "governs": [
+          "dynamic symbolic trajectory evaluation",
+          "fusion thresholds",
+          "lambda=1 negative-control semantics"
+        ]
+      },
+      "historical_correction_gate": {
+        "git_commit": "79ddc4c6d6dea52c7cabc55a6d082448fc24fcf9",
+        "path": "src/concept_drift_ids/cd_primary_correction.py",
+        "git_blob_sha1": "c3349495e5954f7c0248e856b30435d149582007",
+        "governs": [
+          "failed-v1 lineage preservation",
+          "correction-config preparation and scientific-block equality"
+        ]
+      },
+      "inherited_phase_b_maintenance_record_projection": {
+        "path": "data/manifests/stage9_5_6_phase_b_maintenance_record_projection_v1.json",
+        "git_blob_sha1": "c4b26ee4c698dfffb8cb2548c02a03b3db129c79",
+        "governs": [
+          "the already-frozen Phase-B maintenance-record timing projection only"
+        ]
+      }
+    }
+  },
+  "dependency_preconditions": {
+    "corrected_correction_config_preconditions_pass": true,
+    "original_v1_seed0_failure_lineage_preserved": true,
+    "phase_a_comparison_pass_required": true,
+    "phase_b_comparison_pass_required": true,
+    "phase_a_seed0_shared_identity_exact_required": true,
+    "phase_b_seed0_three_arm_binding_required": true,
+    "no_phase_a_or_phase_b_reexecution_under_correction": true
+  },
+  "successful_corrected_output_file_set": {
+    "exact_files": [
+      "attempt.json",
+      "c_frozen_symbolic_evaluation.json",
+      "c_frozen_symbolic_prediction_trace.jsonl.gz",
+      "d_drift_evaluation.json",
+      "d_drift_prediction_trace.jsonl.gz",
+      "d_periodic_evaluation.json",
+      "d_periodic_prediction_trace.jsonl.gz",
+      "phase_c_seed_manifest.json"
+    ],
+    "failure_json_permitted_on_success": false,
+    "extra_scored_artifacts_permitted": false
+  },
+  "attempt_json": {
+    "raw_payload_sha256_must_verify": true,
+    "required_exact_fields": {
+      "seed": 0,
+      "phase": "offline_boundary_aware_evaluation",
+      "adaptive_components_received_boundary": false
+    },
+    "primary_config_manifest_sha256_rule": "must equal the corresponding accepted/fresh validated correction-config manifest SHA-256 before projection",
+    "projected_comparison": {
+      "normalize_after_binding": [
+        "primary_config_manifest_sha256"
+      ],
+      "remove_after_raw_integrity_verification": [
+        "payload_sha256"
+      ],
+      "all_other_fields_exact": true
+    }
+  },
+  "prediction_trace": {
+    "applies_to_all_three_arms": true,
+    "expected_path_pattern": "<arm>_prediction_trace.jsonl.gz",
+    "path_must_remain_within_corrected_seed0_root": true,
+    "row_count_exact": 138530,
+    "raw_compressed_byte_identity": {
+      "descriptor_field": "prediction_trace.sha256",
+      "actual_file_sha256_must_equal_descriptor": true,
+      "accepted_and_fresh_descriptor_sha256_must_be_identical": true,
+      "projection_or_normalization_permitted": false
+    },
+    "decompressed_canonical_jsonl_content_identity": {
+      "descriptor_field": "prediction_trace.canonical_jsonl_sha256",
+      "sha256_over_exact_decompressed_jsonl_bytes_must_equal_descriptor": true,
+      "accepted_and_fresh_content_sha256_must_be_identical": true,
+      "nonempty_line_count_must_equal_row_count": true,
+      "projection_or_normalization_permitted": false
+    },
+    "source_determinism_basis": {
+      "gzip_filename": "",
+      "gzip_compresslevel": 9,
+      "gzip_mtime": 0,
+      "json_sort_keys": true,
+      "json_separators": [
+        ",",
+        ":"
+      ],
+      "json_allow_nan": false
+    },
+    "row_semantics_fail_closed": [
+      "row_id",
+      "origin_index",
+      "true_label",
+      "neural_checkpoint_sha256",
+      "rule_base_version_id",
+      "neural_probability",
+      "symbolic_attack_probability",
+      "symbolic_class",
+      "covered",
+      "uncovered",
+      "conflict_abstain",
+      "fused_probability_lambda_0_5",
+      "decision_lambda_0_5",
+      "fused_probability_lambda_0_7",
+      "decision_lambda_0_7",
+      "fused_probability_lambda_0_9",
+      "decision_lambda_0_9",
+      "fused_probability_lambda_1_0",
+      "decision_lambda_1_0"
+    ]
+  },
+  "evaluation_json": {
+    "files": [
+      "c_frozen_symbolic_evaluation.json",
+      "d_drift_evaluation.json",
+      "d_periodic_evaluation.json"
+    ],
+    "raw_integrity_verification_order": [
+      "verify payload_sha256 as the canonical SHA-256 of the raw JSON object without payload_sha256 but including summary_sha256",
+      "verify summary_sha256 as the canonical SHA-256 of the raw JSON object without payload_sha256 and summary_sha256",
+      "verify seed equals 0 and arm equals the filename/expected arm",
+      "verify primary_config_manifest_sha256 binds to the corresponding validated correction config",
+      "verify phase_b_arm_manifest_sha256 binds to the corresponding validated Phase-B seed-0 arm manifest",
+      "verify shared_identity_sha256 binds to the exact validated Phase-A seed-0 shared identity",
+      "verify maintenance_summary equals the corresponding raw Phase-B arm maintenance_summary within the same accepted/fresh tree",
+      "verify prediction_trace descriptor and referenced bytes/content under the prediction_trace contract"
+    ],
+    "exact_scientific_fields": [
+      "shared_identity_sha256",
+      "metrics_by_neural_weight",
+      "explanation",
+      "primary_windows",
+      "primary_recovery",
+      "prediction_trace"
+    ],
+    "inherited_phase_b_timing_projection_only": {
+      "location": "maintenance_summary",
+      "removable_fields": [
+        "compute_seconds",
+        "shap_seconds",
+        "surrogate_seconds",
+        "lifecycle_seconds",
+        "compute_seconds_per_opportunity",
+        "compute_seconds_per_publication"
+      ],
+      "source": "already-frozen Phase-B timing projection",
+      "any_other_maintenance_summary_field_exact": true
+    },
+    "legitimate_transitive_identity_normalization_after_binding": [
+      "primary_config_manifest_sha256",
+      "phase_b_arm_manifest_sha256"
+    ],
+    "derived_hash_fields_removed_after_raw_integrity_verification": [
+      "payload_sha256",
+      "summary_sha256"
+    ],
+    "projected_equality_rule": "after only the inherited six Phase-B maintenance timing fields are removed and the two validated transitive identity fields are normalized, accepted and fresh evaluation JSON must be exact recursively equal and have identical canonical JSON SHA-256",
+    "numeric_tolerance_permitted": false
+  },
+  "metrics": {
+    "container": "metrics_by_neural_weight",
+    "neural_weight_keys_exactly": [
+      "0.5",
+      "0.7",
+      "0.9",
+      "1.0"
+    ],
+    "domains_exactly": [
+      "full",
+      "pre",
+      "post"
+    ],
+    "metric_keys_exactly": [
+      "accuracy",
+      "balanced_accuracy",
+      "precision",
+      "recall",
+      "f1",
+      "fpr",
+      "mcc",
+      "roc_auc",
+      "average_precision",
+      "tp",
+      "tn",
+      "fp",
+      "fn"
+    ],
+    "comparison": "exact recursive JSON equality for every weight/domain/metric; no tolerance, rounding, recalibration, recomputation substitution, or endpoint relaxation",
+    "exclusions": []
+  },
+  "explanations": {
+    "container": "explanation",
+    "domains_exactly": [
+      "full",
+      "pre",
+      "post"
+    ],
+    "fields_exactly": [
+      "benign_rows",
+      "benign_coverage",
+      "benign_symbolic_correctness_on_covered",
+      "benign_correct_symbolic_coverage",
+      "attack_rows",
+      "attack_coverage",
+      "attack_symbolic_correctness_on_covered",
+      "attack_correct_symbolic_coverage",
+      "mcsc",
+      "resolved_coverage",
+      "uncovered_rate",
+      "conflict_abstain_rate"
+    ],
+    "comparison": "exact recursive JSON equality; null-vs-value differences fail closed",
+    "exclusions": []
+  },
+  "diagnostics": {
+    "primary_windows": {
+      "domains_exactly": [
+        "pre",
+        "post"
+      ],
+      "ordered_window_fields_exactly": [
+        "start_index",
+        "end_index_exclusive",
+        "row_count",
+        "mcc",
+        "fpr",
+        "f1",
+        "mcsc",
+        "resolved_coverage",
+        "conflict_abstain_rate"
+      ],
+      "comparison": "ordered arrays and every field exact"
+    },
+    "primary_recovery": {
+      "metric_keys_exactly": [
+        "mcc",
+        "mcsc",
+        "fpr"
+      ],
+      "available_false_shape_exactly": [
+        "available",
+        "reason"
+      ],
+      "available_false_reason": "undefined_window_metric",
+      "available_true_fields_exactly": [
+        "available",
+        "baseline",
+        "recovered",
+        "recovery_clock",
+        "right_censored",
+        "recovery_rows_from_boundary"
+      ],
+      "comparison": "exact recursive JSON equality"
+    },
+    "trigger_diagnostics": {
+      "location": "phase_c_seed_manifest.trigger_diagnostics",
+      "fields_exactly": [
+        "detector_event_count",
+        "pre_reference_alarm_count",
+        "pre_reference_alarm_clocks",
+        "post_reference_event_count",
+        "first_post_reference_confirmation_clock",
+        "first_post_reference_confirmation_delay_rows",
+        "latency_adjusted_excess_delay_rows",
+        "repeated_post_reference_events",
+        "neural_publication_count"
+      ],
+      "comparison": "exact recursive JSON equality",
+      "exclusions": []
+    },
+    "diagnostic_exclusion_note": "These scientific/operational diagnostics are not runtime diagnostics and receive no exclusion. The only Phase-C field removals are the already-frozen Phase-B timing fields copied into maintenance_summary."
+  },
+  "retention_probes": {
+    "location": "phase_c_seed_manifest.neural_retention_probes",
+    "ordered_list_required": true,
+    "row_fields_exactly": [
+      "sequence",
+      "checkpoint_file_sha256",
+      "publication_effective_index",
+      "metrics"
+    ],
+    "metric_prefixes_exactly": [
+      "development_",
+      "pre_reference_"
+    ],
+    "metric_names_exactly": [
+      "accuracy",
+      "balanced_accuracy",
+      "precision",
+      "recall",
+      "f1",
+      "fpr",
+      "mcc",
+      "roc_auc",
+      "average_precision"
+    ],
+    "per_metric_fields_exactly": [
+      "value",
+      "delta_from_initial",
+      "descriptive_forgetting"
+    ],
+    "comparison": "ordered list, checkpoint identities, publication clocks, metric key set, and every numeric value exact; no tolerance or diagnostic exclusion",
+    "exclusions": []
+  },
+  "phase_c_seed_manifest": {
+    "raw_integrity_verification_order": [
+      "verify payload_sha256 as canonical SHA-256 of the raw JSON object without payload_sha256 but including manifest_sha256",
+      "verify manifest_sha256 as canonical SHA-256 of the raw JSON object without payload_sha256 and manifest_sha256",
+      "verify seed=0, status=complete_offline_evaluation, lambda_one_predictive_equality=true, boundary_index=69260, adaptive_components_received_boundary=false",
+      "verify primary_config_manifest_sha256 binds to the corresponding validated correction config",
+      "verify phase_a_run_manifest_sha256 binds to the corresponding validated Phase-A seed-0 run manifest",
+      "verify phase_b_seed_manifest_sha256 binds to the corresponding validated Phase-B seed-0 seed manifest",
+      "verify arm_summary_sha256 has exactly the three frozen arm keys and each value equals that tree's raw evaluation summary_sha256"
+    ],
+    "exact_fields_after_binding": [
+      "schema_version",
+      "seed",
+      "status",
+      "lambda_one_predictive_equality",
+      "trigger_diagnostics",
+      "neural_retention_probes",
+      "boundary_index",
+      "adaptive_components_received_boundary"
+    ],
+    "legitimate_transitive_identity_normalization_after_binding": [
+      "primary_config_manifest_sha256",
+      "phase_a_run_manifest_sha256",
+      "phase_b_seed_manifest_sha256",
+      "arm_summary_sha256.c_frozen_symbolic",
+      "arm_summary_sha256.d_drift",
+      "arm_summary_sha256.d_periodic"
+    ],
+    "derived_hash_fields_removed_after_raw_integrity_verification": [
+      "payload_sha256",
+      "manifest_sha256"
+    ],
+    "projected_equality_rule": "after only the validated transitive identity fields above are normalized and the two verified self-hash fields are removed, accepted and fresh seed manifests must be exact recursively equal and have identical canonical JSON SHA-256"
+  },
+  "arm_summary_identities": {
+    "raw_summary_sha256_must_verify_for_each_evaluation": true,
+    "raw_payload_sha256_must_verify_for_each_evaluation": true,
+    "seed_manifest_arm_summary_map_keys_exactly": [
+      "c_frozen_symbolic",
+      "d_drift",
+      "d_periodic"
+    ],
+    "within_tree_binding_required": true,
+    "accepted_vs_fresh_raw_summary_sha256_equality_required": false,
+    "rationale": "raw summary identities may differ only because validated correction-config/Phase-B transitive identities and the already-frozen six Phase-B timing summary fields can differ; projected evaluation content must nevertheless be exact",
+    "normalization_allowed_only_after": [
+      "raw evaluation self-hashes verify",
+      "evaluation upstream bindings verify",
+      "inherited Phase-B timing projection is applied",
+      "accepted/fresh projected evaluation equality passes"
+    ]
+  },
+  "legitimate_derived_hash_treatment": {
+    "allowed": [
+      {
+        "field": "attempt.json.payload_sha256",
+        "treatment": "verify raw, then remove after correction-config binding and config identity normalization"
+      },
+      {
+        "field": "evaluation.payload_sha256",
+        "treatment": "verify raw, then remove"
+      },
+      {
+        "field": "evaluation.summary_sha256",
+        "treatment": "verify raw, then remove because it transitively covers fields already validated/projected"
+      },
+      {
+        "field": "evaluation.primary_config_manifest_sha256",
+        "treatment": "verify against own validated correction config, then normalize as transitive identity"
+      },
+      {
+        "field": "evaluation.phase_b_arm_manifest_sha256",
+        "treatment": "verify against own validated Phase-B arm manifest, then normalize as transitive identity"
+      },
+      {
+        "field": "phase_c_seed_manifest.payload_sha256",
+        "treatment": "verify raw, then remove"
+      },
+      {
+        "field": "phase_c_seed_manifest.manifest_sha256",
+        "treatment": "verify raw, then remove because it transitively covers validated/projected fields"
+      },
+      {
+        "field": "phase_c_seed_manifest.primary_config_manifest_sha256",
+        "treatment": "verify against own validated correction config, then normalize"
+      },
+      {
+        "field": "phase_c_seed_manifest.phase_a_run_manifest_sha256",
+        "treatment": "verify against own validated Phase-A seed-0 manifest, then normalize"
+      },
+      {
+        "field": "phase_c_seed_manifest.phase_b_seed_manifest_sha256",
+        "treatment": "verify against own validated Phase-B seed-0 manifest, then normalize"
+      },
+      {
+        "field": "phase_c_seed_manifest.arm_summary_sha256.*",
+        "treatment": "verify against each own-tree raw evaluation summary_sha256; normalize only after corresponding projected evaluation equality passes"
+      }
+    ],
+    "explicitly_not_derived_or_normalizable": [
+      "prediction_trace.sha256",
+      "prediction_trace.canonical_jsonl_sha256",
+      "prediction_trace.row_count",
+      "shared_identity_sha256",
+      "metrics_by_neural_weight",
+      "explanation",
+      "primary_windows",
+      "primary_recovery",
+      "trigger_diagnostics",
+      "neural_retention_probes",
+      "lambda_one_predictive_equality",
+      "boundary_index",
+      "adaptive_components_received_boundary"
+    ]
+  },
+  "exclusions": {
+    "newly_added_phase_c_diagnostic_exclusions": [],
+    "inherited_only": [
+      "evaluation.maintenance_summary.compute_seconds",
+      "evaluation.maintenance_summary.shap_seconds",
+      "evaluation.maintenance_summary.surrogate_seconds",
+      "evaluation.maintenance_summary.lifecycle_seconds",
+      "evaluation.maintenance_summary.compute_seconds_per_opportunity",
+      "evaluation.maintenance_summary.compute_seconds_per_publication"
+    ],
+    "post_outcome_additions_permitted": false
+  },
+  "completion_predicate": {
+    "corrected_output_exact_file_set_passes": true,
+    "attempt_projection_passes": true,
+    "all_three_prediction_traces_pass_raw_byte_and_content_identity": true,
+    "all_three_evaluation_json_projected_comparisons_pass": true,
+    "all_metrics_exact": true,
+    "all_explanations_exact": true,
+    "all_primary_windows_and_recovery_exact": true,
+    "trigger_diagnostics_exact": true,
+    "retention_probes_exact": true,
+    "arm_summary_bindings_pass": true,
+    "projected_seed_manifest_passes": true,
+    "mismatch_count": 0,
+    "failures": [],
+    "blockers": []
+  },
+  "implementation_boundary": {
+    "comparator_implementation_or_modification_in_this_freeze": false,
+    "existing_comparator_conformance_assessed_in_this_freeze": false,
+    "required_next_step": "audit existing comparator against this frozen standalone contract before any historical corrected Phase-C seed-0 replay outcome is inspected; any implementation correction must tighten conformance only and may not add exclusions"
+  },
+  "scientific_objects_modified": false,
+  "accepted_stage8_9_evidence_replaced": false,
+  "stage10_outcomes_accessed": false,
+  "historical_phase_c_dependency_map": {
+    "attempt_json": {
+      "direct_transitive_dependencies": {
+        "primary_config_manifest_sha256": "fresh corrected Phase-C binds to the regenerated validated correction config, so this identity may differ across accepted/fresh trees after scientific-block equality is established"
+      },
+      "derived_hash_dependencies": {
+        "payload_sha256": "write_json_new hashes the attempt object containing primary_config_manifest_sha256; verify raw integrity first, then remove only after the config identity is bound and normalized"
+      },
+      "no_other_dependency_is_normalizable": true
+    },
+    "evaluation_json": {
+      "direct_transitive_dependencies": {
+        "primary_config_manifest_sha256": "depends on the accepted/fresh validated correction-config identity",
+        "phase_b_arm_manifest_sha256": "depends on the accepted/fresh validated Phase-B arm-manifest identity, whose raw hash may differ only through already-frozen Phase-B timing projections",
+        "maintenance_summary.compute_seconds": "inherited Phase-B timing-only summary field",
+        "maintenance_summary.shap_seconds": "inherited Phase-B timing-only summary field",
+        "maintenance_summary.surrogate_seconds": "inherited Phase-B timing-only summary field",
+        "maintenance_summary.lifecycle_seconds": "inherited Phase-B timing-only summary field",
+        "maintenance_summary.compute_seconds_per_opportunity": "derived from inherited Phase-B timing-only compute_seconds",
+        "maintenance_summary.compute_seconds_per_publication": "derived from inherited Phase-B timing-only compute_seconds"
+      },
+      "derived_hash_dependencies": {
+        "summary_sha256": "canonical hash of the evaluation summary containing correction-config identity, Phase-B arm identity, maintenance_summary and all exact scientific fields",
+        "payload_sha256": "write_json_new canonical hash over the evaluation object after summary_sha256 has been inserted"
+      },
+      "explicitly_independent_and_exact": [
+        "shared_identity_sha256",
+        "metrics_by_neural_weight",
+        "explanation",
+        "primary_windows",
+        "primary_recovery",
+        "prediction_trace.path",
+        "prediction_trace.row_count",
+        "prediction_trace.sha256",
+        "prediction_trace.canonical_jsonl_sha256"
+      ],
+      "no_other_dependency_is_normalizable": true
+    },
+    "prediction_trace": {
+      "dependencies": {
+        "row_content": "constructed from frozen Phase-A neural predictions/checkpoint identities, frozen Phase-B symbolic trajectory/rule-version identities, frozen fusion thresholds, and the corrected Phase-C source",
+        "raw_gzip_bytes": "deterministic GzipFile filename='', compresslevel=9, mtime=0 over canonical compact sorted-key JSONL"
+      },
+      "exact_identity_required": [
+        "raw compressed SHA-256",
+        "decompressed exact JSONL-byte SHA-256",
+        "row count",
+        "every row-level field"
+      ],
+      "derived_hash_normalization_permitted": false
+    },
+    "phase_c_seed_manifest": {
+      "direct_transitive_dependencies": {
+        "primary_config_manifest_sha256": "accepted/fresh validated correction-config identity",
+        "phase_a_run_manifest_sha256": "accepted/fresh validated Phase-A seed-0 run-manifest identity; raw hash may differ only through the already-frozen Phase-A runtime diagnostic projection",
+        "phase_b_seed_manifest_sha256": "accepted/fresh validated Phase-B seed-0 manifest identity; raw hash may differ only through the already-frozen Phase-B timing/transitive projection",
+        "arm_summary_sha256.c_frozen_symbolic": "raw c_frozen_symbolic evaluation summary identity",
+        "arm_summary_sha256.d_drift": "raw d_drift evaluation summary identity",
+        "arm_summary_sha256.d_periodic": "raw d_periodic evaluation summary identity"
+      },
+      "derived_hash_dependencies": {
+        "manifest_sha256": "canonical hash of the seed manifest containing all direct transitive identities plus exact trigger diagnostics, retention probes, controls and boundary fields",
+        "payload_sha256": "write_json_new canonical hash over the seed manifest after manifest_sha256 has been inserted"
+      },
+      "explicitly_independent_and_exact": [
+        "schema_version",
+        "seed",
+        "status",
+        "lambda_one_predictive_equality",
+        "trigger_diagnostics",
+        "neural_retention_probes",
+        "boundary_index",
+        "adaptive_components_received_boundary"
+      ],
+      "arm_summary_normalization_precondition": "each raw evaluation payload/summary hash and within-tree binding must verify, inherited Phase-B timing projection must pass, and accepted/fresh projected evaluation equality must pass before the corresponding arm_summary_sha256 can be normalized",
+      "no_other_dependency_is_normalizable": true
+    },
+    "governing_rule": "Only identities proven to be transitive consequences of the already-frozen Phase-A runtime projection, Phase-B timing projection, or regenerated correction-config identity may be normalized after raw integrity and within-tree binding checks. Every prediction, metric, explanation, diagnostic, retention-probe value, trace identity/content, boundary/control field and endpoint remains exact and fail-closed."
+  }
+}

@@ -1,0 +1,91 @@
+{
+  "schema_version": 1,
+  "protocol_id": "stage10c-unseen-bot-introduction-v1",
+  "scenario_id": "cicids2017_controlled_unseen_bot_v1",
+  "status": "prospectively_frozen_preoutcome_execution_locked",
+  "governing_master_protocol": "stage10-plus-master-replication-sensitivity-v1_1",
+  "protocol_document": {
+    "path": "STAGE10C_UNSEEN_BOT_FAMILY_REPLICATION_PROTOCOL_V1.md",
+    "git_blob_sha1": "525b5a91179c6f093c1e4c4614f268f5423961c7"
+  },
+  "source_audit": {
+    "path": "data/manifests/stage10c_unseen_bot_source_audit_v1.json",
+    "git_blob_sha1": "414336438ae714dfa2f15ae08ca0deff1a1b1b1b",
+    "canonical_sha256": "2beb64a94e35714854494624f5fb0011e6b73b66be71a3b902146bea48c9cadd"
+  },
+  "inherited_identities": {
+    "preprocessing_core_state_sha256": "4527f77220f2cf6063108a7d71d80aaa0e82099ad282ff25408a2d9ce3488b1e",
+    "system_a_manifest_sha256": "42004b5ed100b690023b9998bdc959fac41ab947b996fb7c58e44cee5e8dc6de",
+    "r0_v2_manifest_sha256": "131027d2f136494eb388183f18dcb7eb0e9d7e9fe786f22dba25f4e1624c1483",
+    "seeds": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ]
+  },
+  "scenario": {
+    "chronology": "controlled_synthetic_pseudo_chronology",
+    "pre_rows": 69260,
+    "post_rows": 69270,
+    "attack_rows_each_regime": 1966,
+    "pre_attack_family": "DoS GoldenEye",
+    "post_attack_family": "Bot",
+    "pre_friday_benign_rows": 67294,
+    "post_friday_benign_rows": 67304,
+    "boundary_index": 69260,
+    "post_estimand": "full_69270_row_unseen_Bot_regime",
+    "binary_attack_target": 1,
+    "binary_benign_target": 0,
+    "benign_background_control": "even_odd_friday_benign_source_row_ordinal_disjoint_spread",
+    "attack_slots": "floor((2*k+1)*N/(2*1966))"
+  },
+  "adaptive_mechanism": {
+    "adwin_delta": 0.002,
+    "adwin_clock": 32,
+    "label_latency_rows": 5000,
+    "neural_replay_rows": 10000,
+    "anchor_update_rows": 5000,
+    "online_update_rows": 5000,
+    "candidate_generation_rows": 10000,
+    "distinct_validation_rows": 10000,
+    "max_symbolic_opportunities": 4,
+    "fusion_lambda": 0.5
+  },
+  "treatment_arms": [
+    "c_frozen_symbolic",
+    "d_drift",
+    "d_periodic"
+  ],
+  "primary_endpoints": [
+    "E1_post_mcc_d_drift_minus_c",
+    "E2_post_mcsc_d_drift_minus_c",
+    "E3_post_mcsc_d_drift_minus_d_periodic"
+  ],
+  "causal_unit": "matched_seed_within_fixed_stage10c_scenario",
+  "preoutcome_freeze": {
+    "no_unseen_bot_in_initial_train_dev": true,
+    "known_regime_evaluator_only": true,
+    "pre_label_maturity_required": true,
+    "no_treatment_dependent_stream_assembly": true,
+    "no_post_outcome_seed_extension": true,
+    "no_window_rule_event_pseudoreplication": true
+  },
+  "claim_boundaries": [
+    "controlled_unseen_family_not_natural_attack_evolution",
+    "attack_day_port_signature_cannot_be_fully_separated",
+    "not_formal_p_y_given_x_proof",
+    "not_independent_second_environment",
+    "no_universal_symbolic_benefit",
+    "no_drift_trigger_superiority_without_comparator_sensitivity"
+  ],
+  "stage9_5_hard_gate_required": true,
+  "stage10_treatment_execution_authorized": false,
+  "stage10_treatment_outcomes_accessed_during_freeze": false,
+  "accepted_stage8_9_evidence_replaced": false,
+  "stage10a_b_evidence_replaced": false,
+  "next_permitted_action": "source_only_stage10c_readiness_verification",
+  "next_prohibited_action": "stage10c_treatment_execution_before_legitimate_stage9_5_closure",
+  "canonical_sha256": "57bfe0fb8f5809be67667243f0c99dceac20511700734ce1b8e460fc90f384cb"
+}

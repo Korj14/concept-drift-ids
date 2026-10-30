@@ -243,3 +243,109 @@ This overlay records the present state after completion of the mandatory retrosp
 No unresolved System-B implementation defect blocks transition to C/D design freeze.
 
 All material primary C/D design controls affecting treatment definition, causal isolation, confirmatory analysis, runtime, and held-out access are now prospectively frozen. Any residual historical wording elsewhere in this register is superseded only where an explicit later accepted/frozen row records completion; it is not permission to reopen accepted System B.
+
+## Stage 9.5 independent-assurance gate overlay — 16 October 2026
+
+This overlay records the current assurance state without reopening accepted Stage-8/9 scientific evidence or earlier control rows.
+
+| Control | Current state |
+| --- | --- |
+| Stage 9.5 overall | **OPEN / BLOCKED** |
+| Stage 9.5-1 fresh-clone reconstruction | **0 repository/runtime/compact-evidence identity failures; 2 external-artifact blockers** |
+| External blocker 1 | `system_a_checkpoint_bytes_missing` — recover and SHA-256 verify the five original System-A checkpoint files; no retraining/regeneration/substitution |
+| External blocker 2 | `stage8_large_artifact_archive_missing` — recover and verify the original `artifacts/cd_primary_v1` archive; compact summaries are not a substitute for the frozen replay-equivalence target |
+| Stage 9.5-2 statistical oracle | **CLOSED** |
+| Stage 9.5-3 causal/information properties | **CLOSED** |
+| Stage 9.5-4 targeted mutations | **CLOSED — 11/11 frozen mutants killed** |
+| Stage 9.5-5 static assurance | **CLOSED; current discovery baseline 154 Ruff / 55 mypy remains triage-only and does not reopen the accepted scientific fingerprint set** |
+| Stage 9.5-6 historical rerun | **OPEN / BLOCKED** — also subject to the prospectively frozen replay-equivalence correction because historical upstream manifest hashes include non-replay-invariant runtime/timing diagnostics |
+| Stage 9.5-7 claim traceability | **HISTORICALLY EXECUTED / PROVISIONAL; NOT PROTOCOL-CLOSED** |
+| Stage 9.5-8 independent reporting | **HISTORICALLY EXECUTED / PROVISIONAL; NOT PROTOCOL-CLOSED** |
+| Stage 9.5-9 hostile review | **HISTORICALLY EXECUTED / PROVISIONAL; NOT PROTOCOL-CLOSED** |
+| Work-package order | **ENFORCED PROSPECTIVELY IN CI: 9.5-7/8/9 remain locked until valid 9.5-6 closure evidence exists** |
+| Stage 10 | **PROHIBITED until Stage 9.5 legitimately closes with zero unresolved Class-A defects** |
+
+Interpretation boundary: these assurance blockers concern reconstructibility/provenance and the literal historical replay gate. They do not by themselves establish that accepted Stage-8/9 numerical results are wrong, and they do not authorize replacement of accepted evidence with regenerated artifacts or summary-only approximations.
+
+## Stage 9.5-1 negative-closure overlay — 17 October 2026
+
+This additive overlay supersedes only the **current-status interpretation** of the 16 October Stage-9.5 table above. Historical open/blocking rows remain part of the assurance chronology.
+
+| Control | Current state |
+| --- | --- |
+| Stage 9.5-1 fresh-clone reconstruction | **CLOSED — FAILED / EXTERNAL PROVENANCE UNRESOLVED** |
+| Negative closure authority | `STAGE9_5_1_FRESH_CLONE_RECONSTRUCTION_NEGATIVE_CLOSURE.md` + `data/manifests/stage9_5_1_negative_closure_v1.json` |
+| Final verifier disposition | **0 identity failures / 2 unresolved external-artifact blockers** |
+| Frozen success criterion | **UNCHANGED** — exact five original System-A checkpoints + original Stage-8 heavy archive at **145/145**, zero failures/blockers |
+| External blocker 1 | `system_a_checkpoint_bytes_missing` |
+| External blocker 2 | `stage8_large_artifact_archive_missing` |
+| Regeneration/substitution | **PROHIBITED as closure evidence** |
+| Stage 9.5-6 historical rerun | **BLOCKED BY CLOSED-FAILED 9.5-1** under the current evidence package |
+| Stage 9.5-7/8/9 | **LOCKED as authoritative closure packages** |
+| Stage 9.5 overall | **NOT CLOSABLE UNDER THE CURRENT EVIDENCE PACKAGE** because the Class-A provenance defect remains unresolved |
+| Stage 10 | **PROHIBITED** |
+
+Interpretation boundary: the negative closure terminates the Stage-9.5-1 assurance attempt without falsifying success. It does not assert that accepted Stage-8/9 numerical results are wrong, and it does not change any accepted treatment, estimand, metric, or result. It records that publication-grade clean-clone reconstruction of the full original checkpoint/heavy-artifact chain has not been demonstrated.
+
+Reopening is permitted only if the exact original bytes are later recovered and the unchanged v1.2 verifier independently passes the frozen five-seed / 145-of-145 predicate. Otherwise any continuation requires a separately governed restart/new evidence-generation campaign rather than substitution into the accepted evidence chain.
+
+---
+
+## Stage 10A pre-outcome attack-pattern replication controls — 27 October 2026
+
+| Variable / control | Frozen Stage-10A value or rule | Selection evidence | Match / gate requirement | Freeze state |
+| --- | --- | --- | --- | --- |
+| Stage-10A scenario | `cicids2017_goldeneye_temporal_attack_shift_v1` | Pre-outcome source audit only; no Stage-10 treatment outcomes | All Stage-10A arms | **FROZEN PRE-OUTCOME** |
+| Scenario interpretation | Same-family DoS GoldenEye attack-pattern / class-conditional feature shift under an essentially stationary BENIGN background; CICIDS2017 pseudo-chronology; no natural-production or unqualified `P(Y|X)` claim | Source-only row/feature audit | All Stage-10A reporting | **FROZEN PRE-OUTCOME** |
+| Stage-10A pre regime | Wednesday rows `[554162,623433)`, excluding the already frozen 11 Heartbleed rows; 69,260 retained = 65,671 BENIGN + 3,589 DoS GoldenEye | Exact raw source identity and row audit | All Stage-10A arms | **FROZEN PRE-OUTCOME** |
+| Stage-10A post regime | Wednesday rows `[623433,692703)`; no BENIGN source replacement; 69,270 retained = 65,697 BENIGN + 3,573 DoS GoldenEye | Exact raw source identity and row audit | All Stage-10A arms | **FROZEN PRE-OUTCOME** |
+| Stage-10A boundary | Logical stream index 69,260 after the frozen Heartbleed exclusion; evaluator/scoring diagnostics only | Prospective scenario design | Never supplied to detector/updater/symbolic lifecycle | **FROZEN PRE-OUTCOME** |
+| Stage-10A raw source | `Wednesday-workingHours.pcap_ISCX.csv`; SHA-256 `893c27dc968bf7a8adef1689f90be55ca4a4dc3088fb63d6ff247ac56856df2a`; 225,166,395 bytes | Accepted CICIDS raw source identity | Exact bytes required | **FROZEN PRE-OUTCOME** |
+| Stage-10A inherited start state | Existing training/development information set, preprocessing core `4527f77220f2cf6063108a7d71d80aaa0e82099ad282ff25408a2d9ce3488b1e`, System-A manifest `42004b5ed100b690023b9998bdc959fac41ab947b996fb7c58e44cee5e8dc6de`, R0.v2 manifest `131027d2f136494eb388183f18dcb7eb0e9d7e9fe786f22dba25f4e1624c1483` | Accepted pre-existing evidence only | Same within matched seed | **FROZEN PRE-OUTCOME** |
+| Stage-10A seeds | 0,1,2,3,4 exactly; no extension after outcome access | Accepted paired-seed design | C/D/D-periodic matched by seed | **FROZEN PRE-OUTCOME** |
+| Stage-10A primary family | E1 post MCC D-drift−C; E2 post MCSC D-drift−C; E3 post MCSC D-drift−D-periodic; paired seed is causal unit | Accepted confirmatory family carried prospectively | No window/event/rule pseudo-replication | **FROZEN PRE-OUTCOME** |
+| Stage-10A adaptive mechanism | Accepted primary detector, timing, neural update, fusion and symbolic-lifecycle semantics inherited unless a prospectively versioned pre-outcome incompatibility correction is required | Accepted Stage-8 design | C/D neural path matched; symbolic state transition remains intended C-vs-D difference | **FROZEN PRE-OUTCOME** |
+| Stage-10A execution gate | Source-only protocol/readiness work is permitted; C/D/D-periodic treatment execution and outcome access remain prohibited until legitimate Stage-9.5 closure | Post-Stage-9 governance addendum + Stage-10+ master protocol | Hard gate; no local or CI bypass | **FROZEN GOVERNANCE RULE** |
+| Stage-10A source verifier | `tools/stage10/stage10a_source_readiness.py`; source identities/counts/row hashes/class-conditional diagnostics only; report must always state treatment execution unauthorized | Pre-outcome engineering assurance | Must stop before adaptive treatment execution | **FROZEN PRE-OUTCOME** |
+
+---
+
+## Stage 10B pre-outcome gradual BENIGN source-regime controls — 28 October 2026
+
+| Variable / control | Prospective value | Match / use requirement | Freeze state |
+| --- | --- | --- | --- |
+| Stage-10B scenario | `cicids2017_gradual_benign_source_v1` | Separate controlled gradual covariate/source-mixture replication, not attack evolution or natural production drift | **FROZEN PRE-OUTCOME** |
+| Raw source identities | Wednesday 225,166,395 bytes SHA-256 `893c27dc968bf7a8adef1689f90be55ca4a4dc3088fb63d6ff247ac56856df2a`; Thursday morning 52,023,263 bytes SHA-256 `d67066211fb1689c78406f1506f4c44704ecb92088353d5c96d96d6474eb819d` | Exact bytes, no corrected/deduplicated substitute | **FROZEN PRE-OUTCOME** |
+| Training/development and initial model | Same frozen Stage-8 training/development, 77-feature preprocessing core, System-A checkpoints/seeds/thresholds, R0.v2 | No refit or future-outcome selection | **FROZEN PRE-OUTCOME** |
+| Evaluation pre | Wednesday `[554162,623433)` excluding original 11 Heartbleed; 69,260 retained; BENIGN 65,671; GoldenEye 3,589 | Source order and frozen exclusion | **FROZEN PRE-OUTCOME** |
+| Evaluation post | Wednesday `[623433,692703)` template 69,270; BENIGN 65,697; GoldenEye 3,573; no attack replacement | Preserve every template position and GoldenEye label | **FROZEN PRE-OUTCOME** |
+| Source mapping | For BENIGN slot ordinal j, frozen Thursday BENIGN eligible index `floor(j*168186/65697)` | Same eligible mapping as accepted Stage-8 abrupt scenario; source-only deterministic | **FROZEN PRE-OUTCOME** |
+| Gradual schedule | Post local clock t, 50,000-row ramp, `p(t)=min(1,(t+0.5)/50000)`; SHA-256 salt `stage10b-gradual-benign-v1`; first 8 digest bytes big-endian uint64; integer comparison `100000*u64<(2*t+1)*2^64`; t>=50,000 always replaces | One exogenous source schedule shared across all arms/seeds, no outcome/trigger dependence | **FROZEN PRE-OUTCOME** |
+| Source-only observed assembly | 41,935/65,697 eligible BENIGN slots replaced: 23,661 ramp, 18,274 plateau; 23,762 Wednesday BENIGN slots retained; GoldenEye unchanged | Verify ordered slot and mapping hashes; no favorable source reselection | **FROZEN PRE-OUTCOME** |
+| Reference clocks | Ramp start global index 69,260; ramp complete 119,260; stream ends 138,530 | Evaluator/diagnostic only; never detector/updater input | **FROZEN PRE-OUTCOME** |
+| Primary inference | Seeds 0–4; paired-seed causal unit; E1 post MCC D-drift−C; E2 post MCSC D-drift−C; E3 post MCSC D-drift−D-periodic; **full post 69,270 rows** as primary estimand | Reporting separately from Stage-8/9 and Stage-10A, no event/window pseudo-replication or seed extension | **FROZEN PRE-OUTCOME** |
+| Secondary reporting | Separate ramp/plateau descriptive trajectories, attacks/FNR/coverage, explanation, timing, cost, failures | Cannot promote subperiod findings into the frozen primary family | **FROZEN PRE-OUTCOME** |
+| Treatment isolation | Match C/D neural and non-symbolic states within seed; identical detector/latency/replay; symbolic lifecycle is intended difference; periodic arm shares symbolic operator/budget | Abort on unmatched causal state; inherited fusion lambda=.50 | **FROZEN PRE-OUTCOME** |
+| Stage-10B stage gate | `tools/stage10/stage10b_source_readiness.py` may inspect only raw source labels/mapping/protocol/source hashes; no treatment output | Stage-9.5 closure remains prerequisite to any Stage-10 adaptive run | **FROZEN GOVERNANCE** |
+
+---
+
+## Stage 10C pre-outcome unseen Bot-family introduction controls — 28 October 2026
+
+| Variable / control | Prospective frozen value | Match / gate requirement | Freeze state |
+| --- | --- | --- | --- |
+| Stage-10C scenario | `cicids2017_controlled_unseen_bot_v1` | Controlled attack-family replacement, not natural attack evolution or independent-environment replication | **FROZEN PRE-OUTCOME** |
+| Raw sources | Wednesday 225,166,395 bytes SHA-256 `893c27dc968bf7a8adef1689f90be55ca4a4dc3088fb63d6ff247ac56856df2a`; Friday morning 58,316,725 bytes SHA-256 `53a41c24d570ea83b7ac55b2e94df94e7a8216aeb80a2af0246b6bc8bb543000` | Exact source bytes, no corrected/deduplicated substitution | **FROZEN PRE-OUTCOME** |
+| Historical initial evidence | Accepted Monday+Tuesday+Wednesday `[0,346352)` training and Wednesday `[346352,554162)` development; GoldenEye seen 1,118 training/2,013 development; Bot not present | Exact inherited System-A/preprocessing/R0.v2/threshold identities; no Bot future label in historical initial state | **FROZEN PRE-OUTCOME** |
+| Pre attack pool | Exactly 1,966 source-ordered GoldenEye from Wednesday `[554162,623433)` original 3,589 candidate rows, selecting candidate ordinal `floor(k*3589/1966)` | No training/development overlap, no treatment-dependent choice | **FROZEN PRE-OUTCOME** |
+| Post attack pool | All 1,966 Friday-morning Bot rows in original source-row order | Unseen-family definition is historical family-label absence, not guaranteed rule noncoverage | **FROZEN PRE-OUTCOME** |
+| BENIGN background | Friday-morning BENIGN source rows 189,067, alternating zero-based benign candidate ordinals into disjoint pre-even/post-odd pools | Same collection source on both sides; prospective even sampling, no BENIGN reuse | **FROZEN PRE-OUTCOME** |
+| BENIGN sample counts | Pre 67,294 from even candidates via `floor(k*even_pool_size/67294)`; post 67,304 from odd via `floor(k*odd_pool_size/67304)` | Source-ordered samples without replacement; source metadata evaluator only | **FROZEN PRE-OUTCOME** |
+| Synthetic attack positions | For each regime N, attack slot `floor((2*k+1)*N/(2*1966))`, k=0..1965 | 1,966 unique slots/regime, fill remaining slots with sampled BENIGN rows; no per-arm seed RNG | **FROZEN PRE-OUTCOME** |
+| Source stream identity | Pre 69,260, post 69,270, boundary global 69,260, 138,530 total; pre GoldenEye, post Bot | Exact ordered `(source_order,row_in_source)` hashes in source audit; evaluator-only boundary | **FROZEN PRE-OUTCOME** |
+| Source diagnostic selection | BENIGN mean KS 0.00247861, max 0.00611571, 0/77 features >=0.1; GoldenEye/Bot mean KS 0.49642, 58/77 >=0.1 | Source-only; no treatment success selection; strong attack-family/port/day signatures remain confounded | **FROZEN PRE-OUTCOME** |
+| Primary treatment | C adaptive neural+frozen symbolic; D-drift same neural+drift-gated lifecycle; D-periodic matched operator/budget periodic clock | Matched within-seed non-symbolic state, fail-closed on divergence | **FROZEN PRE-OUTCOME** |
+| Primary inferential family | Seeds 0–4; E1 post MCC D-drift−C, E2 post MCSC D-drift−C, E3 post MCSC D-drift−D-periodic; entire post Bot regime | Paired seed causal unit; no pseudo-replication, post-hoc endpoint/seed changes, or replacement of accepted evidence | **FROZEN PRE-OUTCOME** |
+| Source verifier | `tools/stage10/stage10c_source_readiness.py` reconstructs exact raw labels, BENIGN/attack selection and slot hashes; recomputes both 77-feature KS comparisons | Raw-only verification, no C/D predictions/outcomes, explicit treatment lock in all reports | **FROZEN PRE-OUTCOME** |
+| Stage 9.5 execution firewall | Source-only protocol/static checks permitted; C/D/D-periodic execution prohibited until legitimate Stage-9.5 closure | No local/GitHub workaround, no false treatment authorization after preflight pass | **FROZEN GOVERNANCE** |
+

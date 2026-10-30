@@ -1,0 +1,14 @@
+{
+  "audit_id": "stage9.5-0-v1.10-scanner-precedence-failure",
+  "classification": "scanner_classification_precedence_defect",
+  "scientific_class": "not_Class_A",
+  "accepted_as_completeness_evidence": false,
+  "exact_head": "93a34e0d057608d0adc080caa5be2d129be48733",
+  "workflow_run_id": 38447463112,
+  "stage9_regression_same_head": "success",
+  "scanner_unit_tests": "19 passed, 1 failed before real scan",
+  "real_parameter_scan_executed": false,
+  "defect": "Source-specific lifecycle material recognition correctly identified streak=1 as a lifecycle control, but the generic small-integer bookkeeping exclusion was applied first and still excluded it.",
+  "scientific_value_changes": false,
+  "correction": "v1.10.1 gives explicit source-specific material classification precedence over only the generic small-integer bookkeeping exclusion; all other exclusions remain unchanged."
+}

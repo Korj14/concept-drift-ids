@@ -1,0 +1,14 @@
+{
+  "audit_id": "stage9.5-0-v1.9-scanner-harness-failure",
+  "classification": "scanner_duplicate_literal_classification_defect",
+  "scientific_class": "not_Class_A",
+  "accepted_as_completeness_evidence": false,
+  "exact_head": "08c9687a777d18b4fe9aa38d302c985ee65a582e",
+  "workflow_run_id": 38445418779,
+  "stage9_regression_same_head": "success",
+  "scanner_unit_tests": "17 passed, 1 failed before real scan",
+  "real_parameter_scan_executed": false,
+  "defect": "Literal container assignments were classified at assignment level, but dictionary keys not present in _flatten_values were rediscovered by the expression visitor. EXPECTED_ACTIVE_COUNTS seed keys 3 and 4 were therefore emitted as spurious unregistered material expressions.",
+  "scientific_value_changes": false,
+  "correction": "v1.9.1 marks all ast.Constant nodes inside successfully literal-evaluated assignments as already handled before expression-level discovery."
+}

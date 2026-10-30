@@ -1,0 +1,25 @@
+{
+  "audit_id": "stage10a-original-source-receipt-v1",
+  "boundary_role": "offline_evaluator_only_not_exposed_to_observations",
+  "canonical_sha256": "eb145dda1654df375016eb254e90e469b3318ebbc7a6fd17b4402a9ef855c93a",
+  "frozen_features": 77,
+  "git": {
+    "branch": "stage10a-governance",
+    "clean": "true",
+    "head": "601516ff7e71d14fdcab2c7caa76fdc512aa9e71"
+  },
+  "label_latency_rows": 5000,
+  "logical_rows": 138530,
+  "model_checkpoints_loaded": false,
+  "neural_or_symbolic_treatments_executed": false,
+  "next_action": "hold_and_verify_matched_c_d_executor_before_separate_release",
+  "ordered_row_ids_sha256": "81924f3c39cb49adfaebea11d9aef045ab73804dd61faee49dcfbd2dd5f33f25",
+  "pass": true,
+  "python_version": "3.11.9",
+  "raw_source_sha256": "893c27dc968bf7a8adef1689f90be55ca4a4dc3088fb63d6ff247ac56856df2a",
+  "scenario_id": "cicids2017_goldeneye_temporal_attack_shift_v1",
+  "scope": "source_only_original_csv_and_frozen_preprocessing",
+  "stage": "10A",
+  "stage10_treatment_execution_authorized": false,
+  "stage10_treatment_outcomes_accessed": false
+}

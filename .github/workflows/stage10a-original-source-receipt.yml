@@ -1,0 +1,116 @@
+name: Stage 10A exact original-source receipt (NO treatments)
+
+on:
+  push:
+    branches:
+      - stage10a-governance
+    paths:
+      - .github/workflows/stage10a-original-source-receipt.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  original-source-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      PYTHONPATH: ${{ github.workspace }}/src:${{ github.workspace }}
+      SOURCE_SHA256: "893c27dc968bf7a8adef1689f90be55ca4a4dc3088fb63d6ff247ac56856df2a"
+      SOURCE_SIZE: "225166395"
+      SOURCE_FILENAME: Wednesday-workingHours.pcap_ISCX.csv
+      SOURCE_REVISION: "4e9edfa727f800b6f595bc2ee7420527156562b2"
+    steps:
+      - name: Checkout exact Stage-10A commit
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Bind clean checked-out branch to immutable workflow SHA
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "${GITHUB_REF}" = "refs/heads/stage10a-governance"
+          git switch -C stage10a-governance "${GITHUB_SHA}"
+          test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
+          test "$(git branch --show-current)" = "stage10a-governance"
+          test -z "$(git status --porcelain)"
+
+      - name: Setup exact Python 3.11.9
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11.9"
+          cache: pip
+
+      - name: Validate Python and install frozen lock
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import platform
+          assert platform.python_version() == "3.11.9", platform.python_version()
+          PY
+          python -m pip install -r requirements-lock.txt
+          test -z "$(git status --porcelain)"
+
+      - name: Fetch revision-pinned public Wednesday CSV and verify original bytes
+        shell: bash
+        run: |
+          set -euo pipefail
+          SOURCE_DIR="${RUNNER_TEMP}/stage10a-source-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+          mkdir -p "${SOURCE_DIR}"
+          FILE="${SOURCE_DIR}/${SOURCE_FILENAME}"
+          URL="https://huggingface.co/datasets/c01dsnap/CIC-IDS2017/resolve/${SOURCE_REVISION}/${SOURCE_FILENAME}?download=true"
+          curl --fail --location --show-error --silent --retry 3 --connect-timeout 45 --max-time 1800 \
+            --output "${FILE}" "${URL}"
+          test -f "${FILE}"
+          test "$(stat -c%s "${FILE}")" = "${SOURCE_SIZE}"
+          printf '%s  %s\n' "${SOURCE_SHA256}" "${FILE}" | sha256sum --check --status
+          echo "Pinned source file matches the original 225166395-byte SHA-256; no treatment data has been run."
+          echo "STAGE10A_SOURCE_DIRECTORY=${SOURCE_DIR}" >> "${GITHUB_ENV}"
+
+      - name: Generate source-only, clean-head write-once receipt
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
+          test -z "$(git status --porcelain)"
+          RECEIPT_DIR="${RUNNER_TEMP}/stage10a-receipt-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+          mkdir -p "${RECEIPT_DIR}"
+          python -m tools.stage10.stage10a_source_receipt \
+            --data-root "${STAGE10A_SOURCE_DIRECTORY}" \
+            --output "${RECEIPT_DIR}/stage10a_source_receipt.json"
+          RECEIPT="${RECEIPT_DIR}/stage10a_source_receipt.json"
+          python - "${RECEIPT}" <<'PY'
+          import json, os, pathlib, sys
+          from tools.stage10.stage10a_source_receipt import _canonical_sha256
+          d = json.loads(pathlib.Path(sys.argv[1]).read_text(encoding="utf-8"))
+          assert d["pass"] is True
+          assert d["git"]["head"] == os.environ["GITHUB_SHA"]
+          assert d["git"]["clean"] == "true"
+          assert d["git"]["branch"] == "stage10a-governance"
+          assert d["python_version"] == "3.11.9"
+          assert d["raw_source_sha256"] == os.environ["SOURCE_SHA256"]
+          assert d["logical_rows"] == 138530 and d["frozen_features"] == 77
+          assert d["stage10_treatment_execution_authorized"] is False
+          assert d["stage10_treatment_outcomes_accessed"] is False
+          assert d["model_checkpoints_loaded"] is False
+          assert d["neural_or_symbolic_treatments_executed"] is False
+          expected = _canonical_sha256({k:v for k,v in d.items() if k!="canonical_sha256"})
+          assert d["canonical_sha256"] == expected
+          print("Original CSV Stage-10A source-only receipt verified:", expected)
+          PY
+          test -z "$(git status --porcelain)"
+          echo "STAGE10A_RECEIPT_PATH=${RECEIPT}" >> "${GITHUB_ENV}"
+
+      - name: Preserve the successful non-outcome receipt (never original CSV)
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: stage10a-source-only-receipt-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ env.STAGE10A_RECEIPT_PATH }}
+          retention-days: 90
+          if-no-files-found: error
+          overwrite: false

@@ -13,6 +13,28 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 CONTRACT_PATH = PROJECT_ROOT / "data" / "manifests" / "stage9_5_claim_reporting_v1.json"
 DEFINITIONS_PATH = PROJECT_ROOT / "data" / "manifests" / "stage9_5_claim_definitions_v1.json"
 
+SOURCE_COMPATIBILITY_PATH = (
+    PROJECT_ROOT / "data" / "manifests" / "stage9_5_claim_source_compatibility_v1_1.json"
+)
+# These pins make the additive v1.1 policy fail closed if edited after review.
+_PINNED_SOURCE_COMPATIBILITY = {'schema_version': '1.1',
+ 'status': 'assurance_only_corrective_not_stage9_5_closure',
+ 'scope': 'stage9.5-7-claim-source-ledger-additive-compatibility',
+ 'frozen_claim_contract': {'path': 'data/manifests/stage9_5_claim_reporting_v1.json',
+                           'blob_sha': 'b38302c509bda9af65e2dbf319e7e903a00ab111'},
+ 'frozen_claim_definitions': {'path': 'data/manifests/stage9_5_claim_definitions_v1.json',
+                              'blob_sha': '18157779d5860b366b568926d6a89a2205e75480'},
+ 'ledger': {'path': 'METHODOLOGY_LEDGER.md',
+            'claim_source_blob_sha': '9b977705b9748138bb12745e9f0fb3d77d73c2b2',
+            'claim_source_historical_commit': 'b141a65033fee1ffbe7709a54838ea1af1324225',
+            'pre_correction_snapshot_blob_sha': '8a14bd17528851e26748b993b7ae85cd90c40db3',
+            'pre_correction_commit': '207c05e5e99568fb4cb7f89996af3314be0d5ef3',
+            'compatibility_mode': 'immutable_frozen_prefix_and_preserved_snapshot_prefix',
+            'report_blob_identity': 'frozen_original'},
+ 'other_claim_sources': 'require_exact_head_blob_identity',
+ 'scientific_objects_modified': False,
+ 'stage10_outcomes_accessed': False}
+
 
 def _load_json(path: Path) -> Any:
     return json.loads(path.read_text(encoding="utf-8"))
@@ -153,25 +175,104 @@ def _evidence_paths(value: Any) -> set[str]:
     return found
 
 
-def _claim_source_sha(contract: Mapping[str, Any], path: str) -> str:
-    frozen = {item["path"]: item["blob_sha"] for item in contract["claim_source_freeze"]}
-    expected = frozen[path]
-    observed = subprocess.run(
-        ["git", "rev-parse", f"HEAD:{path}"],
+def _git_bytes(*args: str) -> bytes:
+    return subprocess.run(
+        ["git", *args],
         cwd=PROJECT_ROOT,
-        text=True,
         capture_output=True,
         check=True,
-    ).stdout.strip()
-    if observed != expected:
-        raise ValueError(f"Claim-source blob mismatch for {path}: {observed} != {expected}")
-    return observed
+    ).stdout
+
+
+def _git_tree_blob(commit: str, path: str) -> str:
+    return _git_bytes("rev-parse", f"{commit}:{path}").decode("ascii").strip()
+
+
+def _assert_append_only_ledger(
+    frozen: bytes, published_snapshot: bytes, observed_head: bytes
+) -> None:
+    """Preserve both claim-era bytes and the entire pre-correction ledger history."""
+    if not frozen or not published_snapshot or not observed_head:
+        raise ValueError("Ledger source or preservation witness is empty.")
+    if not published_snapshot.startswith(frozen):
+        raise ValueError("Pre-correction ledger does not preserve the frozen claim source.")
+    if not observed_head.startswith(published_snapshot):
+        raise ValueError("HEAD ledger rewrites or truncates preserved historical entries.")
+
+
+def _validate_claim_source_identities(contract: Mapping[str, Any]) -> dict[str, str]:
+    policy = _load_json(SOURCE_COMPATIBILITY_PATH)
+    if policy != _PINNED_SOURCE_COMPATIBILITY:
+        raise ValueError("Unrecognized Stage-9.5-7 v1.1 compatibility policy.")
+
+    # The original frozen v1 contract and claim definitions must remain byte-identical.
+    for key in ("frozen_claim_contract", "frozen_claim_definitions"):
+        item = policy[key]
+        observed = _git_tree_blob("HEAD", item["path"])
+        if observed != item["blob_sha"]:
+            raise ValueError(
+                f"Original claim freeze changed at {item['path']}: "
+                f"{observed} != {item['blob_sha']}"
+            )
+
+    frozen = {item["path"]: item["blob_sha"] for item in contract["claim_source_freeze"]}
+    ledger = policy["ledger"]
+    ledger_path = ledger["path"]
+    if len(frozen) != 4 or ledger_path not in frozen:
+        raise ValueError("Expected exactly four original frozen claim sources.")
+    if frozen[ledger_path] != ledger["claim_source_blob_sha"]:
+        raise ValueError("Original frozen methodology-ledger blob was substituted.")
+
+    # Git blob checks alone do not detect uncommitted edits to worktree inputs.
+    # Reject changed frozen contracts, definitions, or claim-source documents.
+    tracked_sources = [
+        policy["frozen_claim_contract"]["path"],
+        policy["frozen_claim_definitions"]["path"],
+        *frozen,
+    ]
+    try:
+        _git_bytes("diff", "--quiet", "HEAD", "--", *tracked_sources)
+    except subprocess.CalledProcessError as exc:
+        raise ValueError("Frozen claim-source inputs differ from the checked HEAD.") from exc
+
+    # The witness is bound to the actual published assurance commit, not a
+    # substitute blob supplied after observing the failed workflow.
+    _git_bytes(
+        "merge-base", "--is-ancestor", ledger["pre_correction_commit"], "HEAD"
+    )
+    historical_sha = _git_tree_blob(
+        ledger["claim_source_historical_commit"], ledger_path
+    )
+    snapshot_sha = _git_tree_blob(ledger["pre_correction_commit"], ledger_path)
+    if historical_sha != ledger["claim_source_blob_sha"]:
+        raise ValueError("Frozen ledger does not match its historical Git commit.")
+    if snapshot_sha != ledger["pre_correction_snapshot_blob_sha"]:
+        raise ValueError("Published pre-correction ledger witness is inconsistent.")
+
+    # Do not allow the compatibility exception to spread to any other source.
+    for path, expected in frozen.items():
+        observed = _git_tree_blob("HEAD", path)
+        if path != ledger_path:
+            if observed != expected:
+                raise ValueError(
+                    f"Claim-source blob mismatch for {path}: {observed} != {expected}"
+                )
+            continue
+
+        frozen_bytes = _git_bytes("cat-file", "blob", expected)
+        snapshot_bytes = _git_bytes("cat-file", "blob", snapshot_sha)
+        head_bytes = _git_bytes("cat-file", "blob", observed)
+        _assert_append_only_ledger(frozen_bytes, snapshot_bytes, head_bytes)
+
+    # The authoritative claim-source identity remains the original frozen blob.
+    return frozen
 
 
 def run(output_dir: Path) -> dict[str, Any]:
     contract = _load_json(CONTRACT_PATH)
     definitions = _load_json(DEFINITIONS_PATH)
     cache: dict[str, Any] = {}
+    source_identities = _validate_claim_source_identities(contract)
 
     frozen_families = set(contract["claim_families"])
     claims = definitions["claims"]
@@ -195,7 +296,7 @@ def run(output_dir: Path) -> dict[str, Any]:
             raise ValueError(f"Claim {claim['claim_id']} has no resolved evidence values.")
         identity_refs = claim["evidence_identity_refs"]
         identities = {name: identity_bank[name] for name in identity_refs}
-        source_sha = _claim_source_sha(contract, claim["source_interpretation_path"])
+        source_sha = source_identities[claim["source_interpretation_path"]]
         row = {
             "claim_id": claim["claim_id"],
             "family": claim["family"],
@@ -227,9 +328,12 @@ def run(output_dir: Path) -> dict[str, Any]:
         raise ValueError(f"Required claim-ledger fields missing: {missing_fields}")
 
     report: dict[str, Any] = {
-        "audit_id": "stage9.5-7-claim-to-evidence-traceability-v1",
+        "audit_id": "stage9.5-7-claim-to-evidence-traceability-v1_1",
         "contract": str(CONTRACT_PATH.relative_to(PROJECT_ROOT)),
         "definitions": str(DEFINITIONS_PATH.relative_to(PROJECT_ROOT)),
+        "claim_source_compatibility_policy": str(SOURCE_COMPATIBILITY_PATH.relative_to(PROJECT_ROOT)),
+        "ledger_frozen_source_blob_sha": source_identities["METHODOLOGY_LEDGER.md"],
+        "ledger_preservation_witness_blob_sha": _PINNED_SOURCE_COMPATIBILITY["ledger"]["pre_correction_snapshot_blob_sha"],
         "claim_count": len(rows),
         "family_count": len(defined_families),
         "frozen_family_count": len(frozen_families),

@@ -1,8 +1,9 @@
-"""Synthetic tests only: never unpickle model checkpoints or execute Stage-10A."""
+"""Source-only original-state tests. Never load models or execute treatments."""
 from __future__ import annotations
 
 import hashlib
 import json
+from pathlib import Path
 
 import pytest
 
@@ -92,3 +93,20 @@ def test_mismatched_r0_path_and_count_fail_closed(tmp_path) -> None:
         verify_r0_rules(tmp_path, rules)
     with pytest.raises(ValueError, match="exactly the five"):
         verify_r0_rules(tmp_path, rules[:4])
+
+
+def test_exact_five_committed_r0_rule_identities_against_frozen_assurance_inventory() -> None:
+    """Actual repository R0 rules, not mock models or outcome-bearing data."""
+    root = Path(__file__).resolve().parents[2]
+    audit = json.loads(
+        (root / "data/manifests/stage9_5_fresh_clone_reconstruction_v1_2.json")
+        .read_text(encoding="utf-8")
+    )
+    assert audit["r0_v2"]["manifest_sha256"] == (
+        "131027d2f136494eb388183f18dcb7eb0e9d7e9fe786f22dba25f4e1624c1483"
+    )
+    records = verify_r0_rules(root, audit["r0_v2"]["rules"])
+    assert tuple(item["seed"] for item in records) == tuple(range(5))
+    for observed, frozen in zip(records, audit["r0_v2"]["rules"], strict=True):
+        assert observed["normalized_text_sha256"] == frozen["text_sha256"]
+        assert observed["artifact_sha256"] == frozen["artifact_sha256"]

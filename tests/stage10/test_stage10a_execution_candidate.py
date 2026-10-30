@@ -94,7 +94,12 @@ def test_no_unknown_field_can_be_injected(documents) -> None:
         verify_candidate(candidate, master, stage, primary)
 
 
-def test_candidate_requires_frozen_input_files(documents, tmp_path) -> None:
+def test_candidate_requires_frozen_input_files(tmp_path) -> None:
+    with pytest.raises(FileNotFoundError):
+        verify_from_repository(root=tmp_path)
+
+
+def test_candidate_rejects_reformatted_upstream_manifest(documents, tmp_path) -> None:
     master, stage, primary, candidate = documents
     tmp_manifest = tmp_path / "data/manifests"
     tmp_manifest.mkdir(parents=True)
@@ -110,5 +115,5 @@ def test_candidate_requires_frozen_input_files(documents, tmp_path) -> None:
     (tmp_manifest / "stage10a_execution_candidate_v1.json").write_text(
         json.dumps(candidate), encoding="utf-8"
     )
-    with pytest.raises(FileNotFoundError):
+    with pytest.raises(ValueError, match="Frozen Git blob identity changed"):
         verify_from_repository(root=tmp_path)

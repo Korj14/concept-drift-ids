@@ -3,26 +3,17 @@
 Research code for an adaptive neuro-symbolic network intrusion-detection system with concept-drift-driven symbolic rule evolution.
 
 
-## Current assurance status — 17 October 2026
+## Stage-9.5 status and next-phase boundary — 31 October 2026
 
-Accepted Stage-8/Stage-9 scientific evidence is frozen. Stage 9.5-1 has now been **CLOSED — FAILED / EXTERNAL PROVENANCE UNRESOLVED** by `STAGE9_5_1_FRESH_CLONE_RECONSTRUCTION_NEGATIVE_CLOSURE.md`; this is a negative assurance closure, not a successful reconstruction. Stage-10 treatment execution remains **PROHIBITED**.
+**Stage 9.5 Q1 technical assurance: COMPLETED and explicitly accepted on 30 October 2026**, evaluated at `cdc4b5eaea7e337802f93563b708b89f3025c3d8`. This is not a PR merge, a repository-administrator sign-off, or a Stage-10 execution release.
 
-The final fresh-clone disposition is **0 repository/runtime/compact-evidence identity failures / 2 unresolved external-artifact blockers**:
+The **current administrative/status interpretation** is recorded in [`STAGE9_5_TERMINAL_ACCEPTANCE_ADMINISTRATIVE_RECONCILIATION_2026_10_31.md`](STAGE9_5_TERMINAL_ACCEPTANCE_ADMINISTRATIVE_RECONCILIATION_2026_10_31.md). The original [`STAGE9_5_Q1_FORMAL_CLOSURE.md`](STAGE9_5_Q1_FORMAL_CLOSURE.md) remains the earlier *formal-closure candidate*, preserved unchanged for provenance; its pre-v1.3 audit assessment is not the final terminal technical verdict. PR [#21](https://github.com/Korj14/concept-drift-ids/pull/21) remains subject to separate review/merge governance.
 
-- `system_a_checkpoint_bytes_missing` — the five exact original System-A checkpoint files were not recovered from any currently accessible authoritative source;
-- `stage8_large_artifact_archive_missing` — the original heavy archive rooted at `artifacts/cd_primary_v1` was not recovered, so the required 145/145 descriptor-linked verification cannot pass.
+The **16–17 October Stage-9.5-1 failed/blocked reconstruction and its two external-byte blockers were genuine at that historical date**, not the current technical outcome. The later independently verified original-byte recovery (5/5 checkpoints; 145/145 archive descriptor requirements), deterministic historical replay, and ordered claim/reporting/hostile-review checks resolved the current Class-A assurance disposition without deleting the historical negative reports. At terminal acceptance there were **zero current unresolved Class A**; one historical Class-A record remains retained. The old overall red GitHub Actions jobs and known hosted-runner/static negative findings must continue to be reported accurately.
 
-The frozen Stage-9.5-1 success criterion was not weakened. Retrained checkpoints, regenerated archives, numerically equivalent serializations, summary-only approximations, and manually authored success evidence remain prohibited substitutes. The negative closure may be reopened only if the exact original bytes are later supplied and the unchanged v1.2 verifier passes with five verified seeds, 145/145 Stage-8 files, zero failures, and zero blockers.
+**Stage-10A/B/C treatment execution remains prohibited.** Stage-10 master v1.1 and stage-specific source-only protocols are frozen but are **not** execution authorization; the machine gate remains `stage10_execution_permitted=false` pending separate legitimate governance and an explicit Stage-10 RELEASE/HOLD decision. Current planning focus is Stage-10A.
 
-Stage 9.5-6 replay-equivalence mechanics are prospectively frozen and implemented across Phase A, Phase B, corrected Phase-C seed-0 preconditions/output comparison, deterministic replay-report finalization, and Stage-1 historical reconstruction evidence. The Stage-1 prerequisite is **closed** by the preserved verifier-produced report `results/audits/stage9_5_full_seed_rerun_v1/stage1_reconstruction_report.json`, canonical SHA-256 `4bafa772f9737d934f40c90bf7be8d80a62108cf89a9c74895fbe5c12c4a88af`.
-
-Because 9.5-1 is now closed-failed with an unresolved Class-A provenance defect, the current Stage-9.5 path cannot legitimately reach a valid Stage-9.5-6 closure or zero-unresolved-Class-A closure. Stage 9.5-7/8/9 therefore remain locked as authoritative closure packages, and Stage 9.5 overall is **NOT CLOSABLE UNDER THE CURRENT EVIDENCE PACKAGE**.
-
-This negative closure does not establish that the accepted Stage-8/9 numerical results are false; it establishes that publication-grade independent reconstruction of their full checkpoint/heavy-artifact chain has not been demonstrated.
-
-The multi-chat assurance diversion is being preserved in `STAGE9_5_ASSURANCE_DIVERSION_RETROSPECTIVE_WORKING_NOTES.md`; any future restart or reopened recovery must preserve this negative closure and the unchanged scientific record.
-
-The later stage-specific sections below are retained as historical execution/protocol documentation and should not be read as the current project gate state.
+This section supersedes this README's former *17 October current assurance status* navigation text; the underlying historical failed-closure evidence remains unchanged in `STAGE9_5_1_FRESH_CLONE_RECONSTRUCTION_NEGATIVE_CLOSURE.md` and the append-only audit record.
 
 ## Environment
 

@@ -1,0 +1,247 @@
+{
+  "arms": {
+    "causal_unit": "matched_seed_within_stage10a_scenario",
+    "names": [
+      "c_frozen_symbolic",
+      "d_drift",
+      "d_periodic"
+    ],
+    "seeds": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "shared_neural_trajectory_per_seed_required": true,
+    "shared_trace_real_provenance_verified": false
+  },
+  "authorities": {
+    "master_manifest_git_blob_sha1": "8ac82c8d907243556a5673d09600cd1bdc19aa52",
+    "master_protocol_git_blob_sha1": "ac61908d30bcc26cddbe6467d807a3de119689d9",
+    "primary_run_config_git_blob_sha1": "7ba598fec1cf8ce92f804d4123afbf01ec310b23",
+    "primary_run_config_manifest_sha256": "d380fce5f9db8f0b639dc999298a263b10a10a3d02e35def226a121d098e2222",
+    "source_audit_canonical_sha256": "5738c65009c22ef57845ba1adf06bfca198098af0d404120a76d958ac5998275",
+    "source_audit_git_blob_sha1": "a9700114cc08b0525b1a77fe2e499152d94ccb26",
+    "stage10a_manifest_canonical_sha256": "d5fd7d49e44cc422f6690df19274b104ecb9658541b93aa9d2ffe066aaf1e730",
+    "stage10a_manifest_git_blob_sha1": "001501350fbf9fa4a4075176b9af43c2cf275bc5",
+    "stage10a_protocol_git_blob_sha1": "2785e94380cc29e20f014738e2837d708649f5bc"
+  },
+  "candidate_id": "stage10a-goldeneye-executable-binding-candidate-v1",
+  "evaluation": {
+    "claim_boundaries": [
+      "no_natural_production_drift_claim",
+      "no_unqualified_p_y_given_x_change_claim_from_source_only_diagnostics",
+      "no_universal_trigger_superiority",
+      "no_universal_symbolic_benefit",
+      "no_architecture_invariance",
+      "no_environmental_generalization_beyond_cicids2017_from_stage10a_alone"
+    ],
+    "confirmatory_unit": "matched_seed_within_stage10a_scenario",
+    "multiplicity": "paired_seeds_0_4_Holm_prospectively_frozen",
+    "post_boundary_offline_evaluation_only": true,
+    "primary_endpoints": [
+      "E1_post_mcc_d_drift_minus_c",
+      "E2_post_mcsc_d_drift_minus_c",
+      "E3_post_mcsc_d_drift_minus_d_periodic"
+    ],
+    "raw_seed_effects_mandatory": true
+  },
+  "governance": {
+    "release_signed": false,
+    "requires_separate_release": true,
+    "stage10_execution_permitted": false,
+    "stage10_treatment_outcomes_accessed": false,
+    "stage10a_treatment_execution_authorized": false,
+    "stage10a_treatment_outcomes_accessed": false
+  },
+  "implementation": {
+    "cpu_only": true,
+    "exact_head_clean_checkout_required": true,
+    "fixed_python_version": "3.11.9",
+    "label_latency_rows": 5000,
+    "output_namespace": "artifacts/stage10a_goldeneye_v1",
+    "phase_order": [
+      "phase_a_shared_control_plane",
+      "phase_b_symbolic_arms",
+      "phase_c_offline_evaluation"
+    ],
+    "prediction_before_label_release": true,
+    "real_matched_c_d_isolation_verified": false,
+    "required_thread_environment": {
+      "MKL_NUM_THREADS": "1",
+      "NUMEXPR_NUM_THREADS": "1",
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1",
+      "PYTHONHASHSEED": "0"
+    },
+    "requirements_lock_normalized_sha256": "9f63cbe19dcb1b916c16603f5b7c01a2fa33ac11271ce2ef0014910158d6741d",
+    "source_boundary_and_labels_forbidden_in_observation_events": true,
+    "stage10a_execution_entrypoint_exists": false,
+    "write_once_outputs": true
+  },
+  "inherited_neural": {
+    "checkpoint_sha256_by_seed": {
+      "0": "514c6d552b3cd680ae966bbb568105bd2871bc68d3a47aded070a70ba0615bd1",
+      "1": "07696c3f580645d9c96ac3e736cfb5eeaa8033f148bf64822e8ee105861cf552",
+      "2": "7630514cf409256bd2bbe27eca59f881acb238be698b5fdb1ee12bca8e402491",
+      "3": "cce1ce47db047b9d441bbe6dad9bd53f1ee6ff3ad7d404521cae72a38bccd4b4",
+      "4": "9b9e56371f3246482998c4efea4829e1e6d5aaf549bb43e1af05e471dfcb9e93"
+    },
+    "monitor_threshold_by_seed": {
+      "0": 0.939024031162262,
+      "1": 0.9333740472793579,
+      "2": 0.9121250510215759,
+      "3": 0.9789621233940125,
+      "4": 0.954619288444519
+    },
+    "primary_control_plane": {
+      "adwin": {
+        "clock": 32,
+        "delta": 0.002,
+        "grace_period": 10,
+        "max_buckets": 5,
+        "min_window_length": 5
+      },
+      "config": {
+        "current_window": 10000,
+        "label_latency": 5000,
+        "neural_update": {
+          "batch_size": 1024,
+          "epochs": 5,
+          "learning_rate": 0.0001,
+          "pos_weight": 4.138247558496975,
+          "weight_decay": 0.00001
+        },
+        "replay_anchor_rows": 5000,
+        "replay_online_rows": 5000,
+        "reservoir_capacity": 10000
+      },
+      "config_sha256": "7491733fe4bb7524eb38960b78067df44081fd4513055664985f3fd0d9841384",
+      "rng": {
+        "adaptation_shuffle_seed_base": 20261011,
+        "anchor_seed": 20261008,
+        "online_reservoir_seed": 20261009,
+        "replay_sample_seed_base": 20261010
+      }
+    },
+    "primary_fusion": {
+      "neural_weight": 0.5,
+      "thresholds_by_seed": {
+        "0": 0.692427396774292,
+        "1": 0.9354645609855652,
+        "2": 0.8299936652183533,
+        "3": 0.9747405052185059,
+        "4": 0.9527904391288757
+      }
+    },
+    "requires_original_checkpoint_bytes": true,
+    "system_a_manifest_sha256": "42004b5ed100b690023b9998bdc959fac41ab947b996fb7c58e44cee5e8dc6de"
+  },
+  "inherited_symbolic": {
+    "generation_window_rows": 10000,
+    "primary_symbolic_operator": {
+      "config": {
+        "cross_class_overlap": 0.5,
+        "gate": {
+          "bootstrap_replicates": 100,
+          "max_complexity": 4,
+          "min_class_precision": 0.8,
+          "min_covered": 25,
+          "min_fidelity_lcb": 0.9,
+          "min_neural_fidelity": 0.9,
+          "min_precision_lcb": 0.8,
+          "min_stability": 0.9,
+          "min_support": 0.001,
+          "wilson_z": 1.6448536269514722
+        },
+        "generation": {
+          "attribution_per_class": 1024,
+          "background_per_class": 128,
+          "max_depth": 4,
+          "min_samples_leaf": 100,
+          "selected_features": 12
+        },
+        "refinement_overlap": 0.5,
+        "same_class_redundancy": 0.95,
+        "validation_rows": 10000
+      },
+      "config_sha256": "197360bb33718f32d7aebeb60b5e5fe3ba0619941c4a38a4f4c6ba3b529b7532",
+      "maximum_opportunities_per_seed": 4,
+      "periodic_clocks": [
+        27706,
+        55412,
+        83118,
+        110824
+      ]
+    },
+    "r0_active_rule_counts_by_seed": {
+      "0": 7,
+      "1": 6,
+      "2": 7,
+      "3": 6,
+      "4": 6
+    },
+    "r0_v2_manifest_sha256": "131027d2f136494eb388183f18dcb7eb0e9d7e9fe786f22dba25f4e1624c1483",
+    "validation_window_rows": 10000
+  },
+  "release_blockers": [
+    "canonical_source_receipt_clean_python3_11_9",
+    "original_system_a_checkpoints_and_r0_bytes_availability",
+    "stage10a_execution_entrypoint_and_test_then_update_proof",
+    "matched_neural_and_control_trajectory_real_evidence_5_seeds",
+    "write_once_run_output_inference_identity",
+    "independent_second_dataset_criteria_freeze_master_S10_04",
+    "explicit_stage10a_release"
+  ],
+  "schema_version": 1,
+  "source_only": {
+    "boundary_offline_only": true,
+    "feature_count": 77,
+    "preprocessing_state_sha256": "4527f77220f2cf6063108a7d71d80aaa0e82099ad282ff25408a2d9ce3488b1e",
+    "raw_source": {
+      "path": "Wednesday-workingHours.pcap_ISCX.csv",
+      "sha256": "893c27dc968bf7a8adef1689f90be55ca4a4dc3088fb63d6ff247ac56856df2a",
+      "size_bytes": 225166395,
+      "source_order": 2
+    },
+    "scenario": {
+      "boundary_index": 69260,
+      "boundary_role": "offline_evaluator_scoring_and_diagnostics_only",
+      "chronology": "pseudo_chronological_source_row_order",
+      "drift_wording": "same-family attack-pattern / class-conditional feature shift",
+      "natural_production_drift_claim": false,
+      "post": {
+        "BENIGN": 65697,
+        "DoS GoldenEye": 3573,
+        "excluded_labels": {},
+        "ordered_row_ids_sha256": "186aec7f816faca89484c537b77ed8e729a9ac55982a7e1bec6f37750c1c30d8",
+        "range": {
+          "row_end_exclusive": 692703,
+          "row_start_inclusive": 623433
+        },
+        "rows": 69270
+      },
+      "pre": {
+        "BENIGN": 65671,
+        "DoS GoldenEye": 3589,
+        "excluded_labels": {
+          "Heartbleed": 11
+        },
+        "ordered_row_ids_sha256": "ef7773f88374c82a663723c0c1125f4a8bfee75a58fe4d8e35355b492e07b354",
+        "range": {
+          "row_end_exclusive": 623433,
+          "row_start_inclusive": 554162
+        },
+        "rows": 69260
+      },
+      "stream_row_ids_sha256": "81924f3c39cb49adfaebea11d9aef045ab73804dd61faee49dcfbd2dd5f33f25",
+      "stream_source_order_row_pairs_sha256": "b6c3b7a14a08be6c6b186ed339a1f205cdff49d48de6fa16ce44cc776796c6a7"
+    },
+    "scenario_id": "cicids2017_goldeneye_temporal_attack_shift_v1",
+    "source_receipt_required": true,
+    "source_receipt_status": "not_yet_accepted_exact_python_3_11_9",
+    "train_development_preexisting": true
+  },
+  "status": "preoutcome_candidate_hold_not_executable"
+}

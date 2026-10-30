@@ -85,12 +85,14 @@ def test_symbolic_difference_allowed_but_shared_state_identical(frozen) -> None:
 def test_exact_five_seed_arm_structure(frozen) -> None:
     primary = frozen[2]
     records = [trace for seed in SEEDS for trace in _trio(primary, seed)]
-    result = verify_all_seeds(records, primary)
+    with pytest.raises(ValueError, match="noncontiguous prediction"):
+        verify_all_seeds(records, primary)  # production default demands all 138530
+    result = verify_all_seeds(records, primary, required_prediction_count=1)
     assert tuple(result) == SEEDS
     with pytest.raises(ValueError, match="Five paired"):
-        verify_all_seeds(records[:-1], primary)
+        verify_all_seeds(records[:-1], primary, required_prediction_count=1)
     with pytest.raises(ValueError, match="unfrozen"):
-        verify_all_seeds(records[:-1] + [replace(records[-1], seed=5)], primary)
+        verify_all_seeds(records[:-1] + [replace(records[-1], seed=5)], primary, required_prediction_count=1)
 
 
 @pytest.mark.parametrize("field", [
@@ -165,6 +167,16 @@ def test_cross_arm_shared_event_mutation_and_boundary_leak_rejected(frozen) -> N
     events[0]["boundary_index"] = 69260
     with pytest.raises(ValueError, match="evaluator-only"):
         verify_seed(0, (replace(a, events=tuple(events)), *_trio(primary)[1:]), primary)
+
+
+@pytest.mark.parametrize("field", ["label", "true_label", "binary_target", "ground_truth"])
+def test_no_future_ground_truth_in_prediction_event(field: str, frozen) -> None:
+    primary = frozen[2]
+    trio = _trio(primary)
+    events = list(copy.deepcopy(trio[0].events))
+    events[0][field] = 1
+    with pytest.raises(ValueError, match="unavailable label"):
+        verify_seed(0, (replace(trio[0], events=tuple(events)), *trio[1:]), primary)
 
 
 def test_required_full_stream_count_cannot_be_claimed_from_sparse_fixture(frozen) -> None:

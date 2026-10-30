@@ -186,6 +186,8 @@ def _assert_timing(events: Sequence[Mapping[str, Any]]) -> None:
                 raise ValueError("Nonsequential or repeated prediction event.")
             if e.get("prediction_committed") is not True:
                 raise ValueError("Prediction was not committed before label use.")
+            if any(key in e for key in ("label", "true_label", "binary_target", "ground_truth")):
+                raise ValueError("Prediction event leaks an unavailable label.")
             predicted.add(origin)
         elif kind == "label_release":
             if type(origin) is not int or origin not in predicted or origin in labels:
@@ -259,6 +261,8 @@ def verify_seed(
 def verify_all_seeds(
     traces: Sequence[ArmEvidence],
     primary: Mapping[str, Any],
+    *,
+    required_prediction_count: int = ROW_COUNT,
 ) -> dict[int, str]:
     if len(traces) != len(SEEDS) * len(ARMS):
         raise ValueError("Five paired three-arm seeds required.")
@@ -268,6 +272,9 @@ def verify_all_seeds(
             raise ValueError("Unfrozen seed present.")
         by_seed[trace.seed].append(trace)
     return {
-        seed: verify_seed(seed, tuple(by_seed[seed]), primary)
+        seed: verify_seed(
+            seed, tuple(by_seed[seed]), primary,
+            required_prediction_count=required_prediction_count,
+        )
         for seed in SEEDS
     }

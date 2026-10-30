@@ -49,8 +49,8 @@ jobs:
           test -f tools/stage10/stage10c_source_readiness.py
           test -f tests/stage10/test_stage10c_source_readiness.py
 
-      - name: Compile Stage 10A verifier
-        run: python -m compileall -q tools/stage10
+      - name: Compile Stage 10A source-only helper and verifier
+        run: python -m compileall -q tools/stage10 src/concept_drift_ids/stage10a_source_adapter.py
 
       - name: Run Stage 10A, 10B and 10C repository-only tests
         run: python -m pytest -q tests/stage10

@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "id": "stage10a-s10-04-independent-environment-eligibility-v1",
+  "status": "prospectively_frozen_selection_rules_no_dataset_selected",
+  "role": "subordinate_s10_04_preoutcome_selection_criteria_not_stage10_protocol",
+  "governing_master": {
+    "path": "STAGE10_PLUS_MASTER_REPLICATION_SENSITIVITY_PROTOCOL_V1_1.md",
+    "git_blob_sha1": "ac61908d30bcc26cddbe6467d807a3de119689d9",
+    "obligation": "S10-04"
+  },
+  "stage10a_context": {
+    "scenario_id": "cicids2017_goldeneye_temporal_attack_shift_v1",
+    "original_protocol_git_blob_sha1": "2785e94380cc29e20f014738e2837d708649f5bc",
+    "stage10a_treatment_execution_authorized": false,
+    "stage10a_outcomes_accessed": false
+  },
+  "selection": {
+    "selected_dataset_id": null,
+    "candidates_assessed": 0,
+    "second_dataset_chosen": false,
+    "outcome_guided_choice_permitted": false,
+    "selection_completion_status": "HOLD",
+    "independent_external_replication_claim_permitted": false
+  },
+  "necessary_inclusion_rules": [
+    "independent_data_collection_and_materially_different_operating_context",
+    "flow_oriented_records_with_reconstructible_feature_provenance",
+    "verifiable_raw_or_authoritative_source_bytes_and_legitimate_access",
+    "reconstructible_attack_and_benign_label_semantics_with_precommitted_target_mapping",
+    "defensible_original_chronology_or_explicit_nonnatural_pseudochronology",
+    "prospective_separation_of_train_development_adaptation_and_evaluation",
+    "reproducible_feature_and_symbolic_semantics_without_forced_harmonization",
+    "pre_outcome_source_only_selection_and_documented_exclusion_rationale"
+  ],
+  "hard_exclusions": [
+    "cicids2017_corrected_reconstructed_or_relabelled_variant",
+    "same_underlying_traffic_capture_or_repackaged_source",
+    "unknown_or_unverifiable_original_source_provenance",
+    "missing_or_nonreconstructible_flow_or_label_semantics",
+    "feature_or_symbolic_harmonization_that_distorts_original_meaning",
+    "candidate_selection_informed_by_c_d_dperiodic_or_other_treatment_effects",
+    "insufficiently_distinct_operating_context_for_independent_claim"
+  ],
+  "selection_assessment_requirements": {
+    "no_stage10_treatment_outcomes_before_selection": true,
+    "document_candidate_identity_and_original_collection_context": true,
+    "document_source_license_and_byte_provenance": true,
+    "document_label_and_feature_semantic_mapping": true,
+    "document_timing_and_partition_construction": true,
+    "document_symbolic_semantics_or_explicitly_narrow_claim": true,
+    "record_rejected_candidates_and_rationale_without_reopening_for_favorable_outcomes": true,
+    "freeze_second_dataset_specific_19_field_protocol_before_any_dataset_treatment": true
+  },
+  "causal_reporting": {
+    "paired_seed_is_unit_within_scenario": true,
+    "event_or_window_pseudoreplication_prohibited": true,
+    "separate_dataset_reporting_required": true,
+    "cross_environment_pooling_secondary_only_if_common_estimand_defensible": true,
+    "five_seeds_one_environment_not_environmental_replication": true,
+    "not_eligible_for_external_claim_until_actual_independent_dataset_experiment": true
+  },
+  "safety": {
+    "treatment_release": false,
+    "frozen_master_mutated": false,
+    "frozen_stage10a_mutated": false,
+    "stage10a_treatment_outcomes_accessed": false,
+    "gate_closed_even_if_eligibility_rules_frozen": true
+  }
+}

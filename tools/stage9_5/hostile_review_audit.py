@@ -23,6 +23,15 @@ STAGE10_PATH = (
 
 # Versioned post-recovery overlay: the original v1 hostile-review contract is
 # immutable historical authority, not a mutable current-status register.
+STAGE10_MASTER_V1_1_PATH = (
+    PROJECT_ROOT / "data" / "manifests"
+    / "stage10_plus_master_replication_sensitivity_v1_1.json"
+)
+STAGE10_MASTER_BINDING_PATH = (
+    PROJECT_ROOT / "data" / "manifests"
+    / "stage9_5_9_stage10_v1_1_binding_v1_3.json"
+)
+
 POST_RECOVERY_PATH = (
     PROJECT_ROOT / "data" / "manifests"
     / "stage9_5_9_post_recovery_assurance_v1_2.json"
@@ -41,6 +50,90 @@ def _git_bytes(*args: str) -> bytes:
 
 def _tree_sha(commit: str, relative: str) -> str:
     return _git_bytes("rev-parse", f"{commit}:{relative}").decode("ascii").strip()
+
+
+# v1.3 additive, exact-policy-bound source identity correction.
+_PINNED_STAGE10_MASTER_BINDING: dict[str, Any] = {'schema_version': '1.3', 'status': 'prospective_assurance_only_correction_pending_exact_head_validation', 'scope': 'stage9.5-9-binding-to-frozen-stage10-master-v1_1', 'historical_stage10_master': {'manifest_path': 'data/manifests/stage10_plus_master_replication_sensitivity_v1.json', 'manifest_git_blob_sha': 'e9971ebb9fe5b46352c27a73b0ebdac09937d091', 'protocol_path': 'STAGE10_PLUS_MASTER_REPLICATION_SENSITIVITY_PROTOCOL.md', 'protocol_git_blob_sha': '8c24d9e7c72fce278baa56e3f17b665ae992fa52', 'protocol_id': 'stage10-plus-master-replication-sensitivity-v1'}, 'governing_stage10_master': {'freeze_commit': '93df16b059b55eb1dc0ce33248d9ddbf75c158b9', 'manifest_path': 'data/manifests/stage10_plus_master_replication_sensitivity_v1_1.json', 'manifest_git_blob_sha': '8ac82c8d907243556a5673d09600cd1bdc19aa52', 'protocol_path': 'STAGE10_PLUS_MASTER_REPLICATION_SENSITIVITY_PROTOCOL_V1_1.md', 'protocol_git_blob_sha': 'ac61908d30bcc26cddbe6467d807a3de119689d9', 'protocol_id': 'stage10-plus-master-replication-sensitivity-v1_1', 'required_obligation_ids': ['S10-01', 'S10-02', 'S10-03', 'S10-04', 'S10-05', 'S10-06', 'S10-07', 'S10-08', 'S10-09', 'S10-10', 'S10-11', 'S10-12', 'S10-13', 'S10-14', 'S10-15', 'S10-16'], 'required_stage_specific_freeze_item_count': 19, 'required_hostile_review_rule': 'In-order Stage 9.5-9 must verify v1.1 or a later prospectively justified master protocol.'}, 'binding': 'verify_original_and_v1_1_git_source_identities_and_locked_semantics', 'original_stage9_5_9_contract_untouched': True, 'original_stage9_5_9_v1_2_overlay_untouched': True, 'original_stage10_master_versions_untouched': True, 'stage9_5_formal_closure_candidate_untouched': True, 'scientific_objects_modified': False, 'stage10_treatment_outcomes_accessed': False, 'stage10_execution_released': False}
+
+
+def _verify_stage10_master_binding(
+    historical: dict[str, Any], current: dict[str, Any]
+) -> dict[str, Any]:
+    """Bind the frozen v1 history AND already frozen prospective v1.1."""
+    policy = _load_json(STAGE10_MASTER_BINDING_PATH)
+    if policy != _PINNED_STAGE10_MASTER_BINDING:
+        raise ValueError("Unrecognized Stage-9.5-9 Stage-10 v1.1 binding policy.")
+    old = policy["historical_stage10_master"]
+    new = policy["governing_stage10_master"]
+    tracked = [
+        old["manifest_path"], old["protocol_path"],
+        new["manifest_path"], new["protocol_path"],
+    ]
+    for item in (old, new):
+        for path_key, hash_key in (
+            ("manifest_path", "manifest_git_blob_sha"),
+            ("protocol_path", "protocol_git_blob_sha"),
+        ):
+            path = item[path_key]
+            if not (PROJECT_ROOT / path).is_file():
+                raise ValueError(f"Frozen Stage-10 master source missing: {path}")
+            if _tree_sha("HEAD", path) != item[hash_key]:
+                raise ValueError(f"Frozen Stage-10 master Git identity changed: {path}")
+    _git_bytes("merge-base", "--is-ancestor", new["freeze_commit"], "HEAD")
+    for path_key, hash_key in (
+        ("manifest_path", "manifest_git_blob_sha"),
+        ("protocol_path", "protocol_git_blob_sha"),
+    ):
+        if _tree_sha(new["freeze_commit"], new[path_key]) != new[hash_key]:
+            raise ValueError("Stage-10 master v1.1 is not its prospective freeze object.")
+    try:
+        _git_bytes("diff", "--quiet", "HEAD", "--", *tracked)
+    except subprocess.CalledProcessError as exc:
+        raise ValueError("Frozen Stage-10 master working-tree inputs changed.") from exc
+
+    ids = [item.get("id") for item in current.get("master_obligations", [])]
+    old_valid = bool(
+        historical.get("protocol_id") == old["protocol_id"]
+        and historical.get("status")
+        == "prospectively_frozen_before_any_stage10_treatment_execution"
+        and historical.get("hard_gate", {}).get("stage10_execution_permitted") is False
+        and historical.get("stage10_treatment_outcomes_accessed") is False
+        and len(historical.get("master_obligations", [])) >= 15
+    )
+    new_valid = bool(
+        current.get("protocol_id") == new["protocol_id"]
+        and current.get("status")
+        == "prospectively_frozen_before_any_stage10_treatment_execution"
+        and current.get("supersedes_for_future_stage10_governance") == old["protocol_id"]
+        and current.get("historical_v1_preserved") is True
+        and current.get("governing_stage9_5_protocol")
+        == "STAGE9_5_Q1_INDEPENDENT_ASSURANCE_PROTOCOL.md"
+        and current.get("hard_gate", {}).get("stage10_execution_permitted") is False
+        and current.get("stage10_treatment_outcomes_accessed") is False
+        and ids == new["required_obligation_ids"]
+        and len(set(ids)) == 16
+        and all(
+            isinstance(item.get("requirement"), str)
+            and bool(item["requirement"].strip())
+            and isinstance(item.get("type"), str)
+            and bool(item["type"].strip())
+            for item in current.get("master_obligations", [])
+        )
+        and len(current.get("stage_specific_pre_outcome_freeze_required", []))
+        == new["required_stage_specific_freeze_item_count"]
+        and current.get("future_hostile_review_requirement")
+        == new["required_hostile_review_rule"]
+    )
+    return {
+        "historical_v1_verified": old_valid,
+        "governing_v1_1_verified": new_valid,
+        "pass": bool(old_valid and new_valid),
+        "historical_v1_manifest_blob": old["manifest_git_blob_sha"],
+        "governing_v1_1_manifest_blob": new["manifest_git_blob_sha"],
+        "governing_v1_1_freeze_commit": new["freeze_commit"],
+        "governing_v1_1_obligation_count": len(ids),
+        "stage10_execution_released": False,
+    }
 
 
 def _assert_append_only_register(
@@ -164,6 +257,8 @@ def _failure_artifacts() -> list[str]:
 def run(output_dir: Path) -> dict[str, Any]:
     contract = _load_json(CONTRACT_PATH)
     stage10 = _load_json(STAGE10_PATH)
+    stage10_v1_1 = _load_json(STAGE10_MASTER_V1_1_PATH)
+    stage10_binding = _verify_stage10_master_binding(stage10, stage10_v1_1)
 
     identity_checks = _current_source_identities(contract)
 
@@ -250,6 +345,7 @@ def run(output_dir: Path) -> dict[str, Any]:
         and class_a_blockers_are_hard
         and not failure_parse_errors
         and stage10_frozen
+        and stage10_binding["pass"]
         and no_stage10_results
         and contract.get("stage10_outcomes_accessed") is False
     )
@@ -260,7 +356,7 @@ def run(output_dir: Path) -> dict[str, Any]:
     status = "closed" if closure_eligible else "open_blocked"
 
     report: dict[str, Any] = {
-        "audit_id": "stage9.5-9-hostile-review-audit-v1_1",
+        "audit_id": "stage9.5-9-hostile-review-audit-v1_3",
         "status": status,
         "audit_execution_pass": audit_execution_pass,
         "stage9_5_closure_eligible": closure_eligible,
@@ -289,6 +385,11 @@ def run(output_dir: Path) -> dict[str, Any]:
         "repository_failed_audit_artifact_count": len(failures),
         "failure_artifact_parse_errors": failure_parse_errors,
         "stage10_master_protocol_frozen": stage10_frozen,
+        "stage10_master_binding_v1_3": stage10_binding,
+        "stage10_master_v1_1_verified": stage10_binding["governing_v1_1_verified"],
+        "stage10_master_v1_1_binding_contract": str(
+            STAGE10_MASTER_BINDING_PATH.relative_to(PROJECT_ROOT)
+        ),
         "stage10_master_obligation_count": len(
             stage10.get("master_obligations", [])
         ),
@@ -325,6 +426,7 @@ def run(output_dir: Path) -> dict[str, Any]:
         f"- unresolved Class A: **{len(unresolved_class_a)}**",
         f"- preserved failed-audit artifacts: **{len(failures)}**",
         f"- Stage-10+ master protocol frozen: **{stage10_frozen}**",
+        f"- Stage-10+ governing v1.1 verified: **{stage10_binding['governing_v1_1_verified']}**",
         f"- report SHA-256: `{report['canonical_sha256']}`",
     ]
     (output_dir / "HOSTILE_REVIEW_REPORT.md").write_text(

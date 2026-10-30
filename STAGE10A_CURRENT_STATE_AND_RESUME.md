@@ -1,37 +1,40 @@
 # Stage-10A — CURRENT_STATE_AND_RESUME
 
-**Role:** HOT / single canonical active-stage state and resume; not a scientific protocol or another evidence ledger.  
+**Role:** HOT; single canonical active-stage resume. Scientific authority and immutable outcomes remain in the sources below, not this summary.  
 **As of:** 31 October 2026 (Asia/Riyadh).  
-**Active phase:** Stage-10A pre-outcome source/configuration readiness. **Treatment execution: HOLD.**  
-**Branch:** `stage10a-governance`, from integrated `main` `217a8ef0f136cc1cee957a93df9f873e561eb7c0`.  
-**Latest verified source/configuration code commit:** `048d69559175011f22c594ecbfe41d5f56f94a0f`. GitHub [Stage-10 pre-outcome run 41138871866](https://github.com/Korj14/concept-drift-ids/actions/runs/41138871866) **SUCCESS, 96 passed** and [Research contract 41138871848](https://github.com/Korj14/concept-drift-ids/actions/runs/41138871848) **SUCCESS**, both at that exact commit. A later documentation-only commit can advance branch HEAD without changing this verified code state.
+**Active phase:** Stage-10A prospective source-only implementation and governance verification. **Treatment execution: HOLD.**  
+**Branch:** `stage10a-governance`, based on accepted integrated `main` `217a8ef0f136cc1cee957a93df9f873e561eb7c0`.  
+**Latest source-only code checkpoint:** `23e794557e9c1cb5c83f79813b49352751b2267b`; [Stage-10 pre-outcome CI 41139950476](https://github.com/Korj14/concept-drift-ids/actions/runs/41139950476) **SUCCESS / 103 tests passed** under Python 3.11.9; [Research contract 41139950478](https://github.com/Korj14/concept-drift-ids/actions/runs/41139950478) **SUCCESS**, both at this exact code SHA. A subsequent documentation-only state commit advances branch HEAD; that is **not** a new code-validation claim.
 
-## Authority and upstream
+## Authority and historical boundary
 
-MAIN doctrine > reconciled implementation plan > frozen Stage-10+ master v1.1 (16 obligations / 19 required pre-outcome fields) > frozen Stage-10A GoldenEye protocol v1 and machine manifest > accepted Stage-8/9 and Stage-9.5 technical evidence > this current-state snapshot > historical checkpoints. Stage-9.5 completed and user-accepted 30 October at immutable `cdc4b5eaea7e337802f93563b708b89f3025c3d8`; PR #21 merged by provenance-preserving `957f907fd5e2d7f9964ae90f60b18f4094d68031`. No Stage-9.5 re-audit is needed. Historical October 16–17 blocked results and interim CI failures remain COLD audit evidence, not competing current status.
+MAIN research doctrine > reconciled implementation plan > frozen Stage-10+ master v1.1 (16 obligations / 19 pre-outcome fields) > frozen Stage-10A GoldenEye protocol and manifest > accepted Stage-8/9 and Stage-9.5 evidence > this resume > older checkpoints. Stage-9.5 technical assurance is accepted on immutable `cdc4b5eaea7e337802f93563b708b89f3025c3d8`; PR #21 integrated it with merge `957f907fd5e2d7f9964ae90f60b18f4094d68031`. October 16–17 blocked and intermediate failed CI reports are genuine COLD audit history, not current assurance status.
 
-## Accepted source-only preparation and tested implementation
+## Verified and prepared — source-only
 
-- Frozen GoldenEye Wednesday source: 225,166,395 bytes, SHA-256 `893c27dc968bf7a8adef1689f90be55ca4a4dc3088fb63d6ff247ac56856df2a`; 69,260 pre + 69,270 post retained, 11 pre Heartbleed excluded; evaluator-only boundary 69,260. Existing source audit preserves the 77-feature class-conditional diagnostics. **No C/D outcome access.**
-- `src/concept_drift_ids/stage10a_source_adapter.py`: source-only observation and 5,000-row label gate, synthetic tests passed; not a real treatment executor.
-- `tools/stage10/stage10a_source_receipt.py`: exact Python 3.11.9, clean-checkout and write-once source receipt command, synthetically validated but **not run on original CSV in the canonical environment**.
-- `tools/stage10/stage10a_isolation_contract.py`: all-five-seed, three-arm matched shared-identity/event checks, 138,530-prediction production default, future-label firewall and negative fixtures; **not bound to independently verified real neural trajectories**.
-- `data/manifests/stage10a_execution_candidate_v1.json` plus verifier/tests: derived from the frozen Stage-10A, master and inherited primary manifests. Exact checks passed at `048d69559175011f22c594ecbfe41d5f56f94a0f`. This is a **pre-outcome non-executable candidate**, not a separate scientific authority or release.
-- WARM 19-field review: `STAGE10A_RELEASE_READINESS_REVIEW_2026_10_31.md`. Supplemental original-CSV source projection: `results/audits/stage10a_supplemental_source_projection_v1.json` (Git blob `e39d1c5b0f3e24e73dfc590ddfdea71749821096`), **noncanonical Python 3.13.5**, not equivalent to an original-CSV clean-checkout source receipt.
-- Historical synthetic test-failure and correction lineage remains auditable in GitHub CI/commits; the latest corrected code passed 96 tests. Never describe older failed runs as successful.
+- Wednesday GoldenEye scenario is prospectively frozen: 225,166,395 original bytes, SHA-256 `893c27dc968bf7a8adef1689f90be55ca4a4dc3088fb63d6ff247ac56856df2a`, 69,260 pre and 69,270 post rows after excluding 11 pre Heartbleed, 77 inherited features and **evaluator-only** boundary 69,260. The raw-source identity/count/eight row hashes were independently checked. No real treatment or model outcomes accessed.
+- `src/concept_drift_ids/stage10a_source_adapter.py`: pre-outcome row/feature selection, immutable inherited preprocessing usage, label-delay interface with synthetic tests. It is **not** a treatment runner.
+- `tools/stage10/stage10a_source_receipt.py`: a strict original-CSV receipt command requiring Python 3.11.9, a clean checkout, frozen source and write-once output. **The real original-CSV receipt has not been run in that canonical environment.** Supplemental evidence `results/audits/stage10a_supplemental_source_projection_v1.json` is explicitly noncanonical Python 3.13.5, and does not close the gate.
+- `tools/stage10/stage10a_isolation_contract.py`: synthetic-only, five-seed and three-arm shared-identity/timing assertions, fail-closed 138,530-prediction default, no future-label leakage, and negative tests; **real C/D neural equality is not demonstrated**.
+- `data/manifests/stage10a_execution_candidate_v1.json` plus `tools/stage10/stage10a_execution_candidate.py`: derived and exact-blob-verified non-executable candidate binding original checkpoints/R0, inherited controls, paired arm structure, endpoints and safety blocks. No release or treatment entrypoint.
+- **New checkpoint:** `tools/stage10/stage10a_synthetic_preflight.py` plus `tests/stage10/test_stage10a_synthetic_preflight.py` at `23e794557e9c1cb5c83f79813b49352751b2267b`; GitHub blob identities `f7504c357a802d84a061456c2e094d8b691f7a52` and `4e7891e754cd3836b42fe4da37947f7ef772095d`. Their new seven tests prove on **synthetic tokens only**: fsync prediction before label release, exactly 5,000-row maturity, no future label in prediction events, one-time output, independently recomputed journal digests and synthetic three-arm equality/tamper rejection. The same seven tests passed locally under noncanonical Python 3.13.5; the combined **103 tests** passed in canonical Python 3.11.9 GitHub CI. A direct local synthetic CLI smoke produced 5,002 synthetic prediction events + 2 matured releases, and refused reuse of the output path. **None of this proves an original-source run or real matched neural trajectories.**
+- Supporting Stage-10A release-readiness matrix remains WARM at `STAGE10A_RELEASE_READINESS_REVIEW_2026_10_31.md`; historical failed assertions and their corrective commits remain COLD, not coequal state.
 
-## HOLD boundaries
+## Unresolved RELEASE/HOLD blockers
 
-Frozen master still has `stage10_execution_permitted=false` and Stage-10A manifest still has `stage10_treatment_execution_authorized=false` and `stage10_treatment_outcomes_accessed_during_freeze=false`. No Stage-10A C, D-drift, or D-periodic neural predictions, adaptive treatments, symbolic lifecycle outcomes or paired hypothesis tests are authorized. Source tests, config checks and branch integration do not imply a RELEASE.
-
-**Unresolved gates:** canonical exact Python 3.11.9 clean-checkout original-source receipt; actual original System-A checkpoint and R0.v2 byte availability in Stage-10A runtime; prospective executable entrypoint, prediction-persistence and label-time proof; independent real shared neural/control identity verification; write-once attempted-seed evidence and paired analysis validation; master S10-04 independent-environment inclusion/exclusion selection freeze verification; and an explicit versioned Stage-10A RELEASE. GitHub `main` branch protection remains a separate administrator follow-up. No outcome-dependent changes are permitted.
+1. Exact Python **3.11.9**, **clean checkout**, frozen-lock environment and actual original Wednesday CSV must produce a write-once *canonical original-source receipt*. This session has only Python 3.13.5 and cannot directly clone GitHub in the local container; do not mark this gate passed.
+2. Verify original per-seed System-A checkpoint bytes, R0.v2 rules and thresholds in the future execution environment without regenerating or refitting them.
+3. Freeze and validate a legitimate Stage-10A treatment entrypoint and full test-before-update/5000-label-delay/evaluator-boundary firewall. The synthetic fixture runner is categorically **not** a treatment entrypoint.
+4. Validate actual, independently generated write-once neural/control trajectories for C, D-drift and D-periodic at paired seeds 0–4. Synthetic-identical digests are not evidence that real checkpoints, predictions, replay, updates, detector events, RNG or optimizer states match.
+5. Verify per-seed output/invalid-run policy, analysis and multiplicity obligations without accessing outcomes prior to RELEASE; verify prospective master S10-04 independent second-environment dataset selection criteria, and record separate signed stage-specific RELEASE.
+6. GitHub `main` branch protection remains a separate repository-admin follow-up. No Stage-10B/C work in this chat.
 
 ## Exact next action and STOP
 
-**First:** in a clean `stage10a-governance` checkout with Python **3.11.9** and frozen `requirements-lock.txt`, place the *original* Wednesday CSV in a separate data root and execute:
+**Next:** run the existing original-source-only receipt on original Wednesday CSV under Python 3.11.9 in a clean `stage10a-governance` checkout using `requirements-lock.txt`, with a fresh external write-once output path:
 
-`python -m tools.stage10.stage10a_source_receipt --data-root /path/to/original-csv-folder --output /external/write-once/stage10a_source_receipt.json`
+`python -m tools.stage10.stage10a_source_receipt --data-root /path/to/original-csv-folder --output /external/new-receipt/stage10a_source_receipt.json`
 
-Preserve the generated receipt, its exact Git HEAD, environment, hashes and any failures without overwrite. This session's local container has only Python 3.13.5 and no direct GitHub clone access, so that canonical receipt cannot be marked passed here.
+Capture the exact repo SHA, receipt SHA-256 and any failure without overwrite. Thereafter prospectively verify actual checkpoint/R0 presence and establish a source-to-real-trajectory evidence binding only through a separately authorized, release-gated executor.
 
-**Then:** test a synthetic-only Stage-10A executable entrypoint and bind any eventual shared-identity fields to independently produced write-once evidence; verify original checkpoint/R0 bytes and final stage-specific exact-head run config. **STOP before actual C/D/D-periodic treatment execution, scoring or outcome access.** Do not issue scientific execution IDs without separate RELEASE. Stage-10B/C are out of scope.
+**Absolute STOP:** frozen Stage-10 master `stage10_execution_permitted=false`, Stage-10A manifest `stage10_treatment_execution_authorized=false`; no C/D/D-periodic model predictions, adaptive updates, symbolic lifecycle outcomes, confirmatory effects or treatment metrics until explicit separate Stage-10A RELEASE. No outcome-based tuning or reinterpretation.

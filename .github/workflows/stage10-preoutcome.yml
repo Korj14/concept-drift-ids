@@ -53,4 +53,4 @@ jobs:
         run: python -m compileall -q tools/stage10
 
       - name: Run Stage 10A, 10B and 10C repository-only tests
-        run: python -m pytest -q tests/stage10/test_stage10a_source_readiness.py tests/stage10/test_stage10b_source_readiness.py tests/stage10/test_stage10c_source_readiness.py
+        run: python -m pytest -q tests/stage10

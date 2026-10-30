@@ -6,6 +6,7 @@ candidate *metadata* only; no C/D scientific execution is permitted.
 """
 from __future__ import annotations
 
+import hashlib
 import json
 from collections.abc import Mapping
 from pathlib import Path
@@ -13,6 +14,7 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parents[2]
 POLICY_PATH = ROOT / "data/manifests/stage10a_s10_04_independent_environment_eligibility_v1.json"
+FROZEN_POLICY_BLOB_SHA1 = "a000d0c018cff865481db2cf8020fe12b01ec7f0"
 MASTER_PATH = ROOT / "data/manifests/stage10_plus_master_replication_sensitivity_v1_1.json"
 STAGE10A_PATH = ROOT / "data/manifests/stage10a_goldeneye_attack_pattern_v1.json"
 
@@ -121,8 +123,16 @@ def screen_synthetic_dossier(dossier: Mapping[str, Any]) -> dict[str, Any]:
     }
 
 
+def frozen_policy_blob_sha1(raw: bytes) -> str:
+    normalized = raw.replace(b"\r\n", b"\n")
+    return hashlib.sha1(b"blob " + str(len(normalized)).encode("ascii") + b"\x00" + normalized).hexdigest()
+
+
 def verify_repository_policy() -> None:
-    policy = json.loads(POLICY_PATH.read_text(encoding="utf-8"))
+    raw = POLICY_PATH.read_bytes()
+    if frozen_policy_blob_sha1(raw) != FROZEN_POLICY_BLOB_SHA1:
+        raise ValueError("S10-04 frozen blob identity changed; versioned review required.")
+    policy = json.loads(raw.decode("utf-8"))
     master = json.loads(MASTER_PATH.read_text(encoding="utf-8"))
     stage10a = json.loads(STAGE10A_PATH.read_text(encoding="utf-8"))
     verify_policy(policy, master, stage10a)

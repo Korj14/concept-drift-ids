@@ -9,7 +9,7 @@ import pytest
 from tools.stage10.stage10a_s10_04_selection import (
     NO_FIELDS, YES_FIELDS, REQUIRED_SOURCE_DOSSIER, POLICY_PATH, MASTER_PATH,
     STAGE10A_PATH, screen_synthetic_dossier, verify_policy,
-    verify_repository_policy,
+    verify_repository_policy, frozen_policy_blob_sha1, FROZEN_POLICY_BLOB_SHA1,
 )
 
 
@@ -96,3 +96,18 @@ def test_prospective_safeguards_and_claim_boundaries_fail_closed(frozen) -> None
     p["selection"]["independent_external_replication_claim_permitted"] = True
     with pytest.raises(ValueError, match="must not assert dataset selection"):
         verify_policy(p, m, a)
+
+
+def test_frozen_policy_blob_rejects_same_length_rule_rewrite(monkeypatch, tmp_path) -> None:
+    from tools.stage10 import stage10a_s10_04_selection as selection
+
+    original = POLICY_PATH.read_bytes()
+    assert frozen_policy_blob_sha1(original) == FROZEN_POLICY_BLOB_SHA1
+    assert b"flow_oriented_records" in original
+    edited = original.replace(b"flow_oriented_records", b"flow_oriented_recordX", 1)
+    assert len(edited) == len(original)
+    altered_path = tmp_path / "selection.json"
+    altered_path.write_bytes(edited)
+    monkeypatch.setattr(selection, "POLICY_PATH", altered_path)
+    with pytest.raises(ValueError, match="frozen blob identity changed"):
+        selection.verify_repository_policy()

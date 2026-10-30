@@ -2,16 +2,16 @@ from __future__ import annotations
 
 import json
 import subprocess
+from pathlib import Path
 
 import pytest
-from pathlib import Path
 
 from tools.stage9_5.claim_traceability import (
     PROJECT_ROOT,
     _assert_append_only_ledger,
-    _validate_claim_source_identities,
     _contains_numeric_literal,
     _pointer,
+    _validate_claim_source_identities,
     run,
 )
 

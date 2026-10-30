@@ -1,0 +1,27 @@
+{
+  "accepted_scientific_objects_modified": false,
+  "current_resolution_authority": {
+    "contract": "data/manifests/stage9_5_6_closure_order_gate_v1.json",
+    "rule": "evaluate_current_order_gate_validates_canonical_stage9_5_1_and_6_evidence"
+  },
+  "formal_stage9_5_closure_asserted": false,
+  "historical_class_a_id": "A-PROV-01",
+  "historical_failure_records_modified": false,
+  "original_contract": {
+    "git_blob_sha": "49e77541d4adea56b32b2cb76579fb0d5fe278e3",
+    "path": "data/manifests/stage9_5_hostile_review_v1.json"
+  },
+  "q1_register": {
+    "compatibility_rule": "frozen_byte_prefix_and_published_snapshot_byte_prefix",
+    "frozen_git_blob_sha": "e1db2f5d9031e502668ec3960bac4a16d710fd57",
+    "frozen_historical_commit": "4c3c74bb708f9fdd67d05c33b6a8c556a63d8438",
+    "path": "Q1_ADVERSARIAL_AUDIT_REGISTER.md",
+    "published_snapshot_blob_sha": "54f604941a61443330e4d49541471c0c4e2c4400",
+    "published_snapshot_commit": "4460439b2d25dbcc3cafe18af5a647d334f22a22"
+  },
+  "schema_version": "1.2",
+  "scope": "stage9.5-9-hostile-review-post-recovery-state",
+  "source_rule": "original_frozen_identity_for_q1_and_strict_exact_identity_for_protocol",
+  "stage10_outcomes_accessed": false,
+  "status": "assurance_only_corrective_pending_fresh_exact_head_ci"
+}

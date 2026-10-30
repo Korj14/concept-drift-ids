@@ -17,7 +17,7 @@ SOURCE_COMPATIBILITY_PATH = (
     PROJECT_ROOT / "data" / "manifests" / "stage9_5_claim_source_compatibility_v1_1.json"
 )
 # These pins make the additive v1.1 policy fail closed if edited after review.
-_PINNED_SOURCE_COMPATIBILITY = {'schema_version': '1.1',
+_PINNED_SOURCE_COMPATIBILITY: dict[str, Any] = {'schema_version': '1.1',
  'status': 'assurance_only_corrective_not_stage9_5_closure',
  'scope': 'stage9.5-7-claim-source-ledger-additive-compatibility',
  'frozen_claim_contract': {'path': 'data/manifests/stage9_5_claim_reporting_v1.json',

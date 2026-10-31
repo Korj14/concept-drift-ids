@@ -1,0 +1,15 @@
+{
+  "kind": "stage10a-original-checkpoint-byte-preflight-request-v1",
+  "checkpoint_size_bytes": 76105,
+  "checkpoint_sha256_by_seed": {
+    "0": "514c6d552b3cd680ae966bbb568105bd2871bc68d3a47aded070a70ba0615bd1",
+    "1": "07696c3f580645d9c96ac3e736cfb5eeaa8033f148bf64822e8ee105861cf552",
+    "2": "7630514cf409256bd2bbe27eca59f881acb238be698b5fdb1ee12bca8e402491",
+    "3": "cce1ce47db047b9d441bbe6dad9bd53f1ee6ff3ad7d404521cae72a38bccd4b4",
+    "4": "9b9e56371f3246482998c4efea4829e1e6d5aaf549bb43e1af05e471dfcb9e93"
+  },
+  "transfer_approved_for_identity_only": true,
+  "checkpoint_deserialization_allowed": false,
+  "stage10a_treatment_execution_authorized": false,
+  "fixture_only_pilot_already_passed": true
+}

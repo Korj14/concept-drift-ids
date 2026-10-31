@@ -1,0 +1,83 @@
+name: Stage-10A original checkpoint byte-only verification — NO treatments
+
+on:
+  push:
+    branches:
+      - stage10a-governance
+    paths:
+      - '.github/stage10a-requests/original-*.json'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: stage10a-original-checkpoint-identity
+  cancel-in-progress: false
+
+jobs:
+  checkpoint-identity-only:
+    if: github.repository == 'Korj14/concept-drift-ids' && github.ref == 'refs/heads/stage10a-governance'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    environment:
+      name: stage10a-checkpoint-verification
+    steps:
+      - name: Exact triggering checkout without reusable credentials
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          fetch-depth: 2
+          persist-credentials: false
+
+      - name: Require one identity-only request and frozen verifier code
+        id: request
+        shell: bash
+        run: |
+          set -euo pipefail
+          git switch -C stage10a-governance "$GITHUB_SHA"
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          test -z "$(git status --porcelain)"
+          CHANGED="$(git diff-tree --no-commit-id --name-only -r HEAD)"
+          [[ "$CHANGED" =~ ^\.github/stage10a-requests/original-[0-9a-f]{16}\.json$ ]]
+          test -f "$CHANGED"
+          test "$(git hash-object tools/stage10/stage10a_checkpoint_byte_gate.py)" = "4803333d0855cccb590cced2497b7b1eef769b85"
+          test "$(git hash-object tools/stage10/stage10a_original_state_preflight.py)" = "1ddf5887b7a13e7f53559836b12af1ea69c4e12b"
+          test "$(git hash-object tools/stage10/stage10a_dropbox_harmless_pilot.py)" = "f340f6084a00c63f9d077b89fb3fde4f7ac648bc"
+          test "$(git hash-object tools/stage10/stage10a_execution_candidate.py)" = "c486268b5cada1f4812c89a34e620e2013a0d0ff"
+          echo "request=$CHANGED" >> "$GITHUB_OUTPUT"
+
+      - name: Set up exact Python 3.11.9
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: '3.11.9'
+
+      - name: Transfer and verify original checkpoint bytes, no model deserialization
+        env:
+          STAGE10A_ORIGINAL_CHECKPOINT_LINKS_JSON: ${{ secrets.STAGE10A_ORIGINAL_CHECKPOINT_LINKS_JSON }}
+          PYTHONPATH: ${{ github.workspace }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          RECEIPT_DIR="$RUNNER_TEMP/stage10a-original-receipt-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          mkdir -m 700 -p "$RECEIPT_DIR"
+          python -m tools.stage10.stage10a_checkpoint_byte_gate \
+            --request '${{ steps.request.outputs.request }}' \
+            --output "$RECEIPT_DIR/original_state_receipt.json"
+          test -z "$(git status --porcelain)"
+          echo "STAGE10A_ORIGINAL_RECEIPT=$RECEIPT_DIR/original_state_receipt.json" >> "$GITHUB_ENV"
+
+      - name: Publish sanitized source-only identity receipt (never binaries)
+        if: success()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: stage10a-original-byte-receipt-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ env.STAGE10A_ORIGINAL_RECEIPT }}
+          if-no-files-found: error
+          overwrite: false
+          retention-days: 7
+
+      - name: Best-effort external receipt cleanup
+        if: always()
+        shell: bash
+        run: |
+          rm -rf -- "$RUNNER_TEMP/stage10a-original-receipt-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"

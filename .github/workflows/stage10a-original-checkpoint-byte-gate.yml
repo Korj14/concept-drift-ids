@@ -18,7 +18,7 @@ jobs:
   checkpoint-identity-only:
     if: github.repository == 'Korj14/concept-drift-ids' && github.ref == 'refs/heads/stage10a-governance'
     runs-on: ubuntu-latest
-    timeout-minutes: 12
+    timeout-minutes: 20
     environment:
       name: stage10a-checkpoint-verification
     steps:
@@ -50,10 +50,16 @@ jobs:
         with:
           python-version: '3.11.9'
 
+      - name: Install frozen Python dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install -r requirements-lock.txt
+
       - name: Transfer and verify original checkpoint bytes, no model deserialization
         env:
           STAGE10A_ORIGINAL_CHECKPOINT_LINKS_JSON: ${{ secrets.STAGE10A_ORIGINAL_CHECKPOINT_LINKS_JSON }}
-          PYTHONPATH: ${{ github.workspace }}
+          PYTHONPATH: ${{ github.workspace }}/src:${{ github.workspace }}
         shell: bash
         run: |
           set -euo pipefail

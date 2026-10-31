@@ -219,7 +219,7 @@ class Stage10AControlPlaneRunner(SharedControlPlaneRunner):
                     logical_clock=logical_clock,
                     status="committed",
                     origin_index=logical_clock,
-                    maturity_index=prediction.maturity_index,
+                    maturity_index=int(public_prediction["maturity_index"]),
                     neural_checkpoint_sha256=active_checkpoint_sha256,
                     config_sha256=self.config_sha256,
                     git_commit=self.git_commit,

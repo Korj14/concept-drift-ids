@@ -1,0 +1,120 @@
+name: Stage 10A original-source vault custody (NO treatments)
+
+on:
+  push:
+    branches: [stage10a-governance]
+    paths:
+      - .github/workflows/stage10a-real-source-custody-once.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  source-custody-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      PYTHONPATH: ${{ github.workspace }}/src:${{ github.workspace }}
+      SOURCE_SHA256: "893c27dc968bf7a8adef1689f90be55ca4a4dc3088fb63d6ff247ac56856df2a"
+      SOURCE_SIZE: "225166395"
+      SOURCE_FILENAME: Wednesday-workingHours.pcap_ISCX.csv
+      SOURCE_REVISION: "4e9edfa727f800b6f595bc2ee7420527156562b2"
+    steps:
+      - name: Checkout clean exact branch head
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Freeze exact Git and Python identities; install lock
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "${GITHUB_REF}" = "refs/heads/stage10a-governance"
+          test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
+          test -z "$(git status --porcelain)"
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11.9'
+          cache: pip
+
+      - name: Install frozen requirements and validate environment
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(python -c 'import platform;print(platform.python_version())')" = "3.11.9"
+          python -m pip install -r requirements-lock.txt
+          test -z "$(git status --porcelain)"
+
+      - name: Recover original source under root-only custody
+        shell: bash
+        run: |
+          set -euo pipefail
+          URL="https://huggingface.co/datasets/c01dsnap/CIC-IDS2017/resolve/${SOURCE_REVISION}/${SOURCE_FILENAME}?download=true"
+          STAGING="${RUNNER_TEMP}/${SOURCE_FILENAME}"
+          curl --fail --location --show-error --silent --retry 3 --connect-timeout 45 --max-time 1800 --output "${STAGING}" "${URL}"
+          test "$(stat -c%s "${STAGING}")" = "${SOURCE_SIZE}"
+          printf '%s  %s\n' "${SOURCE_SHA256}" "${STAGING}" | sha256sum --check --status
+          SRC="/tmp/stage10a-custody-source-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+          OUT="/tmp/stage10a-custody-output-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+          sudo install -d -o root -g root -m 0700 "${SRC}"
+          sudo install -d -o root -g root -m 0711 "${OUT}"
+          sudo install -o root -g root -m 0400 "${STAGING}" "${SRC}/${SOURCE_FILENAME}"
+          rm -f "${STAGING}"
+          test -z "$(git status --porcelain)"
+          echo "STAGE10A_SRC=${SRC}" >> "${GITHUB_ENV}"
+          echo "STAGE10A_OUT=${OUT}" >> "${GITHUB_ENV}"
+
+      - name: Actually split original features and private labels, enforce cross-UID denial
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
+          PY="$(command -v python)"
+          test "$("${PY}" -c 'import platform;print(platform.python_version())')" = "3.11.9"
+          ATTEMPT="original-source-only-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+          sudo env "PYTHONPATH=${GITHUB_WORKSPACE}/src:${GITHUB_WORKSPACE}" "${PY}" \
+            -m tools.stage10.stage10a_g2_real_input_custodian \
+            --source-root "${STAGE10A_SRC}" --output-parent "${STAGE10A_OUT}" \
+            --attempt-id "${ATTEMPT}" --writer-uid 54011 --writer-gid 54011 \
+            --escrow-uid 54012 --escrow-gid 54012
+          RECEIPT="${STAGE10A_OUT}/${ATTEMPT}/source_custody_receipt.json"
+          sudo test -f "${RECEIPT}"
+          sudo install -m 0644 "${RECEIPT}" "${RUNNER_TEMP}/stage10a-custody-receipt.json"
+          python - "${RUNNER_TEMP}/stage10a-custody-receipt.json" <<'PY'
+          import json, pathlib, sys
+          d=json.loads(pathlib.Path(sys.argv[1]).read_bytes())
+          assert d['schema']=='stage10a-g2-real-source-custody-v1'
+          assert d['shape']==[138530,77]
+          assert d['expected_within_stream_mature_labels']==133530
+          assert d['right_censored_labels']==5000
+          assert d['same_host_kernel_access_probe_passed'] is True
+          assert d['kernel_access_independently_observed'] is False
+          assert d['original_checkpoint_loaded'] is False
+          assert d['prediction_commit_witnessed'] is False
+          assert d['stage10a_treatment_execution_authorized'] is False
+          assert d['stage10a_release_ready'] is False
+          print('Original-data source custody and same-host UID denial: VERIFIED SOURCE-ONLY')
+          PY
+          test -z "$(git status --porcelain)"
+
+      - name: Remove original data and private vault bytes
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          case "${STAGE10A_SRC:-}" in /tmp/stage10a-custody-source-*) sudo rm -rf -- "${STAGE10A_SRC}";; esac
+          case "${STAGE10A_OUT:-}" in /tmp/stage10a-custody-output-*) sudo rm -rf -- "${STAGE10A_OUT}";; esac
+          rm -f -- "${RUNNER_TEMP}/${SOURCE_FILENAME}"
+
+      - name: Preserve ONLY non-outcome custody receipt
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: stage10a-real-source-custody-receipt-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/stage10a-custody-receipt.json
+          if-no-files-found: error
+          retention-days: 90
+          overwrite: false

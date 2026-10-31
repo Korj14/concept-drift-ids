@@ -1,0 +1,12 @@
+{
+  "audit_id": "stage10a-harmless-dropbox-pilot-v1",
+  "checkpoint_bytes_transferred": false,
+  "fixture_sha256": "ccbc2e85dff26dc9abc25827133cd4468377e37ecc924d69a9f6bd6134520c8d",
+  "fixture_size_bytes": 120,
+  "git_head": "42dcc2a6d4978373a9b3843f61aaffbf98da476f",
+  "model_or_treatment_executed": false,
+  "pass": true,
+  "python_version": "3.11.9",
+  "scope": "harmless_fixture_only",
+  "stage10a_treatment_execution_authorized": false
+}

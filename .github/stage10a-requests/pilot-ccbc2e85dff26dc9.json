@@ -1,0 +1,8 @@
+{
+  "kind": "stage10a-harmless-dropbox-pilot-v1",
+  "non_sensitive_fixture_confirmed": true,
+  "fixture_size_bytes": 120,
+  "fixture_sha256": "ccbc2e85dff26dc9abc25827133cd4468377e37ecc924d69a9f6bd6134520c8d",
+  "checkpoint_file": false,
+  "treatment_execution_authorized": false
+}

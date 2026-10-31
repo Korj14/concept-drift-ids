@@ -1,0 +1,116 @@
+{
+  "candidate_id": "stage10a-production-schema-review-v0.1",
+  "frozen_authority_bytes": {
+    "data/manifests/cd_primary_run_config_v1_1.json": "7ba598fec1cf8ce92f804d4123afbf01ec310b23",
+    "data/manifests/stage10_plus_master_replication_sensitivity_v1_1.json": "8ac82c8d907243556a5673d09600cd1bdc19aa52",
+    "data/manifests/stage10a_goldeneye_attack_pattern_v1.json": "001501350fbf9fa4a4075176b9af43c2cf275bc5",
+    "results/audits/stage10a_original_checkpoint_source_only_receipt_41156553037.json": "94cf6ee608e63be4834372aa0be8956eaaf289234f395dd788a9e0d23ba2b1c1",
+    "results/audits/stage10a_original_source_receipt_601516ff_2026_10_31.json": "d6e0874181b4aebe4d259b7f4f66b7d608aaf7803c6dc3c10f0151aaf2f9a42a"
+  },
+  "governance": {
+    "outcome_access_authorized": false,
+    "production_schema_frozen": false,
+    "real_neural_trajectory_verified": false,
+    "real_runtime_attested": false,
+    "real_stage10a_entrypoint_exists": false,
+    "release_signed": false,
+    "stage10_execution_permitted": false,
+    "stage10a_treatment_execution_authorized": false
+  },
+  "layout_reuse": {
+    "all_five_phase_a_seals_required_before_any_phase_b": true,
+    "phase_a_and_child_checkpoints_read_only_to_arms": true,
+    "phase_a_dir": "phase_a_shared_control_plane/seed-{seed}",
+    "phase_a_extra_candidate_artifacts": [
+      "attempt.json",
+      "input_identity.json",
+      "runtime_attestation.json",
+      "checkpoint_custody_receipt.json",
+      "append_witness.jsonl",
+      "shared_identity.json",
+      "run_manifest.json",
+      "stage10a_provenance_seal.json"
+    ],
+    "phase_a_six_journals": [
+      "predictions.jsonl",
+      "label_schedule.jsonl",
+      "detector_observations.jsonl",
+      "events.jsonl",
+      "replay_transactions.jsonl",
+      "checkpoint_chain.jsonl"
+    ],
+    "phase_b_dir": "phase_b_symbolic_arms/seed-{seed}",
+    "phase_b_three_readonly_arms": [
+      "c_frozen_symbolic",
+      "d_drift",
+      "d_periodic"
+    ],
+    "phase_c_offline_only_after_seals": true
+  },
+  "required_event_invariants": {
+    "all_attempts_failures_and_incomplete_seeds_retained": true,
+    "immutable_rng_optimizer_replay_and_checkpoint_parent_child_custody": true,
+    "label_release_origin_equals_clock_minus_latency": true,
+    "neural_checkpoint_publication_effective_next_row": true,
+    "neural_monitor_uses_neural_hard_error_not_fused_arm_score": true,
+    "no_boundary_or_pre_post_flag_in_adaptive_or_symbolic_inputs": true,
+    "no_lookahead_labels_in_prediction_or_monitor_inputs": true,
+    "prediction_append_and_fsync_before_current_clock_label_release": true
+  },
+  "role": "WARM_non_governing_design_candidate",
+  "schema_version": 1,
+  "scientific_scope": {
+    "arms": [
+      "c_frozen_symbolic",
+      "d_drift",
+      "d_periodic"
+    ],
+    "boundary_evaluator_only": true,
+    "inherited_preprocessing_sha256": "4527f77220f2cf6063108a7d71d80aaa0e82099ad282ff25408a2d9ce3488b1e",
+    "inherited_r0_manifest_sha256": "131027d2f136494eb388183f18dcb7eb0e9d7e9fe786f22dba25f4e1624c1483",
+    "latency_rows": 5000,
+    "ordered_row_ids_sha256": "81924f3c39cb49adfaebea11d9aef045ab73804dd61faee49dcfbd2dd5f33f25",
+    "original_features": 77,
+    "original_source_sha256": "893c27dc968bf7a8adef1689f90be55ca4a4dc3088fb63d6ff247ac56856df2a",
+    "post_rows": 69270,
+    "pre_rows": 69260,
+    "retained_rows": 138530,
+    "right_censored_labels": 5000,
+    "scenario_id": "cicids2017_goldeneye_temporal_attack_shift_v1",
+    "seeds": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "within_stream_mature_labels": 133530
+  },
+  "status": "PROPOSAL_UNREVIEWED_NONEXECUTABLE",
+  "unresolved_review_choices": {
+    "checkpoint_and_phase_b_custody": {
+      "independent_byte_and_state_chain_verification_required": true,
+      "no_public_checkpoint_binaries_or_signed_links": true,
+      "option": "protected_raw_initial_child_bytes_and_readonly_model_resolver",
+      "status": "PENDING_EXPLICIT_DESIGN_REVIEW"
+    },
+    "label_availability_access_control": {
+      "must_preserve_frozen_neural_semantics": true,
+      "option": "separate_process_or_equivalently_enforced_label_escrow",
+      "same_process_fixture_is_not_production_proof": true,
+      "status": "PENDING_EXPLICIT_DESIGN_REVIEW"
+    },
+    "runtime_identity_external_witness": {
+      "github_sha_self_report_alone_insufficient": true,
+      "must_prove_outside_writer": true,
+      "option": "clean_exact_head_python3119_lock_plus_independent_runner_job_witness",
+      "status": "PENDING_EXPLICIT_DESIGN_REVIEW"
+    },
+    "s10_04_release_scope": {
+      "criteria_frozen_not_second_dataset_selected": true,
+      "do_not_weaken_master_obligations": true,
+      "external_replication_not_claimed": true,
+      "status": "PENDING_EXPLICIT_DESIGN_REVIEW"
+    }
+  }
+}

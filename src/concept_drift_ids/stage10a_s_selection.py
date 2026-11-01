@@ -7,7 +7,7 @@ freeze remain OPEN; no real treatment launcher is exposed here.
 """
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from typing import Any, Sequence
 
 from concept_drift_ids.cd_control_plane import canonical_sha256
@@ -157,3 +157,89 @@ def validate_and_confirm_s_selection(
         selected_candidate_ids=tuple(sorted(c.candidate_id for c in selected)),
         confirmation=confirm,
     )
+
+
+@dataclass(frozen=True)
+class SDelayedRuleBase:
+    """A candidate S rule-base *proposal*, not a scientific RELEASE."""
+    selection: SSelectionConfirmation
+    state: RuleBaseState | None
+    valid_from: int | None
+    # The S variant/thresholds still need independent scientific freeze.
+    s_variant_frozen: bool = False
+
+
+def derive_s_delayed_rule_base(
+    *,
+    initial_s_state: RuleBaseState,
+    transaction: PendingSymbolicTransaction,
+    validation: ValidationBlockResult,
+    confirmation_records: Sequence[SymbolicValidationRecord],
+    feature_names: Sequence[str],
+    operator_config: SymbolicOperatorConfig,
+    next_checkpoint_effective_index: int | None,
+    required_confirmation_rows: int = 10_000,
+) -> SDelayedRuleBase:
+    """Apply inherited lifecycle to *confirmed* new candidates only, at t+1.
+
+    The validation selection is re-derived first. The provisional validation
+    state is never exposed as an S publication; candidate publication can
+    occur only after the independent matured-label confirmation finishes.
+    """
+    selection = validate_and_confirm_s_selection(
+        initial_s_state=initial_s_state, transaction=transaction,
+        validation=validation, confirmation_records=confirmation_records,
+        feature_names=feature_names, operator_config=operator_config,
+        next_checkpoint_effective_index=next_checkpoint_effective_index,
+        required_confirmation_rows=required_confirmation_rows,
+    )
+    confirmation = selection.confirmation
+    if (confirmation is None or confirmation.publication_effective_index is None
+        or confirmation.status != "independently_confirmed_subset"):
+        return SDelayedRuleBase(selection, None, None)
+
+    confirmed = {
+        m["candidate_id"] for m in confirmation.candidate_evidence
+        if m["independently_confirmed"] is True
+    }
+    if not confirmed or not confirmed <= set(selection.selected_candidate_ids):
+        raise ValueError("S confirmation is not bound to validated selection")
+    filtered_transaction = replace(
+        transaction,
+        candidates=tuple(
+            c for c in transaction.candidates if c.candidate_id in confirmed
+        ),
+    )
+    valid_from = confirmation.publication_effective_index
+    if (valid_from <= max(r.maturity_index for r in validation.records)
+        or next_checkpoint_effective_index is not None
+        and valid_from >= next_checkpoint_effective_index):
+        raise ValueError("S rule-publication time violates independent confirmation")
+    result = complete_symbolic_transaction(
+        initial_s_state, filtered_transaction, validation,
+        feature_names=feature_names,
+        validation_evidence_id=canonical_sha256({
+            "arm": transaction.arm, "opportunity_id": transaction.opportunity_id,
+            "status": "complete",
+            "row_ids": list(validation.row_ids),
+            "neural_checkpoint_sha256": transaction.neural_checkpoint_sha256,
+        }),
+        publication_effective_index=valid_from,
+        operator_config=operator_config,
+    )
+    if result.lifecycle is None:
+        raise ValueError("Inherited lifecycle failed after S confirmation")
+    new_state = result.lifecycle.state
+    previous_active = {
+        r.rule_revision_id for r in initial_s_state.active_revisions()
+    }
+    new_candidate_ids = {
+        r.source_candidate_id for r in new_state.active_revisions()
+        if r.rule_revision_id not in previous_active
+        and r.valid_from == valid_from and r.source_candidate_id is not None
+    }
+    if not new_candidate_ids:
+        return SDelayedRuleBase(selection, None, None)
+    if not new_candidate_ids <= confirmed:
+        raise ValueError("Unconfirmed candidate would enter S rule-base")
+    return SDelayedRuleBase(selection, new_state, valid_from)

@@ -112,3 +112,34 @@ def test_s_selection_does_not_mutate_primary_baseline():
     _=validate_and_confirm_s_selection(**kw)
     assert kw["initial_s_state"].canonical_sha256==before
     assert kw["initial_s_state"].version_number==0
+
+
+def test_confirmed_candidate_is_delayed_into_s_rule_base():
+    from concept_drift_ids.stage10a_s_selection import derive_s_delayed_rule_base
+    kw=_test_inputs()
+    before=kw["initial_s_state"].canonical_sha256
+    result=derive_s_delayed_rule_base(**kw)
+    assert result.selection.confirmation.status=="independently_confirmed_subset"
+    assert result.state is not None
+    assert result.valid_from==10208
+    assert result.s_variant_frozen is False
+    assert any(
+        r.source_candidate_id=="new-candidate" and r.valid_from==10208
+        for r in result.state.active_revisions()
+    )
+    assert kw["initial_s_state"].canonical_sha256==before
+
+
+def test_unconfirmed_or_superseded_candidate_cannot_publish_s_state():
+    from concept_drift_ids.stage10a_s_selection import derive_s_delayed_rule_base
+    kw=_test_inputs()
+    kw["next_checkpoint_effective_index"]=5300
+    result=derive_s_delayed_rule_base(**kw)
+    assert result.state is None and result.valid_from is None
+    kw=_test_inputs()
+    from dataclasses import replace
+    kw["confirmation_records"]=tuple(
+        replace(r,true_label=0) for r in kw["confirmation_records"]
+    )
+    result=derive_s_delayed_rule_base(**kw)
+    assert result.state is None and result.valid_from is None

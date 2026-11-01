@@ -1,0 +1,59 @@
+name: Stage 10A privileged escrow kernel preflight (NO treatments)
+
+on:
+  push:
+    branches:
+      - stage10a-governance
+    paths:
+      - src/concept_drift_ids/stage10a_privileged_escrow.py
+      - tests/stage10/test_stage10a_privileged_escrow.py
+      - .github/workflows/stage10a-privileged-escrow-kernel-preflight.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  non-treatment-kernel-boundary:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout exact clean Stage 10A governance commit
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Enforce exact HEAD and frozen no-treatment flags
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
+          test -z "$(git status --porcelain)"
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          master=json.loads(Path("data/manifests/stage10_plus_master_replication_sensitivity_v1_1.json").read_text())
+          stage=json.loads(Path("data/manifests/stage10a_goldeneye_attack_pattern_v1.json").read_text())
+          assert master["hard_gate"]["stage10_execution_permitted"] is False
+          assert stage["stage10_treatment_execution_authorized"] is False
+          PY
+      - name: Use frozen Python 3.11.9
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11.9"
+          cache: pip
+      - name: Install exact frozen dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(python -c 'import platform;print(platform.python_version())')" = "3.11.9"
+          python -m pip install -r requirements-lock.txt
+          test -z "$(git status --porcelain)"
+      - name: Test actual Linux cross-UID escrow and fsync boundary only
+        shell: bash
+        run: |
+          set -euo pipefail
+          PY="$(command -v python)"
+          sudo --non-interactive env PYTHONPATH="${GITHUB_WORKSPACE}/src:${GITHUB_WORKSPACE}" "${PY}" -m pytest -q tests/stage10/test_stage10a_privileged_escrow.py
+          test -z "$(git status --porcelain)"
+          echo "Non-treatment kernel protocol validated. No original data, original checkpoints or scientific outcomes loaded."

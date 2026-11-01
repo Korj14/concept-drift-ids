@@ -1,0 +1,140 @@
+{
+  "schema_version": 1,
+  "status": "proposal_scientific_review_required_not_frozen",
+  "protocol_id": "stage10a-rs-s-method-review-v0.2",
+  "protocol_document": "STAGE10A_RS_S_METHOD_FREEZE_CANDIDATE_V0_2_2026_11_01.md",
+  "date": "2026-11-01",
+  "primary_R": {
+    "frozen_protocol": "stage10a-goldeneye-attack-pattern-v1",
+    "unchanged": true,
+    "arms": [
+      "c_frozen_symbolic",
+      "d_drift",
+      "d_periodic"
+    ],
+    "seeds": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "e1_e2_e3_unchanged": true
+  },
+  "common_S": {
+    "shared_phase_a_writer": true,
+    "read_only_phase_b": true,
+    "rows": 138530,
+    "evaluator_only_boundary": 69260,
+    "label_delay_rows": 5000,
+    "max_opportunities_per_arm": 4,
+    "seeds": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "inferential_status": "descriptive_diagnostic_no_new_confirmatory_family",
+    "invalid_runs": "write_once_retained_no_imputation_no_replacement_seeds",
+    "scheduled_execution": "after_same_sealed_per_seed_phase_a_as_independent_read_only_phase_b_consumers",
+    "withdrawal_difference_confounding": "S_WD2_changes_persistence_and_insufficient_handling_jointly_no_single_factor_attribution"
+  },
+  "variants": [
+    {
+      "id": "S-CF-D",
+      "kind": "confirmation",
+      "source_arm": "d_drift",
+      "generation_rows": 10000,
+      "selection_rows": 10000,
+      "confirmation_rows": 10000,
+      "confirmation_rule": "same_inherited_100_bootstrap_quality_gate",
+      "publication": "next_prediction_after_confirmation_maturity",
+      "implementation": "partial_needs_baseline_lifecycle_split"
+    },
+    {
+      "id": "S-CF-P",
+      "kind": "confirmation",
+      "source_arm": "d_periodic",
+      "generation_rows": 10000,
+      "selection_rows": 10000,
+      "confirmation_rows": 10000,
+      "confirmation_rule": "same_inherited_100_bootstrap_quality_gate",
+      "publication": "next_prediction_after_confirmation_maturity",
+      "implementation": "partial_needs_baseline_lifecycle_split"
+    },
+    {
+      "id": "S-WD1",
+      "kind": "withdrawal",
+      "first_failure": "inherited_R_fail_including_evidence_insufficient_demotes",
+      "second_consecutive_complete_failure": "inherited_R_next_failure_retires",
+      "insufficient": "inherited_R_evidence_insufficient_is_failing_gate",
+      "implementation": "not_implemented"
+    },
+    {
+      "id": "S-WD2",
+      "kind": "withdrawal",
+      "first_failure": "completed_fail_pending_no_vote",
+      "second_consecutive_complete_failure": "demote",
+      "insufficient": "abstain_neither_increment_nor_reset_failure_streak",
+      "implementation": "not_implemented",
+      "third_consecutive_complete_failure": "retire"
+    },
+    {
+      "id": "S-H5",
+      "kind": "evidence_horizon",
+      "generation_rows": 5000,
+      "validation_rows": 5000,
+      "implementation": "not_implemented"
+    },
+    {
+      "id": "S-B1000",
+      "kind": "bootstrap_diagnostic",
+      "baseline_replicates": 100,
+      "sensitivity_replicates": 1000,
+      "flag_absolute_difference_gt": 0.05,
+      "implementation": "not_implemented"
+    },
+    {
+      "id": "S-XAI",
+      "kind": "explanation_triangulation",
+      "mcsc_unchanged": true,
+      "missing_denominator": "NA",
+      "implementation": "not_implemented"
+    }
+  ],
+  "s_report": {
+    "comparators": [
+      "corresponding_R",
+      "S-CF-D_minus_S-CF-P"
+    ],
+    "post_endpoints": [
+      "MCC",
+      "MCSC"
+    ],
+    "causal_unit": "matched_seed",
+    "p_values": "none_confirmatory_for_S",
+    "full_seed_reporting": true
+  },
+  "authorization": {
+    "g1_scientific_approved": false,
+    "g2_production_approved": false,
+    "g3_treatment_release": false,
+    "real_model_execution_permitted": false,
+    "g1_design_freeze_can_precede_g2_implementation": true
+  },
+  "source_papers": [
+    {
+      "url": "https://link.springer.com/article/10.1007/s44443-026-00964-4",
+      "published": "2026-06-23"
+    },
+    {
+      "url": "https://www.mdpi.com/1424-8220/26/19/6200",
+      "published": "2026-09-30"
+    },
+    {
+      "url": "https://link.springer.com/article/10.1007/s11416-026-00664-7",
+      "published": "2026-08-24"
+    }
+  ]
+}

@@ -72,6 +72,20 @@ def test_actual_distinct_uids_socket_commit_and_delayed_label_boundary():
     with tempfile.TemporaryDirectory(prefix="stage10a-escrow-", dir="/tmp") as temporary:
         base = Path(temporary)
         os.chmod(base, 0o711)
+        # Hosted checkout ancestors may be mode 0700 under /home/runner.
+        # Root stages exact source into a disposable read-only public-traverse
+        # directory instead of weakening permissions on the checkout itself.
+        source_dir = base / "read_only_source"
+        source_dir.mkdir(mode=0o755)
+        shutil.copytree(
+            root / "src" / "concept_drift_ids",
+            source_dir / "concept_drift_ids",
+            ignore=shutil.ignore_patterns("__pycache__", "*.pyc"),
+        )
+        for path in sorted(source_dir.rglob("*"), reverse=True):
+            os.chown(path, 0, 0)
+            os.chmod(path, 0o555 if path.is_dir() else 0o444)
+        os.chmod(source_dir, 0o555)
         attempt = base / "custody-test"
         attempt.mkdir(mode=0o711)
         label_dir = attempt / "escrow"
@@ -88,7 +102,7 @@ def test_actual_distinct_uids_socket_commit_and_delayed_label_boundary():
                       escrow_uid=ESCROW[0], escrow_gid=ESCROW[1])
         ipc = attempt / "ipc"
         code_server = (
-            f"import sys;sys.path.insert(0,{str(root / 'src')!r});"
+            f"import sys;sys.path.insert(0,{str(source_dir)!r});"
             "from concept_drift_ids.stage10a_privileged_escrow import serve;"
             f"serve(attempt=__import__('pathlib').Path({str(attempt)!r}),"
             "attempt_id='custody-test',run_id='gate-test',seed=0,"
@@ -111,7 +125,7 @@ def test_actual_distinct_uids_socket_commit_and_delayed_label_boundary():
             else:
                 raise AssertionError("Escrow server did not bind")
             code_writer = (
-                f"import sys;sys.path.insert(0,{str(root / 'src')!r});"
+                f"import sys;sys.path.insert(0,{str(source_dir)!r});"
                 "from concept_drift_ids.stage10a_privileged_escrow import Stage10AUnixGateway;"
                 "from pathlib import Path;"
                 f"g=Stage10AUnixGateway(socket_path=Path({str(sock)!r}),"

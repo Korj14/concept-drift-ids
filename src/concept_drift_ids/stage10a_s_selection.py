@@ -63,6 +63,14 @@ def validate_and_confirm_s_selection(
         or len(set(c.candidate_id for c in transaction.candidates))
            != len(transaction.candidates)):
         raise ValueError("S generation evidence/candidates are not unique")
+    prior_candidate_ids = {
+        r.source_candidate_id for r in initial_s_state.revisions
+        if r.source_candidate_id is not None
+    }
+    if prior_candidate_ids.intersection(
+        c.candidate_id for c in transaction.candidates
+    ):
+        raise ValueError("S candidate ID collides with historical rule provenance")
     if validation.status != "complete":
         return SSelectionConfirmation(
             "selection_validation_not_complete",
@@ -230,16 +238,17 @@ def derive_s_delayed_rule_base(
     if result.lifecycle is None:
         raise ValueError("Inherited lifecycle failed after S confirmation")
     new_state = result.lifecycle.state
-    previous_active = {
-        r.rule_revision_id for r in initial_s_state.active_revisions()
-    }
+    # Existing R0 rules may receive replacement revisions during
+    # maintenance; those are not newly proposed candidates. Preserve their
+    # independent historical provenance rather than falsely rejecting them.
+    original_candidate_ids = {c.candidate_id for c in transaction.candidates}
     new_candidate_ids = {
         r.source_candidate_id for r in new_state.active_revisions()
-        if r.rule_revision_id not in previous_active
-        and r.valid_from == valid_from and r.source_candidate_id is not None
+        if r.valid_from == valid_from
+        and r.source_candidate_id in original_candidate_ids
     }
-    if not new_candidate_ids:
-        return SDelayedRuleBase(selection, None, None)
     if not new_candidate_ids <= confirmed:
         raise ValueError("Unconfirmed candidate would enter S rule-base")
+    if not new_candidate_ids:
+        return SDelayedRuleBase(selection, None, None)
     return SDelayedRuleBase(selection, new_state, valid_from)

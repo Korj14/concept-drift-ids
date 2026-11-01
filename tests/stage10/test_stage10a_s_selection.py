@@ -143,3 +143,14 @@ def test_unconfirmed_or_superseded_candidate_cannot_publish_s_state():
     )
     result=derive_s_delayed_rule_base(**kw)
     assert result.state is None and result.valid_from is None
+
+
+def test_historical_candidate_id_collision_is_not_reinterpreted_as_new():
+    kw=_test_inputs()
+    from dataclasses import replace
+    candidate=kw["transaction"].candidates[0]
+    kw["transaction"]=replace(
+        kw["transaction"],candidates=(replace(candidate,candidate_id="historical"),)
+    )
+    with pytest.raises(ValueError,match="collides with historical"):
+        validate_and_confirm_s_selection(**kw)
